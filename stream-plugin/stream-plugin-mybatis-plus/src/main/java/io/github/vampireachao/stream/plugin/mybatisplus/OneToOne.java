@@ -2,7 +2,6 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 
 import java.io.Serializable;
 import java.util.Collection;
