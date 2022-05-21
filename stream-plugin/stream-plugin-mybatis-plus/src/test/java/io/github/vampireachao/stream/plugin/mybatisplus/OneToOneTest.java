@@ -33,6 +33,9 @@ class OneToOneTest {
 
         userIdNameMap = OneToOne.query(w -> w.le(UserInfo::getAge, 22), 1L, UserInfo::getId, UserInfo::getName);
         Assertions.assertEquals(1, userIdNameMap.size());
+
+        Map<Long, Boolean> query = OneToOne.query(w -> w.select(UserInfo::getId, UserInfo::getName), userIds, UserInfo::getId, userInfo -> userInfo.getName() != null && userInfo.getName().contains("a"));
+        Assertions.assertEquals(2, query.values().stream().filter(Boolean::booleanValue).count());
     }
 
 }

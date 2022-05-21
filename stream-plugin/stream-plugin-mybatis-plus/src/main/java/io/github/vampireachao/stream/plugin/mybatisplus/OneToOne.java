@@ -69,7 +69,7 @@ public class OneToOne {
 
     @SafeVarargs
     public static <K extends Serializable, V, T> Map<K, V> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, Collection<K> dataList, SFunction<T, K> keyFunction, SFunction<T, V> valueFunction, boolean isParallel, Consumer<T>... peeks) {
-        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> w.select(keyFunction, valueFunction))).map(wrapper -> SimpleQuery.map(wrapper, keyFunction, valueFunction, isParallel, peeks)).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.map(wrapper, keyFunction, valueFunction, isParallel, peeks)).orElseGet(HashMap::new);
     }
 
 
@@ -118,7 +118,7 @@ public class OneToOne {
 
     @SafeVarargs
     public static <K extends Serializable, V, T> Map<K, V> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, K data, SFunction<T, K> keyFunction, SFunction<T, V> valueFunction, boolean isParallel, Consumer<T>... peeks) {
-        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> w.select(keyFunction, valueFunction))).map(wrapper -> SimpleQuery.map(wrapper, keyFunction, valueFunction, isParallel, peeks)).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.map(wrapper, keyFunction, valueFunction, isParallel, peeks)).orElseGet(HashMap::new);
     }
 
 
