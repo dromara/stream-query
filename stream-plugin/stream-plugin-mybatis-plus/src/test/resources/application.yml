@@ -7,5 +7,4 @@ spring:
 
 logging:
   level:
-    org.springframework.jdbc: debug
-    com.baomidou.mybatisplus.test.autoconfigure: debug
+    root: DEBUG
