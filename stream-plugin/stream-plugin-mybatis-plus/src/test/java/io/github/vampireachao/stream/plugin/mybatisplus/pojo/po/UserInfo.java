@@ -4,6 +4,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+/**
+ * UserInfo
+ *
+ * @author VampireAchao
+ * @since 2022/5/21
+ */
 @Data
 public class UserInfo {
 

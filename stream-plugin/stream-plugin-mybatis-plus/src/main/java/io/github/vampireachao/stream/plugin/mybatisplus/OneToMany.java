@@ -79,7 +79,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <K extends Serializable, V, T> Map<K, List<V>> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, Collection<K> dataList, SFunction<T, K> keyFunction, SFunction<T, V> valueFunction, boolean isParallel, Consumer<T>... peeks) {
-        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.group(wrapper, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks)).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> (Map<K, List<V>>) SimpleQuery.group(wrapper, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks)).orElseGet(HashMap::new);
     }
 
     // dataList key collector
@@ -107,7 +107,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <K extends Serializable, V, A, T> Map<K, V> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, Collection<K> dataList, SFunction<T, K> keyFunction, Collector<T, A, V> downstream, boolean isParallel, Consumer<T>... peeks) {
-        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> SimpleQuery.group(wrapper, keyFunction, downstream, isParallel, peeks)).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> (Map<K, V>) SimpleQuery.group(wrapper, keyFunction, downstream, isParallel, peeks)).orElseGet(HashMap::new);
     }
 
 
@@ -164,6 +164,6 @@ public class OneToMany {
 
     @SafeVarargs
     public static <K extends Serializable, V, T> Map<K, List<V>> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, K data, SFunction<T, K> keyFunction, SFunction<T, V> valueFunction, boolean isParallel, Consumer<T>... peeks) {
-        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.group(wrapper, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks)).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> (Map<K, List<V>>) SimpleQuery.group(wrapper, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks)).orElseGet(HashMap::new);
     }
 }
