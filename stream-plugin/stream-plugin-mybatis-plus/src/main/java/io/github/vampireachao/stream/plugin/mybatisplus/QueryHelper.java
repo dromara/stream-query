@@ -34,8 +34,10 @@ public class QueryHelper {
     }
 
     @SafeVarargs
-    @SuppressWarnings("unchecked")
     public static <T> LambdaQueryWrapper<T> select(LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
-        return wrapper.select(Stream.of(columns).filter(func -> PropertyNamer.isGetter(LambdaUtils.extract(func).getImplMethodName())).toArray(SFunction[]::new));
+        if (Stream.of(columns).allMatch(func -> PropertyNamer.isGetter(LambdaUtils.extract(func).getImplMethodName()))) {
+            wrapper.select(columns);
+        }
+        return wrapper;
     }
 }

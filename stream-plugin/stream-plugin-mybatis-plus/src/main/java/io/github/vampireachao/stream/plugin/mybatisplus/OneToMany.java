@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -80,6 +81,35 @@ public class OneToMany {
     public static <K extends Serializable, V, T> Map<K, List<V>> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, Collection<K> dataList, SFunction<T, K> keyFunction, SFunction<T, V> valueFunction, boolean isParallel, Consumer<T>... peeks) {
         return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.group(wrapper, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks)).orElseGet(HashMap::new);
     }
+
+    // dataList key collector
+
+    @SafeVarargs
+    public static <K extends Serializable, V, A, T> Map<K, V> query(Collection<K> dataList, SFunction<T, K> keyFunction, Collector<T, A, V> downstream, Consumer<T>... peeks) {
+        return query(UnaryOperator.identity(), dataList, keyFunction, downstream, false, peeks);
+    }
+
+    // wrapper dataList key collector
+
+    @SafeVarargs
+    public static <K extends Serializable, V, A, T> Map<K, V> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, Collection<K> dataList, SFunction<T, K> keyFunction, Collector<T, A, V> downstream, Consumer<T>... peeks) {
+        return query(queryOperator, dataList, keyFunction, downstream, false, peeks);
+    }
+
+    // dataList key collector parallel
+
+    @SafeVarargs
+    public static <K extends Serializable, V, A, T> Map<K, V> query(Collection<K> dataList, SFunction<T, K> keyFunction, Collector<T, A, V> downstream, boolean isParallel, Consumer<T>... peeks) {
+        return query(UnaryOperator.identity(), dataList, keyFunction, downstream, isParallel, peeks);
+    }
+
+    // wrapper dataList key value parallel
+
+    @SafeVarargs
+    public static <K extends Serializable, V, A, T> Map<K, V> query(UnaryOperator<LambdaQueryWrapper<T>> queryOperator, Collection<K> dataList, SFunction<T, K> keyFunction, Collector<T, A, V> downstream, boolean isParallel, Consumer<T>... peeks) {
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> SimpleQuery.group(wrapper, keyFunction, downstream, isParallel, peeks)).orElseGet(HashMap::new);
+    }
+
 
     // data key
 
