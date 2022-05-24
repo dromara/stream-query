@@ -12,6 +12,6 @@ import lombok.Data;
 public class UserRole {
 
     private Long id;
-    private Long user_id;
-    private Long role_id;
+    private Long userId;
+    private Long roleId;
 }

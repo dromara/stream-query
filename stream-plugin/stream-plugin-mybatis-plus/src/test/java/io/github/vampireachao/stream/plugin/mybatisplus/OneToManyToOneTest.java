@@ -9,7 +9,11 @@ import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * OneToManyToOneTest
@@ -29,6 +33,14 @@ class OneToManyToOneTest {
             Assertions.assertEquals(10, userRoles.size());
             List<RoleInfo> roleInfos = SimpleQuery.selectList(RoleInfo.class, Wrappers.lambdaQuery());
             Assertions.assertEquals(3, roleInfos.size());
+
+            Set<Long> userIds = userInfos.stream().map(UserInfo::getId).collect(Collectors.toSet());
+            Set<Long> roleIds = new HashSet<>();
+            Map<Long, List<Long>> userIdRoleIdsMap = OneToMany.query(userIds, UserRole::getUserId, UserRole::getRoleId, userRole -> roleIds.add(userRole.getRoleId()));
+            final Map<Long, RoleInfo> idRoleMap = OneToOne.query(roleIds, RoleInfo::getId);
+            final Map<Long, List<RoleInfo>> userIdRoleInfosMap = userIdRoleIdsMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().map(idRoleMap::get).collect(Collectors.toList())));
+            Assertions.assertEquals(5, userIdRoleInfosMap.size());
+
         });
     }
 
