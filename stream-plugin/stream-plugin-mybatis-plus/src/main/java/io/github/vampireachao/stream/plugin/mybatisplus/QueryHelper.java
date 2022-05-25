@@ -10,6 +10,7 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -35,9 +36,16 @@ public class QueryHelper {
 
     @SafeVarargs
     public static <T> LambdaQueryWrapper<T> select(LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
-        if (Stream.of(columns).allMatch(func -> PropertyNamer.isGetter(LambdaUtils.extract(func).getImplMethodName()))) {
+        if (Stream.of(columns).allMatch(func -> Objects.nonNull(func) && PropertyNamer.isGetter(LambdaUtils.extract(func).getImplMethodName()))) {
             wrapper.select(columns);
         }
         return wrapper;
+    }
+
+    public static <$ENTITY_KEY extends Serializable, $ENTITY> Optional<LambdaQueryWrapper<$ENTITY>> lambdaQuery(Collection<$ENTITY_KEY> dataList, $ENTITY_KEY data, SFunction<$ENTITY, $ENTITY_KEY> keyFunction) {
+        if (Objects.nonNull(dataList)) {
+            return lambdaQuery(dataList, keyFunction);
+        }
+        return lambdaQuery(data, keyFunction);
     }
 }
