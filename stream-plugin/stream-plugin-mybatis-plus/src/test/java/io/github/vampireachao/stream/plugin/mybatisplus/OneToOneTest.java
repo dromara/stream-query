@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * 一对一测试
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt;
  */
 @MybatisPlusTest
 class OneToOneTest {

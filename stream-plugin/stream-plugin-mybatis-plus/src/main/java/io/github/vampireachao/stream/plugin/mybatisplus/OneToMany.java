@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * 一对多
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt;
  * @since 2022/5/23 17:40
  */
 public class OneToMany {

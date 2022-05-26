@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 /**
  * stream辅助类
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt;
  * @since 2022/5/26 19:11
  */
 public class StreamHelper {

@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 /**
  * 一对多对一
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt;
  * @since 2022/5/24 14:15
  */
 public class OneToManyToOne {

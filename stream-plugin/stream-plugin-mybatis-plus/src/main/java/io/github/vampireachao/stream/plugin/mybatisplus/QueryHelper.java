@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * 辅助类
  *
  * @author VampireAchao
- * @since 1.0-SNAPSHOT
+ * @since 1.0
  */
 public class QueryHelper {
 
