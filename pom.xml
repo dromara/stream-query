@@ -7,7 +7,7 @@
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-query</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.3</version>
+    <version>1.0.3</version>
     <modules>
         <module>stream-core</module>
         <module>stream-plugin</module>
