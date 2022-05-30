@@ -1,1 +1,4 @@
 /.idea/
+*/target/**
+**/pom.xml.versionsBackup
+/stream-plugin/stream-plugin-mybatis-plus/target/
