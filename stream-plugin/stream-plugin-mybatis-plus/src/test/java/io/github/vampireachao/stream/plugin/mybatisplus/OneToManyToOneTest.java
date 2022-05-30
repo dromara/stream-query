@@ -3,7 +3,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
-import io.github.vampireachao.stream.core.StreamHelper;
+import io.github.vampireachao.stream.core.stream.StreamHelper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;

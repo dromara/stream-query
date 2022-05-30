@@ -7,7 +7,7 @@
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-query</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.3</version>
+    <version>1.0.6</version>
     <modules>
         <module>stream-core</module>
         <module>stream-plugin</module>
@@ -144,7 +144,7 @@
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>
