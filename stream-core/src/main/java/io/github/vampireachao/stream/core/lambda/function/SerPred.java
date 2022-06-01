@@ -6,7 +6,6 @@ import java.util.function.Predicate;
 /**
  * 可序列化的Predicate
  *
- * @param <T>
  * @author VampireAchao
  * @see java.util.function.Predicate
  */

@@ -6,7 +6,6 @@ import java.util.function.Function;
 /**
  * 可序列化的Function
  *
- * @param <T>
  * @author VampireAchao
  * @see java.util.function.Function
  */

@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 /**
  * 可序列化的Supplier
  *
- * @param <T>
  * @author VampireAchao
  * @see java.util.function.Supplier
  */

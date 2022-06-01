@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * LambdaHelper
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao
  * @since 2022/5/29 9:19
  */
 public class LambdaHelper {

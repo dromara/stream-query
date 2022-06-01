@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 /**
  * 可序列化的Consumer
  *
- * @param <T>
  * @author VampireAchao
  * @see java.util.function.Consumer
  */

@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 /**
  * 收集器
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao
  * @since 2022/5/29 8:55
  */
 public class Collectors {

@@ -6,7 +6,6 @@ import java.util.function.UnaryOperator;
 /**
  * 可序列化的UnaryOperator
  *
- * @param <T>
  * @author VampireAchao
  * @see java.util.function.UnaryOperator
  */
