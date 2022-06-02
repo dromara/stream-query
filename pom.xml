@@ -7,7 +7,7 @@
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-query</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <modules>
         <module>stream-core</module>
         <module>stream-plugin</module>
@@ -64,7 +64,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.4.0</version>
+                <configuration>
+                    <additionalOptions>-Xdoclint:none</additionalOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
