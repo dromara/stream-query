@@ -166,4 +166,32 @@ public class OneToMany {
     public static <$KEY extends Serializable, $VALUE, $ENTITY> Map<$KEY, List<$VALUE>> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, Consumer<$ENTITY>... peeks) {
         return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.group(wrapper, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks)).orElseGet(HashMap::new);
     }
+
+    // data key collector
+
+    @SafeVarargs
+    public static <$KEY extends Serializable, $VALUE, A, $ENTITY> Map<$KEY, $VALUE> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, Collector<$ENTITY, A, $VALUE> downstream, Consumer<$ENTITY>... peeks) {
+        return query(UnaryOperator.identity(), data, keyFunction, downstream, false, peeks);
+    }
+
+    // wrapper data key collector
+
+    @SafeVarargs
+    public static <$KEY extends Serializable, $VALUE, A, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, Collector<$ENTITY, A, $VALUE> downstream, Consumer<$ENTITY>... peeks) {
+        return query(queryOperator, data, keyFunction, downstream, false, peeks);
+    }
+
+    // data key collector parallel
+
+    @SafeVarargs
+    public static <$KEY extends Serializable, $VALUE, A, $ENTITY> Map<$KEY, $VALUE> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, Collector<$ENTITY, A, $VALUE> downstream, boolean isParallel, Consumer<$ENTITY>... peeks) {
+        return query(UnaryOperator.identity(), data, keyFunction, downstream, isParallel, peeks);
+    }
+
+    // wrapper data key collector parallel
+
+    @SafeVarargs
+    public static <$KEY extends Serializable, $VALUE, A, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, Collector<$ENTITY, A, $VALUE> downstream, boolean isParallel, Consumer<$ENTITY>... peeks) {
+        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator).map(wrapper -> SimpleQuery.group(wrapper, keyFunction, downstream, isParallel, peeks)).orElseGet(HashMap::new);
+    }
 }

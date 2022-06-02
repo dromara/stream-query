@@ -41,11 +41,4 @@ public class QueryHelper {
         }
         return wrapper;
     }
-
-    public static <$ENTITY_KEY extends Serializable, $ENTITY> Optional<LambdaQueryWrapper<$ENTITY>> lambdaQuery(Collection<$ENTITY_KEY> dataList, $ENTITY_KEY data, SFunction<$ENTITY, $ENTITY_KEY> keyFunction) {
-        if (Objects.nonNull(dataList)) {
-            return lambdaQuery(dataList, keyFunction);
-        }
-        return lambdaQuery(data, keyFunction);
-    }
 }
