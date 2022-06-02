@@ -1,11 +1,13 @@
 package io.github.vampireachao.stream.core.lambda;
 
-import org.apache.flink.api.java.typeutils.TypeExtractionUtils;
-import org.apache.flink.shaded.asm9.org.objectweb.asm.Type;
+import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
@@ -27,7 +29,13 @@ public class LambdaHelper {
         /* Do not new me! */
     }
 
-    public static SerializedLambda serialize(Serializable lambda) {
+    /**
+     * Resolve the lambda to a {@link SerializedLambda} instance.
+     *
+     * @param lambda The lambda to resolve.
+     * @return SerializedLambda
+     */
+    private static SerializedLambda serialize(Serializable lambda) {
         Objects.requireNonNull(lambda, "lambda can not be null");
         if (lambda instanceof SerializedLambda) {
             return (SerializedLambda) lambda;
@@ -41,8 +49,7 @@ public class LambdaHelper {
                 throw new IllegalArgumentException("Not a lambda expression: " + clazz.getName());
             }
             try {
-                final Method writeReplace = clazz.getDeclaredMethod("writeReplace");
-                writeReplace.setAccessible(true);
+                final Method writeReplace = ReflectHelper.accessible(clazz.getDeclaredMethod("writeReplace"));
                 final Object maybeSerLambda = writeReplace.invoke(lambda);
                 if (Objects.nonNull(maybeSerLambda) && maybeSerLambda instanceof SerializedLambda) {
                     return (SerializedLambda) maybeSerLambda;
@@ -55,7 +62,13 @@ public class LambdaHelper {
     }
 
 
-    public static Executable resolve(Serializable lambda) {
+    /**
+     * Resolve the lambda to a {@link LambdaExecutable} instance.
+     *
+     * @param lambda The lambda to resolve.
+     * @return LambdaExecutable
+     */
+    public static LambdaExecutable resolve(Serializable lambda) {
         final SerializedLambda serializedLambda = serialize(lambda);
         final String methodName = serializedLambda.getImplMethodName();
         final Class<?> implClass;
@@ -66,16 +79,16 @@ public class LambdaHelper {
         }
         if (CONSTRUCTOR_METHOD_NAME.equals(methodName)) {
             for (Constructor<?> constructor : implClass.getDeclaredConstructors()) {
-                if (Type.getConstructorDescriptor(constructor).equals(serializedLambda.getImplMethodSignature())) {
-                    return constructor;
+                if (ReflectHelper.getDescriptor(constructor).equals(serializedLambda.getImplMethodSignature())) {
+                    return new LambdaExecutable(constructor);
                 }
             }
         } else {
-            List<Method> methods = TypeExtractionUtils.getAllDeclaredMethods(implClass);
+            List<Method> methods = ReflectHelper.getAllDeclaredMethods(implClass);
             for (Method method : methods) {
                 if (method.getName().equals(methodName)
-                        && Type.getMethodDescriptor(method).equals(serializedLambda.getImplMethodSignature())) {
-                    return method;
+                        && ReflectHelper.getDescriptor(method).equals(serializedLambda.getImplMethodSignature())) {
+                    return new LambdaExecutable(method);
                 }
             }
         }

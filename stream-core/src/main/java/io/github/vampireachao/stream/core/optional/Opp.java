@@ -1,5 +1,10 @@
 package io.github.vampireachao.stream.core.optional;
 
+import io.github.vampireachao.stream.core.lambda.LambdaHelper;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -351,8 +356,72 @@ public class Opp<T> {
      */
     @SafeVarargs
     public final Opp<T> peeks(Consumer<T>... actions) throws NullPointerException {
-        // 第三个参数 (Opps, Opp) -> null其实并不会执行到该函数式接口所以直接返回了个null
-        return Stream.of(actions).reduce(this, Opp<T>::peek, (opts, opp) -> null);
+        return peek(Stream.of(actions).reduce(Consumer::andThen).orElseGet(() -> o -> {}));
+    }
+
+    /**
+     * 如果传入的lambda入参类型一致，或者是父类，就执行，目前不支持子泛型
+     *
+     * @param action 入参类型一致，或者是父类，就执行的操作
+     * @param <U>    操作入参类型
+     * @return 如果传入的lambda入参类型一致，就执行对应的操作，并返回本身
+     */
+    public <U> Opp<T> typeOfPeek(SerCons<U> action) {
+        return ofTry(() -> {
+            Type[] types = LambdaHelper.resolve(action).getParameterTypes();
+            return types[types.length - 1];
+        }).flatMap(type -> typeOfPeek(type, action));
+    }
+
+    /**
+     * 如果传入的lambda入参类型一致，或者是父类，就执行并获取返回值，目前不支持子泛型
+     *
+     * @param mapper 入参类型一致，或者是父类，就执行的操作
+     * @param <U>    操作入参类型
+     * @param <R>    操作返回值类型
+     * @return 如果传入的lambda入参类型一致，就执行并获取返回值
+     */
+    public <U, R> Opp<R> typeOfMap(SerFunc<U, R> mapper) {
+        return ofTry(() -> {
+            Type[] types = LambdaHelper.resolve(mapper).getParameterTypes();
+            return types[types.length - 1];
+        }).flatMap(type -> typeOfMap(type, mapper));
+    }
+
+    /**
+     * 如果传入的类型一致，或者是父类，就执行，目前不支持子泛型
+     *
+     * @param type   类型
+     * @param action 入参类型一致，或者是父类，就执行的操作
+     * @param <U>    操作入参类型
+     * @return 如果传入的lambda入参类型一致，就执行对应的操作，并返回本身
+     */
+    @SuppressWarnings("unchecked")
+    public <U> Opp<T> typeOfPeek(Type type, SerCons<U> action) {
+        return ofNullable(type).flatMap(t -> filter(obj -> {
+            if (t.equals(obj.getClass())) {
+                return true;
+            }
+            if (t instanceof Class) {
+                Class<?> clazz = (Class<?>) t;
+                return clazz.isAssignableFrom(obj.getClass());
+            }
+            return false;
+        }).peek(v -> action.accept((U) v)));
+    }
+
+    /**
+     * 如果传入的类型一致，或者是父类，就执行并获取返回值，目前不支持子泛型
+     *
+     * @param type   类型
+     * @param mapper 入参类型一致，或者是父类，就执行的操作
+     * @param <U>    操作入参类型
+     * @param <R>    操作返回值类型
+     * @return 如果传入的lambda入参类型一致，就执行并获取返回值
+     */
+    @SuppressWarnings("unchecked")
+    public <U, R> Opp<R> typeOfMap(Type type, SerFunc<U, R> mapper) {
+        return ofNullable(type).flatMap(t -> filter(obj -> t.equals(obj.getClass()) || t.getClass().isAssignableFrom(obj.getClass())).map(v -> mapper.apply((U) v)));
     }
 
     /**

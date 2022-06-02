@@ -6,8 +6,8 @@ import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.lang.reflect.Array;
+import java.util.List;
 
 /**
  * LambdaHelper测试
@@ -20,14 +20,31 @@ class LambdaHelperTest {
 
     @Test
     void testResolve() {
-        Constructor<Object> objectConstructor = (Constructor<Object>) LambdaHelper.resolve((SerSupp<Object>) Object::new);
-        Assertions.assertNotNull(objectConstructor);
+        Assertions.assertAll(() -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerSupp<Object>) Object::new);
+                    Assertions.assertEquals(0, lambdaExecutable.getParameterTypes().length);
+                    Assertions.assertEquals(Object.class, lambdaExecutable.getReturnType());
+                }, () -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
+                    Assertions.assertEquals(int.class, lambdaExecutable.getParameterTypes()[0]);
+                    Assertions.assertEquals(Integer.class, ((Class<Array>) lambdaExecutable.getReturnType()).getComponentType());
+                }, () -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerCons<Object>) System.out::println);
+                    Assertions.assertEquals(Object.class, lambdaExecutable.getParameterTypes()[0]);
+                    Assertions.assertEquals(void.class, lambdaExecutable.getReturnType());
+                }, () -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerCons<String[]>) (String[] stringList) -> {});
+                    Assertions.assertInstanceOf(Class.class, lambdaExecutable.getParameterTypes()[0]);
+                    Assertions.assertEquals(String.class, ((Class<Array>) lambdaExecutable.getParameterTypes()[0]).getComponentType());
+                    Assertions.assertEquals(void.class, lambdaExecutable.getReturnType());
+                }, () -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerCons<List<String>>) (List<String> stringList) -> {});
+                    Assertions.assertEquals(List.class, lambdaExecutable.getParameterTypes()[0]);
+                    Assertions.assertEquals(void.class, lambdaExecutable.getReturnType());
+                }, () -> {
 
-        Method intArrayConstructor = (Method) LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
-        Assertions.assertNotNull(intArrayConstructor);
-
-        Method systemOutPrintln = (Method) LambdaHelper.resolve((SerCons<Object>) System.out::println);
-        Assertions.assertNotNull(systemOutPrintln);
+                }
+        );
     }
 
 }
