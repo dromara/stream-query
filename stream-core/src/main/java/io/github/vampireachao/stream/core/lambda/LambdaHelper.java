@@ -5,12 +5,10 @@ import org.apache.flink.shaded.asm9.org.objectweb.asm.Type;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.WeakHashMap;
 
 
 /**
@@ -23,30 +21,37 @@ public class LambdaHelper {
 
     private static final String CONSTRUCTOR_METHOD_NAME = "<init>";
 
+    private static final WeakHashMap<String, SerializedLambda> SERIALIZED_LAMBDA_CACHE = new WeakHashMap<>();
+
     private LambdaHelper() {
         /* Do not new me! */
     }
 
-    private static SerializedLambda serialize(Serializable lambda) {
+    public static SerializedLambda serialize(Serializable lambda) {
         Objects.requireNonNull(lambda, "lambda can not be null");
         if (lambda instanceof SerializedLambda) {
             return (SerializedLambda) lambda;
         }
+        if (lambda instanceof Proxy) {
+            throw new IllegalStateException("Are you debugging?Get out!!!");
+        }
         final Class<? extends Serializable> clazz = lambda.getClass();
-        if (!clazz.isSynthetic()) {
-            throw new IllegalArgumentException("Not a lambda expression: " + clazz.getName());
-        }
-        try {
-            final Method writeReplace = clazz.getDeclaredMethod("writeReplace");
-            writeReplace.setAccessible(true);
-            final Object maybeSerLambda = writeReplace.invoke(lambda);
-            if (Objects.nonNull(maybeSerLambda) && maybeSerLambda instanceof SerializedLambda) {
-                return (SerializedLambda) maybeSerLambda;
+        return SERIALIZED_LAMBDA_CACHE.computeIfAbsent(clazz.getName(), key -> {
+            if (!clazz.isSynthetic()) {
+                throw new IllegalArgumentException("Not a lambda expression: " + clazz.getName());
             }
-            throw new IllegalStateException("writeReplace result value is not java.lang.invoke.SerializedLambda");
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
+            try {
+                final Method writeReplace = clazz.getDeclaredMethod("writeReplace");
+                writeReplace.setAccessible(true);
+                final Object maybeSerLambda = writeReplace.invoke(lambda);
+                if (Objects.nonNull(maybeSerLambda) && maybeSerLambda instanceof SerializedLambda) {
+                    return (SerializedLambda) maybeSerLambda;
+                }
+                throw new IllegalStateException("writeReplace result value is not java.lang.invoke.SerializedLambda");
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new IllegalStateException(e);
+            }
+        });
     }
 
 
