@@ -23,7 +23,7 @@ public class LambdaHelper {
 
     private static final String CONSTRUCTOR_METHOD_NAME = "<init>";
 
-    private static final WeakHashMap<String, SerializedLambda> SERIALIZED_LAMBDA_CACHE = new WeakHashMap<>();
+    private static final WeakHashMap<String, LambdaExecutable> SERIALIZED_LAMBDA_EXECUTABLE_CACHE = new WeakHashMap<>();
 
     private LambdaHelper() {
         /* Do not new me! */
@@ -36,7 +36,6 @@ public class LambdaHelper {
      * @return SerializedLambda
      */
     private static SerializedLambda serialize(Serializable lambda) {
-        Objects.requireNonNull(lambda, "lambda can not be null");
         if (lambda instanceof SerializedLambda) {
             return (SerializedLambda) lambda;
         }
@@ -44,21 +43,19 @@ public class LambdaHelper {
             throw new IllegalStateException("Are you debugging?Get out!!!");
         }
         final Class<? extends Serializable> clazz = lambda.getClass();
-        return SERIALIZED_LAMBDA_CACHE.computeIfAbsent(clazz.getName(), key -> {
-            if (!clazz.isSynthetic()) {
-                throw new IllegalArgumentException("Not a lambda expression: " + clazz.getName());
+        if (!clazz.isSynthetic()) {
+            throw new IllegalArgumentException("Not a lambda expression: " + clazz.getName());
+        }
+        try {
+            final Method writeReplace = ReflectHelper.accessible(clazz.getDeclaredMethod("writeReplace"));
+            final Object maybeSerLambda = writeReplace.invoke(lambda);
+            if (Objects.nonNull(maybeSerLambda) && maybeSerLambda instanceof SerializedLambda) {
+                return (SerializedLambda) maybeSerLambda;
             }
-            try {
-                final Method writeReplace = ReflectHelper.accessible(clazz.getDeclaredMethod("writeReplace"));
-                final Object maybeSerLambda = writeReplace.invoke(lambda);
-                if (Objects.nonNull(maybeSerLambda) && maybeSerLambda instanceof SerializedLambda) {
-                    return (SerializedLambda) maybeSerLambda;
-                }
-                throw new IllegalStateException("writeReplace result value is not java.lang.invoke.SerializedLambda");
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new IllegalStateException(e);
-            }
-        });
+            throw new IllegalStateException("writeReplace result value is not java.lang.invoke.SerializedLambda");
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
 
@@ -69,30 +66,33 @@ public class LambdaHelper {
      * @return LambdaExecutable
      */
     public static LambdaExecutable resolve(Serializable lambda) {
-        final SerializedLambda serializedLambda = serialize(lambda);
-        final String methodName = serializedLambda.getImplMethodName();
-        final Class<?> implClass;
-        try {
-            implClass = Class.forName(serializedLambda.getImplClass().replace("/", "."), true, Thread.currentThread().getContextClassLoader());
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-        if (CONSTRUCTOR_METHOD_NAME.equals(methodName)) {
-            for (Constructor<?> constructor : implClass.getDeclaredConstructors()) {
-                if (ReflectHelper.getDescriptor(constructor).equals(serializedLambda.getImplMethodSignature())) {
-                    return new LambdaExecutable(constructor);
+        Objects.requireNonNull(lambda, "lambda can not be null");
+        return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(), key -> {
+            final SerializedLambda serializedLambda = serialize(lambda);
+            final String methodName = serializedLambda.getImplMethodName();
+            final Class<?> implClass;
+            try {
+                implClass = Class.forName(serializedLambda.getImplClass().replace("/", "."), true, Thread.currentThread().getContextClassLoader());
+            } catch (ClassNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
+            if (CONSTRUCTOR_METHOD_NAME.equals(methodName)) {
+                for (Constructor<?> constructor : implClass.getDeclaredConstructors()) {
+                    if (ReflectHelper.getDescriptor(constructor).equals(serializedLambda.getImplMethodSignature())) {
+                        return new LambdaExecutable(constructor);
+                    }
+                }
+            } else {
+                List<Method> methods = ReflectHelper.getAllDeclaredMethods(implClass);
+                for (Method method : methods) {
+                    if (method.getName().equals(methodName)
+                            && ReflectHelper.getDescriptor(method).equals(serializedLambda.getImplMethodSignature())) {
+                        return new LambdaExecutable(method);
+                    }
                 }
             }
-        } else {
-            List<Method> methods = ReflectHelper.getAllDeclaredMethods(implClass);
-            for (Method method : methods) {
-                if (method.getName().equals(methodName)
-                        && ReflectHelper.getDescriptor(method).equals(serializedLambda.getImplMethodSignature())) {
-                    return new LambdaExecutable(method);
-                }
-            }
-        }
-        throw new IllegalStateException("No lambda method found.");
+            throw new IllegalStateException("No lambda method found.");
+        });
     }
 
 }
