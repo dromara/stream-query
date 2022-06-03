@@ -17,6 +17,8 @@
  */
 package io.github.vampireachao.stream.core.reflect;
 
+import sun.invoke.util.Wrapper;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
@@ -26,6 +28,7 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 反射工具类
@@ -108,26 +111,14 @@ public class ReflectHelper {
             stringBuilder.append('[');
         }
         if (currentClass.isPrimitive()) {
-            char descriptor;
-            if (long.class == currentClass) {
-                descriptor = 'J';
-            } else if (int.class == currentClass) {
-                descriptor = 'I';
-            } else if (short.class == currentClass) {
-                descriptor = 'S';
-            } else if (char.class == currentClass) {
-                descriptor = 'C';
-            } else if (byte.class == currentClass) {
-                descriptor = 'B';
-            } else if (double.class == currentClass) {
-                descriptor = 'D';
-            } else if (float.class == currentClass) {
-                descriptor = 'F';
-            } else if (boolean.class == currentClass) {
-                descriptor = 'Z';
-            } else if (void.class == currentClass) {
-                descriptor = 'V';
-            } else {
+            char descriptor = 0;
+            for (Wrapper wrapper : Wrapper.class.getEnumConstants()) {
+                if (currentClass.getSimpleName().toUpperCase(Locale.ROOT).equals(wrapper.name())) {
+                    descriptor = wrapper.basicTypeChar();
+                    break;
+                }
+            }
+            if (descriptor == 0) {
                 throw new AssertionError();
             }
             stringBuilder.append(descriptor);
