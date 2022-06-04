@@ -792,7 +792,8 @@ public class Collectors {
         Supplier<A> downstreamSupplier = downstream.supplier();
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
         BiConsumer<Map<K, A>, T> accumulator = (m, t) -> {
-            K key = Objects.requireNonNull(classifier.apply(t), NON_NULL_MSG);
+            // stream-core changed this line
+            K key = Optional.ofNullable(t).map(classifier).orElse(null);
             A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());
             downstreamAccumulator.accept(container, t);
         };
