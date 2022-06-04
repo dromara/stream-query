@@ -79,7 +79,7 @@ public class LambdaHelper {
             if (CONSTRUCTOR_METHOD_NAME.equals(methodName)) {
                 for (Constructor<?> constructor : implClass.getDeclaredConstructors()) {
                     if (ReflectHelper.getDescriptor(constructor).equals(serializedLambda.getImplMethodSignature())) {
-                        return new LambdaExecutable(constructor);
+                        return new LambdaExecutable(constructor, serializedLambda);
                     }
                 }
             } else {
@@ -87,7 +87,7 @@ public class LambdaHelper {
                 for (Method method : methods) {
                     if (method.getName().equals(methodName)
                             && ReflectHelper.getDescriptor(method).equals(serializedLambda.getImplMethodSignature())) {
-                        return new LambdaExecutable(method);
+                        return new LambdaExecutable(method, serializedLambda);
                     }
                 }
             }

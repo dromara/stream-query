@@ -42,7 +42,9 @@ class LambdaHelperTest {
                     Assertions.assertEquals(List.class, lambdaExecutable.getParameterTypes()[0]);
                     Assertions.assertEquals(void.class, lambdaExecutable.getReturnType());
                 }, () -> {
-
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerFunc<Object, String>) Object::toString);
+                    Assertions.assertEquals(0, lambdaExecutable.getParameterTypes().length);
+                    Assertions.assertEquals(String.class, lambdaExecutable.getReturnType());
                 }
         );
     }

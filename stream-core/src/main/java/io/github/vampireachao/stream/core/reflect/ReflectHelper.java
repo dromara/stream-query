@@ -19,16 +19,11 @@ package io.github.vampireachao.stream.core.reflect;
 
 import sun.invoke.util.Wrapper;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+
 
 /**
  * 反射工具类
@@ -136,5 +131,26 @@ public class ReflectHelper {
      */
     public static String getInternalName(Class<?> clazz) {
         return clazz.getName().replace('.', '/');
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getFieldValue(Object obj, String fieldName) {
+        if (Objects.isNull(obj) || Objects.isNull(fieldName)) {
+            return null;
+        }
+        try {
+            return (T) getField(obj.getClass(), fieldName).get(obj);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static Field getField(Class<?> aClass, String fieldName) {
+        try {
+            return accessible(aClass.getDeclaredField(fieldName));
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }
