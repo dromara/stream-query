@@ -17,12 +17,14 @@
  */
 package io.github.vampireachao.stream.core.reflect;
 
-import sun.invoke.util.Wrapper;
 
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -106,14 +108,31 @@ public class ReflectHelper {
             stringBuilder.append('[');
         }
         if (currentClass.isPrimitive()) {
-            char descriptor = 0;
-            for (Wrapper wrapper : Wrapper.class.getEnumConstants()) {
-                if (currentClass.getSimpleName().toUpperCase(Locale.ROOT).equals(wrapper.name())) {
-                    descriptor = wrapper.basicTypeChar();
-                    break;
-                }
-            }
-            if (descriptor == 0) {
+            final char descriptor;
+            // see sun.invoke.util.Wrapper
+            // These must be in the order defined for widening primitive conversions in JLS 5.1.2
+            if (currentClass == boolean.class) {
+                descriptor = 'Z';
+            } else if (currentClass == byte.class) {
+                descriptor = 'B';
+            } else if (currentClass == short.class) {
+                descriptor = 'S';
+            } else if (currentClass == char.class) {
+                descriptor = 'C';
+            } else if (currentClass == int.class) {
+                descriptor = 'I';
+            } else if (currentClass == long.class) {
+                descriptor = 'J';
+            } else if (currentClass == float.class) {
+                descriptor = 'F';
+            } else if (currentClass == double.class) {
+                descriptor = 'D';
+            } else if (currentClass == Object.class) {
+                descriptor = 'L';
+            } else if (currentClass == void.class) {
+                // VOID must be the last type, since it is "assignable" from any other type:
+                descriptor = 'V';
+            } else {
                 throw new AssertionError();
             }
             stringBuilder.append(descriptor);
