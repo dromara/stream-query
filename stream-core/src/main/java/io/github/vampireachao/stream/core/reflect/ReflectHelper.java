@@ -127,8 +127,6 @@ public class ReflectHelper {
                 descriptor = 'F';
             } else if (currentClass == double.class) {
                 descriptor = 'D';
-            } else if (currentClass == Object.class) {
-                descriptor = 'L';
             } else if (currentClass == void.class) {
                 // VOID must be the last type, since it is "assignable" from any other type:
                 descriptor = 'V';
@@ -139,7 +137,18 @@ public class ReflectHelper {
         } else {
             stringBuilder.append('L').append(getInternalName(currentClass)).append(';');
         }
+    }
 
+    /**
+     * get descriptor of class
+     *
+     * @param clazz clazz
+     * @return descriptor char
+     */
+    public static String getDescriptor(Class<?> clazz) {
+        StringBuilder stringBuilder = new StringBuilder();
+        appendDescriptor(clazz, stringBuilder);
+        return stringBuilder.toString();
     }
 
     /**

@@ -3,11 +3,14 @@ package io.github.vampireachao.stream.core.lambda;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
+import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * LambdaHelper测试
@@ -45,6 +48,9 @@ class LambdaHelperTest {
                     LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerFunc<Object, String>) Object::toString);
                     Assertions.assertEquals(0, lambdaExecutable.getParameterTypes().length);
                     Assertions.assertEquals(String.class, lambdaExecutable.getReturnType());
+                }, () -> {
+                    LambdaExecutable resolve = LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w);
+                    Assertions.assertEquals(ReflectHelper.getDescriptor(resolve.getExecutable()), resolve.getLambda().getImplMethodSignature());
                 }
         );
     }
