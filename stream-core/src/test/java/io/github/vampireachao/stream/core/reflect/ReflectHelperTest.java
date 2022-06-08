@@ -19,4 +19,10 @@ class ReflectHelperTest {
         Assertions.assertEquals("Z", ReflectHelper.getDescriptor(boolean.class));
         Assertions.assertEquals("Ljava/lang/Boolean;", ReflectHelper.getDescriptor(Boolean.class));
     }
+
+    @Test
+    void testTypeReference() {
+        Assertions.assertEquals("java.lang.String", new TypeReference<String>() {}.getTypeName());
+    }
 }
+
