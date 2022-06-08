@@ -10,12 +10,12 @@
         <dependency>
             <groupId>io.github.vampireachao</groupId>
             <artifactId>stream-plugin-mybatis-plus</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.8</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-core -->
         <dependency>
             <groupId>io.github.vampireachao</groupId>
             <artifactId>stream-core</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.8</version>
         </dependency>
 ```

@@ -2,55 +2,16 @@ package io.github.vampireachao.stream.core.lambda.function;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.function.BiPredicate;
 
 /**
- * 可序列化的Predicate
+ * SerBiPred
  *
  * @author VampireAchao
- * @see java.util.function.Predicate
+ * @since 2022/6/8
  */
 @FunctionalInterface
-public interface SerPred<T> extends Predicate<T>, Serializable {
-
-    /**
-     * multi
-     *
-     * @param predicates lambda
-     * @param <T>        类型
-     * @return lambda
-     */
-    static <T> SerPred<T> mutliAnd(SerPred<T>... predicates) {
-        return Stream.of(predicates).reduce(SerPred::and).orElseGet(() -> o -> true);
-    }
-
-    /**
-     * multi
-     *
-     * @param predicates lambda
-     * @param <T>        类型
-     * @return lambda
-     */
-    static <T> SerPred<T> mutliOr(SerPred<T>... predicates) {
-        return Stream.of(predicates).reduce(SerPred::or).orElseGet(() -> o -> false);
-    }
-
-    /**
-     * Returns a predicate that tests if two arguments are equal according
-     * to {@link Objects#equals(Object, Object)}.
-     *
-     * @param <T>       the type of arguments to the predicate
-     * @param targetRef the object reference with which to compare for equality,
-     *                  which may be {@code null}
-     * @return a predicate that tests if two arguments are equal according
-     * to {@link Objects#equals(Object, Object)}
-     */
-    static <T> SerPred<T> isEqual(Object... targetRef) {
-        return (null == targetRef)
-                ? Objects::isNull
-                : object -> Stream.of(targetRef).allMatch(target -> target.equals(object));
-    }
+public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
 
     /**
      * Returns a composed predicate that represents a short-circuiting logical
@@ -68,9 +29,9 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * AND of this predicate and the {@code other} predicate
      * @throws NullPointerException if other is null
      */
-    default SerPred<T> and(SerPred<? super T> other) {
+    default SerBiPred<T, U> and(SerBiPred<? super T, ? super U> other) {
         Objects.requireNonNull(other);
-        return t -> test(t) && other.test(t);
+        return (T t, U u) -> test(t, u) && other.test(t, u);
     }
 
     /**
@@ -80,8 +41,8 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * @return a predicate that represents the logical negation of this
      * predicate
      */
-    default SerPred<T> negate() {
-        return (t) -> !test(t);
+    default SerBiPred<T, U> negate() {
+        return (T t, U u) -> !test(t, u);
     }
 
     /**
@@ -100,9 +61,9 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * OR of this predicate and the {@code other} predicate
      * @throws NullPointerException if other is null
      */
-    default SerPred<T> or(SerPred<? super T> other) {
+    default SerBiPred<T, U> or(SerBiPred<? super T, ? super U> other) {
         Objects.requireNonNull(other);
-        return t -> test(t) || other.test(t);
+        return (T t, U u) -> test(t, u) || other.test(t, u);
     }
-
 }
+

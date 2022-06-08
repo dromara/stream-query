@@ -2,17 +2,15 @@ package io.github.vampireachao.stream.core.lambda.function;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * 可序列化的Consumer
+ * SerArgsSerArgsCons
  *
  * @author VampireAchao
- * @see java.util.function.Consumer
+ * @since 2022/6/8
  */
-@FunctionalInterface
-public interface SerCons<T> extends Consumer<T>, Serializable {
+public interface SerArgsCons<T> extends Serializable {
 
     /**
      * multi
@@ -22,25 +20,32 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
      * @return lambda
      */
     @SafeVarargs
-    static <T> SerCons<T> multi(SerCons<T>... consumers) {
-        return Stream.of(consumers).reduce(SerCons::andThen).orElseGet(() -> o -> {});
+    static <T> SerArgsCons<T> multi(SerArgsCons<T>... consumers) {
+        return Stream.of(consumers).reduce(SerArgsCons::andThen).orElseGet(() -> o -> {});
     }
 
     /**
-     * Returns a composed {@code Consumer} that performs, in sequence, this
+     * Performs this operation on the given argument.
+     *
+     * @param t the input arguments
+     */
+    void accept(T... t);
+
+    /**
+     * Returns a composed {@code SerArgsCons} that performs, in sequence, this
      * operation followed by the {@code after} operation. If performing either
      * operation throws an exception, it is relayed to the caller of the
      * composed operation.  If performing this operation throws an exception,
      * the {@code after} operation will not be performed.
      *
      * @param after the operation to perform after this operation
-     * @return a composed {@code Consumer} that performs in sequence this
+     * @return a composed {@code SerArgsCons} that performs in sequence this
      * operation followed by the {@code after} operation
      * @throws NullPointerException if {@code after} is null
      */
-    default SerCons<T> andThen(SerCons<? super T> after) {
+    default SerArgsCons<T> andThen(SerArgsCons<? super T> after) {
         Objects.requireNonNull(after);
-        return (T t) -> {
+        return (T... t) -> {
             accept(t);
             after.accept(t);
         };
