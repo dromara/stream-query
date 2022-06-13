@@ -21,10 +21,7 @@ package io.github.vampireachao.stream.core.reflect;
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -180,5 +177,67 @@ public class ReflectHelper {
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public static Type[] getGenericTypes(Type type) {
+        Type gst = type.getClass().getGenericSuperclass();
+        if (Objects.isNull(gst)) {
+            return new Type[0];
+        }
+        if (gst instanceof ParameterizedType) {
+            ParameterizedType ty = (ParameterizedType) gst;
+            return ty.getActualTypeArguments();
+        }
+        return new Type[]{gst};
+    }
+
+    public static <T> boolean isAssignable(T obj, Type t) {
+        Type[] sourceTypes = ReflectHelper.getGenericTypes(t);
+        Object object = obj;
+        if (object instanceof Map) {
+            Map<?, ?> map = ((Map<?, ?>) obj);
+            object = map.entrySet();
+        }
+        if (object instanceof Iterable) {
+            if (sourceTypes.length == 0) {
+                return false;
+            }
+            Iterable<?> iterable = (Iterable<?>) object;
+            for (Object o : iterable) {
+                if (Objects.nonNull(o)) {
+                    Type[] eTypes = sourceTypes;
+                    if (sourceTypes[0] instanceof ParameterizedType) {
+                        ParameterizedType sourceParamType = (ParameterizedType) sourceTypes[0];
+                        eTypes = sourceParamType.getActualTypeArguments();
+                    }
+
+                    if (o instanceof Map.Entry) {
+                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
+                        if (!typeOf(entry.getKey(), eTypes[0])) {
+                            return false;
+                        }
+                        if (!typeOf(entry.getValue(), eTypes[1])) {
+                            return false;
+                        }
+                    } else if (!typeOf(o, eTypes[0])) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        if (t instanceof Class) {
+            Class<?> clazz = (Class<?>) t;
+            return clazz.isInstance(obj);
+        }
+        return false;
+    }
+
+    public static boolean typeOf(Object obj, Type eType) {
+        if (eType instanceof Class) {
+            Class<?> clazz = (Class<?>) eType;
+            return clazz.isInstance(obj);
+        }
+        return false;
     }
 }

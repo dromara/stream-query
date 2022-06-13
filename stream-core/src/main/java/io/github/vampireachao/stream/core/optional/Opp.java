@@ -3,6 +3,7 @@ package io.github.vampireachao.stream.core.optional;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -398,16 +399,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("unchecked")
     public <U> Opp<T> typeOfPeek(Type type, SerCons<U> action) {
-        return ofNullable(type).flatMap(t -> filter(obj -> {
-            if (t.equals(obj.getClass())) {
-                return true;
-            }
-            if (t instanceof Class) {
-                Class<?> clazz = (Class<?>) t;
-                return clazz.isAssignableFrom(obj.getClass());
-            }
-            return false;
-        }).peek(v -> action.accept((U) v)));
+        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isAssignable(obj, t)).peek(v -> action.accept((U) v)));
     }
 
     /**

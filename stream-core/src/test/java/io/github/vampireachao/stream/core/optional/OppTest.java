@@ -1,10 +1,13 @@
 package io.github.vampireachao.stream.core.optional;
 
+import io.github.vampireachao.stream.core.reflect.TypeReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -34,9 +37,26 @@ class OppTest {
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<List<Integer>> opp = Opp.ofNullable(Arrays.asList(1, 2, 3)).typeOfPeek((List<Integer> array) -> isExecute.set(true));
+            Opp<List<Integer>> opp = Opp.ofNullable(Arrays.asList(1, 2, 3, 4)).typeOfPeek((List<?> array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
+        }, () -> {
+            AtomicBoolean isExecute = new AtomicBoolean();
+            Opp<List<Integer>> opp = Opp.ofNullable(Arrays.asList(1, 2, 3)).typeOfPeek(List.class, (array) -> isExecute.set(true));
+            Assertions.assertTrue(opp.isPresent());
+            Assertions.assertTrue(isExecute.get());
+        }, () -> {
+            AtomicBoolean isExecute = new AtomicBoolean();
+            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, String>>() {
+            }, (array) -> isExecute.set(true));
+            Assertions.assertTrue(opp.isPresent());
+            Assertions.assertTrue(isExecute.get());
+        }, () -> {
+            AtomicBoolean isExecute = new AtomicBoolean();
+            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, Integer>>() {
+            }, (array) -> isExecute.set(true));
+            Assertions.assertTrue(opp.isEmpty());
+            Assertions.assertFalse(isExecute.get());
         });
     }
 
