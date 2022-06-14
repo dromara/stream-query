@@ -74,7 +74,7 @@ class OppTest {
             Opp<Boolean> opp = Opp.ofNullable("").typeOfMap((String str) -> {
                 isExecute.set(true);
                 return isExecute.get();
-            }).typeOfMap(Object.class, i -> false);
+            }).typeOfMap(Object.class, i -> false).typeOfMap(new TypeReference<String>() {}, i -> true);
             Assertions.assertTrue(opp.isEmpty());
         });
     }

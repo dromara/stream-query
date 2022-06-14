@@ -413,7 +413,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("unchecked")
     public <U, R> Opp<R> typeOfMap(Type type, SerFunc<U, R> mapper) {
-        return ofNullable(type).flatMap(t -> filter(obj -> t.equals(obj.getClass()) || t.getClass().isAssignableFrom(obj.getClass())).map(v -> mapper.apply((U) v)));
+        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isAssignable(obj, t)).map(v -> mapper.apply((U) v)));
     }
 
     /**
