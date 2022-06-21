@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 /**
+ * 单条
+ *
  * @author VampireAchao
  * @since 2022/6/18 14:47
  */

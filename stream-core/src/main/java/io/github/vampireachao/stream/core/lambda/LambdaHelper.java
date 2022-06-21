@@ -65,7 +65,7 @@ public class LambdaHelper {
      * @param lambda The lambda to resolve.
      * @return LambdaExecutable
      */
-    public static LambdaExecutable resolve(Serializable lambda) {
+    public static <T extends Serializable> LambdaExecutable resolve(T lambda) {
         Objects.requireNonNull(lambda, "lambda can not be null");
         return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(), key -> {
             final SerializedLambda serializedLambda = serialize(lambda);

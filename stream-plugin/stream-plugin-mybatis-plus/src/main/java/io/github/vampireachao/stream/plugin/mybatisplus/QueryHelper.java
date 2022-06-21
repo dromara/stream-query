@@ -10,6 +10,7 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -31,7 +32,7 @@ public class QueryHelper {
     }
 
     public static <T, E extends Serializable> Optional<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
-        return Optional.ofNullable(dataList).filter(values -> !values.isEmpty()).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, value));
+        return Optional.ofNullable(dataList).filter(values -> !values.isEmpty()).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value)));
     }
 
     @SafeVarargs
