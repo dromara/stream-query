@@ -5,12 +5,12 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.github.vampireachao.stream.core.collector.Collectors;
+import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
@@ -80,7 +80,7 @@ public class Many {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <$ENTITY, $KEY extends Serializable, $VALUE> List<$VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean parallel, Consumer<$ENTITY>... peeks) {
-        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Optional.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
+        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
     }
 
     // dataList key
@@ -137,7 +137,7 @@ public class Many {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <$ENTITY, $KEY extends Serializable, $VALUE> List<$VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean parallel, Consumer<$ENTITY>... peeks) {
-        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Optional.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SimpleQuery.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
     }
 
 

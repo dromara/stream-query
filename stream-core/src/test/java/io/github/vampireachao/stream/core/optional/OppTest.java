@@ -17,6 +17,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 class OppTest {
 
     @Test
+    void testOfEmptyAble() {
+        Assertions.assertTrue(Opp.ofEmptyAble(Arrays.asList(null, null, null)).isEmpty());
+        Assertions.assertTrue(Opp.ofEmptyAble(Arrays.asList(null, 1, null)).isPresent());
+    }
+
+    @Test
     void testTypeOfPeek() {
         Assertions.assertAll(() -> {
             AtomicBoolean isExecute = new AtomicBoolean();

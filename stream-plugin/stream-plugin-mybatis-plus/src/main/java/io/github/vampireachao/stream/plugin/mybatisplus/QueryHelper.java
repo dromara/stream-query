@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
+import io.github.vampireachao.stream.core.optional.Opp;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -27,12 +27,12 @@ public class QueryHelper {
         /* Do not new me! */
     }
 
-    public static <T, E extends Serializable> Optional<LambdaQueryWrapper<T>> lambdaQuery(E data, SFunction<T, E> condition) {
-        return Optional.ofNullable(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).eq(condition, value));
+    public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(E data, SFunction<T, E> condition) {
+        return Opp.ofNullable(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).eq(condition, value));
     }
 
-    public static <T, E extends Serializable> Optional<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
-        return Optional.ofNullable(dataList).filter(values -> !values.isEmpty()).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value)));
+    public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
+        return Opp.ofEmptyAble(dataList).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value)));
     }
 
     @SafeVarargs

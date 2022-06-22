@@ -100,7 +100,7 @@ public class Opp<T> {
      * @since 5.7.17
      */
     public static <T, R extends Collection<T>> Opp<R> ofEmptyAble(R value) {
-        return Opp.ofNullable(value).filter(coll -> !coll.isEmpty());
+        return Opp.ofNullable(value).filter(coll -> !coll.isEmpty() && coll.stream().anyMatch(Objects::nonNull));
     }
 
     /**

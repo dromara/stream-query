@@ -3,6 +3,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.github.vampireachao.stream.core.collector.Collectors;
+import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.io.Serializable;
 import java.util.*;
@@ -231,14 +232,14 @@ public class OneToManyToOne {
 
     public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable, $MIDDLE_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, Consumer<$MIDDLE> middleConsumer, Consumer<$ATTACH> attachConsumer) {
         Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Optional.of(OneToMany.query(middleQueryOperator, mainDataList, middleKey, middleValue, isParallel, middleConsumer, middle -> Optional.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Optional.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, isParallel, attachConsumer)).filter(keyAttachMap -> !keyAttachMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
+        return Opp.of(OneToMany.query(middleQueryOperator, mainDataList, middleKey, middleValue, isParallel, middleConsumer, middle -> Opp.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, isParallel, attachConsumer)).filter(keyAttachMap -> !keyAttachMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
     }
 
     // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
 
     public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable, $MIDDLE_VALUE extends Serializable, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, Consumer<$MIDDLE> middleConsumer, Consumer<$ATTACH> attachConsumer) {
         Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Optional.of(OneToMany.query(middleQueryOperator, mainDataList, middleKey, middleValue, isParallel, middleConsumer, middle -> Optional.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Optional.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, attachValue, isParallel, attachConsumer)).filter(attachKeyValueMap -> !attachKeyValueMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
+        return Opp.of(OneToMany.query(middleQueryOperator, mainDataList, middleKey, middleValue, isParallel, middleConsumer, middle -> Opp.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, attachValue, isParallel, attachConsumer)).filter(attachKeyValueMap -> !attachKeyValueMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
     }
 
     // mainData middleKey middleValue attachKey
@@ -449,18 +450,18 @@ public class OneToManyToOne {
 
     public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable, $MIDDLE_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, Consumer<$MIDDLE> middleConsumer, Consumer<$ATTACH> attachConsumer) {
         Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Optional.of(OneToMany.query(middleQueryOperator, mainData, middleKey, middleValue, isParallel, middleConsumer, middle -> Optional.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Optional.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, isParallel, attachConsumer)).filter(keyAttachMap -> !keyAttachMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
+        return Opp.of(OneToMany.query(middleQueryOperator, mainData, middleKey, middleValue, isParallel, middleConsumer, middle -> Opp.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, isParallel, attachConsumer)).filter(keyAttachMap -> !keyAttachMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
     }
 
     // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
 
     public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable, $MIDDLE_VALUE extends Serializable, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, Consumer<$MIDDLE> middleConsumer, Consumer<$ATTACH> attachConsumer) {
         Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Optional.of(OneToMany.query(middleQueryOperator, mainData, middleKey, middleValue, isParallel, middleConsumer, middle -> Optional.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Optional.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, attachValue, isParallel, attachConsumer)).filter(attachKeyValueMap -> !attachKeyValueMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
+        return Opp.of(OneToMany.query(middleQueryOperator, mainData, middleKey, middleValue, isParallel, middleConsumer, middle -> Opp.ofNullable(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.of(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, attachValue, isParallel, attachConsumer)).filter(attachKeyValueMap -> !attachKeyValueMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
     }
 
 
     private static <$ATTACH, $MIDDLE_KEY extends Serializable, $MIDDLE_VALUE extends Serializable> Function<Map<$MIDDLE_VALUE, $ATTACH>, Map<$MIDDLE_KEY, List<$ATTACH>>> convertMiddleToAttachFunction(boolean isParallel, Map<$MIDDLE_KEY, List<$MIDDLE_VALUE>> middleKeyValuesMap) {
-        return keyAttachMap -> StreamSupport.stream(middleKeyValuesMap.entrySet().spliterator(), isParallel).collect(Collectors.toMap(Map.Entry::getKey, middleKeyValuesEntry -> Optional.ofNullable(middleKeyValuesEntry.getValue()).filter(middleValues -> !middleValues.isEmpty()).map(middleValues -> StreamSupport.stream(middleValues.spliterator(), isParallel).map(keyAttachMap::get).collect(Collectors.toList())).orElseGet(ArrayList::new)));
+        return keyAttachMap -> StreamSupport.stream(middleKeyValuesMap.entrySet().spliterator(), isParallel).collect(Collectors.toMap(Map.Entry::getKey, middleKeyValuesEntry -> Opp.ofNullable(middleKeyValuesEntry.getValue()).filter(middleValues -> !middleValues.isEmpty()).map(middleValues -> StreamSupport.stream(middleValues.spliterator(), isParallel).map(keyAttachMap::get).collect(Collectors.toList())).orElseGet(ArrayList::new)));
     }
 }

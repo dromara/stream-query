@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 /**
@@ -43,7 +43,7 @@ public class One {
 
     @SuppressWarnings("unchecked")
     public static <$KEY extends Serializable, $VALUE, $ENTITY> $VALUE query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
-        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectOne(wrapper))).map(Optional.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
+        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectOne(wrapper))).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
     }
 
 
