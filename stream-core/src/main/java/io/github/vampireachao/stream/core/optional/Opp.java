@@ -7,10 +7,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -100,7 +97,7 @@ public class Opp<T> {
      * @since 5.7.17
      */
     public static <T, R extends Collection<T>> Opp<R> ofEmptyAble(R value) {
-        return Opp.ofNullable(value).filter(coll -> !coll.isEmpty() && coll.stream().anyMatch(Objects::nonNull));
+        return Opp.ofNullable(value).filter(coll -> !coll.isEmpty() && Collections.frequency(value, null) != value.size());
     }
 
     /**
