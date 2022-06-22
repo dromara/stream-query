@@ -97,7 +97,7 @@ public class Opp<T> {
      * @since 5.7.17
      */
     public static <T, R extends Collection<T>> Opp<R> ofEmptyAble(R value) {
-        return Opp.ofNullable(value).filter(coll -> !coll.isEmpty() && Collections.frequency(value, null) != value.size());
+        return Opp.ofNullable(value).filter(coll -> !coll.isEmpty() && !Objects.equals(Collections.frequency(value, null), value.size()));
     }
 
     /**
