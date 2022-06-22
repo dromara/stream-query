@@ -5,6 +5,8 @@
 封装 热门orm常用操作
 封装 使用`stream`进行数据返回处理
 
+powered by [GitHub Copilot](https://copilot.github.com/)
+
 ```xml
         <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-plugin-mybatis-plus -->
         <dependency>
