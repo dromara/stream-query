@@ -3,6 +3,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
+import io.github.vampireachao.stream.core.collector.Collectors;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -12,7 +13,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /**
  * 一对多

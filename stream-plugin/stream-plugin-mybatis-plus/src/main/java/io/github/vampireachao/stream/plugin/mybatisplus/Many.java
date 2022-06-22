@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import io.github.vampireachao.stream.core.collector.Collectors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 /**
  * 多条

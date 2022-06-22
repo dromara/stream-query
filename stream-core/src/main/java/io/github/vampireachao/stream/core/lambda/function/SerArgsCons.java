@@ -50,4 +50,13 @@ public interface SerArgsCons<T> extends Serializable {
             after.accept(t);
         };
     }
+
+    /**
+     * nothing
+     *
+     * @return nothing
+     */
+    static <T> SerArgsCons<T> nothing() {
+        return t -> {};
+    }
 }

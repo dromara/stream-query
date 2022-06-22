@@ -1,5 +1,9 @@
 package io.github.vampireachao.stream.core.collector;
 
+import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.optional.Opp;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -32,25 +36,6 @@ public class Collectors {
     private static final String NON_NULL_MSG = "element cannot be mapped to a null key";
 
     private Collectors() {
-    }
-
-    /**
-     * Returns a merge function, suitable for use in
-     * {@link Map#merge(Object, Object, BiFunction) Map.merge()} or
-     * {@link #toMap(Function, Function, BinaryOperator) toMap()}, which always
-     * throws {@code IllegalStateException}.  This can be used to enforce the
-     * assumption that the elements being collected are distinct.
-     *
-     * @param <T> the type of input arguments to the merge function
-     * @return a merge function which always throw {@code IllegalStateException}
-     */
-    private static <T> BinaryOperator<T> throwingMerger() {
-        return (u, v) -> {throw new IllegalStateException(String.format("Duplicate key %s", u));};
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <I, R> Function<I, R> castingIdentity() {
-        return i -> (R) i;
     }
 
     /**
@@ -1082,7 +1067,7 @@ public class Collectors {
     public static <T, K, U>
     Collector<T, ?, Map<K, U>> toMap(Function<? super T, ? extends K> keyMapper,
                                      Function<? super T, ? extends U> valueMapper) {
-        return toMap(keyMapper, valueMapper, throwingMerger(), HashMap::new);
+        return toMap(keyMapper, valueMapper, SerBiOp.justAfter(), HashMap::new);
     }
 
     /**
@@ -1182,8 +1167,12 @@ public class Collectors {
                              BinaryOperator<U> mergeFunction,
                              Supplier<M> mapSupplier) {
         BiConsumer<M, T> accumulator
-                = (map, element) -> map.merge(keyMapper.apply(element),
-                valueMapper.apply(element), mergeFunction);
+                = (map, element) -> {
+            Opp<? extends K> keyOpp = Opp.ofNullable(element).map(keyMapper);
+            U value = Opp.ofNullable(element).map(valueMapper).map(newValue -> keyOpp.map(map::get)
+                    .map(oldValue -> mergeFunction.apply(oldValue, newValue)).orElse(newValue)).get();
+            map.put(keyOpp.get(), value);
+        };
         return new Collectors.CollectorImpl<>(mapSupplier, accumulator, mapMerger(mergeFunction), CH_ID);
     }
 
@@ -1234,7 +1223,7 @@ public class Collectors {
     public static <T, K, U>
     Collector<T, ?, ConcurrentMap<K, U>> toConcurrentMap(Function<? super T, ? extends K> keyMapper,
                                                          Function<? super T, ? extends U> valueMapper) {
-        return toConcurrentMap(keyMapper, valueMapper, throwingMerger(), ConcurrentHashMap::new);
+        return toConcurrentMap(keyMapper, valueMapper, SerBiOp.justAfter(), ConcurrentHashMap::new);
     }
 
     /**
@@ -1427,7 +1416,7 @@ public class Collectors {
                       BiConsumer<A, T> accumulator,
                       BinaryOperator<A> combiner,
                       Set<Characteristics> characteristics) {
-            this(supplier, accumulator, combiner, castingIdentity(), characteristics);
+            this(supplier, accumulator, combiner, SerFunc.castingIdentity(), characteristics);
         }
 
         @Override

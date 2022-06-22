@@ -3,6 +3,7 @@ package io.github.vampireachao.stream.core.optional;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.lang.reflect.Type;
@@ -193,56 +194,6 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的值存在时的操作({@link Consumer#accept})
-     * 否则执行传入的值不存在时的操作({@link Runnable}中的{@link Runnable#run()})
-     *
-     * <p>
-     * 例如值存在就打印对应的值，不存在则用{@code Console.error}打印另一句字符串
-     * <pre>{@code
-     * Opp.ofNullable("Hello Hutool!").ifPresentOrElse(Console::log, () -> Console.error("Ops!Something is wrong!"));
-     * }</pre>
-     *
-     * @param action      包裹里的值存在时的操作
-     * @param emptyAction 包裹里的值不存在时的操作
-     * @return this;
-     * @throws NullPointerException 如果包裹里的值存在时，执行的操作为 {@code null}, 或者包裹里的值不存在时的操作为 {@code null}，则抛出{@code NPE}
-     */
-    public Opp<T> ifPresentOrElse(Consumer<? super T> action, Runnable emptyAction) {
-        if (isPresent()) {
-            action.accept(value);
-        } else {
-            emptyAction.run();
-        }
-        return this;
-    }
-
-
-    /**
-     * 如果包裹里的值存在，就执行传入的值存在时的操作({@link Function#apply(Object)})支持链式调用、转换为其他类型
-     * 否则执行传入的值不存在时的操作({@link Runnable}中的{@link Runnable#run()})
-     *
-     * <p>
-     * 如果值存在就转换为大写，否则用{@code Console.error}打印另一句字符串
-     * <pre>{@code
-     * String hutool = Opp.ofBlankAble("hutool").mapOrElse(String::toUpperCase, () -> Console.log("yes")).mapOrElse(String::intern, () -> Console.log("Value is not present~")).get();
-     * }</pre>
-     *
-     * @param <U>         map后新的类型
-     * @param mapper      包裹里的值存在时的操作
-     * @param emptyAction 包裹里的值不存在时的操作
-     * @return 新的类型的Opp
-     * @throws NullPointerException 如果包裹里的值存在时，执行的操作为 {@code null}, 或者包裹里的值不存在时的操作为 {@code null}，则抛出{@code NPE}
-     */
-    public <U> Opp<U> mapOrElse(Function<? super T, ? extends U> mapper, Runnable emptyAction) {
-        if (isPresent()) {
-            return ofNullable(mapper.apply(value));
-        } else {
-            emptyAction.run();
-            return empty();
-        }
-    }
-
-    /**
      * 判断包裹里的值存在并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
      * 如果满足条件则返回本身
      * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
@@ -390,7 +341,7 @@ public class Opp<T> {
     }
 
     /**
-     * 如果传入的类型一致，或者是父类，就执行，目前不支持子泛型
+     * 如果传入的类型一致，或者是父类，就执行，支持子泛型
      *
      * @param type   类型
      * @param action 入参类型一致，或者是父类，就执行的操作
@@ -461,6 +412,22 @@ public class Opp<T> {
      */
     public T orElse(T other) {
         return isPresent() ? value : other;
+    }
+
+    /**
+     * 如果包裹里元素的值存在，则返回该值，否则执行传入的操作
+     *
+     * @param action 值不存在时执行的操作
+     * @return 如果包裹里元素的值存在，则返回该值，否则执行传入的操作
+     * @throws NullPointerException 如果值不存在，并且传入的操作为 {@code null}
+     */
+    public T orElseRun(SerRunn action) {
+        if (isPresent()) {
+            return value;
+        } else {
+            action.run();
+            return null;
+        }
     }
 
     /**

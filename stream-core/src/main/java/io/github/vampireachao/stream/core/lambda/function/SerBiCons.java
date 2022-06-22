@@ -44,4 +44,14 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
             after.accept(l, r);
         };
     }
+
+
+    /**
+     * nothing
+     *
+     * @return nothing
+     */
+    static <T, U> SerBiCons<T, U> nothing() {
+        return (l, r) -> {};
+    }
 }

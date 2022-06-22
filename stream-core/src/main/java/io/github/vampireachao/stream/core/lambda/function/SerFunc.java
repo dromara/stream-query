@@ -23,4 +23,15 @@ public interface SerFunc<T, R> extends Function<T, R>, Serializable {
         return t -> t;
     }
 
+    /**
+     * casting identity
+     *
+     * @param <T> param type
+     * @param <R> result type
+     * @return identity after casting
+     */
+    @SuppressWarnings("unchecked")
+    static <T, R> Function<T, R> castingIdentity() {
+        return t -> (R) t;
+    }
 }

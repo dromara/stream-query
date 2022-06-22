@@ -1,7 +1,9 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 
 /**
  * SerBiUnOp
@@ -10,7 +12,7 @@ import java.util.Objects;
  * @since 2022/6/8
  */
 @FunctionalInterface
-public interface SerBiOp<T> extends SerBiFunc<T, T, T> {
+public interface SerBiOp<T> extends BinaryOperator<T>, Serializable {
     /**
      * Returns a {@link SerBiOp} which returns the lesser of two elements
      * according to the specified {@code Comparator}.
@@ -39,6 +41,26 @@ public interface SerBiOp<T> extends SerBiFunc<T, T, T> {
     static <T> SerBiOp<T> maxBy(Comparator<? super T> comparator) {
         Objects.requireNonNull(comparator);
         return (a, b) -> comparator.compare(a, b) >= 0 ? a : b;
+    }
+
+    /**
+     * just before
+     *
+     * @param <T> type
+     * @return before
+     */
+    static <T> SerBiOp<T> justBefore() {
+        return (l, r) -> l;
+    }
+
+    /**
+     * just after
+     *
+     * @param <T> type
+     * @return after
+     */
+    static <T> SerBiOp<T> justAfter() {
+        return (l, r) -> r;
     }
 }
 

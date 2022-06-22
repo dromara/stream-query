@@ -45,4 +45,13 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
             after.accept(t);
         };
     }
+
+    /**
+     * nothing
+     *
+     * @return nothing
+     */
+    static <T> SerCons<T> nothing() {
+        return t -> {};
+    }
 }
