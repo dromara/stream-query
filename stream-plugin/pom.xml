@@ -5,7 +5,7 @@
     <parent>
         <artifactId>stream-query</artifactId>
         <groupId>io.github.vampireachao</groupId>
-        <version>1.0.9</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,12 +14,6 @@
     <modules>
         <module>stream-plugin-mybatis-plus</module>
     </modules>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
-
 
     <dependencies>
         <!-- stream-core -->
