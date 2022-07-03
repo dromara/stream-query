@@ -9,6 +9,7 @@ import java.util.Objects;
  * @author VampireAchao
  * @see SerArgsFunc
  */
+@SuppressWarnings("unchecked")
 @FunctionalInterface
 public interface SerArgsFunc<T, R> extends Serializable {
 

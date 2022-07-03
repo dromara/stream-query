@@ -21,6 +21,7 @@ public interface SerArgsPred<T> extends Serializable {
      * @param <T>        类型
      * @return lambda
      */
+    @SafeVarargs
     static <T> SerArgsPred<T> mutliAnd(SerArgsPred<T>... predicates) {
         return Stream.of(predicates).reduce(SerArgsPred::and).orElseGet(() -> o -> true);
     }
@@ -32,6 +33,7 @@ public interface SerArgsPred<T> extends Serializable {
      * @param <T>        类型
      * @return lambda
      */
+    @SafeVarargs
     static <T> SerArgsPred<T> mutliOr(SerArgsPred<T>... predicates) {
         return Stream.of(predicates).reduce(SerArgsPred::or).orElseGet(() -> o -> false);
     }
@@ -59,6 +61,7 @@ public interface SerArgsPred<T> extends Serializable {
      * @return {@code true} if the input argument matches the predicate,
      * otherwise {@code false}
      */
+    @SuppressWarnings("unchecked")
     boolean test(T... t);
 
     /**
@@ -90,7 +93,7 @@ public interface SerArgsPred<T> extends Serializable {
      * predicate
      */
     default SerArgsPred<T> negate() {
-        return (t) -> !test(t);
+        return t -> !test(t);
     }
 
     /**

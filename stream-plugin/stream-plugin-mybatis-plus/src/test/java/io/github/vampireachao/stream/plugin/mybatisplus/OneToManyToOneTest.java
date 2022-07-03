@@ -38,7 +38,7 @@ class OneToManyToOneTest {
             Set<Long> userIds = StreamHelper.mapToSet(userInfos, UserInfo::getId);
 
             Set<Long> roleIds = new HashSet<>();
-            Map<Long, List<Long>> userIdRoleIdsMap = OneToMany.query(userIds, UserRole::getUserId, UserRole::getRoleId, userRole -> roleIds.add(userRole.getRoleId()));
+            Map<Long, List<Long>> userIdRoleIdsMap = OneToMany.query(userIds, UserRole::getUserId, UserRole::getRoleId, (userRole, index) -> roleIds.add(userRole.getRoleId()));
             Map<Long, RoleInfo> idRoleMap = OneToOne.query(roleIds, RoleInfo::getId);
             Map<Long, List<RoleInfo>> userIdRoleInfosMap = userIdRoleIdsMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().map(idRoleMap::get).collect(Collectors.toList())));
             Assertions.assertEquals(5, userIdRoleInfosMap.size());

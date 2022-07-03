@@ -29,6 +29,7 @@ public interface SerArgsCons<T> extends Serializable {
      *
      * @param t the input arguments
      */
+    @SuppressWarnings("unchecked")
     void accept(T... t);
 
     /**
