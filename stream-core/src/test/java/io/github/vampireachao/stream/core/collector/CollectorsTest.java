@@ -16,7 +16,7 @@ class CollectorsTest {
     @Test
     void testToMap() {
         Assertions.assertNull(Stream.of(null, null, null).collect(Collectors.toMap(Object::hashCode, Object::hashCode)).get(null));
-        Assertions.assertArrayEquals(new Object[]{null, null, null}, Stream.of(null, null, null).collect(Collectors.groupingBy(Object::hashCode)).get(null).toArray());
+        Assertions.assertArrayEquals(new Object[]{}, Stream.of(null, null, null).collect(Collectors.groupingBy(Object::hashCode)).get(null).toArray());
     }
 
 }

@@ -205,7 +205,7 @@ public class Collectors {
                                Collector<? super U, A, R> downstream) {
         BiConsumer<A, ? super U> downstreamAccumulator = downstream.accumulator();
         return new Collectors.CollectorImpl<>(downstream.supplier(),
-                (r, t) -> downstreamAccumulator.accept(r, mapper.apply(t)),
+                (r, t) -> downstreamAccumulator.accept(r, Opp.ofNullable(t).map(mapper).get()),
                 downstream.combiner(), downstream.finisher(),
                 downstream.characteristics());
     }
@@ -778,9 +778,9 @@ public class Collectors {
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
         BiConsumer<Map<K, A>, T> accumulator = (m, t) -> {
             // stream-core changed this line
-            K key = Optional.ofNullable(t).map(classifier).orElse(null);
+            K key = Opp.ofNullable(t).map(classifier).orElse(null);
             A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());
-            downstreamAccumulator.accept(container, t);
+            Opp.ofNullable(t).ifPresent(o -> downstreamAccumulator.accept(container, o));
         };
         BinaryOperator<Map<K, A>> merger = Collectors.mapMerger(downstream.combiner());
         @SuppressWarnings("unchecked")
