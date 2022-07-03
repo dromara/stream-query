@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
 import java.io.Serializable;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
@@ -20,6 +21,19 @@ public interface SerUnOp<T> extends UnaryOperator<T>, Serializable {
      */
     static <T> SerUnOp<T> identity() {
         return t -> t;
+    }
+
+
+    /**
+     * casting identity
+     *
+     * @param <T> param type
+     * @param <R> result type
+     * @return identity after casting
+     */
+    @SuppressWarnings("unchecked")
+    static <T, R, F extends Function<T, R>> SerUnOp<T> casting(F function) {
+        return t -> (T) function.apply(t);
     }
 
 }

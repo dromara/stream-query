@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.core.collector;
 
 import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
@@ -789,13 +790,10 @@ public class Collectors {
         if (downstream.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH)) {
             return new Collectors.CollectorImpl<>(mangledFactory, accumulator, merger, CH_ID);
         } else {
-            @SuppressWarnings("unchecked")
-            Function<A, A> downstreamFinisher = (Function<A, A>) downstream.finisher();
+            SerUnOp<A> downstreamFinisher = SerUnOp.casting(downstream.finisher());
             Function<Map<K, A>, M> finisher = intermediate -> {
                 intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-                @SuppressWarnings("unchecked")
-                M castResult = (M) intermediate;
-                return castResult;
+                return SerFunc.<Map<K, A>, M>castingIdentity().apply(intermediate);
             };
             return new Collectors.CollectorImpl<>(mangledFactory, accumulator, merger, finisher, CH_NOID);
         }
@@ -923,8 +921,8 @@ public class Collectors {
         Supplier<A> downstreamSupplier = downstream.supplier();
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
         BinaryOperator<ConcurrentMap<K, A>> merger = Collectors.mapMerger(downstream.combiner());
-        @SuppressWarnings("unchecked")
-        Supplier<ConcurrentMap<K, A>> mangledFactory = (Supplier<ConcurrentMap<K, A>>) mapFactory;
+        Supplier<ConcurrentMap<K, A>> mangledFactory = SerFunc.<Supplier<M>, Supplier<ConcurrentMap<K, A>>>
+                castingIdentity().apply(mapFactory);
         BiConsumer<ConcurrentMap<K, A>, T> accumulator;
         if (downstream.characteristics().contains(Collector.Characteristics.CONCURRENT)) {
             accumulator = (m, t) -> {
@@ -945,13 +943,10 @@ public class Collectors {
         if (downstream.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH)) {
             return new Collectors.CollectorImpl<>(mangledFactory, accumulator, merger, CH_CONCURRENT_ID);
         } else {
-            @SuppressWarnings("unchecked")
-            Function<A, A> downstreamFinisher = (Function<A, A>) downstream.finisher();
+            SerUnOp<A> downstreamFinisher = SerUnOp.casting(downstream.finisher());
             Function<ConcurrentMap<K, A>, M> finisher = intermediate -> {
                 intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-                @SuppressWarnings("unchecked")
-                M castResult = (M) intermediate;
-                return castResult;
+                return SerFunc.<ConcurrentMap<K, A>, M>castingIdentity().apply(intermediate);
             };
             return new Collectors.CollectorImpl<>(mangledFactory, accumulator, merger, finisher, CH_CONCURRENT_NOID);
         }
