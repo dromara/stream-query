@@ -82,8 +82,9 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * @return a predicate that represents the logical negation of this
      * predicate
      */
+    @Override
     default SerPred<T> negate() {
-        return (t) -> !test(t);
+        return t -> !test(t);
     }
 
     /**

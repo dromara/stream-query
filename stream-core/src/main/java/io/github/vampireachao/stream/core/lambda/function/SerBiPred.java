@@ -41,6 +41,7 @@ public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
      * @return a predicate that represents the logical negation of this
      * predicate
      */
+    @Override
     default SerBiPred<T, U> negate() {
         return (T t, U u) -> !test(t, u);
     }
