@@ -20,7 +20,7 @@
         <dependency>
             <groupId>io.github.vampireachao</groupId>
             <artifactId>stream-core</artifactId>
-            <version>1.0.9</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
