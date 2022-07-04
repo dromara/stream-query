@@ -211,6 +211,16 @@ public class Collectors {
                 downstream.characteristics());
     }
 
+    public static <T, U, A, R>
+    Collector<T, ?, R> flatMapping(Function<? super T, Stream<? extends U>> mapper,
+                                   Collector<? super U, A, R> downstream) {
+        BiConsumer<A, ? super U> downstreamAccumulator = downstream.accumulator();
+        return new Collectors.CollectorImpl<>(downstream.supplier(),
+                (r, t) -> Opp.ofNullable(t).map(mapper).ifPresent(s -> s.forEach(v -> downstreamAccumulator.accept(r, v))),
+                downstream.combiner(), downstream.finisher(),
+                downstream.characteristics());
+    }
+
     /**
      * Adapts a {@code Collector} to perform an additional finishing
      * transformation.  For example, one could adapt the {@link #toList()}

@@ -49,4 +49,11 @@ class CollectorsTest {
         }}, nameScoreMapList.stream().collect(reducing));
     }
 
+    @Test
+    void testFlatMapping() {
+        List<Integer> actual = Stream.iterate(0, i -> ++i).limit(3)
+                .collect(Collectors.flatMapping(i -> Stream.of(i, i), Collectors.toList()));
+        Assertions.assertEquals(Arrays.asList(0, 0, 1, 1, 2, 2), actual);
+    }
+
 }
