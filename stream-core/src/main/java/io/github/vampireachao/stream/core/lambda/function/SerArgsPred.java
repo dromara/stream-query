@@ -22,7 +22,7 @@ public interface SerArgsPred<T> extends Serializable {
      * @return lambda
      */
     @SafeVarargs
-    static <T> SerArgsPred<T> mutliAnd(SerArgsPred<T>... predicates) {
+    static <T> SerArgsPred<T> multiAnd(SerArgsPred<T>... predicates) {
         return Stream.of(predicates).reduce(SerArgsPred::and).orElseGet(() -> o -> true);
     }
 
@@ -34,7 +34,7 @@ public interface SerArgsPred<T> extends Serializable {
      * @return lambda
      */
     @SafeVarargs
-    static <T> SerArgsPred<T> mutliOr(SerArgsPred<T>... predicates) {
+    static <T> SerArgsPred<T> multiOr(SerArgsPred<T>... predicates) {
         return Stream.of(predicates).reduce(SerArgsPred::or).orElseGet(() -> o -> false);
     }
 

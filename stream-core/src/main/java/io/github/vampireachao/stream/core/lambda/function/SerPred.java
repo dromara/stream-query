@@ -22,7 +22,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * @return lambda
      */
     @SafeVarargs
-    static <T> SerPred<T> mutliAnd(SerPred<T>... predicates) {
+    static <T> SerPred<T> multiAnd(SerPred<T>... predicates) {
         return Stream.of(predicates).reduce(SerPred::and).orElseGet(() -> o -> true);
     }
 
@@ -34,7 +34,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * @return lambda
      */
     @SafeVarargs
-    static <T> SerPred<T> mutliOr(SerPred<T>... predicates) {
+    static <T> SerPred<T> multiOr(SerPred<T>... predicates) {
         return Stream.of(predicates).reduce(SerPred::or).orElseGet(() -> o -> false);
     }
 
