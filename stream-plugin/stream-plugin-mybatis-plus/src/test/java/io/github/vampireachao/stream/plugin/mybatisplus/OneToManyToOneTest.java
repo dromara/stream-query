@@ -3,7 +3,6 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
-import io.github.vampireachao.stream.core.stream.StreamHelper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
@@ -35,7 +34,7 @@ class OneToManyToOneTest {
             List<RoleInfo> roleInfos = SimpleQuery.selectList(RoleInfo.class, Wrappers.lambdaQuery());
             Assertions.assertEquals(3, roleInfos.size());
 
-            Set<Long> userIds = StreamHelper.mapToSet(userInfos, UserInfo::getId);
+            Set<Long> userIds = userInfos.stream().map(UserInfo::getId).collect(Collectors.toSet());
 
             Set<Long> roleIds = new HashSet<>();
             Map<Long, List<Long>> userIdRoleIdsMap = OneToMany.query(userIds, UserRole::getUserId, UserRole::getRoleId, (userRole, index) -> roleIds.add(userRole.getRoleId()));
