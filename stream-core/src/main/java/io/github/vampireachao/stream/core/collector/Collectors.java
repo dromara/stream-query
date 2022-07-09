@@ -216,7 +216,8 @@ public class Collectors {
                                    Collector<? super U, A, R> downstream) {
         BiConsumer<A, ? super U> downstreamAccumulator = downstream.accumulator();
         return new Collectors.CollectorImpl<>(downstream.supplier(),
-                (r, t) -> Opp.ofNullable(t).map(mapper).ifPresent(s -> s.forEach(v -> downstreamAccumulator.accept(r, v))),
+                (r, t) -> Opp.ofNullable(t).map(mapper).ifPresent(s -> s.sequential()
+                        .forEach(v -> downstreamAccumulator.accept(r, v))),
                 downstream.combiner(), downstream.finisher(),
                 downstream.characteristics());
     }
