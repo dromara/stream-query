@@ -3,7 +3,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * MybatisPlusTestApplication
+ * MybatisPlusTestApplication less Create Retrieve Update Delete
  *
  * @author VampireAchao
  * @since 2022/5/21
