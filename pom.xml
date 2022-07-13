@@ -7,7 +7,7 @@
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-query</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <modules>
         <module>stream-core</module>
         <module>stream-plugin</module>
@@ -22,6 +22,7 @@
         <spring-boot.version>2.7.0</spring-boot.version>
         <h2.version>1.4.200</h2.version>
         <junit.version>5.8.2</junit.version>
+        <jmh.version>1.35</jmh.version>
     </properties>
 
     <name>stream-query</name>
@@ -52,6 +53,21 @@
             <email>achao1441470436@gmail.com</email>
         </developer>
     </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
