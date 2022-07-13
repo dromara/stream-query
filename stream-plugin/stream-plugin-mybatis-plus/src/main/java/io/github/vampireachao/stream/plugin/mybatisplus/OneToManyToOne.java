@@ -462,6 +462,6 @@ public class OneToManyToOne {
 
 
     private static <$ATTACH, $MIDDLE_KEY extends Serializable, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Function<Map<$MIDDLE_VALUE, $ATTACH>, Map<$MIDDLE_KEY, List<$ATTACH>>> convertMiddleToAttachFunction(boolean isParallel, Map<$MIDDLE_KEY, List<$MIDDLE_VALUE>> middleKeyValuesMap) {
-        return keyAttachMap -> StreamSupport.stream(middleKeyValuesMap.entrySet().spliterator(), isParallel).collect(Collectors.toMap(Map.Entry::getKey, middleKeyValuesEntry -> Opp.ofNullable(middleKeyValuesEntry.getValue()).filter(middleValues -> !middleValues.isEmpty()).map(middleValues -> StreamSupport.stream(middleValues.spliterator(), isParallel).map(keyAttachMap::get).collect(Collectors.toList())).orElseGet(ArrayList::new)));
+        return keyAttachMap -> StreamSupport.stream(middleKeyValuesMap.entrySet().spliterator(), isParallel).collect(Collectors.toMap(Map.Entry::getKey, middleKeyValuesEntry -> Opp.ofNullable(middleKeyValuesEntry.getValue()).filter(middleValues -> !middleValues.isEmpty()).map(middleValues -> StreamSupport.stream(middleValues.spliterator(), isParallel).map(keyAttachMap::get).filter(Objects::nonNull).collect(Collectors.toList())).orElseGet(ArrayList::new)));
     }
 }
