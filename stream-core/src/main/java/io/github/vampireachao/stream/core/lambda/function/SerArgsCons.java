@@ -10,6 +10,7 @@ import java.util.stream.Stream;
  * @author VampireAchao
  * @since 2022/6/8
  */
+@FunctionalInterface
 public interface SerArgsCons<T> extends Serializable {
 
     /**
