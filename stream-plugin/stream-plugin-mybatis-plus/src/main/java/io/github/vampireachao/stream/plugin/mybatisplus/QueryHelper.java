@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.github.vampireachao.stream.core.collector.Collectors;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
@@ -64,8 +65,7 @@ public class QueryHelper {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
         Integer result = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insert(entity));
         return SqlHelper.retBool(result);
     }
@@ -149,8 +149,7 @@ public class QueryHelper {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
         return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
     }
 
@@ -172,8 +171,7 @@ public class QueryHelper {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
         return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
     }
 
@@ -251,8 +249,7 @@ public class QueryHelper {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
@@ -491,12 +488,11 @@ public class QueryHelper {
      * @param <T>        实体类型
      * @return 实体类型
      */
-    @SuppressWarnings("unchecked")
     private static <T> Class<T> getEntityClass(Collection<T> entityList) {
         Class<T> entityClass = null;
         for (T entity : entityList) {
             if (entity != null && entity.getClass() != null) {
-                entityClass = (Class<T>) entity.getClass();
+                entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
                 break;
             }
         }
@@ -511,13 +507,12 @@ public class QueryHelper {
      * @param <T>          实体类型
      * @return 实体类型
      */
-    @SuppressWarnings("unchecked")
     private static <T> Class<T> getEntityClass(AbstractWrapper<T, ?, ?> queryWrapper) {
         Class<T> entityClass = queryWrapper.getEntityClass();
         if (entityClass == null) {
             T entity = queryWrapper.getEntity();
             if (entity != null) {
-                entityClass = (Class<T>) entity.getClass();
+                entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
             }
         }
         Assert.notNull(entityClass, "error: can not get entityClass from wrapper");
