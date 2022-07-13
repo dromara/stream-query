@@ -23,26 +23,26 @@ public class One {
 
     // data key
 
-    public static <$KEY extends Serializable, $ENTITY> $ENTITY query($KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
+    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> $ENTITY query($KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
         return query(UnaryOperator.identity(), data, keyFunction);
     }
 
     // data key value
 
-    public static <$KEY extends Serializable, $VALUE, $ENTITY> $VALUE query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
+    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
         return query(UnaryOperator.identity(), data, keyFunction, valueFunction);
     }
 
     // wrapper data key
 
-    public static <$KEY extends Serializable, $ENTITY> $ENTITY query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
+    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> $ENTITY query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
         return query(queryOperator, data, keyFunction, null);
     }
 
     // wrapper data key value
 
     @SuppressWarnings("unchecked")
-    public static <$KEY extends Serializable, $VALUE, $ENTITY> $VALUE query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
+    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
         return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectOne(wrapper))).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
     }
 
