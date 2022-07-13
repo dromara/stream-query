@@ -261,7 +261,7 @@ public class Opp<T> {
      * @see Optional#flatMap(Function)
      * @since 5.7.16
      */
-    public <U> Opp<U> flattedMap(Function<? super T, ? extends Optional<? extends U>> mapper) {
+    public <U> Opp<U> flattedMap(Function<? super T, Optional<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
         if (isEmpty()) {
             return empty();
