@@ -27,8 +27,9 @@ public interface SerUnOp<T> extends UnaryOperator<T>, Serializable {
     /**
      * casting identity
      *
-     * @param <T> param type
-     * @param <R> result type
+     * @param function source function
+     * @param <T>      param type
+     * @param <R>      result type
      * @return identity after casting
      */
     @SuppressWarnings("unchecked")
