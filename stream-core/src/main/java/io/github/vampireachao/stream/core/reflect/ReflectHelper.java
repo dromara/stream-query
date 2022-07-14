@@ -187,18 +187,18 @@ public class ReflectHelper {
         if (Objects.isNull(gst)) {
             return new Type[0];
         }
-        for (gst = type; gst instanceof Class && Object.class.equals(gst);
-             gst = ((Class<?>) gst).getGenericSuperclass()) {
-            Type[] genericInterfaces = ((Class<?>) gst).getGenericInterfaces();
+        for (type = gst; type instanceof Class && Object.class.equals(type);
+             type = ((Class<?>) type).getGenericSuperclass()) {
+            Type[] genericInterfaces = ((Class<?>) type).getGenericInterfaces();
             if (genericInterfaces.length > 0 && Objects.nonNull(genericInterfaces[0])) {
-                gst = genericInterfaces[0];
+                type = genericInterfaces[0];
             }
         }
         if (gst instanceof ParameterizedType) {
             ParameterizedType ty = (ParameterizedType) gst;
             return ty.getActualTypeArguments();
         }
-        return new Type[]{gst};
+        return new Type[0];
     }
 
     public static <T> boolean isAssignable(T obj, Type t) {
@@ -207,6 +207,9 @@ public class ReflectHelper {
             if (sourceTypes.length > 0) {
                 t = sourceTypes[0];
             }
+        }
+        if (t instanceof ParameterizedType) {
+            t = ((ParameterizedType) t).getRawType();
         }
         if (t instanceof Class) {
             Class<?> clazz = (Class<?>) t;

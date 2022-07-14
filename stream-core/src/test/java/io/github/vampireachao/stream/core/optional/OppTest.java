@@ -62,8 +62,8 @@ class OppTest {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, Integer>>() {
             }, (array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isEmpty());
-            Assertions.assertFalse(isExecute.get());
+            Assertions.assertTrue(opp.isPresent());
+            Assertions.assertTrue(isExecute.get());
         }).forEach(Runnable::run);
     }
 
