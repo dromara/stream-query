@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author VampireAchao
@@ -25,6 +27,11 @@ class ReflectHelperTest {
     void testTypeReference() {
         Assertions.assertEquals("java.lang.String", new TypeReference<String>() {}.getTypeName());
         Assertions.assertEquals("java.util.ArrayList<java.lang.String>", new TypeReference<ArrayList<String>>() {}.getTypeName());
+    }
+
+    @Test
+    void testIsAssignable() {
+        Assertions.assertTrue(ReflectHelper.isAssignable(Collections.singletonMap(1, ""), new TypeReference<Map<Integer, String>>() {}));
     }
 }
 
