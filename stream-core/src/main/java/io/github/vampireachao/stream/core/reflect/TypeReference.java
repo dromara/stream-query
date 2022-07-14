@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
  * @author VampireAchao
  * @since 2022/6/2 18:53
  */
-public class TypeReference<T> implements Type {
+public abstract class TypeReference<T> implements Type {
 
     /**
      * Returns a string describing this type, including information
