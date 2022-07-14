@@ -30,7 +30,7 @@ public class Many {
     // data key
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(SerUnOp.identity(), data, keyFunction, peeks);
     }
 
@@ -44,7 +44,7 @@ public class Many {
     // data key parallel
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(SerUnOp.identity(), data, keyFunction, null, parallel, peeks);
     }
 
@@ -58,7 +58,7 @@ public class Many {
     // wrapper data key
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(queryOperator, data, keyFunction, null, false, peeks);
     }
 
@@ -72,7 +72,7 @@ public class Many {
     // wrapper data key parallel
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(queryOperator, data, keyFunction, null, parallel, peeks);
     }
 
@@ -87,7 +87,7 @@ public class Many {
     // dataList key
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(SerUnOp.identity(), dataList, keyFunction, peeks);
     }
 
@@ -101,7 +101,7 @@ public class Many {
     // dataList key parallel
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(SerUnOp.identity(), dataList, keyFunction, null, parallel, peeks);
     }
 
@@ -115,7 +115,7 @@ public class Many {
     // wrapper dataList key
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(queryOperator, dataList, keyFunction, null, false, peeks);
     }
 
@@ -129,7 +129,7 @@ public class Many {
     // wrapper dataList key parallel
 
     @SafeVarargs
-    public static <$ENTITY, $KEY extends Serializable> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>> List<$ENTITY> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
         return query(queryOperator, dataList, keyFunction, null, parallel, peeks);
     }
 
