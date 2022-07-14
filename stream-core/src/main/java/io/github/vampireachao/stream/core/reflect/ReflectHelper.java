@@ -184,6 +184,13 @@ public class ReflectHelper {
         if (Objects.isNull(gst)) {
             return new Type[0];
         }
+        for (gst = type; gst instanceof Class && Object.class.equals(gst);
+             gst = ((Class<?>) gst).getGenericSuperclass()) {
+            Type[] genericInterfaces = ((Class<?>) gst).getGenericInterfaces();
+            if (genericInterfaces.length > 0) {
+                gst = genericInterfaces[0];
+            }
+        }
         if (gst instanceof ParameterizedType) {
             ParameterizedType ty = (ParameterizedType) gst;
             return ty.getActualTypeArguments();

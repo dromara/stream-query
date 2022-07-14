@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * @author VampireAchao
@@ -23,6 +24,7 @@ class ReflectHelperTest {
     @Test
     void testTypeReference() {
         Assertions.assertEquals("java.lang.String", new TypeReference<String>() {}.getTypeName());
+        Assertions.assertEquals("java.util.ArrayList<java.lang.String>", new TypeReference<ArrayList<String>>() {}.getTypeName());
     }
 }
 
