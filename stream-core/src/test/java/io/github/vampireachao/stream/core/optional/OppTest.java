@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 /**
  * @author VampireAchao
@@ -24,7 +25,7 @@ class OppTest {
 
     @Test
     void testTypeOfPeek() {
-        Assertions.assertAll(() -> {
+        Stream.<Runnable>of(() -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<String> opp = Opp.ofNullable("").typeOfPeek((String str) -> {
                 isExecute.set(true);
@@ -63,7 +64,7 @@ class OppTest {
             }, (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isEmpty());
             Assertions.assertFalse(isExecute.get());
-        });
+        }).forEach(Runnable::run);
     }
 
     @Test
