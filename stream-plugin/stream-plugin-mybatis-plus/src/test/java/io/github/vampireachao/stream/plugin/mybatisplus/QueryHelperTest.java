@@ -111,6 +111,18 @@ class QueryHelperTest {
     }
 
     @Test
+    void testUpdateForceById() {
+        UserInfo sheep = new UserInfo();
+        sheep.setId(1L);
+        sheep.setName("bee bee I'm a sheep");
+
+        boolean isSuccess = QueryHelper.updateForceById(sheep, UserInfo::getName, UserInfo::getAge);
+        Assertions.assertTrue(isSuccess);
+        Assertions.assertEquals("bee bee I'm a sheep", QueryHelper.getById(1L, UserInfo.class).getName());
+        Assertions.assertNull(QueryHelper.getById(1L, UserInfo.class).getAge());
+    }
+
+    @Test
     void testRemove() {
         boolean isSuccess = QueryHelper.remove(Wrappers.lambdaQuery(UserInfo.class).eq(UserInfo::getId, 1L));
         Assertions.assertTrue(isSuccess);

@@ -240,4 +240,19 @@ public class ReflectHelper {
         }
         return false;
     }
+
+    public static <T> void setFieldValue(T bean, String keyProperty, Object fieldValue) {
+        if (Objects.isNull(bean) || Objects.isNull(keyProperty)) {
+            return;
+        }
+        try {
+            Field field = bean.getClass().getDeclaredField(keyProperty);
+            accessible(field);
+            field.set(bean, fieldValue);
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

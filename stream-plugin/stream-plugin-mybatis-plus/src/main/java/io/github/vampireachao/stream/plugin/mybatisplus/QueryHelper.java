@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -13,6 +14,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.github.vampireachao.stream.core.collector.Collectors;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -173,6 +175,29 @@ public class QueryHelper {
         }
         Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
         return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
+    }
+
+    /**
+     * 强制根据id更新，指定的字段不管是否为null也会更新
+     *
+     * @param entity     实体对象
+     * @param updateKeys 指定字段
+     * @param <T>        实体类型
+     * @return 是否成功
+     */
+    @SafeVarargs
+    public static <T> boolean updateForceById(T entity, SFunction<T, ?>... updateKeys) {
+        if (Objects.isNull(entity) || ArrayUtils.isEmpty(updateKeys)) {
+            return updateById(entity);
+        }
+        @SuppressWarnings("unchecked")
+        Class<T> entityClass = (Class<T>) entity.getClass();
+        TableInfo tableInfo = getTableInfo(entityClass);
+        T bean = ClassUtils.newInstance(entityClass);
+        ReflectHelper.setFieldValue(bean, tableInfo.getKeyProperty(), ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty()));
+        LambdaUpdateWrapper<T> updateWrapper = Stream.of(updateKeys).reduce(Wrappers.lambdaUpdate(bean),
+                (wrapper, field) -> wrapper.set(field, field.apply(entity)), (l, r) -> r);
+        return update(bean, updateWrapper);
     }
 
     /**
@@ -529,5 +554,4 @@ public class QueryHelper {
     private static <T> TableInfo getTableInfo(Class<T> entityClass) {
         return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
     }
-
 }
