@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.core.optional;
 
+import io.github.vampireachao.stream.core.lambda.LambdaExecutable;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
@@ -317,7 +318,8 @@ public class Opp<T> {
      */
     public <U> Opp<T> typeOfPeek(SerCons<U> action) {
         return ofTry(() -> {
-            Type[] types = LambdaHelper.resolve(action).getParameterTypes();
+            LambdaExecutable resolve = LambdaHelper.resolve(action);
+            Type[] types = resolve.getParameterTypes();
             return types[types.length - 1];
         }).flatMap(type -> typeOfPeek(type, action));
     }

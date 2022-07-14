@@ -44,7 +44,6 @@ class OppTest {
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            // FIXME: 2020/6/2 19:06 不能获取到泛型类型
             Opp<List<Integer>> opp = Opp.ofNullable(Arrays.asList(1, 2, 3, 4)).typeOfPeek((List<Integer> array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());

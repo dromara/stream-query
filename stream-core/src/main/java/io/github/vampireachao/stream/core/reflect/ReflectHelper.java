@@ -21,7 +21,10 @@ package io.github.vampireachao.stream.core.reflect;
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -187,7 +190,7 @@ public class ReflectHelper {
         for (gst = type; gst instanceof Class && Object.class.equals(gst);
              gst = ((Class<?>) gst).getGenericSuperclass()) {
             Type[] genericInterfaces = ((Class<?>) gst).getGenericInterfaces();
-            if (genericInterfaces.length > 0) {
+            if (genericInterfaces.length > 0 && Objects.nonNull(genericInterfaces[0])) {
                 gst = genericInterfaces[0];
             }
         }
@@ -199,39 +202,11 @@ public class ReflectHelper {
     }
 
     public static <T> boolean isAssignable(T obj, Type t) {
-        Type[] sourceTypes = ReflectHelper.getGenericTypes(t);
-        Object object = obj;
-        if (object instanceof Map) {
-            Map<?, ?> map = ((Map<?, ?>) obj);
-            object = map.entrySet();
-        }
-        if (object instanceof Iterable) {
-            if (sourceTypes.length == 0) {
-                return false;
+        if (!(t instanceof Class)) {
+            Type[] sourceTypes = ReflectHelper.getGenericTypes(t);
+            if (sourceTypes.length > 0) {
+                t = sourceTypes[0];
             }
-            Iterable<?> iterable = (Iterable<?>) object;
-            for (Object o : iterable) {
-                if (Objects.nonNull(o)) {
-                    Type[] eTypes = sourceTypes;
-                    if (sourceTypes[0] instanceof ParameterizedType) {
-                        ParameterizedType sourceParamType = (ParameterizedType) sourceTypes[0];
-                        eTypes = sourceParamType.getActualTypeArguments();
-                    }
-
-                    if (o instanceof Map.Entry) {
-                        Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
-                        if (!typeOf(entry.getKey(), eTypes[0])) {
-                            return false;
-                        }
-                        if (!typeOf(entry.getValue(), eTypes[1])) {
-                            return false;
-                        }
-                    } else if (!typeOf(o, eTypes[0])) {
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
         if (t instanceof Class) {
             Class<?> clazz = (Class<?>) t;
