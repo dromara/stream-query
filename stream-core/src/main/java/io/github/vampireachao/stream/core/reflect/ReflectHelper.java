@@ -201,7 +201,7 @@ public class ReflectHelper {
         return new Type[0];
     }
 
-    public static <T> boolean isAssignable(T obj, Type t) {
+    public static <T> boolean isInstance(T obj, Type t) {
         if (!(t instanceof Class)) {
             Type[] sourceTypes = ReflectHelper.getGenericTypes(t);
             if (sourceTypes.length > 0) {

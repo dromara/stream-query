@@ -31,7 +31,7 @@ class ReflectHelperTest {
 
     @Test
     void testIsAssignable() {
-        Assertions.assertTrue(ReflectHelper.isAssignable(Collections.singletonMap(1, ""), new TypeReference<Map<Integer, String>>() {}));
+        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new TypeReference<Map<Integer, String>>() {}));
     }
 }
 

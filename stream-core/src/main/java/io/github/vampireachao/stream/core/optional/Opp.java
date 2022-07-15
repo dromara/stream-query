@@ -349,7 +349,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("unchecked")
     public <U> Opp<T> typeOfPeek(Type type, SerCons<U> action) {
-        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isAssignable(obj, t)).peek(v -> action.accept((U) v)));
+        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).peek(v -> action.accept((U) v)));
     }
 
     /**
@@ -363,7 +363,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("unchecked")
     public <U, R> Opp<R> typeOfMap(Type type, SerFunc<U, R> mapper) {
-        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isAssignable(obj, t)).map(v -> mapper.apply((U) v)));
+        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).map(v -> mapper.apply((U) v)));
     }
 
     /**
