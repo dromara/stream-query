@@ -2,11 +2,17 @@ package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.LambdaExecutable;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
-import io.github.vampireachao.stream.core.lambda.function.*;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -96,13 +102,13 @@ public class Opp<T> {
     }
 
     /**
-     * @param serSupp 操作
-     * @param <T>     类型
+     * @param supplier 操作
+     * @param <T>      类型
      * @return 操作执行后的值
      */
-    public static <T> Opp<T> ofTry(SerSupp<T> serSupp) {
+    public static <T> Opp<T> ofTry(Supplier<T> supplier) {
         try {
-            return Opp.ofNullable(serSupp.get());
+            return Opp.ofNullable(supplier.get());
         } catch (Exception e) {
             final Opp<T> empty = new Opp<>(null);
             empty.exception = e;
@@ -137,7 +143,7 @@ public class Opp<T> {
 
     /**
      * 获取异常<br>
-     * 当调用 {@link #ofTry(SerSupp)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
+     * 当调用 {@link #ofTry(Supplier)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
      *
      * @return 异常
      * @since 5.7.17
@@ -148,7 +154,7 @@ public class Opp<T> {
 
     /**
      * 是否失败<br>
-     * 当调用 {@link #ofTry(SerSupp)}时，抛出异常则表示失败
+     * 当调用 {@link #ofTry(Supplier)}时，抛出异常则表示失败
      *
      * @return 是否失败
      * @since 5.7.17
@@ -167,7 +173,7 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link SerCons#accept})
+     * 如果包裹里的值存在，就执行传入的操作({@link Consumer#accept})
      *
      * <p> 例如如果值存在就打印结果
      * <pre>{@code
@@ -178,7 +184,7 @@ public class Opp<T> {
      * @return this
      * @throws NullPointerException 如果包裹里的值存在，但你传入的操作为{@code null}时抛出
      */
-    public Opp<T> ifPresent(SerCons<? super T> action) {
+    public Opp<T> ifPresent(Consumer<? super T> action) {
         if (isPresent()) {
             action.accept(value);
         }
@@ -186,7 +192,7 @@ public class Opp<T> {
     }
 
     /**
-     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link SerPred#test}执行结果是否为true)
+     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
      * 如果满足条件则返回本身
      * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      *
@@ -194,7 +200,7 @@ public class Opp<T> {
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
-    public Opp<T> filter(SerPred<? super T> predicate) {
+    public Opp<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         if (isEmpty()) {
             return this;
@@ -204,16 +210,16 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link SerFunc#apply})并返回一个包裹了该操作返回值的{@code Opp}
+     * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回一个包裹了该操作返回值的{@code Opp}
      * 如果不存在，返回一个空的{@code Opp}
      *
      * @param mapper 值存在时执行的操作
      * @param <U>    操作返回值的类型
-     * @return 如果包裹里的值存在，就执行传入的操作({@link SerFunc#apply})并返回一个包裹了该操作返回值的{@code Opp}，
+     * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回一个包裹了该操作返回值的{@code Opp}，
      * 如果不存在，返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的操作为 {@code null}，抛出 {@code NPE}
      */
-    public <U> Opp<U> map(SerFunc<? super T, ? extends U> mapper) {
+    public <U> Opp<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (isEmpty()) {
             return empty();
@@ -223,17 +229,17 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link SerFunc#apply})并返回该操作返回值
+     * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
      * 和 {@link Opp#map}的区别为 传入的操作返回值必须为 Opp
      *
      * @param mapper 值存在时执行的操作
      * @param <U>    操作返回值的类型
-     * @return 如果包裹里的值存在，就执行传入的操作({@link SerFunc#apply})并返回该操作返回值
+     * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
      */
-    public <U> Opp<U> flatMap(SerFunc<? super T, ? extends Opp<? extends U>> mapper) {
+    public <U> Opp<U> flatMap(Function<? super T, ? extends Opp<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
         if (isEmpty()) {
             return empty();
@@ -244,19 +250,19 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link SerFunc#apply})并返回该操作返回值
+     * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
      * 和 {@link Opp#map}的区别为 传入的操作返回值必须为 {@link Optional}
      *
      * @param mapper 值存在时执行的操作
      * @param <U>    操作返回值的类型
-     * @return 如果包裹里的值存在，就执行传入的操作({@link SerFunc#apply})并返回该操作返回值
+     * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
-     * @see Opp#flatMap(SerFunc)
+     * @see Optional#flatMap(Function)
      * @since 5.7.16
      */
-    public <U> Opp<U> flattedMap(SerFunc<? super T, Optional<? extends U>> mapper) {
+    public <U> Opp<U> flattedMap(Function<? super T, Optional<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
         if (isEmpty()) {
             return empty();
@@ -276,7 +282,7 @@ public class Opp<T> {
      * @throws NullPointerException 如果值存在，并且传入的操作为 {@code null}
      * @author VampireAchao
      */
-    public Opp<T> peek(SerCons<T> action) throws NullPointerException {
+    public Opp<T> peek(Consumer<T> action) throws NullPointerException {
         Objects.requireNonNull(action);
         if (isEmpty()) {
             return Opp.empty();
@@ -291,7 +297,7 @@ public class Opp<T> {
      * 如果不存在，返回一个空的{@code Opp}
      *
      * <p>属于 {@link #ifPresent}的链式拓展
-     * <p>属于 {@link #peek(SerCons)}的动态拓展
+     * <p>属于 {@link #peek(Consumer)}的动态拓展
      *
      * @param actions 值存在时执行的操作，动态参数，可传入数组，当数组为一个空数组时并不会抛出 {@code NPE}
      * @return this
@@ -299,8 +305,8 @@ public class Opp<T> {
      * @author VampireAchao
      */
     @SafeVarargs
-    public final Opp<T> peeks(SerCons<T>... actions) throws NullPointerException {
-        return peek(Stream.of(actions).reduce(SerCons::andThen).orElseGet(() -> o -> {}));
+    public final Opp<T> peeks(Consumer<T>... actions) throws NullPointerException {
+        return peek(Stream.of(actions).reduce(Consumer::andThen).orElseGet(() -> o -> {}));
     }
 
     /**
@@ -363,16 +369,16 @@ public class Opp<T> {
     /**
      * 如果包裹里元素的值存在，就返回本身，如果不存在，则使用传入的操作执行后获得的 {@code Opp}
      *
-     * @param serSupp 不存在时的操作
+     * @param supplier 不存在时的操作
      * @return 如果包裹里元素的值存在，就返回本身，如果不存在，则使用传入的函数执行后获得的 {@code Opp}
      * @throws NullPointerException 如果传入的操作为空，或者传入的操作执行后返回值为空，则抛出 {@code NPE}
      */
-    public Opp<T> or(SerSupp<? extends Opp<? extends T>> serSupp) {
-        Objects.requireNonNull(serSupp);
+    public Opp<T> or(Supplier<? extends Opp<? extends T>> supplier) {
+        Objects.requireNonNull(supplier);
         if (isPresent()) {
             return this;
         } else {
-            @SuppressWarnings("unchecked") final Opp<T> r = (Opp<T>) serSupp.get();
+            @SuppressWarnings("unchecked") final Opp<T> r = (Opp<T>) supplier.get();
             return Objects.requireNonNull(r);
         }
     }
@@ -437,12 +443,12 @@ public class Opp<T> {
     /**
      * 如果包裹里元素的值存在，则返回该值，否则返回传入的操作执行后的返回值
      *
-     * @param serSupp 值不存在时需要执行的操作，返回一个类型与 包裹里元素类型 相同的元素
+     * @param supplier 值不存在时需要执行的操作，返回一个类型与 包裹里元素类型 相同的元素
      * @return 如果包裹里元素的值存在，则返回该值，否则返回传入的操作执行后的返回值
      * @throws NullPointerException 如果之不存在，并且传入的操作为空，则抛出 {@code NPE}
      */
-    public T orElseGet(SerSupp<? extends T> serSupp) {
-        return isPresent() ? value : serSupp.get();
+    public T orElseGet(Supplier<? extends T> supplier) {
+        return isPresent() ? value : supplier.get();
     }
 
     /**
@@ -459,17 +465,17 @@ public class Opp<T> {
      * 如果包裹里的值存在，则返回该值，否则执行传入的操作，获取异常类型的返回值并抛出
      * <p>往往是一个包含无参构造器的异常 例如传入{@code IllegalStateException::new}
      *
-     * @param <X>              异常类型
-     * @param exceptionSerSupp 值不存在时执行的操作，返回值继承 {@link Throwable}
+     * @param <X>               异常类型
+     * @param exceptionSupplier 值不存在时执行的操作，返回值继承 {@link Throwable}
      * @return 包裹里不能为空的值
      * @throws X                    如果值不存在
      * @throws NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
      */
-    public <X extends Throwable> T orElseThrow(SerSupp<? extends X> exceptionSerSupp) throws X {
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
         if (isPresent()) {
             return value;
         } else {
-            throw exceptionSerSupp.get();
+            throw exceptionSupplier.get();
         }
     }
 
@@ -481,19 +487,19 @@ public class Opp<T> {
      * 		Opp.ofNullable(null).orElseThrow(IllegalStateException::new, "Ops!Something is wrong!");
      * }</pre>
      *
-     * @param <X>              异常类型
-     * @param exceptionSerFunc 值不存在时执行的操作，返回值继承 {@link Throwable}
-     * @param message          作为传入操作执行时的参数，一般作为异常自定义提示语
+     * @param <X>               异常类型
+     * @param exceptionFunction 值不存在时执行的操作，返回值继承 {@link Throwable}
+     * @param message           作为传入操作执行时的参数，一般作为异常自定义提示语
      * @return 包裹里不能为空的值
      * @throws X                    如果值不存在
      * @throws NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
      * @author VampireAchao
      */
-    public <X extends Throwable> T orElseThrow(SerFunc<String, ? extends X> exceptionSerFunc, String message) throws X {
+    public <X extends Throwable> T orElseThrow(Function<String, ? extends X> exceptionFunction, String message) throws X {
         if (isPresent()) {
             return value;
         } else {
-            throw exceptionSerFunc.apply(message);
+            throw exceptionFunction.apply(message);
         }
     }
 
