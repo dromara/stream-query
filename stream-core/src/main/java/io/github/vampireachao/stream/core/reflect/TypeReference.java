@@ -1,6 +1,5 @@
 package io.github.vampireachao.stream.core.reflect;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -21,6 +20,6 @@ public abstract class TypeReference<T> implements Type {
      */
     @Override
     public String getTypeName() {
-        return ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0].getTypeName();
+        return ReflectHelper.getGenericTypes(this)[0].getTypeName();
     }
 }
