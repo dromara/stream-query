@@ -182,16 +182,15 @@ public class ReflectHelper {
         }
     }
 
-    public static Type[] getGenericTypes(Type type) {
-        Type gst = type.getClass().getGenericSuperclass();
-        if (Objects.isNull(gst)) {
-            return new Type[0];
-        }
-        for (type = gst; type instanceof Class && Object.class.equals(type);
+    public static Type[] getGenericTypes(Type paramType) {
+        Type type;
+        for (type = paramType; type instanceof Class;
              type = ((Class<?>) type).getGenericSuperclass()) {
-            Type[] genericInterfaces = ((Class<?>) type).getGenericInterfaces();
-            if (genericInterfaces.length > 0 && Objects.nonNull(genericInterfaces[0])) {
-                type = genericInterfaces[0];
+            if (Object.class.equals(type)) {
+                Type[] genericInterfaces = ((Class<?>) type).getGenericInterfaces();
+                if (genericInterfaces.length > 0 && Objects.nonNull(genericInterfaces[0])) {
+                    type = genericInterfaces[0];
+                }
             }
         }
         if (type instanceof ParameterizedType) {
@@ -202,11 +201,9 @@ public class ReflectHelper {
     }
 
     public static <T> boolean isInstance(T obj, Type t) {
-        if (!(t instanceof Class)) {
-            Type[] sourceTypes = ReflectHelper.getGenericTypes(t);
-            if (sourceTypes.length > 0) {
-                t = sourceTypes[0];
-            }
+        Type[] sourceTypes = ReflectHelper.getGenericTypes(t);
+        if (sourceTypes.length > 0) {
+            t = sourceTypes[0];
         }
         if (t instanceof ParameterizedType) {
             t = ((ParameterizedType) t).getRawType();

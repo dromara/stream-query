@@ -54,14 +54,12 @@ class OppTest {
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, String>>() {
-            }, (array) -> isExecute.set(true));
+            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, Integer>>() {
-            }, (array) -> isExecute.set(true));
+            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }).forEach(Runnable::run);

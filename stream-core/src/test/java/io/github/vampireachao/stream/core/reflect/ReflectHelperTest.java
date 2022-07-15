@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -24,19 +26,23 @@ class ReflectHelperTest {
     }
 
     @Test
-    void testTypeReference() {
-        Assertions.assertEquals("java.lang.String", new TypeReference<String>() {}.getTypeName());
-        Assertions.assertEquals("java.util.ArrayList<java.lang.String>", new TypeReference<ArrayList<String>>() {}.getTypeName());
-    }
-
-    @Test
     void testGetGenericTypes() {
-        Assertions.assertAll(() -> {});
+        class StringArrayList extends ArrayList<String> {
+            private static final long serialVersionUID = 5735314375293577082L;
+        }
+        Type[] stringType = ReflectHelper.getGenericTypes(new TypeReference<String>() {}.getClass());
+        Assertions.assertEquals(String.class, stringType[0]);
+        Type[] stringArrayListType = ReflectHelper.getGenericTypes(StringArrayList.class);
+        Assertions.assertEquals(String.class, stringArrayListType[0]);
+        Type[] hashMapType = ReflectHelper.getGenericTypes(new HashMap<String, Object>() {}.getClass());
+        Assertions.assertEquals(String.class, hashMapType[0]);
+        Assertions.assertEquals(Object.class, hashMapType[1]);
     }
 
     @Test
     void testIsInstance() {
-        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new TypeReference<Map<Integer, String>>() {}));
+        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new TypeReference<Map<?, ?>>() {}.getClass()));
+        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), Map.class));
     }
 }
 

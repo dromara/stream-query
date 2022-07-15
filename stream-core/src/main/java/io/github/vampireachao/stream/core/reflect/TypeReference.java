@@ -20,6 +20,10 @@ public abstract class TypeReference<T> implements Type {
      */
     @Override
     public String getTypeName() {
-        return ReflectHelper.getGenericTypes(this)[0].getTypeName();
+        return ReflectHelper.getGenericTypes(this.getClass())[0].getTypeName();
+    }
+
+    public Type getType() {
+        return ReflectHelper.getGenericTypes(this.getClass())[0];
     }
 }
