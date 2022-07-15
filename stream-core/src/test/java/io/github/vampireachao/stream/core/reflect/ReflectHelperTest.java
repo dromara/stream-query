@@ -30,7 +30,7 @@ class ReflectHelperTest {
     }
 
     @Test
-    void testIsAssignable() {
+    void testIsInstance() {
         Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new TypeReference<Map<Integer, String>>() {}));
     }
 }
