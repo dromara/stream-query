@@ -30,6 +30,11 @@ class ReflectHelperTest {
     }
 
     @Test
+    void testGetGenericTypes() {
+        Assertions.assertAll(() -> {});
+    }
+
+    @Test
     void testIsInstance() {
         Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new TypeReference<Map<Integer, String>>() {}));
     }

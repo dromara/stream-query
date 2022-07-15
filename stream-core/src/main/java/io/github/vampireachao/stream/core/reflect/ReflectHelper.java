@@ -194,8 +194,8 @@ public class ReflectHelper {
                 type = genericInterfaces[0];
             }
         }
-        if (gst instanceof ParameterizedType) {
-            ParameterizedType ty = (ParameterizedType) gst;
+        if (type instanceof ParameterizedType) {
+            ParameterizedType ty = (ParameterizedType) type;
             return ty.getActualTypeArguments();
         }
         return new Type[0];
