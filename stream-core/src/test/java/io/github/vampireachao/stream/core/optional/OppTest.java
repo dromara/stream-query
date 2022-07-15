@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.core.optional;
 
+import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.reflect.TypeReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class OppTest {
 
     @Test
     void testTypeOfPeek() {
-        Stream.<Runnable>of(() -> {
+        Stream.<SerRunn>of(() -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<String> opp = Opp.ofNullable("").typeOfPeek((String str) -> {
                 isExecute.set(true);
@@ -62,12 +63,12 @@ class OppTest {
             Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
-        }).forEach(Runnable::run);
+        }).forEach(SerRunn::run);
     }
 
     @Test
     void testTypeOfMap() {
-        Assertions.assertAll(() -> {
+        Stream.<SerRunn>of(() -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<Boolean> opp = Opp.ofNullable("").typeOfMap((String str) -> {
                 isExecute.set(true);
@@ -81,6 +82,18 @@ class OppTest {
                 return isExecute.get();
             }).typeOfMap(Object.class, i -> false).typeOfMap(new TypeReference<String>() {}, i -> true);
             Assertions.assertTrue(opp.isEmpty());
-        });
+        }).forEach(SerRunn::run);
+    }
+
+
+    @Test
+    void testTypeOfFilter() {
+        Stream.<SerRunn>of(() -> {
+            Opp<String> opp = Opp.ofNullable("").typeOfFilter((String str) -> str.trim().isEmpty());
+            Assertions.assertTrue(opp.isPresent());
+        }, () -> {
+            Opp<String> opp = Opp.ofNullable("").typeOfFilter((String str) -> !str.trim().isEmpty());
+            Assertions.assertTrue(opp.isEmpty());
+        }).forEach(SerRunn::run);
     }
 }
