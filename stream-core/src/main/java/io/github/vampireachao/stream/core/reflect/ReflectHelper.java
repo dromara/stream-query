@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 
 /**
@@ -174,12 +175,19 @@ public class ReflectHelper {
         }
     }
 
-    public static Field getField(Class<?> aClass, String fieldName) {
-        try {
-            return accessible(aClass.getDeclaredField(fieldName));
-        } catch (NoSuchFieldException e) {
-            throw new IllegalArgumentException(e);
+    public static Field getField(Class<?> clazz, String fieldName) {
+        Stream.Builder<Field> fieldsBuilder = Stream.builder();
+        Class<?> currentClass;
+        for (currentClass = clazz;
+             currentClass != null;
+             currentClass = currentClass.getSuperclass()) {
+            for (Field field : currentClass.getDeclaredFields()) {
+                fieldsBuilder.add(field);
+            }
         }
+        return fieldsBuilder.build().filter(field -> field.getName().equals(fieldName))
+                .findFirst().map(ReflectHelper::accessible)
+                .orElseThrow(() -> new IllegalArgumentException("No such field: " + fieldName));
     }
 
     public static Type[] getGenericTypes(Type paramType) {
