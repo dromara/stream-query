@@ -4,6 +4,7 @@ import io.github.vampireachao.stream.core.lambda.LambdaExecutable;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
@@ -340,6 +341,22 @@ public class Opp<T> {
     }
 
     /**
+     * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
+     * 如果满足条件则返回本身
+     * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
+     *
+     * @param predicate 给定的条件
+     * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
+     * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
+     */
+    public <U> Opp<T> typeOfFilter(SerPred<U> predicate) {
+        return ofTry(() -> {
+            Type[] types = LambdaHelper.resolve(predicate).getParameterTypes();
+            return types[types.length - 1];
+        }).flatMap(type -> typeOfFilter(type, predicate));
+    }
+
+    /**
      * 如果传入的类型一致，或者是父类，就执行，支持子泛型
      *
      * @param type   类型
@@ -364,6 +381,21 @@ public class Opp<T> {
     @SuppressWarnings("unchecked")
     public <U, R> Opp<R> typeOfMap(Type type, SerFunc<U, R> mapper) {
         return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).map(v -> mapper.apply((U) v)));
+    }
+
+    /**
+     * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
+     * 如果满足条件则返回本身
+     * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
+     *
+     * @param type      类型
+     * @param predicate 给定的条件
+     * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
+     * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
+     */
+    @SuppressWarnings("unchecked")
+    public <U> Opp<T> typeOfFilter(Type type, SerPred<U> predicate) {
+        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).filter(v -> predicate.test((U) v)));
     }
 
     /**
