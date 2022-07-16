@@ -81,7 +81,7 @@ public class Many {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <$ENTITY, $KEY extends Serializable, $VALUE> List<$VALUE> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
+        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
     }
 
     // dataList key
@@ -138,7 +138,7 @@ public class Many {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <$ENTITY, $KEY extends Serializable, $VALUE> List<$VALUE> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, keyFunction, valueFunction))).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> QueryHelper.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel, peeks).map(Opp.ofNullable(valueFunction).orElse(i -> ($VALUE) i)).collect(Collectors.toList())).orElseGet(ArrayList::new);
     }
 
 

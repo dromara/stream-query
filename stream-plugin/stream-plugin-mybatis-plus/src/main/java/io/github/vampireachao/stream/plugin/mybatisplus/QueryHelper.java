@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.github.vampireachao.stream.core.collector.Collectors;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
+import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
@@ -53,8 +54,13 @@ public class QueryHelper {
 
     @SafeVarargs
     public static <T> LambdaQueryWrapper<T> select(LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
+        return select(wrapper, LambdaQueryWrapper::select, columns);
+    }
+
+    @SafeVarargs
+    public static <T> LambdaQueryWrapper<T> select(LambdaQueryWrapper<T> wrapper, SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn, SFunction<T, ?>... columns) {
         if (Stream.of(columns).allMatch(func -> Objects.nonNull(func) && PropertyNamer.isGetter(LambdaHelper.resolve(func).getLambda().getImplMethodName()))) {
-            wrapper.select(columns);
+            whenAllMatchColumn.accept(wrapper, columns);
         }
         return wrapper;
     }
