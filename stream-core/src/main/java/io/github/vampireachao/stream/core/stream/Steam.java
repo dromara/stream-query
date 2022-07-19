@@ -1223,12 +1223,30 @@ public class Steam<T> implements Stream<T> {
         return stream.toString();
     }
 
+    public <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory) {
+        return collect(Collectors.toCollection(collectionFactory));
+    }
+
     public List<T> toList() {
         return collect(Collectors.toList());
     }
 
     public Set<T> toSet() {
         return collect(Collectors.toSet());
+    }
+
+    public String joining() {
+        return joining("");
+    }
+
+    public String joining(CharSequence delimiter) {
+        return joining(delimiter, "", "");
+    }
+
+    public String joining(CharSequence delimiter,
+                          CharSequence prefix,
+                          CharSequence suffix) {
+        return map(String::valueOf).collect(Collectors.joining(delimiter, prefix, suffix));
     }
 
     public <K> Map<K, T> toMap(Function<? super T, ? extends K> keyMapper) {
