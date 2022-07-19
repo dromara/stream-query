@@ -1271,5 +1271,19 @@ public class Steam<T> implements Stream<T> {
         return collect(Collectors.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
     }
 
+    public <K> Map<K, List<T>> groupingBy(Function<? super T, ? extends K> classifier) {
+        return groupingBy(classifier, Collectors.toList());
+    }
 
+    public <K, A, D> Map<K, D> groupingBy(Function<? super T, ? extends K> classifier,
+                                          Collector<? super T, A, D> downstream) {
+        return groupingBy(classifier, HashMap::new, downstream);
+    }
+
+    public <K, D, A, M extends Map<K, D>>
+    M groupingBy(Function<? super T, ? extends K> classifier,
+                 Supplier<M> mapFactory,
+                 Collector<? super T, A, D> downstream) {
+        return collect(Collectors.groupingBy(classifier, mapFactory, downstream));
+    }
 }

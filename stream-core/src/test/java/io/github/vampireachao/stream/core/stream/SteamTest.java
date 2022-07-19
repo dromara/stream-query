@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static java.util.Collections.singletonList;
+
 /**
  * @author VampireAchao
  * @since 2022/7/19 14:14
@@ -59,5 +61,16 @@ class SteamTest {
         }}, identityMap);
     }
 
+    @Test
+    void testGroupingBy() {
+        List<Integer> list = Arrays.asList(1, 2, 3);
+        Map<String, List<Integer>> groupingBy = Steam.of(list).groupingBy(String::valueOf);
+        Assertions.assertEquals(
+                new HashMap<String, List<Integer>>() {{
+                    put("1", singletonList(1));
+                    put("2", singletonList(2));
+                    put("3", singletonList(3));
+                }}, groupingBy);
+    }
 
 }
