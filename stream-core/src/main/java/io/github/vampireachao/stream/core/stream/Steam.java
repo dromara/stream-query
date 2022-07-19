@@ -1224,6 +1224,34 @@ public class Steam<T> implements Stream<T> {
     }
 
     public List<T> toList() {
-        return stream.collect(Collectors.toList());
+        return collect(Collectors.toList());
     }
+
+    public Set<T> toSet() {
+        return collect(Collectors.toSet());
+    }
+
+    public <K> Map<K, T> toMap(Function<? super T, ? extends K> keyMapper) {
+        return toMap(keyMapper, Function.identity());
+    }
+
+    public <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
+                                  Function<? super T, ? extends U> valueMapper) {
+        return toMap(keyMapper, valueMapper, (l, r) -> r);
+    }
+
+    public <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
+                                  Function<? super T, ? extends U> valueMapper,
+                                  BinaryOperator<U> mergeFunction) {
+        return toMap(keyMapper, valueMapper, mergeFunction, HashMap::new);
+    }
+
+    public <K, U, M extends Map<K, U>> M toMap(Function<? super T, ? extends K> keyMapper,
+                                               Function<? super T, ? extends U> valueMapper,
+                                               BinaryOperator<U> mergeFunction,
+                                               Supplier<M> mapSupplier) {
+        return collect(Collectors.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
+    }
+
+
 }
