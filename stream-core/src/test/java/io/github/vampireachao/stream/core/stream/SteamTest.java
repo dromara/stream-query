@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
 
@@ -23,6 +24,7 @@ class SteamTest {
     void testOf() {
         Assertions.assertEquals(3, Steam.of(Arrays.asList(1, 2, 3)).count());
         Assertions.assertEquals(3, Steam.of(1, 2, 3).count());
+        Assertions.assertEquals(3, Steam.of(Stream.builder().add(1).add(2).add(3).build()).count());
     }
 
     @Test
@@ -95,5 +97,24 @@ class SteamTest {
         }).toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 2, 3), mapMulti);
     }
+
+    @Test
+    void testForeachIndex() {
+        List<String> list = Arrays.asList("dromara", "hutool", "sweet");
+        Steam.SteamBuilder<String> builder = Steam.builder();
+        Steam.of(list).forEachIndex((e, i) -> builder.accept(i + 1 + "." + e));
+        Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
+        // 并行流时为-1
+        Steam.of(1, 2, 3).parallel().forEachIndex((e, i) -> Assertions.assertEquals(-1, i));
+    }
+
+    @Test
+    void testForEachOrderedIndex() {
+        List<String> list = Arrays.asList("dromara", "hutool", "sweet");
+        Steam.SteamBuilder<String> builder = Steam.builder();
+        Steam.of(list).forEachOrderedIndex((e, i) -> builder.accept(i + 1 + "." + e));
+        Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
+    }
+
 
 }

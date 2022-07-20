@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.core.stream;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -217,12 +218,16 @@ public class Steam<T> implements Stream<T> {
      * Accessing an element of a deeply concatenated stream can result in deep
      * call chains, or even {@code StackOverflowException}.
      */
-    public static <T> Steam<T> concat(Stream<? extends T> a, Stream<? extends T> b) {
+    public static <T> Steam<T> concat(Steam<? extends T> a, Steam<? extends T> b) {
         return new Steam<>(Stream.concat(a, b));
     }
 
     public static <T> Steam<T> of(Iterable<T> iterable) {
         return new Steam<>(StreamSupport.stream(iterable.spliterator(), false));
+    }
+
+    public static <T> Steam<T> of(Stream<T> stream) {
+        return new Steam<>(stream);
     }
 
     /**
@@ -615,6 +620,11 @@ public class Steam<T> implements Stream<T> {
         stream.forEach(action);
     }
 
+    public void forEachIndex(BiConsumer<? super T, Integer> action) {
+        AtomicInteger index = new AtomicInteger(-1);
+        stream.forEach(e -> action.accept(e, isParallel() ? index.get() : index.incrementAndGet()));
+    }
+
     /**
      * Performs an action for each element of this stream, in the encounter
      * order of the stream if the stream has a defined encounter order.
@@ -635,6 +645,11 @@ public class Steam<T> implements Stream<T> {
     @Override
     public void forEachOrdered(Consumer<? super T> action) {
         stream.forEachOrdered(action);
+    }
+
+    public void forEachOrderedIndex(BiConsumer<? super T, Integer> action) {
+        AtomicInteger index = new AtomicInteger(-1);
+        stream.forEachOrdered(e -> action.accept(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
 
     /**
