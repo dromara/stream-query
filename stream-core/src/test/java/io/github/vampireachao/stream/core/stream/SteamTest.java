@@ -21,6 +21,12 @@ class SteamTest {
     }
 
     @Test
+    void testIterator() {
+        List<Integer> list = Steam.iterate(0, i -> i < 3, i -> ++i).toList();
+        Assertions.assertEquals(Arrays.asList(0, 1, 2), list);
+    }
+
+    @Test
     void testToCollection() {
         List<Integer> list = Arrays.asList(1, 2, 3);
         List<String> toCollection = Steam.of(list).map(String::valueOf).toCollection(LinkedList::new);
