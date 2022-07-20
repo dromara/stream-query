@@ -89,7 +89,7 @@ public class Steam<T> implements Stream<T> {
      * @param <T> the type of stream elements
      * @return an empty sequential stream
      */
-    public static <T> Stream<T> empty() {
+    public static <T> Steam<T> empty() {
         return new Steam<>(Stream.empty());
     }
 
@@ -100,7 +100,7 @@ public class Steam<T> implements Stream<T> {
      * @param <T> the type of stream elements
      * @return a singleton sequential stream
      */
-    public static <T> Stream<T> of(T t) {
+    public static <T> Steam<T> of(T t) {
         return new Steam<>(Stream.of(t));
     }
 
@@ -135,7 +135,7 @@ public class Steam<T> implements Stream<T> {
      *             a new element
      * @return a new sequential {@code Stream}
      */
-    public static <T> Stream<T> iterate(final T seed, final UnaryOperator<T> f) {
+    public static <T> Steam<T> iterate(final T seed, final UnaryOperator<T> f) {
         return new Steam<>(Stream.iterate(seed, f));
     }
 
