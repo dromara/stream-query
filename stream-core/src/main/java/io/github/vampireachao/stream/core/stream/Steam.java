@@ -424,6 +424,15 @@ public class Steam<T> implements Stream<T> {
         return stream.flatMapToDouble(mapper);
     }
 
+    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
+        Objects.requireNonNull(mapper);
+        return flatMap(e -> {
+            SteamBuilder<R> buffer = Steam.builder();
+            mapper.accept(e, buffer);
+            return buffer.build();
+        });
+    }
+
     /**
      * Returns a stream consisting of the distinct elements (according to
      * {@link Object#equals(Object)}) of this stream.

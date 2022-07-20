@@ -85,4 +85,16 @@ class SteamTest {
                 }}, groupingBy);
     }
 
+    @Test
+    void testMapMulti() {
+        List<Integer> list = Arrays.asList(1, 2, 3);
+        List<Integer> mapMulti = Steam.of(list).<Integer>mapMulti((e, buffer) -> {
+            if (e % 2 == 0) {
+                buffer.accept(e);
+            }
+            buffer.accept(e);
+        }).toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 2, 3), mapMulti);
+    }
+
 }
