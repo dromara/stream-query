@@ -15,6 +15,12 @@ import static java.util.Collections.singletonList;
 class SteamTest {
 
     @Test
+    void testBuilder() {
+        List<Integer> list = Steam.<Integer>builder().add(1).add(2).add(3).build().toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), list);
+    }
+
+    @Test
     void testOf() {
         Assertions.assertEquals(3, Steam.of(Arrays.asList(1, 2, 3)).count());
         Assertions.assertEquals(3, Steam.of(1, 2, 3).count());

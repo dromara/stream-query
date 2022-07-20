@@ -23,8 +23,63 @@ public class Steam<T> implements Stream<T> {
      * @param <T> type of elements
      * @return a stream builder
      */
-    public static <T> Builder<T> builder() {
-        return Stream.builder();
+    public static <T> SteamBuilder<T> builder() {
+        return new SteamBuilder<T>() {
+            private final Builder<T> streamBuilder = Stream.builder();
+
+            @Override
+            public void accept(T t) {
+                streamBuilder.accept(t);
+            }
+
+            @Override
+            public Steam<T> build() {
+                return new Steam<>(streamBuilder.build());
+            }
+        };
+    }
+
+    public interface SteamBuilder<T> extends Consumer<T> {
+
+        /**
+         * Adds an element to the stream being built.
+         *
+         * @param t the element to add
+         * @throws IllegalStateException if the builder has already transitioned to
+         *                               the built state
+         */
+        @Override
+        void accept(T t);
+
+        /**
+         * Adds an element to the stream being built.
+         *
+         * @param t the element to add
+         * @return {@code this} builder
+         * @throws IllegalStateException if the builder has already transitioned to
+         *                               the built state
+         * @implSpec The default implementation behaves as if:
+         * <pre>{@code
+         *     accept(t)
+         *     return this;
+         * }</pre>
+         */
+        default Steam.SteamBuilder<T> add(T t) {
+            accept(t);
+            return this;
+        }
+
+        /**
+         * Builds the stream, transitioning this builder to the built state.
+         * An {@code IllegalStateException} is thrown if there are further attempts
+         * to operate on the builder after it has entered the built state.
+         *
+         * @return the built stream
+         * @throws IllegalStateException if the builder has already transitioned to
+         *                               the built state
+         */
+        Steam<T> build();
+
     }
 
     /**
