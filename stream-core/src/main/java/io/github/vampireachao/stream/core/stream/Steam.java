@@ -248,6 +248,10 @@ public class Steam<T> implements Stream<T> {
         return new Steam<>(stream.filter(predicate));
     }
 
+    public Steam<T> nonNull() {
+        return new Steam<>(stream.filter(Objects::nonNull));
+    }
+
     /**
      * Returns a stream consisting of the results of applying the given
      * function to the elements of this stream.

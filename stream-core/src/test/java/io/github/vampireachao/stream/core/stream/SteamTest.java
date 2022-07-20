@@ -116,5 +116,10 @@ class SteamTest {
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
     }
 
-
+    @Test
+    void testNonNull() {
+        List<Integer> list = Arrays.asList(1, null, 2, 3);
+        List<Integer> nonNull = Steam.of(list).nonNull().toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), nonNull);
+    }
 }
