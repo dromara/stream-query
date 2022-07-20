@@ -1394,10 +1394,9 @@ public class Steam<T> implements Stream<T> {
         return groupingBy(classifier, HashMap::new, downstream);
     }
 
-    public <K, D, A, M extends Map<K, D>>
-    M groupingBy(Function<? super T, ? extends K> classifier,
-                 Supplier<M> mapFactory,
-                 Collector<? super T, A, D> downstream) {
+    public <K, D, A, M extends Map<K, D>> M groupingBy(Function<? super T, ? extends K> classifier,
+                                                       Supplier<M> mapFactory,
+                                                       Collector<? super T, A, D> downstream) {
         return collect(Collectors.groupingBy(classifier, mapFactory, downstream));
     }
 }
