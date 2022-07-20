@@ -89,7 +89,8 @@ public class Steam<T> implements Stream<T> {
         Spliterator<T> spliterator = new Spliterators.AbstractSpliterator<T>(Long.MAX_VALUE,
                 Spliterator.ORDERED | Spliterator.IMMUTABLE) {
             T prev;
-            boolean started, finished;
+            boolean started;
+            boolean finished;
 
             @Override
             public boolean tryAdvance(Consumer<? super T> action) {
@@ -109,7 +110,8 @@ public class Steam<T> implements Stream<T> {
                     finished = true;
                     return false;
                 }
-                action.accept(prev = t);
+                prev = t;
+                action.accept(prev);
                 return true;
             }
 

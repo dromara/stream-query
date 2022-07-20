@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.function.SerRunn;
-import io.github.vampireachao.stream.core.reflect.TypeReference;
+import io.github.vampireachao.stream.core.reflect.AbstractTypeReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -55,12 +55,12 @@ class OppTest {
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
+            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new TypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
+            Opp<Map<Integer, String>> opp = Opp.ofNullable(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }).forEach(SerRunn::run);
@@ -80,7 +80,7 @@ class OppTest {
             Opp<Boolean> opp = Opp.ofNullable("").typeOfMap((String str) -> {
                 isExecute.set(true);
                 return isExecute.get();
-            }).typeOfMap(Object.class, i -> false).typeOfMap(new TypeReference<String>() {}, i -> true);
+            }).typeOfMap(Object.class, i -> false).typeOfMap(new AbstractTypeReference<String>() {}, i -> true);
             Assertions.assertTrue(opp.isEmpty());
         }).forEach(SerRunn::run);
     }

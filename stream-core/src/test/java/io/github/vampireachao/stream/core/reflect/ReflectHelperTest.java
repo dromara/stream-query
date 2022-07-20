@@ -30,7 +30,7 @@ class ReflectHelperTest {
         class StringArrayList extends ArrayList<String> {
             private static final long serialVersionUID = 5735314375293577082L;
         }
-        Type[] stringType = ReflectHelper.getGenericTypes(new TypeReference<String>() {}.getClass());
+        Type[] stringType = ReflectHelper.getGenericTypes(new AbstractTypeReference<String>() {}.getClass());
         Assertions.assertEquals(String.class, stringType[0]);
         Type[] stringArrayListType = ReflectHelper.getGenericTypes(StringArrayList.class);
         Assertions.assertEquals(String.class, stringArrayListType[0]);
@@ -41,7 +41,7 @@ class ReflectHelperTest {
 
     @Test
     void testIsInstance() {
-        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new TypeReference<Map<?, ?>>() {}.getClass()));
+        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new AbstractTypeReference<Map<?, ?>>() {}.getClass()));
         Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), Map.class));
     }
 }
