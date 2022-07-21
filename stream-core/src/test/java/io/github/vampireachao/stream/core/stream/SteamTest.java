@@ -117,6 +117,13 @@ class SteamTest {
     }
 
     @Test
+    void testFlatMapIter() {
+        List<Integer> list = Arrays.asList(1, 2, 3);
+        List<Integer> flatMapIter = Steam.of(list).<Integer>flatMapIter(e -> null).toList();
+        Assertions.assertEquals(Arrays.asList(1, 1, 2, 2, 3, 3), flatMapIter);
+    }
+
+    @Test
     void testNonNull() {
         List<Integer> list = Arrays.asList(1, null, 2, 3);
         List<Integer> nonNull = Steam.of(list).nonNull().toList();

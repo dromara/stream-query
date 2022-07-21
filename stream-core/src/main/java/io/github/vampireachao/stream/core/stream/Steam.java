@@ -223,7 +223,7 @@ public class Steam<T> implements Stream<T> {
     }
 
     public static <T> Steam<T> of(Iterable<T> iterable) {
-        return new Steam<>(StreamSupport.stream(iterable.spliterator(), false));
+        return Optional.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, false)).map(Steam::new).orElse(empty());
     }
 
     public static <T> Steam<T> of(Stream<T> stream) {
@@ -362,6 +362,10 @@ public class Steam<T> implements Stream<T> {
     @Override
     public <R> Steam<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
         return new Steam<>(stream.flatMap(mapper));
+    }
+
+    public <R> Steam<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMap(w -> Steam.of(mapper.apply(w)));
     }
 
     /**
