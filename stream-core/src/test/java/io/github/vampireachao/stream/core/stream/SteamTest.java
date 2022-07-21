@@ -63,10 +63,10 @@ class SteamTest {
     @Test
     void testJoining() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        String joining = Steam.of(list).joining();
+        String joining = Steam.of(list).join();
         Assertions.assertEquals("123", joining);
-        Assertions.assertEquals("1,2,3", Steam.of(list).joining(","));
-        Assertions.assertEquals("(1,2,3)", Steam.of(list).joining(",", "(", ")"));
+        Assertions.assertEquals("1,2,3", Steam.of(list).join(","));
+        Assertions.assertEquals("(1,2,3)", Steam.of(list).join(",", "(", ")"));
     }
 
     @Test
@@ -83,7 +83,7 @@ class SteamTest {
     @Test
     void testGroupingBy() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        Map<String, List<Integer>> groupingBy = Steam.of(list).groupBy(String::valueOf);
+        Map<String, List<Integer>> groupingBy = Steam.of(list).group(String::valueOf);
         Assertions.assertEquals(
                 new HashMap<String, List<Integer>>() {{
                     put("1", singletonList(1));
@@ -116,7 +116,7 @@ class SteamTest {
     @Test
     void testDistinctBy() {
         List<Integer> list = Arrays.asList(1, 2, 2, 3);
-        List<Integer> distinctBy = Steam.of(list).distinctBy(String::valueOf).toList();
+        List<Integer> distinctBy = Steam.of(list).distinct(String::valueOf).toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 3), distinctBy);
     }
 

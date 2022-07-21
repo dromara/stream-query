@@ -494,7 +494,7 @@ public class Steam<T> implements Stream<T> {
         return new Steam<>(stream.distinct());
     }
 
-    public Steam<T> distinctBy(Function<? super T, ?> keyExtractor) {
+    public Steam<T> distinct(Function<? super T, ?> keyExtractor) {
         return new Steam<>(StreamSupport.stream(toMap(keyExtractor).entrySet().spliterator(), isParallel())).map(Map.Entry::getValue);
     }
 
@@ -1394,17 +1394,17 @@ public class Steam<T> implements Stream<T> {
         return collect(Collectors.toSet());
     }
 
-    public String joining() {
-        return joining("");
+    public String join() {
+        return join("");
     }
 
-    public String joining(CharSequence delimiter) {
-        return joining(delimiter, "", "");
+    public String join(CharSequence delimiter) {
+        return join(delimiter, "", "");
     }
 
-    public String joining(CharSequence delimiter,
-                          CharSequence prefix,
-                          CharSequence suffix) {
+    public String join(CharSequence delimiter,
+                       CharSequence prefix,
+                       CharSequence suffix) {
         return map(String::valueOf).collect(Collectors.joining(delimiter, prefix, suffix));
     }
 
@@ -1430,18 +1430,18 @@ public class Steam<T> implements Stream<T> {
         return collect(Collectors.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
     }
 
-    public <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
-        return groupBy(classifier, Collectors.toList());
+    public <K> Map<K, List<T>> group(Function<? super T, ? extends K> classifier) {
+        return group(classifier, Collectors.toList());
     }
 
-    public <K, A, D> Map<K, D> groupBy(Function<? super T, ? extends K> classifier,
-                                       Collector<? super T, A, D> downstream) {
-        return groupBy(classifier, HashMap::new, downstream);
+    public <K, A, D> Map<K, D> group(Function<? super T, ? extends K> classifier,
+                                     Collector<? super T, A, D> downstream) {
+        return group(classifier, HashMap::new, downstream);
     }
 
-    public <K, D, A, M extends Map<K, D>> M groupBy(Function<? super T, ? extends K> classifier,
-                                                    Supplier<M> mapFactory,
-                                                    Collector<? super T, A, D> downstream) {
+    public <K, D, A, M extends Map<K, D>> M group(Function<? super T, ? extends K> classifier,
+                                                  Supplier<M> mapFactory,
+                                                  Collector<? super T, A, D> downstream) {
         return collect(Collectors.groupingBy(classifier, mapFactory, downstream));
     }
 }
