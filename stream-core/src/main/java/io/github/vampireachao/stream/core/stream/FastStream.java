@@ -14,11 +14,11 @@ import java.util.stream.*;
  *
  * @author VampireAchao
  */
-public class Steam<T> implements Stream<T> {
+public class FastStream<T> implements Stream<T> {
 
     protected final Stream<T> stream;
 
-    Steam(Stream<T> stream) {
+    FastStream(Stream<T> stream) {
         this.stream = stream;
     }
 
@@ -38,53 +38,10 @@ public class Steam<T> implements Stream<T> {
             }
 
             @Override
-            public Steam<T> build() {
-                return new Steam<>(streamBuilder.build());
+            public FastStream<T> build() {
+                return new FastStream<>(streamBuilder.build());
             }
         };
-    }
-
-    public interface SteamBuilder<T> extends Consumer<T> {
-
-        /**
-         * Adds an element to the stream being built.
-         *
-         * @param t the element to add
-         * @throws IllegalStateException if the builder has already transitioned to
-         *                               the built state
-         */
-        @Override
-        void accept(T t);
-
-        /**
-         * Adds an element to the stream being built.
-         *
-         * @param t the element to add
-         * @return {@code this} builder
-         * @throws IllegalStateException if the builder has already transitioned to
-         *                               the built state
-         * @implSpec The default implementation behaves as if:
-         * <pre>{@code
-         *     accept(t)
-         *     return this;
-         * }</pre>
-         */
-        default Steam.SteamBuilder<T> add(T t) {
-            accept(t);
-            return this;
-        }
-
-        /**
-         * Builds the stream, transitioning this builder to the built state.
-         * An {@code IllegalStateException} is thrown if there are further attempts
-         * to operate on the builder after it has entered the built state.
-         *
-         * @return the built stream
-         * @throws IllegalStateException if the builder has already transitioned to
-         *                               the built state
-         */
-        Steam<T> build();
-
     }
 
     /**
@@ -93,8 +50,8 @@ public class Steam<T> implements Stream<T> {
      * @param <T> the type of stream elements
      * @return an empty sequential stream
      */
-    public static <T> Steam<T> empty() {
-        return new Steam<>(Stream.empty());
+    public static <T> FastStream<T> empty() {
+        return new FastStream<>(Stream.empty());
     }
 
     /**
@@ -104,8 +61,8 @@ public class Steam<T> implements Stream<T> {
      * @param <T> the type of stream elements
      * @return a singleton sequential stream
      */
-    public static <T> Steam<T> of(T t) {
-        return new Steam<>(Stream.of(t));
+    public static <T> FastStream<T> of(T t) {
+        return new FastStream<>(Stream.of(t));
     }
 
     /**
@@ -118,8 +75,8 @@ public class Steam<T> implements Stream<T> {
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
-    public static <T> Steam<T> of(T... values) {
-        return new Steam<>(Arrays.stream(values));
+    public static <T> FastStream<T> of(T... values) {
+        return new FastStream<>(Arrays.stream(values));
     }
 
     /**
@@ -139,11 +96,11 @@ public class Steam<T> implements Stream<T> {
      *             a new element
      * @return a new sequential {@code Stream}
      */
-    public static <T> Steam<T> iterate(final T seed, final UnaryOperator<T> f) {
-        return new Steam<>(Stream.iterate(seed, f));
+    public static <T> FastStream<T> iterate(final T seed, final UnaryOperator<T> f) {
+        return new FastStream<>(Stream.iterate(seed, f));
     }
 
-    public static <T> Steam<T> iterate(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
+    public static <T> FastStream<T> iterate(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
         Objects.requireNonNull(next);
         Objects.requireNonNull(hasNext);
         Spliterator<T> spliterator = new Spliterators.AbstractSpliterator<T>(Long.MAX_VALUE,
@@ -190,7 +147,7 @@ public class Steam<T> implements Stream<T> {
                 }
             }
         };
-        return new Steam<>(StreamSupport.stream(spliterator, false));
+        return new FastStream<>(StreamSupport.stream(spliterator, false));
     }
 
     /**
@@ -202,8 +159,8 @@ public class Steam<T> implements Stream<T> {
      * @param s   the {@code Supplier} of generated elements
      * @return a new infinite sequential unordered {@code Stream}
      */
-    public static <T> Steam<T> generate(Supplier<T> s) {
-        return new Steam<>(Stream.generate(s));
+    public static <T> FastStream<T> generate(Supplier<T> s) {
+        return new FastStream<>(Stream.generate(s));
     }
 
     /**
@@ -222,20 +179,20 @@ public class Steam<T> implements Stream<T> {
      * Accessing an element of a deeply concatenated stream can result in deep
      * call chains, or even {@code StackOverflowException}.
      */
-    public static <T> Steam<T> concat(Steam<? extends T> a, Steam<? extends T> b) {
-        return new Steam<>(Stream.concat(a, b));
+    public static <T> FastStream<T> concat(FastStream<? extends T> a, FastStream<? extends T> b) {
+        return new FastStream<>(Stream.concat(a, b));
     }
 
-    public static <T> Steam<T> of(Iterable<T> iterable) {
-        return Optional.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, false)).map(Steam::new).orElseGet(Steam::empty);
+    public static <T> FastStream<T> of(Iterable<T> iterable) {
+        return Optional.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, false)).map(FastStream::new).orElseGet(FastStream::empty);
     }
 
-    public static <T> Steam<T> of(Stream<T> stream) {
-        return new Steam<>(stream);
+    public static <T> FastStream<T> of(Stream<T> stream) {
+        return new FastStream<>(stream);
     }
 
-    public static Steam<String> split(CharSequence str, String regex) {
-        return Opp.ofBlankAble(str).map(String::valueOf).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
+    public static FastStream<String> split(CharSequence str, String regex) {
+        return Opp.ofBlankAble(str).map(String::valueOf).map(s -> s.split(regex)).map(FastStream::of).orElseGet(FastStream::empty);
     }
 
     /**
@@ -252,17 +209,17 @@ public class Steam<T> implements Stream<T> {
      * @return the new stream
      */
     @Override
-    public Steam<T> filter(Predicate<? super T> predicate) {
-        return new Steam<>(stream.filter(predicate));
+    public FastStream<T> filter(Predicate<? super T> predicate) {
+        return new FastStream<>(stream.filter(predicate));
     }
 
-    public Steam<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
+    public FastStream<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
         AtomicInteger index = new AtomicInteger(-1);
         return filter(e -> predicate.test(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
 
-    public Steam<T> nonNull() {
-        return new Steam<>(stream.filter(Objects::nonNull));
+    public FastStream<T> nonNull() {
+        return new FastStream<>(stream.filter(Objects::nonNull));
     }
 
     /**
@@ -278,13 +235,57 @@ public class Steam<T> implements Stream<T> {
      * @return the new stream
      */
     @Override
-    public <R> Steam<R> map(Function<? super T, ? extends R> mapper) {
-        return new Steam<>(stream.map(mapper));
+    public <R> FastStream<R> map(Function<? super T, ? extends R> mapper) {
+        return new FastStream<>(stream.map(mapper));
     }
 
-    public <R> Steam<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
+    public <R> FastStream<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
         AtomicInteger index = new AtomicInteger(-1);
         return map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
+    }
+
+    /**
+     * Returns a stream consisting of the results of replacing each element of
+     * this stream with the contents of a mapped stream produced by applying
+     * the provided mapping function to each element.  Each mapped stream is
+     * {@link FastStream#close() closed} after its contents
+     * have been placed into this stream.  (If a mapped stream is {@code null}
+     * an empty stream is used, instead.)
+     *
+     * <p>This is an <a href="package-summary.html#BaseSteamOps">intermediate
+     * operation</a>.
+     *
+     * @param mapper a <a href="package-summary.html#NonInterference">non-interfering</a>,
+     *               <a href="package-summary.html#Statelessness">stateless</a>
+     *               function to apply to each element which produces a stream
+     *               of new values
+     * @return the new stream
+     * @apiNote The {@code flatMap()} operation has the effect of applying a one-to-many
+     * transformation to the elements of the stream, and then flattening the
+     * resulting elements into a new stream.
+     *
+     * <p><b>Examples.</b>
+     *
+     * <p>If {@code orders} is a stream of purchase orders, and each purchase
+     * order contains a collection of line items, then the following produces a
+     * stream containing all the line items in all the orders:
+     * <pre>{@code
+     *     orders.flatMap(order -> order.getLineItems().stream())...
+     * }</pre>
+     *
+     * <p>If {@code path} is the path to a file, then the following produces a
+     * stream of the {@code words} contained in that file:
+     * <pre>{@code
+     *     Steam<String> lines = Files.lines(path, StandardCharsets.UTF_8);
+     *     Steam<String> words = lines.flatMap(line -> Steam.of(line.split(" +")));
+     * }</pre>
+     * The {@code mapper} function passed to {@code flatMap} splits a line,
+     * using a simple regular expression, into an array of words, and then
+     * creates a stream of words from that array.
+     */
+    @Override
+    public <R> FastStream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+        return new FastStream<>(stream.flatMap(mapper));
     }
 
     /**
@@ -338,59 +339,15 @@ public class Steam<T> implements Stream<T> {
         return stream.mapToDouble(mapper);
     }
 
-    /**
-     * Returns a stream consisting of the results of replacing each element of
-     * this stream with the contents of a mapped stream produced by applying
-     * the provided mapping function to each element.  Each mapped stream is
-     * {@link Steam#close() closed} after its contents
-     * have been placed into this stream.  (If a mapped stream is {@code null}
-     * an empty stream is used, instead.)
-     *
-     * <p>This is an <a href="package-summary.html#BaseSteamOps">intermediate
-     * operation</a>.
-     *
-     * @param mapper a <a href="package-summary.html#NonInterference">non-interfering</a>,
-     *               <a href="package-summary.html#Statelessness">stateless</a>
-     *               function to apply to each element which produces a stream
-     *               of new values
-     * @return the new stream
-     * @apiNote The {@code flatMap()} operation has the effect of applying a one-to-many
-     * transformation to the elements of the stream, and then flattening the
-     * resulting elements into a new stream.
-     *
-     * <p><b>Examples.</b>
-     *
-     * <p>If {@code orders} is a stream of purchase orders, and each purchase
-     * order contains a collection of line items, then the following produces a
-     * stream containing all the line items in all the orders:
-     * <pre>{@code
-     *     orders.flatMap(order -> order.getLineItems().stream())...
-     * }</pre>
-     *
-     * <p>If {@code path} is the path to a file, then the following produces a
-     * stream of the {@code words} contained in that file:
-     * <pre>{@code
-     *     Steam<String> lines = Files.lines(path, StandardCharsets.UTF_8);
-     *     Steam<String> words = lines.flatMap(line -> Steam.of(line.split(" +")));
-     * }</pre>
-     * The {@code mapper} function passed to {@code flatMap} splits a line,
-     * using a simple regular expression, into an array of words, and then
-     * creates a stream of words from that array.
-     */
-    @Override
-    public <R> Steam<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return new Steam<>(stream.flatMap(mapper));
-    }
-
-    public <R> Steam<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMap(w -> Steam.of(mapper.apply(w)));
+    public <R> FastStream<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMap(w -> FastStream.of(mapper.apply(w)));
     }
 
     /**
      * Returns an {@code IntBaseSteam} consisting of the results of replacing each
      * element of this stream with the contents of a mapped stream produced by
      * applying the provided mapping function to each element.  Each mapped
-     * stream is {@link Steam#close() closed} after its
+     * stream is {@link FastStream#close() closed} after its
      * contents have been placed into this stream.  (If a mapped stream is
      * {@code null} an empty stream is used, instead.)
      *
@@ -413,7 +370,7 @@ public class Steam<T> implements Stream<T> {
      * Returns an {@code LongBaseSteam} consisting of the results of replacing each
      * element of this stream with the contents of a mapped stream produced by
      * applying the provided mapping function to each element.  Each mapped
-     * stream is {@link Steam#close() closed} after its
+     * stream is {@link FastStream#close() closed} after its
      * contents have been placed into this stream.  (If a mapped stream is
      * {@code null} an empty stream is used, instead.)
      *
@@ -436,7 +393,7 @@ public class Steam<T> implements Stream<T> {
      * Returns an {@code DoubleBaseSteam} consisting of the results of replacing
      * each element of this stream with the contents of a mapped stream produced
      * by applying the provided mapping function to each element.  Each mapped
-     * stream is {@link Steam#close() closed} after its
+     * stream is {@link FastStream#close() closed} after its
      * contents have placed been into this stream.  (If a mapped stream is
      * {@code null} an empty stream is used, instead.)
      *
@@ -455,10 +412,10 @@ public class Steam<T> implements Stream<T> {
         return stream.flatMapToDouble(mapper);
     }
 
-    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
+    public <R> FastStream<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
         Objects.requireNonNull(mapper);
         return flatMap(e -> {
-            SteamBuilder<R> buffer = Steam.builder();
+            SteamBuilder<R> buffer = FastStream.builder();
             mapper.accept(e, buffer);
             return buffer.build();
         });
@@ -490,12 +447,12 @@ public class Steam<T> implements Stream<T> {
      * performance.
      */
     @Override
-    public Steam<T> distinct() {
-        return new Steam<>(stream.distinct());
+    public FastStream<T> distinct() {
+        return new FastStream<>(stream.distinct());
     }
 
-    public Steam<T> distinct(Function<? super T, ?> keyExtractor) {
-        return new Steam<>(StreamSupport.stream(toMap(keyExtractor).entrySet().spliterator(), isParallel())).map(Map.Entry::getValue);
+    public FastStream<T> distinct(Function<? super T, ?> keyExtractor) {
+        return new FastStream<>(StreamSupport.stream(toMap(keyExtractor).entrySet().spliterator(), isParallel())).map(Map.Entry::getValue);
     }
 
     /**
@@ -513,8 +470,8 @@ public class Steam<T> implements Stream<T> {
      * @return the new stream
      */
     @Override
-    public Steam<T> sorted() {
-        return new Steam<>(stream.sorted());
+    public FastStream<T> sorted() {
+        return new FastStream<>(stream.sorted());
     }
 
     /**
@@ -533,8 +490,8 @@ public class Steam<T> implements Stream<T> {
      * @return the new stream
      */
     @Override
-    public Steam<T> sorted(Comparator<? super T> comparator) {
-        return new Steam<>(stream.sorted(comparator));
+    public FastStream<T> sorted(Comparator<? super T> comparator) {
+        return new FastStream<>(stream.sorted(comparator));
     }
 
     /**
@@ -566,8 +523,8 @@ public class Steam<T> implements Stream<T> {
      * }</pre>
      */
     @Override
-    public Steam<T> peek(Consumer<? super T> action) {
-        return new Steam<>(stream.peek(action));
+    public FastStream<T> peek(Consumer<? super T> action) {
+        return new FastStream<>(stream.peek(action));
     }
 
     /**
@@ -594,8 +551,8 @@ public class Steam<T> implements Stream<T> {
      * with {@link #sequential()} may improve performance.
      */
     @Override
-    public Steam<T> limit(long maxSize) {
-        return new Steam<>(stream.limit(maxSize));
+    public FastStream<T> limit(long maxSize) {
+        return new FastStream<>(stream.limit(maxSize));
     }
 
     /**
@@ -624,8 +581,23 @@ public class Steam<T> implements Stream<T> {
      * with {@link #sequential()} may improve performance.
      */
     @Override
-    public Steam<T> skip(long n) {
-        return new Steam<>(stream.skip(n));
+    public FastStream<T> skip(long n) {
+        return new FastStream<>(stream.skip(n));
+    }
+
+    /**
+     * Returns an equivalent stream that is sequential.  May return
+     * itself, either because the stream was already sequential, or because
+     * the underlying stream state was modified to be sequential.
+     *
+     * <p>This is an <a href="package-summary.html#StreamOps">intermediate
+     * operation</a>.
+     *
+     * @return a sequential stream
+     */
+    @Override
+    public FastStream<T> sequential() {
+        return new FastStream<>(stream.sequential());
     }
 
     /**
@@ -1170,23 +1142,6 @@ public class Steam<T> implements Stream<T> {
     }
 
     /**
-     * Returns an equivalent stream that is sequential.  May return
-     * itself, either because the stream was already sequential, or because
-     * the underlying stream state was modified to be sequential.
-     *
-     * <p>This is an <a href="package-summary.html#StreamOps">intermediate
-     * operation</a>.
-     *
-     * @return a sequential stream
-     */
-    @Override
-    public Steam<T> sequential() {
-        return new Steam<>(stream.sequential());
-    }
-
-    // Extra methods for convenience
-
-    /**
      * Returns an equivalent stream that is parallel.  May return
      * itself, either because the stream was already parallel, or because
      * the underlying stream state was modified to be parallel.
@@ -1197,11 +1152,11 @@ public class Steam<T> implements Stream<T> {
      * @return a parallel stream
      */
     @Override
-    public Steam<T> parallel() {
-        return new Steam<>(stream.parallel());
+    public FastStream<T> parallel() {
+        return new FastStream<>(stream.parallel());
     }
 
-    // Static factories
+    // Extra methods for convenience
 
     /**
      * Returns an equivalent stream that is
@@ -1215,9 +1170,11 @@ public class Steam<T> implements Stream<T> {
      * @return an unordered stream
      */
     @Override
-    public Steam<T> unordered() {
-        return new Steam<>(stream.unordered());
+    public FastStream<T> unordered() {
+        return new FastStream<>(stream.unordered());
     }
+
+    // Static factories
 
     /**
      * Returns an equivalent stream with an additional close handler.  Close
@@ -1238,8 +1195,12 @@ public class Steam<T> implements Stream<T> {
      * @return a stream with a handler that is run if the stream is closed
      */
     @Override
-    public Steam<T> onClose(Runnable closeHandler) {
-        return new Steam<>(stream.onClose(closeHandler));
+    public FastStream<T> onClose(Runnable closeHandler) {
+        return new FastStream<>(stream.onClose(closeHandler));
+    }
+
+    public FastStream<T> push(T obj) {
+        return FastStream.concat(this, FastStream.of(obj));
     }
 
     /**
@@ -1445,22 +1406,61 @@ public class Steam<T> implements Stream<T> {
         return collect(Collectors.groupingBy(classifier, mapFactory, downstream));
     }
 
-    public Steam<T> push(T obj) {
-        return Steam.concat(this, Steam.of(obj));
+    @SuppressWarnings("unchecked")
+    public FastStream<T> push(T... obj) {
+        return FastStream.concat(this, FastStream.of(obj));
+    }
+
+    public FastStream<T> unshift(T obj) {
+        return FastStream.concat(FastStream.of(obj), this);
     }
 
     @SuppressWarnings("unchecked")
-    public Steam<T> push(T... obj) {
-        return Steam.concat(this, Steam.of(obj));
+    public FastStream<T> unshift(T... obj) {
+        return FastStream.concat(FastStream.of(obj), this);
     }
 
-    public Steam<T> unshift(T obj) {
-        return Steam.concat(Steam.of(obj), this);
-    }
+    public interface SteamBuilder<T> extends Consumer<T> {
 
-    @SuppressWarnings("unchecked")
-    public Steam<T> unshift(T... obj) {
-        return Steam.concat(Steam.of(obj), this);
+        /**
+         * Adds an element to the stream being built.
+         *
+         * @param t the element to add
+         * @throws IllegalStateException if the builder has already transitioned to
+         *                               the built state
+         */
+        @Override
+        void accept(T t);
+
+        /**
+         * Adds an element to the stream being built.
+         *
+         * @param t the element to add
+         * @return {@code this} builder
+         * @throws IllegalStateException if the builder has already transitioned to
+         *                               the built state
+         * @implSpec The default implementation behaves as if:
+         * <pre>{@code
+         *     accept(t)
+         *     return this;
+         * }</pre>
+         */
+        default FastStream.SteamBuilder<T> add(T t) {
+            accept(t);
+            return this;
+        }
+
+        /**
+         * Builds the stream, transitioning this builder to the built state.
+         * An {@code IllegalStateException} is thrown if there are further attempts
+         * to operate on the builder after it has entered the built state.
+         *
+         * @return the built stream
+         * @throws IllegalStateException if the builder has already transitioned to
+         *                               the built state
+         */
+        FastStream<T> build();
+
     }
 
 }
