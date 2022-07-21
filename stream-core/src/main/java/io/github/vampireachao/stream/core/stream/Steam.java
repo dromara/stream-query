@@ -1,5 +1,8 @@
 package io.github.vampireachao.stream.core.stream;
 
+
+import io.github.vampireachao.stream.core.optional.Opp;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
@@ -223,11 +226,15 @@ public class Steam<T> implements Stream<T> {
     }
 
     public static <T> Steam<T> of(Iterable<T> iterable) {
-        return Optional.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, false)).map(Steam::new).orElse(empty());
+        return Optional.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, false)).map(Steam::new).orElseGet(Steam::empty);
     }
 
     public static <T> Steam<T> of(Stream<T> stream) {
         return new Steam<>(stream);
+    }
+
+    public static Steam<String> split(CharSequence str, String regex) {
+        return Opp.ofBlankAble(str).map(String::valueOf).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
     }
 
     /**

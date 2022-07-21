@@ -28,6 +28,12 @@ class SteamTest {
     }
 
     @Test
+    void testSplit() {
+        List<Integer> list = Steam.split("1,2,3", ",").map(Integer::valueOf).toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), list);
+    }
+
+    @Test
     void testIterator() {
         List<Integer> list = Steam.iterate(0, i -> i < 3, i -> ++i).toList();
         Assertions.assertEquals(Arrays.asList(0, 1, 2), list);
