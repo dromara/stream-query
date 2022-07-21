@@ -277,6 +277,11 @@ public class Steam<T> implements Stream<T> {
         return new Steam<>(stream.map(mapper));
     }
 
+    public <R> Steam<R> mapIndex(BiFunction<? super T, Integer, ? extends R> mapper) {
+        AtomicInteger index = new AtomicInteger(-1);
+        return new Steam<>(stream.map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet())));
+    }
+
     /**
      * Returns an {@code IntBaseSteam} consisting of the results of applying the
      * given function to the elements of this stream.

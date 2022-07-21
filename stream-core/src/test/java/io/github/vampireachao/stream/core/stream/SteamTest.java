@@ -93,6 +93,15 @@ class SteamTest {
     }
 
     @Test
+    void testMapIndex() {
+        List<String> list = Arrays.asList("dromara", "hutool", "sweet");
+        List<String> mapIndex = Steam.of(list).mapIndex((e, i) -> i + 1 + "." + e).toList();
+        Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), mapIndex);
+        // 并行流时为-1
+        Assertions.assertEquals(Arrays.asList(-1, -1, -1), Steam.of(1, 2, 3).parallel().mapIndex((e, i) -> i).toList());
+    }
+
+    @Test
     void testMapMulti() {
         List<Integer> list = Arrays.asList(1, 2, 3);
         List<Integer> mapMulti = Steam.of(list).<Integer>mapMulti((e, buffer) -> {
