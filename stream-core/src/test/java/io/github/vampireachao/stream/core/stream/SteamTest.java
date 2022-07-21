@@ -160,4 +160,18 @@ class SteamTest {
         List<Integer> nonNull = Steam.of(list).nonNull().toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 3), nonNull);
     }
+
+    @Test
+    void testPush() {
+        List<Integer> list = Arrays.asList(1, 2);
+        List<Integer> push = Steam.of(list).push(3).toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), push);
+    }
+
+    @Test
+    void testUnshift() {
+        List<Integer> list = Arrays.asList(2, 3);
+        List<Integer> unshift = Steam.of(list).unshift(1).toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), unshift);
+    }
 }

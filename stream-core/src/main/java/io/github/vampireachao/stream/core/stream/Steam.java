@@ -1444,4 +1444,23 @@ public class Steam<T> implements Stream<T> {
                                                   Collector<? super T, A, D> downstream) {
         return collect(Collectors.groupingBy(classifier, mapFactory, downstream));
     }
+
+    public Steam<T> push(T obj) {
+        return Steam.concat(this, Steam.of(obj));
+    }
+
+    @SuppressWarnings("unchecked")
+    public Steam<T> push(T... obj) {
+        return Steam.concat(this, Steam.of(obj));
+    }
+
+    public Steam<T> unshift(T obj) {
+        return Steam.concat(Steam.of(obj), this);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Steam<T> unshift(T... obj) {
+        return Steam.concat(Steam.of(obj), this);
+    }
+
 }
