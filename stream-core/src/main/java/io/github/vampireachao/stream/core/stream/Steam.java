@@ -256,6 +256,11 @@ public class Steam<T> implements Stream<T> {
         return new Steam<>(stream.filter(predicate));
     }
 
+    public Steam<T> filterIndex(BiPredicate<? super T, Integer> predicate) {
+        AtomicInteger index = new AtomicInteger(-1);
+        return filter(e -> predicate.test(e, isParallel() ? index.get() : index.incrementAndGet()));
+    }
+
     public Steam<T> nonNull() {
         return new Steam<>(stream.filter(Objects::nonNull));
     }
@@ -279,7 +284,7 @@ public class Steam<T> implements Stream<T> {
 
     public <R> Steam<R> mapIndex(BiFunction<? super T, Integer, ? extends R> mapper) {
         AtomicInteger index = new AtomicInteger(-1);
-        return new Steam<>(stream.map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet())));
+        return map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
 
     /**

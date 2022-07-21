@@ -146,6 +146,15 @@ class SteamTest {
     }
 
     @Test
+    void testFilterIndex() {
+        List<String> list = Arrays.asList("dromara", "hutool", "sweet");
+        List<String> filterIndex = Steam.of(list).filterIndex((e, i) -> i < 2).toList();
+        Assertions.assertEquals(Arrays.asList("dromara", "hutool"), filterIndex);
+        // 并行流时为-1
+        Assertions.assertEquals(3L, Steam.of(1, 2, 3).parallel().filterIndex((e, i) -> i == -1).count());
+    }
+
+    @Test
     void testNonNull() {
         List<Integer> list = Arrays.asList(1, null, 2, 3);
         List<Integer> nonNull = Steam.of(list).nonNull().toList();
