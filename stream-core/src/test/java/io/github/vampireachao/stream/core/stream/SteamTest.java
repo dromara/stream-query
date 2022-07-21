@@ -120,7 +120,7 @@ class SteamTest {
     void testFlatMapIter() {
         List<Integer> list = Arrays.asList(1, 2, 3);
         List<Integer> flatMapIter = Steam.of(list).<Integer>flatMapIter(e -> null).toList();
-        Assertions.assertEquals(Arrays.asList(1, 1, 2, 2, 3, 3), flatMapIter);
+        Assertions.assertEquals(Collections.emptyList(), flatMapIter);
     }
 
     @Test
