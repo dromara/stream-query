@@ -174,4 +174,13 @@ class FastStreamTest {
         List<Integer> unshift = FastStream.of(list).unshift(1).toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 3), unshift);
     }
+
+    @Test
+    void testAt() {
+        List<Integer> list = Arrays.asList(1, 2, 3);
+        Assertions.assertEquals(1, FastStream.of(list).at(0));
+        Assertions.assertEquals(1, FastStream.of(list).at(-3));
+        Assertions.assertEquals(3, FastStream.of(list).at(-1));
+        Assertions.assertNull(FastStream.of(list).at(-4));
+    }
 }

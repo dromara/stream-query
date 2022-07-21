@@ -1420,6 +1420,21 @@ public class FastStream<T> implements Stream<T> {
         return FastStream.concat(FastStream.of(obj), this);
     }
 
+    public T at(Integer idx) {
+        List<T> list = toList();
+        if (idx > -1) {
+            if (list.size() <= idx) {
+                return null;
+            }
+            return list.get(idx);
+        }
+        if (list.size() < -idx) {
+            return null;
+        }
+        return list.get(list.size() + idx);
+    }
+
+
     public interface SteamBuilder<T> extends Consumer<T> {
 
         /**
