@@ -256,7 +256,7 @@ public class Steam<T> implements Stream<T> {
         return new Steam<>(stream.filter(predicate));
     }
 
-    public Steam<T> filterIndex(BiPredicate<? super T, Integer> predicate) {
+    public Steam<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
         AtomicInteger index = new AtomicInteger(-1);
         return filter(e -> predicate.test(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
@@ -282,7 +282,7 @@ public class Steam<T> implements Stream<T> {
         return new Steam<>(stream.map(mapper));
     }
 
-    public <R> Steam<R> mapIndex(BiFunction<? super T, Integer, ? extends R> mapper) {
+    public <R> Steam<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
         AtomicInteger index = new AtomicInteger(-1);
         return map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
@@ -677,7 +677,7 @@ public class Steam<T> implements Stream<T> {
         stream.forEachOrdered(action);
     }
 
-    public void forEachOrderedIndex(BiConsumer<? super T, Integer> action) {
+    public void forEachOrderedIdx(BiConsumer<? super T, Integer> action) {
         AtomicInteger index = new AtomicInteger(-1);
         stream.forEachOrdered(e -> action.accept(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
@@ -1430,18 +1430,18 @@ public class Steam<T> implements Stream<T> {
         return collect(Collectors.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
     }
 
-    public <K> Map<K, List<T>> groupingBy(Function<? super T, ? extends K> classifier) {
-        return groupingBy(classifier, Collectors.toList());
+    public <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+        return groupBy(classifier, Collectors.toList());
     }
 
-    public <K, A, D> Map<K, D> groupingBy(Function<? super T, ? extends K> classifier,
-                                          Collector<? super T, A, D> downstream) {
-        return groupingBy(classifier, HashMap::new, downstream);
+    public <K, A, D> Map<K, D> groupBy(Function<? super T, ? extends K> classifier,
+                                       Collector<? super T, A, D> downstream) {
+        return groupBy(classifier, HashMap::new, downstream);
     }
 
-    public <K, D, A, M extends Map<K, D>> M groupingBy(Function<? super T, ? extends K> classifier,
-                                                       Supplier<M> mapFactory,
-                                                       Collector<? super T, A, D> downstream) {
+    public <K, D, A, M extends Map<K, D>> M groupBy(Function<? super T, ? extends K> classifier,
+                                                    Supplier<M> mapFactory,
+                                                    Collector<? super T, A, D> downstream) {
         return collect(Collectors.groupingBy(classifier, mapFactory, downstream));
     }
 }

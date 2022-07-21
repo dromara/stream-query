@@ -83,7 +83,7 @@ class SteamTest {
     @Test
     void testGroupingBy() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        Map<String, List<Integer>> groupingBy = Steam.of(list).groupingBy(String::valueOf);
+        Map<String, List<Integer>> groupingBy = Steam.of(list).groupBy(String::valueOf);
         Assertions.assertEquals(
                 new HashMap<String, List<Integer>>() {{
                     put("1", singletonList(1));
@@ -95,10 +95,10 @@ class SteamTest {
     @Test
     void testMapIndex() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
-        List<String> mapIndex = Steam.of(list).mapIndex((e, i) -> i + 1 + "." + e).toList();
+        List<String> mapIndex = Steam.of(list).mapIdx((e, i) -> i + 1 + "." + e).toList();
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), mapIndex);
         // 并行流时为-1
-        Assertions.assertEquals(Arrays.asList(-1, -1, -1), Steam.of(1, 2, 3).parallel().mapIndex((e, i) -> i).toList());
+        Assertions.assertEquals(Arrays.asList(-1, -1, -1), Steam.of(1, 2, 3).parallel().mapIdx((e, i) -> i).toList());
     }
 
     @Test
@@ -134,7 +134,7 @@ class SteamTest {
     void testForEachOrderedIndex() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
         Steam.SteamBuilder<String> builder = Steam.builder();
-        Steam.of(list).forEachOrderedIndex((e, i) -> builder.accept(i + 1 + "." + e));
+        Steam.of(list).forEachOrderedIdx((e, i) -> builder.accept(i + 1 + "." + e));
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
     }
 
@@ -148,10 +148,10 @@ class SteamTest {
     @Test
     void testFilterIndex() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
-        List<String> filterIndex = Steam.of(list).filterIndex((e, i) -> i < 2).toList();
+        List<String> filterIndex = Steam.of(list).filterIdx((e, i) -> i < 2).toList();
         Assertions.assertEquals(Arrays.asList("dromara", "hutool"), filterIndex);
         // 并行流时为-1
-        Assertions.assertEquals(3L, Steam.of(1, 2, 3).parallel().filterIndex((e, i) -> i == -1).count());
+        Assertions.assertEquals(3L, Steam.of(1, 2, 3).parallel().filterIdx((e, i) -> i == -1).count());
     }
 
     @Test
