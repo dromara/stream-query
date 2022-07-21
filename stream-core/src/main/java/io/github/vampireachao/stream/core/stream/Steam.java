@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.core.stream;
 
 
+import io.github.vampireachao.stream.core.collector.Collectors;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
@@ -481,6 +482,10 @@ public class Steam<T> implements Stream<T> {
     @Override
     public Steam<T> distinct() {
         return new Steam<>(stream.distinct());
+    }
+
+    public Steam<T> distinctBy(Function<? super T, ?> keyExtractor) {
+        return new Steam<>(StreamSupport.stream(toMap(keyExtractor).entrySet().spliterator(), isParallel())).map(Map.Entry::getValue);
     }
 
     /**

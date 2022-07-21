@@ -105,6 +105,13 @@ class SteamTest {
     }
 
     @Test
+    void testDistinctBy() {
+        List<Integer> list = Arrays.asList(1, 2, 2, 3);
+        List<Integer> distinctBy = Steam.of(list).distinctBy(String::valueOf).toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), distinctBy);
+    }
+
+    @Test
     void testForeachIndex() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
         Steam.SteamBuilder<String> builder = Steam.builder();
