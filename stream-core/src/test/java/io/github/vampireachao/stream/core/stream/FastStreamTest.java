@@ -136,10 +136,10 @@ class FastStreamTest {
     void testForeachIdx() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
         FastStream.StreamBuilder<String> builder = FastStream.builder();
-        FastStream.of(list).forEachIndex((e, i) -> builder.accept(i + 1 + "." + e));
+        FastStream.of(list).forEachIdx((e, i) -> builder.accept(i + 1 + "." + e));
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
         // 并行流时为-1
-        FastStream.of(1, 2, 3).parallel().forEachIndex((e, i) -> Assertions.assertEquals(-1, i));
+        FastStream.of(1, 2, 3).parallel().forEachIdx((e, i) -> Assertions.assertEquals(-1, i));
     }
 
     @Test
@@ -207,6 +207,20 @@ class FastStreamTest {
         Assertions.assertEquals(1, FastStream.of(list).at(-3));
         Assertions.assertEquals(3, FastStream.of(list).at(-1));
         Assertions.assertNull(FastStream.of(list).at(-4));
+    }
+
+    @Test
+    void testFindFirst() {
+        List<Integer> list = Arrays.asList(1, 2, 3);
+        Integer find = FastStream.of(list).findFirst(Objects::nonNull);
+        Assertions.assertEquals(1, find);
+    }
+
+    @Test
+    void testFindLast() {
+        List<Integer> list = Arrays.asList(1, null, 3);
+        Integer find = FastStream.of(list).findLast(Objects::nonNull);
+        Assertions.assertEquals(3, find);
     }
 
     @Test

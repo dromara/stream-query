@@ -244,7 +244,8 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
     }
 
     public <R> FastStream<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
-        return zip(isParallel() ? generate(() -> -1) : iterate(0, i -> i + 1), mapper);
+        AtomicInteger index = new AtomicInteger(-1);
+        return map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
 
     /**
@@ -625,7 +626,7 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
         stream.forEach(action);
     }
 
-    public void forEachIndex(BiConsumer<? super T, Integer> action) {
+    public void forEachIdx(BiConsumer<? super T, Integer> action) {
         AtomicInteger index = new AtomicInteger(-1);
         stream.forEach(e -> action.accept(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
@@ -1095,6 +1096,16 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
         return stream.findFirst();
     }
 
+    public Optional<T> findLast() {
+        return Optional.of(toList()).filter(l -> !l.isEmpty()).map(l -> l.get(l.size() - 1));
+    }
+
+    public FastStream<T> reverse() {
+        List<T> list = toList();
+        Collections.reverse(list);
+        return FastStream.of(list);
+    }
+
     /**
      * Returns an {@link Optional} describing some element of the stream, or an
      * empty {@code Optional} if the stream is empty.
@@ -1447,6 +1458,14 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
             return null;
         }
         return list.get(list.size() + idx);
+    }
+
+    public T findFirst(Predicate<? super T> predicate) {
+        return filter(predicate).findFirst().orElse(null);
+    }
+
+    public T findLast(Predicate<? super T> predicate) {
+        return reverse().filter(predicate).findFirst().orElse(null);
     }
 
     public <U, R> FastStream<R> zip(Iterable<U> other,
