@@ -61,7 +61,7 @@ class FastStreamTest {
     }
 
     @Test
-    void testJoining() {
+    void testJoin() {
         List<Integer> list = Arrays.asList(1, 2, 3);
         String joining = FastStream.of(list).join();
         Assertions.assertEquals("123", joining);
@@ -81,7 +81,7 @@ class FastStreamTest {
     }
 
     @Test
-    void testGroupingBy() {
+    void testGroup() {
         List<Integer> list = Arrays.asList(1, 2, 3);
         Map<String, List<Integer>> groupingBy = FastStream.of(list).group(String::valueOf);
         Assertions.assertEquals(
@@ -93,7 +93,7 @@ class FastStreamTest {
     }
 
     @Test
-    void testMapIndex() {
+    void testMapIdx() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
         List<String> mapIndex = FastStream.of(list).mapIdx((e, i) -> i + 1 + "." + e).toList();
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), mapIndex);
@@ -114,14 +114,14 @@ class FastStreamTest {
     }
 
     @Test
-    void testDistinctBy() {
+    void testDistinct() {
         List<Integer> list = Arrays.asList(1, 2, 2, 3);
         List<Integer> distinctBy = FastStream.of(list).distinct(String::valueOf).toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 3), distinctBy);
     }
 
     @Test
-    void testForeachIndex() {
+    void testForeachIdx() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
         FastStream.SteamBuilder<String> builder = FastStream.builder();
         FastStream.of(list).forEachIndex((e, i) -> builder.accept(i + 1 + "." + e));
@@ -146,7 +146,7 @@ class FastStreamTest {
     }
 
     @Test
-    void testFilterIndex() {
+    void testFilterIdx() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
         List<String> filterIndex = FastStream.of(list).filterIdx((e, i) -> i < 2).toList();
         Assertions.assertEquals(Arrays.asList("dromara", "hutool"), filterIndex);
