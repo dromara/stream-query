@@ -14,7 +14,7 @@ import java.util.stream.*;
  *
  * @author VampireAchao
  */
-public class FastStream<T> implements Stream<T> {
+public class FastStream<T> implements Stream<T>, Iterable<T> {
 
     protected final Stream<T> stream;
 
@@ -244,8 +244,7 @@ public class FastStream<T> implements Stream<T> {
     }
 
     public <R> FastStream<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
-        AtomicInteger index = new AtomicInteger(-1);
-        return map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
+        return zip(isParallel() ? generate(() -> -1) : iterate(0, i -> i + 1), mapper);
     }
 
     /**
@@ -1363,6 +1362,11 @@ public class FastStream<T> implements Stream<T> {
         return collect(Collectors.toSet());
     }
 
+    public <R> Map<T, R> toZip(Iterable<R> other) {
+        Iterator<R> iterator = other.iterator();
+        return toMap(Function.identity(), e -> iterator.hasNext() ? iterator.next() : null);
+    }
+
     public String join() {
         return join("");
     }
@@ -1429,6 +1433,9 @@ public class FastStream<T> implements Stream<T> {
     }
 
     public T at(Integer idx) {
+        if (Objects.isNull(idx)) {
+            return null;
+        }
         List<T> list = toList();
         if (idx > -1) {
             if (list.size() <= idx) {
@@ -1440,6 +1447,12 @@ public class FastStream<T> implements Stream<T> {
             return null;
         }
         return list.get(list.size() + idx);
+    }
+
+    public <U, R> FastStream<R> zip(Iterable<U> other,
+                                    BiFunction<? super T, ? super U, ? extends R> zipper) {
+        Iterator<U> iterator = other.iterator();
+        return new FastStream<>(stream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
     }
 
     public interface StreamBuilder<T> extends Consumer<T> {

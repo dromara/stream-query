@@ -61,6 +61,18 @@ class FastStreamTest {
     }
 
     @Test
+    void testToZip() {
+        List<Integer> orders = Arrays.asList(1, 2, 3);
+        List<String> list = Arrays.asList("dromara", "hutool", "sweet");
+        Map<Integer, String> toZip = FastStream.of(orders).toZip(list);
+        Assertions.assertEquals(new HashMap<Integer, String>() {{
+            put(1, "dromara");
+            put(2, "hutool");
+            put(3, "sweet");
+        }}, toZip);
+    }
+
+    @Test
     void testJoin() {
         List<Integer> list = Arrays.asList(1, 2, 3);
         String joining = FastStream.of(list).join();
@@ -195,5 +207,13 @@ class FastStreamTest {
         Assertions.assertEquals(1, FastStream.of(list).at(-3));
         Assertions.assertEquals(3, FastStream.of(list).at(-1));
         Assertions.assertNull(FastStream.of(list).at(-4));
+    }
+
+    @Test
+    void testZip() {
+        List<Integer> orders = Arrays.asList(1, 2, 3);
+        List<String> list = Arrays.asList("dromara", "hutool", "sweet");
+        List<String> zip = FastStream.of(orders).zip(list, (e1, e2) -> e1 + "." + e2).toList();
+        Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), zip);
     }
 }
