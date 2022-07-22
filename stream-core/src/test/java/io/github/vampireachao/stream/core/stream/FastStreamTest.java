@@ -221,6 +221,7 @@ class FastStreamTest {
         List<Integer> list = Arrays.asList(1, null, 3);
         Integer find = FastStream.of(list).findLast(Objects::nonNull);
         Assertions.assertEquals(3, find);
+        Assertions.assertEquals(3, FastStream.of(list).findLast().orElse(null));
     }
 
     @Test
