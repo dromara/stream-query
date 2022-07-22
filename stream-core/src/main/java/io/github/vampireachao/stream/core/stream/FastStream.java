@@ -452,7 +452,7 @@ public class FastStream<T> implements Stream<T> {
     }
 
     public FastStream<T> distinct(Function<? super T, ?> keyExtractor) {
-        return new FastStream<>(StreamSupport.stream(toMap(keyExtractor).entrySet().spliterator(), isParallel())).map(Map.Entry::getValue);
+        return new FastStream<>(toMap(keyExtractor).entrySet().stream()).parallel(isParallel()).map(Map.Entry::getValue);
     }
 
     /**
@@ -1156,6 +1156,10 @@ public class FastStream<T> implements Stream<T> {
         return new FastStream<>(stream.parallel());
     }
 
+    public FastStream<T> parallel(boolean parallel) {
+        return new FastStream<>(parallel ? stream.parallel() : stream.sequential());
+    }
+
     // Extra methods for convenience
 
     /**
@@ -1432,6 +1436,14 @@ public class FastStream<T> implements Stream<T> {
             return null;
         }
         return list.get(list.size() + idx);
+    }
+
+    @SafeVarargs
+    public final <R> List<List<T>> toLists(Predicate<R> predicate, Function<T, R>... functions) {
+        List<T> list = toList();
+        return of(functions).map(f -> of(list).parallel(isParallel())
+                .filter(e -> Opp.ofNullable(e).map(f).filter(predicate).isPresent())
+                .toList()).toList();
     }
 
 
