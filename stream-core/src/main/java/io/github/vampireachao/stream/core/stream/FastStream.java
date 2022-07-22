@@ -213,6 +213,10 @@ public class FastStream<T> implements Stream<T> {
         return new FastStream<>(stream.filter(predicate));
     }
 
+    public <R> FastStream<T> filter(Function<? super T, ? extends R> mapper, R value) {
+        return filter(e -> Objects.equals(Opp.ofNullable(e).map(mapper).get(), value));
+    }
+
     public FastStream<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
         AtomicInteger index = new AtomicInteger(-1);
         return filter(e -> predicate.test(e, isParallel() ? index.get() : index.incrementAndGet()));
@@ -1437,15 +1441,6 @@ public class FastStream<T> implements Stream<T> {
         }
         return list.get(list.size() + idx);
     }
-
-    @SafeVarargs
-    public final <R> List<List<T>> toLists(Predicate<R> predicate, Function<T, R>... functions) {
-        List<T> list = toList();
-        return of(functions).map(f -> of(list).parallel(isParallel())
-                .filter(e -> Opp.ofNullable(e).map(f).filter(predicate).isPresent())
-                .toList()).toList();
-    }
-
 
     public interface StreamBuilder<T> extends Consumer<T> {
 

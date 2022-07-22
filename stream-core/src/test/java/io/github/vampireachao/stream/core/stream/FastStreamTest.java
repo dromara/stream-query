@@ -54,15 +54,6 @@ class FastStreamTest {
     }
 
     @Test
-    void testToLists() {
-        List<Integer> list = Arrays.asList(1, 2, 3);
-        List<List<Integer>> lists = FastStream.of(list).toLists(v -> Objects.equals(v, "1"),
-                String::valueOf,
-                Object::toString);
-        Assertions.assertEquals(FastStream.of(FastStream.of(1), FastStream.of(1)).map(FastStream::toList).toList(), lists);
-    }
-
-    @Test
     void testToSet() {
         List<Integer> list = Arrays.asList(1, 2, 3);
         Set<String> toSet = FastStream.of(list).map(String::valueOf).toSet();
@@ -152,6 +143,13 @@ class FastStreamTest {
         List<Integer> list = Arrays.asList(1, 2, 3);
         List<Integer> flatMapIter = FastStream.of(list).<Integer>flatMapIter(e -> null).toList();
         Assertions.assertEquals(Collections.emptyList(), flatMapIter);
+    }
+
+    @Test
+    void testFilter() {
+        List<Integer> list = Arrays.asList(1, 2, 3);
+        List<Integer> filterIndex = FastStream.of(list).filter(String::valueOf, "1").toList();
+        Assertions.assertEquals(Collections.singletonList(1), filterIndex);
     }
 
     @Test

@@ -594,4 +594,7 @@ public class Opp<T> {
         return isPresent() ? value.toString() : null;
     }
 
+    public <R> Opp<T> filterEqual(R value) {
+        return filter(Predicate.isEqual(value));
+    }
 }
