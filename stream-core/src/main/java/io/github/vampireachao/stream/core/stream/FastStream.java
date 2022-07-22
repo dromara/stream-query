@@ -28,8 +28,8 @@ public class FastStream<T> implements Stream<T> {
      * @param <T> type of elements
      * @return a stream builder
      */
-    public static <T> SteamBuilder<T> builder() {
-        return new SteamBuilder<T>() {
+    public static <T> StreamBuilder<T> builder() {
+        return new StreamBuilder<T>() {
             private final Builder<T> streamBuilder = Stream.builder();
 
             @Override
@@ -415,7 +415,7 @@ public class FastStream<T> implements Stream<T> {
     public <R> FastStream<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
         Objects.requireNonNull(mapper);
         return flatMap(e -> {
-            SteamBuilder<R> buffer = FastStream.builder();
+            StreamBuilder<R> buffer = FastStream.builder();
             mapper.accept(e, buffer);
             return buffer.build();
         });
@@ -1435,7 +1435,7 @@ public class FastStream<T> implements Stream<T> {
     }
 
 
-    public interface SteamBuilder<T> extends Consumer<T> {
+    public interface StreamBuilder<T> extends Consumer<T> {
 
         /**
          * Adds an element to the stream being built.
@@ -1460,7 +1460,7 @@ public class FastStream<T> implements Stream<T> {
          *     return this;
          * }</pre>
          */
-        default FastStream.SteamBuilder<T> add(T t) {
+        default StreamBuilder<T> add(T t) {
             accept(t);
             return this;
         }

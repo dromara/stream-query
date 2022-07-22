@@ -83,13 +83,13 @@ class FastStreamTest {
     @Test
     void testGroup() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        Map<String, List<Integer>> groupingBy = FastStream.of(list).group(String::valueOf);
+        Map<String, List<Integer>> group = FastStream.of(list).group(String::valueOf);
         Assertions.assertEquals(
                 new HashMap<String, List<Integer>>() {{
                     put("1", singletonList(1));
                     put("2", singletonList(2));
                     put("3", singletonList(3));
-                }}, groupingBy);
+                }}, group);
     }
 
     @Test
@@ -123,7 +123,7 @@ class FastStreamTest {
     @Test
     void testForeachIdx() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
-        FastStream.SteamBuilder<String> builder = FastStream.builder();
+        FastStream.StreamBuilder<String> builder = FastStream.builder();
         FastStream.of(list).forEachIndex((e, i) -> builder.accept(i + 1 + "." + e));
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
         // 并行流时为-1
@@ -133,7 +133,7 @@ class FastStreamTest {
     @Test
     void testForEachOrderedIndex() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
-        FastStream.SteamBuilder<String> builder = FastStream.builder();
+        FastStream.StreamBuilder<String> builder = FastStream.builder();
         FastStream.of(list).forEachOrderedIdx((e, i) -> builder.accept(i + 1 + "." + e));
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
     }
