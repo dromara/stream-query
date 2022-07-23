@@ -353,7 +353,7 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
     }
 
     public <R> FastStream<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMap(w -> FastStream.of(mapper.apply(w)));
+        return flatMap(w -> Opp.of(w).map(mapper).map(FastStream::of).orElseGet(FastStream::empty));
     }
 
     /**
