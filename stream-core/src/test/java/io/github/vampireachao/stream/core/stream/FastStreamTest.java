@@ -22,7 +22,7 @@ class FastStreamTest {
 
     @Test
     void testOf() {
-        Assertions.assertEquals(3, FastStream.of(Arrays.asList(1, 2, 3)).count());
+        Assertions.assertEquals(3, FastStream.of(Arrays.asList(1, 2, 3), true).count());
         Assertions.assertEquals(3, FastStream.of(1, 2, 3).count());
         Assertions.assertEquals(3, FastStream.of(Stream.builder().add(1).add(2).add(3).build()).count());
     }
@@ -217,11 +217,27 @@ class FastStreamTest {
     }
 
     @Test
+    void testFindFirstIdx() {
+        List<Integer> list = Arrays.asList(null, 2, 3);
+        Integer idx = FastStream.of(list).findFirstIdx(Objects::nonNull);
+        Assertions.assertEquals(1, idx);
+        Assertions.assertEquals(-1, FastStream.of(list).parallel().findFirstIdx(Objects::nonNull));
+    }
+
+    @Test
     void testFindLast() {
         List<Integer> list = Arrays.asList(1, null, 3);
         Integer find = FastStream.of(list).findLast(Objects::nonNull);
         Assertions.assertEquals(3, find);
         Assertions.assertEquals(3, FastStream.of(list).findLast().orElse(null));
+    }
+
+    @Test
+    void testFindLastIdx() {
+        List<Integer> list = Arrays.asList(1, null, 3);
+        Integer idx = FastStream.of(list).findLastIdx(Objects::nonNull);
+        Assertions.assertEquals(2, idx);
+        Assertions.assertEquals(-1, FastStream.of(list).parallel().findLastIdx(Objects::nonNull));
     }
 
     @Test

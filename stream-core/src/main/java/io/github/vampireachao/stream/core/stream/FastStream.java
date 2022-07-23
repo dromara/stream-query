@@ -184,7 +184,11 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
     }
 
     public static <T> FastStream<T> of(Iterable<T> iterable) {
-        return Optional.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, false)).map(FastStream::new).orElseGet(FastStream::empty);
+        return of(iterable, false);
+    }
+
+    public static <T> FastStream<T> of(Iterable<T> iterable, boolean parallel) {
+        return Optional.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(FastStream::new).orElseGet(FastStream::empty);
     }
 
     public static <T> FastStream<T> of(Stream<T> stream) {
@@ -1464,8 +1468,28 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
         return filter(predicate).findFirst().orElse(null);
     }
 
+    public Integer findFirstIdx(Predicate<? super T> predicate) {
+        AtomicInteger idxRef = new AtomicInteger(-1);
+        forEachIdx((e, i) -> {
+            if (predicate.test(e) && idxRef.get() == -1) {
+                idxRef.set(i);
+            }
+        });
+        return idxRef.get();
+    }
+
     public T findLast(Predicate<? super T> predicate) {
         return reverse().filter(predicate).findFirst().orElse(null);
+    }
+
+    public Integer findLastIdx(Predicate<? super T> predicate) {
+        AtomicInteger idxRef = new AtomicInteger(-1);
+        forEachIdx((e, i) -> {
+            if (predicate.test(e)) {
+                idxRef.set(i);
+            }
+        });
+        return idxRef.get();
     }
 
     public <U, R> FastStream<R> zip(Iterable<U> other,
