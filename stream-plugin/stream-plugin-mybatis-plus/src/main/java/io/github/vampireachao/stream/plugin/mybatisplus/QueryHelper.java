@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.github.vampireachao.stream.core.collector.Collectors;
+import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
@@ -436,7 +436,7 @@ public class QueryHelper {
      * @param mapper       转换函数
      */
     public static <T, V> List<V> listObjs(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(queryWrapper).stream().map(mapper).collect(Collectors.toList()));
+        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(queryWrapper).stream().map(mapper).collect(Collective.toList()));
     }
 
     /**
@@ -446,7 +446,7 @@ public class QueryHelper {
      * @param mapper      转换函数
      */
     public static <T, V> List<V> listObjs(Class<T> entityClass, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(null).stream().map(mapper).collect(Collectors.toList()));
+        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(null).stream().map(mapper).collect(Collective.toList()));
     }
 
     /**

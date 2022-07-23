@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.github.vampireachao.stream.core.collector.Collectors;
+import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.stream.StreamHelper;
 
@@ -53,7 +53,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, List<$ENTITY>> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collectors.groupingBy(keyFunction))).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collective.groupingBy(keyFunction))).orElseGet(HashMap::new);
     }
 
     // dataList key value
@@ -81,7 +81,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, List<$VALUE>> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, dataList, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks);
+        return query(queryOperator, dataList, keyFunction, Collective.mapping(valueFunction, Collective.toList()), isParallel, peeks);
     }
 
     // dataList key collector
@@ -109,7 +109,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, A, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, Collector<$ENTITY, A, $VALUE> downstream, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collectors.groupingBy(keyFunction, downstream))).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collective.groupingBy(keyFunction, downstream))).orElseGet(HashMap::new);
     }
 
 
@@ -166,7 +166,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, List<$VALUE>> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, data, keyFunction, Collectors.mapping(valueFunction, Collectors.toList()), isParallel, peeks);
+        return query(queryOperator, data, keyFunction, Collective.mapping(valueFunction, Collective.toList()), isParallel, peeks);
     }
 
     // data key collector
@@ -194,6 +194,6 @@ public class OneToMany {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, A, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, Collector<$ENTITY, A, $VALUE> downstream, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collectors.groupingBy(keyFunction, downstream))).orElseGet(HashMap::new);
+        return QueryHelper.lambdaQuery(data, keyFunction).map(queryOperator).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collective.groupingBy(keyFunction, downstream))).orElseGet(HashMap::new);
     }
 }

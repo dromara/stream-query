@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static io.github.vampireachao.stream.core.collector.Collectors.*;
+import static io.github.vampireachao.stream.core.collector.Collective.*;
 
 /**
  * Collectors测试
@@ -15,7 +15,7 @@ import static io.github.vampireachao.stream.core.collector.Collectors.*;
  * @author VampireAchao
  * @since 2022/6/22 11:10
  */
-class CollectorsTest {
+class CollectiveTest {
 
     @Test
     void testToMap() {

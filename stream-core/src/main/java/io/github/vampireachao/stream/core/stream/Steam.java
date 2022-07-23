@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.core.stream;
 
+import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.io.PrintStream;
@@ -134,7 +135,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <T>     元素类型
      * @param hasNext 条件值
      * @param seed    初始值
-     * @param f       用上一个元素作为参数执行并返回一个新的元素
+     * @param next    用上一个元素作为参数执行并返回一个新的元素
      * @return 无限有序流
      */
     public static <T> Steam<T> iterate(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
@@ -1103,7 +1104,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 集合
      */
     public <C extends Collection<T>> C toColl(Supplier<C> collectionFactory) {
-        return collect(Collectors.toCollection(collectionFactory));
+        return collect(Collective.toCollection(collectionFactory));
     }
 
     /**
@@ -1112,7 +1113,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return list
      */
     public List<T> toList() {
-        return collect(Collectors.toList());
+        return collect(Collective.toList());
     }
 
     /**
@@ -1121,7 +1122,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return hashSet
      */
     public Set<T> toSet() {
-        return collect(Collectors.toSet());
+        return collect(Collective.toSet());
     }
 
     /**
@@ -1166,7 +1167,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public String join(CharSequence delimiter,
                        CharSequence prefix,
                        CharSequence suffix) {
-        return map(String::valueOf).collect(Collectors.joining(delimiter, prefix, suffix));
+        return map(String::valueOf).collect(Collective.joining(delimiter, prefix, suffix));
     }
 
     /**
@@ -1226,7 +1227,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                                                Function<? super T, ? extends U> valueMapper,
                                                BinaryOperator<U> mergeFunction,
                                                Supplier<M> mapSupplier) {
-        return collect(CollectorUtil.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
+        return collect(Collective.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
     }
 
 
@@ -1238,7 +1239,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return {@link Collector}
      */
     public <K> Map<K, List<T>> group(Function<? super T, ? extends K> classifier) {
-        return group(classifier, Collectors.toList());
+        return group(classifier, Collective.toList());
     }
 
     /**
@@ -1271,7 +1272,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public <K, D, A, M extends Map<K, D>> M group(Function<? super T, ? extends K> classifier,
                                                   Supplier<M> mapFactory,
                                                   Collector<? super T, A, D> downstream) {
-        return collect(CollectorUtil.groupingBy(classifier, mapFactory, downstream));
+        return collect(Collective.groupingBy(classifier, mapFactory, downstream));
     }
 
     public <U, R> Steam<R> zip(Iterable<U> other,
