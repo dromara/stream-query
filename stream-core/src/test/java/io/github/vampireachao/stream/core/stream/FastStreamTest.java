@@ -42,7 +42,7 @@ class FastStreamTest {
     @Test
     void testToCollection() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        List<String> toCollection = FastStream.of(list).map(String::valueOf).toCollection(LinkedList::new);
+        List<String> toCollection = FastStream.of(list).map(String::valueOf).toColl(LinkedList::new);
         Assertions.assertEquals(Arrays.asList("1", "2", "3"), toCollection);
     }
 
@@ -143,11 +143,20 @@ class FastStreamTest {
     }
 
     @Test
-    void testForEachOrderedIndex() {
+    void testForEachOrderedIdx() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
         FastStream.StreamBuilder<String> builder = FastStream.builder();
         FastStream.of(list).forEachOrderedIdx((e, i) -> builder.accept(i + 1 + "." + e));
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), builder.build().toList());
+    }
+
+    @Test
+    void testFlatMapIdx() {
+        List<String> list = Arrays.asList("dromara", "hutool", "sweet");
+        List<String> mapIndex = FastStream.of(list).flatMapIdx((e, i) -> FastStream.of(i + 1 + "." + e)).toList();
+        Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), mapIndex);
+        // 并行流时为-1
+        Assertions.assertEquals(Arrays.asList(-1, -1, -1), FastStream.of(1, 2, 3).parallel().mapIdx((e, i) -> i).toList());
     }
 
     @Test
@@ -207,6 +216,18 @@ class FastStreamTest {
         Assertions.assertEquals(1, FastStream.of(list).at(-3));
         Assertions.assertEquals(3, FastStream.of(list).at(-1));
         Assertions.assertNull(FastStream.of(list).at(-4));
+    }
+
+    @Test
+    void testSplice() {
+        List<Integer> list = Arrays.asList(1, 2, 3);
+        Assertions.assertEquals(Arrays.asList(1, 2, 2, 3), FastStream.of(list).splice(1, 0, 2).toList());
+        Assertions.assertEquals(Arrays.asList(1, 2, 3, 3), FastStream.of(list).splice(3, 1, 3).toList());
+        Assertions.assertEquals(Arrays.asList(1, 2, 4), FastStream.of(list).splice(2, 1, 4).toList());
+        Assertions.assertEquals(Arrays.asList(1, 2), FastStream.of(list).splice(2, 1).toList());
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), FastStream.of(list).splice(2, 0).toList());
+        Assertions.assertEquals(Arrays.asList(1, 2), FastStream.of(list).splice(-1, 1).toList());
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), FastStream.of(list).splice(-2, 2, 2, 3).toList());
     }
 
     @Test

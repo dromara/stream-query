@@ -296,6 +296,11 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
         return new FastStream<>(stream.flatMap(mapper));
     }
 
+    public <R> FastStream<R> flatMapIdx(BiFunction<? super T, Integer, ? extends Stream<? extends R>> mapper) {
+        AtomicInteger index = new AtomicInteger(-1);
+        return flatMap(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
+    }
+
     /**
      * Returns an {@code IntBaseSteam} consisting of the results of applying the
      * given function to the elements of this stream.
@@ -1365,7 +1370,7 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
         return stream.toString();
     }
 
-    public <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory) {
+    public <C extends Collection<T>> C toColl(Supplier<C> collectionFactory) {
         return collect(Collectors.toCollection(collectionFactory));
     }
 
@@ -1453,12 +1458,12 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
         }
         List<T> list = toList();
         if (idx > -1) {
-            if (list.size() <= idx) {
+            if (idx >= list.size()) {
                 return null;
             }
             return list.get(idx);
         }
-        if (list.size() < -idx) {
+        if (-idx > list.size()) {
             return null;
         }
         return list.get(list.size() + idx);
@@ -1496,6 +1501,26 @@ public class FastStream<T> implements Stream<T>, Iterable<T> {
                                     BiFunction<? super T, ? super U, ? extends R> zipper) {
         Iterator<U> iterator = other.iterator();
         return new FastStream<>(stream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
+    }
+
+    @SuppressWarnings("unchecked")
+    public FastStream<T> splice(int start, int deleteCount, T... items) {
+        List<T> list = toList();
+        if (start > -1) {
+            if (start >= list.size()) {
+                return FastStream.concat(FastStream.of(list), FastStream.of(items));
+            }
+            list.removeAll(list.subList(start, start + deleteCount));
+            list.addAll(start, Arrays.asList(items));
+            return FastStream.of(list);
+        }
+        if (-start > list.size()) {
+            return FastStream.concat(FastStream.of(items), FastStream.of(list));
+        }
+        start = list.size() + start;
+        list.removeAll(list.subList(start, start + deleteCount));
+        list.addAll(start, Arrays.asList(items));
+        return FastStream.of(list);
     }
 
     public interface StreamBuilder<T> extends Consumer<T> {
