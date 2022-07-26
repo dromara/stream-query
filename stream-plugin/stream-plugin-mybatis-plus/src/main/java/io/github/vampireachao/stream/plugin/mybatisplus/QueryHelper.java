@@ -18,6 +18,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.plugin.mybatisplus.injector.IMapper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -26,6 +27,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -105,6 +108,21 @@ public class QueryHelper {
         Class<?> mapperClass = ClassUtils.toClassConfident(getTableInfo(entityClass).getCurrentNamespace());
         String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.INSERT_ONE);
         return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+    }
+
+    /**
+     * 以单条sql方式插入（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean saveOneSql(Collection<T> entityList) {
+        if (CollectionUtils.isEmpty(entityList)) {
+            return false;
+        }
+        Class<T> entityClass = getEntityClass(entityList);
+        return execute(entityClass, baseMapper -> Objects.equals(entityList.size(), baseMapper.insertOneSql(entityList)));
     }
 
     /**
@@ -526,39 +544,32 @@ public class QueryHelper {
      * @return 返回lambda执行结果
      */
     @SuppressWarnings("unchecked")
-    public static <T, R, M extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<M, R> sFunction) {
+    public static <T, R> R execute(Class<T> entityClass, SFunction<IMapper<T>, R> sFunction) {
         SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
         try {
-            M baseMapper = (M) SqlHelper.getMapper(entityClass, sqlSession);
-            return sFunction.apply(baseMapper);
+            BaseMapper<T> baseMapper = SqlHelper.getMapper(entityClass, sqlSession);
+            if (baseMapper instanceof IMapper) {
+                return sFunction.apply((IMapper<T>) baseMapper);
+            }
+            IMapper<T> proxyInstance = (IMapper<T>) Proxy.newProxyInstance(Thread.currentThread()
+                            .getContextClassLoader(),
+                    new Class[]{IMapper.class},
+                    ((proxy, method, args) -> {
+                        Method baseMapperMethod;
+                        try {
+                            baseMapperMethod = org.springframework.util.ClassUtils.getMethod(baseMapper.getClass(),
+                                    method.getName());
+                        } catch (IllegalStateException e) {
+                            throw new IllegalStateException(TableInfoHelper.getTableInfo(entityClass)
+                                    .getCurrentNamespace() + " is not implement " + IMapper.class.getName(), e);
+                        }
+                        ReflectHelper.accessible(baseMapperMethod);
+                        return baseMapperMethod.invoke(method, args);
+                    }));
+            return sFunction.apply(proxyInstance);
         } finally {
             SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }
-    }
-
-    /**
-     * 通过entityClass获取Mapper，记得要释放连接
-     * 例： {@code
-     * SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
-     * try {
-     * BaseMapper<User> userMapper = getMapper(User.class, sqlSession);
-     * } finally {
-     * sqlSession.close();
-     * }
-     * }
-     *
-     * @param entityClass 实体
-     * @param <T>         实体类型
-     * @return Mapper
-     */
-    @SuppressWarnings("unchecked")
-    public static <T, M extends BaseMapper<T>> M getMapper(Class<T> entityClass, SqlSession sqlSession) {
-        Assert.notNull(entityClass, "entityClass can't be null!");
-        TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass))
-                .orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".",
-                        entityClass.getName()));
-        Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
-        return (M) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
     }
 
     /**

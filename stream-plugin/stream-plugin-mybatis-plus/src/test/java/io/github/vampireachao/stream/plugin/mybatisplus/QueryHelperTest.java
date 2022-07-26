@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
+import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,37 @@ import java.util.*;
  */
 @MybatisPlusTest
 class QueryHelperTest {
+
+    @Test
+    void testExecute() {
+        UserInfo entity = new UserInfo();
+        entity.setName("cat");
+        entity.setAge(20);
+        entity.setEmail("achao1441470436@gmail.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("ruben");
+        List<UserInfo> list = Arrays.asList(userInfo, entity);
+        int effectRows = QueryHelper.execute(UserInfo.class, m -> m.insertOneSql(list));
+        Assertions.assertEquals(2, effectRows);
+        Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
+
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> QueryHelper.execute(UserRole.class, m -> m.insertOneSql(Collections.emptyList())));
+    }
+
+    @Test
+    void testSaveOneSql() {
+        UserInfo entity = new UserInfo();
+        entity.setName("cat");
+        entity.setAge(20);
+        entity.setEmail("achao1441470436@gmail.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("ruben");
+        List<UserInfo> list = Arrays.asList(userInfo, entity);
+        boolean isSuccess = QueryHelper.saveOneSql(list);
+        Assertions.assertTrue(isSuccess);
+        Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
+    }
 
     @Test
     void testSave() {

@@ -16,6 +16,6 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @param list 数据
      * @return 条数
      */
-    int insertBatch(@Param("list") Collection<T> list);
+    int insertOneSql(@Param("list") Collection<T> list);
 
 }
