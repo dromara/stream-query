@@ -9,7 +9,7 @@ public enum SqlMethodEnum {
     /**
      * 插入
      */
-    INSERT_BATCH("insertOneSql", "插入多条数据（mysql语法批量）", "<script>\nINSERT INTO %s %s VALUES %s\n</script>"),
+    INSERT_ONE_SQL("insertOneSql", "插入多条数据（mysql语法批量）", "<script>\nINSERT INTO %s %s VALUES %s\n</script>"),
     ;
     private final String method;
     private final String desc;

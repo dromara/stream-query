@@ -26,10 +26,10 @@ public class SqlInjectorConfig {
             @Override
             public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
-                methodList.add(new AbstractMethod(SqlMethodEnum.INSERT_BATCH.getMethod()) {
+                methodList.add(new AbstractMethod(SqlMethodEnum.INSERT_ONE_SQL.getMethod()) {
                     @Override
                     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-                        final String sql = SqlMethodEnum.INSERT_BATCH.getSql();
+                        final String sql = SqlMethodEnum.INSERT_ONE_SQL.getSql();
                         final String fieldSql = prepareFieldSql(tableInfo);
                         final String valueSql = prepareValuesSqlForMysqlBatch(tableInfo);
                         final String sqlResult = String.format(sql, tableInfo.getTableName(), fieldSql, valueSql);
