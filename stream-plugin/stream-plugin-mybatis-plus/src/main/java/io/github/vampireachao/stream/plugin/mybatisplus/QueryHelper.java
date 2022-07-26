@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -21,6 +22,8 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.property.PropertyNamer;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -75,7 +78,7 @@ public class QueryHelper {
             return false;
         }
         Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
-        Integer result = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insert(entity));
+        Integer result = execute(entityClass, baseMapper -> baseMapper.insert(entity));
         return SqlHelper.retBool(result);
     }
 
@@ -146,7 +149,7 @@ public class QueryHelper {
      * @param entityClass 实体类
      */
     public static <T> boolean removeById(Serializable id, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(id)));
+        return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(id)));
     }
 
     /**
@@ -159,7 +162,7 @@ public class QueryHelper {
             return false;
         }
         Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
+        return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
     }
 
     /**
@@ -168,7 +171,7 @@ public class QueryHelper {
      * @param queryWrapper 实体包装类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> boolean remove(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.retBool(baseMapper.delete(queryWrapper)));
+        return execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.retBool(baseMapper.delete(queryWrapper)));
     }
 
     /**
@@ -181,7 +184,7 @@ public class QueryHelper {
             return false;
         }
         Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
+        return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
     }
 
     /**
@@ -223,7 +226,7 @@ public class QueryHelper {
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     public static <T> boolean update(T entity, AbstractWrapper<T, ?, ?> updateWrapper) {
-        return SqlHelper.execute(getEntityClass(updateWrapper), baseMapper -> SqlHelper.retBool(baseMapper.update(entity, updateWrapper)));
+        return execute(getEntityClass(updateWrapper), baseMapper -> SqlHelper.retBool(baseMapper.update(entity, updateWrapper)));
     }
 
     /**
@@ -259,7 +262,7 @@ public class QueryHelper {
      * @param entityClass 实体类
      */
     public static <T> boolean removeByIds(Collection<? extends Serializable> list, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteBatchIds(list)));
+        return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteBatchIds(list)));
     }
 
     /**
@@ -269,7 +272,7 @@ public class QueryHelper {
      * @param entityClass 实体类
      */
     public static <T> boolean removeByMap(Map<String, Object> columnMap, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteByMap(columnMap)));
+        return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteByMap(columnMap)));
     }
 
     /**
@@ -297,7 +300,7 @@ public class QueryHelper {
      * @param entityClass 实体类
      */
     public static <T> T getById(Serializable id, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectById(id));
+        return execute(entityClass, baseMapper -> baseMapper.selectById(id));
     }
 
     /**
@@ -319,9 +322,9 @@ public class QueryHelper {
     public static <T> T getOne(AbstractWrapper<T, ?, ?> queryWrapper, boolean throwEx) {
         Class<T> entityClass = getEntityClass(queryWrapper);
         if (throwEx) {
-            return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper));
+            return execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper));
         }
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.getObject(log, baseMapper.selectList(queryWrapper)));
+        return execute(entityClass, baseMapper -> SqlHelper.getObject(log, baseMapper.selectList(queryWrapper)));
     }
 
     /**
@@ -331,7 +334,7 @@ public class QueryHelper {
      * @param entityClass 实体类
      */
     public static <T> List<T> listByMap(Map<String, Object> columnMap, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectByMap(columnMap));
+        return execute(entityClass, baseMapper -> baseMapper.selectByMap(columnMap));
     }
 
     /**
@@ -341,7 +344,7 @@ public class QueryHelper {
      * @param entityClass 实体类
      */
     public static <T> List<T> listByIds(Collection<? extends Serializable> idList, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectBatchIds(idList));
+        return execute(entityClass, baseMapper -> baseMapper.selectBatchIds(idList));
     }
 
     /**
@@ -350,7 +353,7 @@ public class QueryHelper {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> Map<String, Object> getMap(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper)));
+        return execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper)));
     }
 
     /**
@@ -360,7 +363,7 @@ public class QueryHelper {
      * @see Wrappers#emptyWrapper()
      */
     public static <T> long count(Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectCount(null));
+        return execute(entityClass, baseMapper -> baseMapper.selectCount(null));
     }
 
     /**
@@ -369,7 +372,7 @@ public class QueryHelper {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> long count(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectCount(queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectCount(queryWrapper));
     }
 
     /**
@@ -379,7 +382,7 @@ public class QueryHelper {
      */
     public static <T> List<T> list(AbstractWrapper<T, ?, ?> queryWrapper) {
         Class<T> entityClass = getEntityClass(queryWrapper);
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(queryWrapper));
+        return execute(entityClass, baseMapper -> baseMapper.selectList(queryWrapper));
     }
 
     /**
@@ -389,7 +392,7 @@ public class QueryHelper {
      * @see Wrappers#emptyWrapper()
      */
     public static <T> List<T> list(Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(null));
+        return execute(entityClass, baseMapper -> baseMapper.selectList(null));
     }
 
     /**
@@ -398,7 +401,7 @@ public class QueryHelper {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<Map<String, Object>> listMaps(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMaps(queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMaps(queryWrapper));
     }
 
     /**
@@ -408,7 +411,7 @@ public class QueryHelper {
      * @see Wrappers#emptyWrapper()
      */
     public static <T> List<Map<String, Object>> listMaps(Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectMaps(null));
+        return execute(entityClass, baseMapper -> baseMapper.selectMaps(null));
     }
 
     /**
@@ -426,7 +429,7 @@ public class QueryHelper {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<Object> listObjs(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectObjs(queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectObjs(queryWrapper));
     }
 
     /**
@@ -436,7 +439,7 @@ public class QueryHelper {
      * @param mapper       转换函数
      */
     public static <T, V> List<V> listObjs(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(queryWrapper).stream().map(mapper).collect(Collective.toList()));
+        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(queryWrapper).stream().map(mapper).collect(Collective.toList()));
     }
 
     /**
@@ -446,7 +449,7 @@ public class QueryHelper {
      * @param mapper      转换函数
      */
     public static <T, V> List<V> listObjs(Class<T> entityClass, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(null).stream().map(mapper).collect(Collective.toList()));
+        return execute(entityClass, baseMapper -> baseMapper.selectList(null).stream().map(mapper).collect(Collective.toList()));
     }
 
     /**
@@ -457,7 +460,7 @@ public class QueryHelper {
      * @see Wrappers#emptyWrapper()
      */
     public static <T, E extends IPage<Map<String, Object>>> E pageMaps(E page, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectMapsPage(page, null));
+        return execute(entityClass, baseMapper -> baseMapper.selectMapsPage(page, null));
     }
 
     /**
@@ -467,7 +470,7 @@ public class QueryHelper {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T, E extends IPage<Map<String, Object>>> E pageMaps(E page, AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMapsPage(page, queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMapsPage(page, queryWrapper));
     }
 
     /**
@@ -478,7 +481,7 @@ public class QueryHelper {
      * @see Wrappers#emptyWrapper()
      */
     public static <T> IPage<T> page(IPage<T> page, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectPage(page, null));
+        return execute(entityClass, baseMapper -> baseMapper.selectPage(page, null));
     }
 
     /**
@@ -488,7 +491,7 @@ public class QueryHelper {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> IPage<T> page(IPage<T> page, AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectPage(page, queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectPage(page, queryWrapper));
     }
 
     /**
@@ -510,7 +513,52 @@ public class QueryHelper {
      * @param mapper       转换函数
      */
     public static <T, V> V getObj(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> mapper.apply(baseMapper.selectOne(queryWrapper)));
+        return execute(getEntityClass(queryWrapper), baseMapper -> mapper.apply(baseMapper.selectOne(queryWrapper)));
+    }
+
+    /**
+     * 通过entityClass获取BaseMapper，再传入lambda使用该mapper，本方法自动释放链接
+     *
+     * @param entityClass 实体类
+     * @param sFunction   lambda操作，例如 {@code m->m.selectList(wrapper)}
+     * @param <T>         实体类的类型
+     * @param <R>         返回值类型
+     * @return 返回lambda执行结果
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, R, M extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<M, R> sFunction) {
+        SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+        try {
+            M baseMapper = (M) SqlHelper.getMapper(entityClass, sqlSession);
+            return sFunction.apply(baseMapper);
+        } finally {
+            SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
+        }
+    }
+
+    /**
+     * 通过entityClass获取Mapper，记得要释放连接
+     * 例： {@code
+     * SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+     * try {
+     * BaseMapper<User> userMapper = getMapper(User.class, sqlSession);
+     * } finally {
+     * sqlSession.close();
+     * }
+     * }
+     *
+     * @param entityClass 实体
+     * @param <T>         实体类型
+     * @return Mapper
+     */
+    @SuppressWarnings("unchecked")
+    public static <T, M extends BaseMapper<T>> M getMapper(Class<T> entityClass, SqlSession sqlSession) {
+        Assert.notNull(entityClass, "entityClass can't be null!");
+        TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass))
+                .orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".",
+                        entityClass.getName()));
+        Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
+        return (M) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
     }
 
     /**
