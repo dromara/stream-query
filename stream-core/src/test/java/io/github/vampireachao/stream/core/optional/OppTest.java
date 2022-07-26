@@ -20,8 +20,8 @@ class OppTest {
 
     @Test
     void testOfEmptyAble() {
-        Assertions.assertTrue(Opp.ofEmptyAble(Arrays.asList(null, null, null)).isEmpty());
-        Assertions.assertTrue(Opp.ofEmptyAble(Arrays.asList(null, 1, null)).isPresent());
+        Assertions.assertTrue(Opp.empty(Arrays.asList(null, null, null)).isEmpty());
+        Assertions.assertTrue(Opp.empty(Arrays.asList(null, 1, null)).isPresent());
     }
 
     @Test

@@ -258,7 +258,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 拆分后元素组成的流
      */
     public static Steam<String> split(CharSequence str, String regex) {
-        return Opp.ofBlankAble(str).map(String::valueOf).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
+        return Opp.blank(str).map(String::valueOf).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
     }
 
     /**

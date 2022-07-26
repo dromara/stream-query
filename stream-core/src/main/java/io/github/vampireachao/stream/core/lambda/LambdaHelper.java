@@ -1,6 +1,10 @@
 package io.github.vampireachao.stream.core.lambda;
 
+import io.github.vampireachao.stream.core.bean.BeanHelper;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
@@ -93,6 +97,15 @@ public class LambdaHelper {
             }
             throw new IllegalStateException("No lambda method found.");
         });
+    }
+
+    @SafeVarargs
+    public static <T> String[] getPropertyNames(SerFunc<T, ?>... funcs) {
+        return Steam.of(funcs).map(LambdaHelper::getPropertyName).toArray(String[]::new);
+    }
+
+    public static <T> String getPropertyName(SerFunc<T, ?> func) {
+        return Opp.ofNullable(func).map(LambdaHelper::resolve).map(LambdaExecutable::getName).map(BeanHelper::getPropertyName).get();
     }
 
 }

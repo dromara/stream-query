@@ -5,7 +5,6 @@ import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
-import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.lang.reflect.Type;
@@ -84,7 +83,7 @@ public class Opp<T> {
      * @param value 传入需要包裹的元素
      * @return 一个包裹里元素可能为空，或者为空字符串的 {@code Opp}
      */
-    public static <T extends CharSequence> Opp<T> ofBlankAble(T value) {
+    public static <T extends CharSequence> Opp<T> blank(T value) {
         return Opp.ofNullable(value).filter(str -> !str.toString().trim().isEmpty());
     }
 
@@ -98,7 +97,7 @@ public class Opp<T> {
      * @return 一个包裹里元素可能为空的 {@code Opp}
      * @since 5.7.17
      */
-    public static <T, R extends Collection<T>> Opp<R> ofEmptyAble(R value) {
+    public static <T, R extends Collection<T>> Opp<R> empty(R value) {
         return Opp.ofNullable(value).filter(coll -> !coll.isEmpty() && !Objects.equals(Collections.frequency(value, null), value.size()));
     }
 
@@ -452,7 +451,7 @@ public class Opp<T> {
      * @return 如果包裹里元素的值存在，则返回该值，否则执行传入的操作
      * @throws NullPointerException 如果值不存在，并且传入的操作为 {@code null}
      */
-    public T orElseRun(SerRunn action) {
+    public <R extends Runnable> T orElseRun(R action) {
         if (isPresent()) {
             return value;
         } else {
@@ -468,7 +467,7 @@ public class Opp<T> {
      * @return 如果未发生异常，则返回该值，否则返回传入的{@code other}
      * @since 5.7.17
      */
-    public T exceptionOrElse(T other) {
+    public T failOrElse(T other) {
         return isFail() ? other : value;
     }
 
@@ -596,5 +595,13 @@ public class Opp<T> {
 
     public <R> Opp<T> filterEqual(R value) {
         return filter(Predicate.isEqual(value));
+    }
+
+    public <R> boolean isEqual(R value) {
+        return filterEqual(value).isPresent();
+    }
+
+    public boolean is(Predicate<T> predicate) {
+        return filter(predicate).isPresent();
     }
 }
