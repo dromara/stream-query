@@ -29,7 +29,7 @@ class IMapperTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        int i = userInfoMapper.insertOneSql(list);
+        long i = userInfoMapper.insertOneSql(list);
         Assertions.assertEquals(2, i);
         Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
     }

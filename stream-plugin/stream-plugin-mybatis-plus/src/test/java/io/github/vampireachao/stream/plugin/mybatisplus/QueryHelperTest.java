@@ -31,7 +31,7 @@ class QueryHelperTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        int effectRows = QueryHelper.execute(UserInfo.class, m -> m.insertOneSql(list));
+        long effectRows = QueryHelper.execute(UserInfo.class, m -> m.insertOneSql(list));
         Assertions.assertEquals(2, effectRows);
         Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
 

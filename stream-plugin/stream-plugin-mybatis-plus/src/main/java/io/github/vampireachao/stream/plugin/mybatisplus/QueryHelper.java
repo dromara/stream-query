@@ -122,7 +122,7 @@ public class QueryHelper {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
-        return execute(entityClass, baseMapper -> Objects.equals(entityList.size(), baseMapper.insertOneSql(entityList)));
+        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertOneSql(entityList));
     }
 
     /**
