@@ -8,3 +8,6 @@ spring:
 logging:
   level:
     root: DEBUG
+mybatis-plus:
+  mapper-locations:
+    - classpath:mapper/*.xml

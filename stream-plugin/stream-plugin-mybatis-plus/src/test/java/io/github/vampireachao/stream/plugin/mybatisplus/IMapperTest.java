@@ -21,7 +21,7 @@ class IMapperTest {
     private UserInfoMapper userInfoMapper;
 
     @Test
-    void insertBatchTest() {
+    void insertOneSqlTest() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -29,9 +29,24 @@ class IMapperTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        long i = userInfoMapper.insertOneSql(list);
-        Assertions.assertEquals(2, i);
+        long affectRows = userInfoMapper.insertOneSql(list);
+        Assertions.assertEquals(2L, affectRows);
         Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
+    }
+
+    @Test
+    void updateOneSqlTest() {
+        UserInfo sheep = new UserInfo();
+        sheep.setId(1L);
+        sheep.setName("bee bee I'm a sheep");
+
+        UserInfo ruben = new UserInfo();
+        ruben.setId(2L);
+        ruben.setName("rabbit");
+        long affectRows = userInfoMapper.updateOneSql(Arrays.asList(sheep, ruben));
+        Assertions.assertEquals(2L, affectRows);
+        Assertions.assertEquals("bee bee I'm a sheep", QueryHelper.getById(1L, UserInfo.class).getName());
+        Assertions.assertEquals("rabbit", QueryHelper.getById(2L, UserInfo.class).getName());
     }
 
 }
