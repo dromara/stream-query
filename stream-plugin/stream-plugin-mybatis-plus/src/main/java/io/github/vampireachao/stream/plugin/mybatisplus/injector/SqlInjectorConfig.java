@@ -39,15 +39,18 @@ public class SqlInjectorConfig {
             @SuppressWarnings("serial")
             public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
+                // one sql insert
                 methodList.add(new AbstractMethod(SqlMethodEnum.INSERT_ONE_SQL.getMethod()) {
                     @Override
                     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
                         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
                         SqlMethodEnum sqlMethod = SqlMethodEnum.INSERT_ONE_SQL;
+                        // column script
                         String columnScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList()).map(TableFieldInfo::getColumn)
                                         .unshift(tableInfo.getKeyColumn())
                                         .join(COMMA),
                                 LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
+                        // value column script in loop
                         String valuesScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList())
                                         .map(i -> SqlScriptUtils.convertChoose(
                                                 String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + i.getProperty()),
@@ -59,6 +62,7 @@ public class SqlInjectorConfig {
                                                 DEFAULT + COMMA))
                                         .nonNull().join(NEWLINE),
                                 LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
+                        // value part into foreach
                         valuesScript = SqlScriptUtils.convertForeach(valuesScript, COLLECTION_PARAM_NAME, null, ENTITY, COMMA);
 
                         String keyProperty = null;
