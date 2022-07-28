@@ -28,7 +28,6 @@ public class SqlInjectorConfig {
 
     public static final String DEFAULT = "default";
     public static final String NON_NULL_CONDITION = "%s != null and %s != null";
-
     public static final String COLLECTION_PARAM_NAME = "list";
 
     @Bean
