@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.github.vampireachao.stream.plugin.mybatisplus.injector.SqlInjectorConfig
+io.github.vampireachao.stream.plugin.mybatisplus.injector.StreamQuerySqlInjectorAutoConfiguration

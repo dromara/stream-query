@@ -13,6 +13,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Documented
 @Inherited
-@Import({SqlInjectorConfig.class})
+@Import({StreamQuerySqlInjectorAutoConfiguration.class})
 public @interface EnableSqlInject {
 }
