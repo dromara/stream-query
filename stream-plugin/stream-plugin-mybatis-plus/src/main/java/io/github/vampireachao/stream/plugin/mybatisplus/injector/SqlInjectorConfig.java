@@ -36,6 +36,7 @@ public class SqlInjectorConfig {
     public DefaultSqlInjector defaultSqlInjector() {
         return new DefaultSqlInjector() {
             @Override
+            @SuppressWarnings("serial")
             public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
                 methodList.add(new AbstractMethod(SqlMethodEnum.INSERT_ONE_SQL.getMethod()) {
