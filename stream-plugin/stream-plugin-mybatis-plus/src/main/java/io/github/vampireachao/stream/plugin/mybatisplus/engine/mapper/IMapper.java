@@ -1,7 +1,7 @@
-package io.github.vampireachao.stream.plugin.mybatisplus.injector;
+package io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.constant.PluginConst;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;

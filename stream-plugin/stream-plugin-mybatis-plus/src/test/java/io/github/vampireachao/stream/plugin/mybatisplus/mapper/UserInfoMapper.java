@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus.mapper;
 
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.IMapper;
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.methods.InsertOneSql;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.methods.InsertOneSql;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.apache.ibatis.annotations.Param;
 

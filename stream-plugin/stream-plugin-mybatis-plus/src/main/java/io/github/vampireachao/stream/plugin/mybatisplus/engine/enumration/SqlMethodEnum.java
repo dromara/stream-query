@@ -1,4 +1,4 @@
-package io.github.vampireachao.stream.plugin.mybatisplus.injector;
+package io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration;
 
 /**
  * sql方法类型

@@ -1,4 +1,4 @@
-package io.github.vampireachao.stream.plugin.mybatisplus.injector.methods;
+package io.github.vampireachao.stream.plugin.mybatisplus.engine.methods;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import io.github.vampireachao.stream.core.stream.Steam;
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.SqlMethodEnum;
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.constant.PluginConst;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;

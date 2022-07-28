@@ -1,4 +1,4 @@
-package io.github.vampireachao.stream.plugin.mybatisplus.injector.constant;
+package io.github.vampireachao.stream.plugin.mybatisplus.engine.constant;
 
 /**
  * @author VampireAchao

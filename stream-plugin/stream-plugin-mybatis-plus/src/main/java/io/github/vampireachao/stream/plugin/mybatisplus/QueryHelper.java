@@ -18,7 +18,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.IMapper;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;

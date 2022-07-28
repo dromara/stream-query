@@ -1,9 +1,10 @@
-package io.github.vampireachao.stream.plugin.mybatisplus.injector;
+package io.github.vampireachao.stream.plugin.mybatisplus.engine.configuration;
 
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.methods.InsertOneSql;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.methods.InsertOneSql;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author VampireAchao
  */
-public class StreamQuerySqlInjectorAutoConfiguration {
+public class StreamPluginAutoConfiguration {
 
 
     @Bean

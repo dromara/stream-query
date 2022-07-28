@@ -3,7 +3,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import io.github.vampireachao.stream.plugin.mybatisplus.injector.EnableSqlInject;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
  * @author VampireAchao
  * @since 2022/5/21
  */
-@EnableSqlInject
+@EnableMybatisPlusPlugin
 @SpringBootApplication
 @MapperScan({"io.github.vampireachao.stream.plugin.mybatisplus.mapper**"})
 public class MybatisPlusTestApplication {
