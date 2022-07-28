@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
 
+import static io.github.vampireachao.stream.plugin.mybatisplus.injector.SqlInjectorConfig.COLLECTION_PARAM_NAME;
+
 /**
  * UserInfoMapper
  *
@@ -14,6 +16,5 @@ import java.util.Collection;
  */
 public interface UserInfoMapper extends IMapper<UserInfo> {
 
-    long updateOneSql(@Param("list") Collection<UserInfo> list);
-
+    long updateOneSql(@Param(COLLECTION_PARAM_NAME) Collection<UserInfo> list);
 }

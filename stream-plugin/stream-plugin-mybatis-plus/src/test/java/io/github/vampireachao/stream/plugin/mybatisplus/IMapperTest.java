@@ -21,7 +21,7 @@ class IMapperTest {
     private UserInfoMapper userInfoMapper;
 
     @Test
-    void insertOneSqlTest() {
+    void testInsertOneSql() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -35,7 +35,7 @@ class IMapperTest {
     }
 
     @Test
-    void updateOneSqlTest() {
+    void testUpdateOneSql() {
         UserInfo sheep = new UserInfo();
         sheep.setId(1L);
         sheep.setName("bee bee I'm a sheep");

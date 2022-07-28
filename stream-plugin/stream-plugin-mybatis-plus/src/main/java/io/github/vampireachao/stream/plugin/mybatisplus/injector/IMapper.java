@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
 
+import static io.github.vampireachao.stream.plugin.mybatisplus.injector.SqlInjectorConfig.COLLECTION_PARAM_NAME;
+
 /**
  * @author VampireAchao
  */
@@ -16,6 +18,6 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @param list 数据
      * @return 条数
      */
-    long insertOneSql(@Param("list") Collection<T> list);
+    long insertOneSql(@Param(COLLECTION_PARAM_NAME) Collection<T> list);
 
 }
