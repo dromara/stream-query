@@ -233,7 +233,7 @@ public class Database {
     }
 
     /**
-     * 强制根据id更新，指定的字段不管是否为null也会更新
+     * 强制根据id修改，指定的字段不管是否为null也会修改
      *
      * @param entity     实体对象
      * @param updateKeys 指定字段
@@ -275,7 +275,7 @@ public class Database {
     }
 
     /**
-     * 根据ID 批量更新
+     * 根据ID 批量修改
      *
      * @param entityList 实体对象集合
      */
@@ -284,10 +284,10 @@ public class Database {
     }
 
     /**
-     * 根据ID 批量更新
+     * 根据ID 批量修改
      *
      * @param entityList 实体对象集合
-     * @param batchSize  更新批次数量
+     * @param batchSize  修改批次数量
      */
     public static <T> boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Class<T> entityClass = getEntityClass(entityList);
@@ -321,7 +321,7 @@ public class Database {
     }
 
     /**
-     * TableId 注解存在更新记录，否插入一条记录
+     * TableId 注解存在修改记录，否插入一条记录
      *
      * @param entity 实体对象
      */
@@ -541,7 +541,7 @@ public class Database {
 
     /**
      * <p>
-     * 根据updateWrapper尝试更新，否继续执行saveOrUpdate(T)方法
+     * 根据updateWrapper尝试修改，否继续执行saveOrUpdate(T)方法
      * 此次修改主要是减少了此项业务代码的代码量（存在性验证之后的saveOrUpdate操作）
      * </p>
      *
