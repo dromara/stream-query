@@ -1309,6 +1309,12 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return Steam.of(list);
     }
 
+    /**
+     * 按指定长度分割元素
+     *
+     * @param batchSize 按指定长度分割元素
+     * @return 流里面的元素是分好的流
+     */
     public Steam<Steam<T>> sub(int batchSize) {
         List<T> list = toList();
         if (list.size() <= batchSize) {
@@ -1318,6 +1324,12 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                 .map(skip -> Steam.of(list).skip(skip).limit(batchSize)).parallel(isParallel());
     }
 
+    /**
+     * 按指定长度分割元素
+     *
+     * @param batchSize 按指定长度分割元素
+     * @return 流里面的元素是分好的list
+     */
     public Steam<List<T>> subList(int batchSize) {
         return sub(batchSize).map(Steam::toList);
     }
