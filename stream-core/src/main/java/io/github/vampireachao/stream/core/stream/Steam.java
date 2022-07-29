@@ -251,6 +251,16 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
+     *  通过传入的Stream<String> 和length得到流中字符串长度与length相等的个数
+     * @param stream 要进行查值的流
+     * @param length 想要得到流中字符串长度为length的个数
+     * @return 流中字符串长度为length的个数有多少个
+     */
+    public static long eqLengthStr(Stream<String> stream,Integer length){
+        return stream.filter(str -> str.length() == length).count();
+    }
+
+    /**
      * 拆分字符串，转换为串行流
      *
      * @param str   字符串
@@ -306,6 +316,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public Steam<T> nonNull() {
         return new Steam<>(stream.filter(Objects::nonNull));
     }
+
+
 
     /**
      * 返回与指定函数将元素作为参数执行的结果组成的流
@@ -783,6 +795,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public Optional<T> max(Comparator<? super T> comparator) {
         return stream.max(comparator);
     }
+
+
 
     /**
      * 返回流元素个数

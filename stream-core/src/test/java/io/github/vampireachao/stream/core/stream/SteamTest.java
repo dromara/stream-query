@@ -37,6 +37,16 @@ class SteamTest {
     void testIterator() {
         List<Integer> list = Steam.iterate(0, i -> i < 3, i -> ++i).toList();
         Assertions.assertEquals(Arrays.asList(0, 1, 2), list);
+
+        List<Integer> limitList = Steam.iterate(0, i -> i + 1).limit(3).toList();
+        Assertions.assertEquals(Arrays.asList(0, 1, 2),limitList);
+    }
+
+    @Test
+    void testEQLengthStr(){
+        Stream<String> stream = Arrays.asList("1", "2", "3").stream();
+        long lengthStr = Steam.eqLengthStr(stream, 1);
+        Assertions.assertEquals(3, lengthStr);
     }
 
     @Test
