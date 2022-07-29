@@ -29,7 +29,7 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @param list 集合
      * @return 是否成功
      */
-    default boolean insertFewSql(Collection<T> list) {
+    default long insertFewSql(Collection<T> list) {
         return this.insertFewSql(list, PluginConst.DEFAULT_BATCH_SIZE);
     }
 
@@ -40,7 +40,7 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @param batchSize 分割量
      * @return 是否成功
      */
-    default boolean insertFewSql(Collection<T> list, int batchSize) {
-        return Steam.of(list).subList(batchSize).allMatch(l -> this.insertOneSql(l) == l.size());
+    default long insertFewSql(Collection<T> list, int batchSize) {
+        return Steam.of(list).subList(batchSize).mapToLong(this::insertOneSql).sum();
     }
 }

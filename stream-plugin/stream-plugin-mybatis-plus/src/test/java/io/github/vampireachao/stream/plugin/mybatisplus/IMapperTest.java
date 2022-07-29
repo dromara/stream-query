@@ -35,6 +35,20 @@ class IMapperTest {
     }
 
     @Test
+    void testInsertFewSql() {
+        UserInfo entity = new UserInfo();
+        entity.setName("cat");
+        entity.setAge(20);
+        entity.setEmail("achao1441470436@gmail.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("ruben");
+        List<UserInfo> list = Arrays.asList(userInfo, entity);
+        long affectRows = userInfoMapper.insertFewSql(list);
+        Assertions.assertEquals(2L, affectRows);
+        Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
+    }
+
+    @Test
     void testUpdateOneSql() {
         UserInfo sheep = new UserInfo();
         sheep.setId(1L);
