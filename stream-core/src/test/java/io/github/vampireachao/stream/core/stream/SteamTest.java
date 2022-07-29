@@ -268,4 +268,24 @@ class SteamTest {
         List<String> zip = Steam.of(orders).zip(list, (e1, e2) -> e1 + "." + e2).toList();
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), zip);
     }
+
+    @Test
+    void testSub() {
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+        List<List<Integer>> lists = Steam.of(list).sub(2).map(Steam::toList).toList();
+        Assertions.assertEquals(Arrays.asList(Arrays.asList(1, 2),
+                Arrays.asList(3, 4),
+                singletonList(5)
+        ), lists);
+    }
+
+    @Test
+    void testSubList() {
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+        List<List<Integer>> lists = Steam.of(list).subList(2).toList();
+        Assertions.assertEquals(Arrays.asList(Arrays.asList(1, 2),
+                Arrays.asList(3, 4),
+                singletonList(5)
+        ), lists);
+    }
 }

@@ -1309,6 +1309,25 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return Steam.of(list);
     }
 
+    public Steam<Steam<T>> sub(int batchSize) {
+        List<T> list = toList();
+        if (list.size() <= batchSize) {
+            return Steam.<Steam<T>>of(Steam.of(list)).parallel(isParallel());
+        }
+        return Steam.iterate(0, i -> i < list.size(), i -> i + batchSize)
+                .map(skip -> Steam.of(list).skip(skip).limit(batchSize)).parallel(isParallel());
+    }
+
+    public Steam<List<T>> subList(int batchSize) {
+        List<T> list = toList();
+        if (list.size() <= batchSize) {
+            return Steam.<List<T>>of(list).parallel(isParallel());
+        }
+        return Steam.iterate(0, i -> i < list.size(), i -> i + batchSize)
+                .map(skip -> Steam.of(list).skip(skip).limit(batchSize).toList())
+                .parallel(isParallel());
+    }
+
     public interface Builder<T> extends Consumer<T> {
 
         /**

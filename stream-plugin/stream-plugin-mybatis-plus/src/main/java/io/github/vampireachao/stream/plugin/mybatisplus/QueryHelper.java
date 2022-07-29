@@ -18,6 +18,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
@@ -39,11 +40,6 @@ import java.util.stream.Stream;
  * @since 1.0
  */
 public class QueryHelper {
-
-    /**
-     * 默认批次提交数量
-     */
-    public static final int DEFAULT_BATCH_SIZE = 1000;
     private static final Log log = LogFactory.getLog(QueryHelper.class);
 
     private QueryHelper() {
@@ -91,7 +87,7 @@ public class QueryHelper {
      * @param entityList 实体对象集合
      */
     public static <T> boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, DEFAULT_BATCH_SIZE);
+        return saveBatch(entityList, PluginConst.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -131,7 +127,7 @@ public class QueryHelper {
      * @param entityList 实体对象集合
      */
     public static <T> boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, DEFAULT_BATCH_SIZE);
+        return saveOrUpdateBatch(entityList, PluginConst.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -253,7 +249,7 @@ public class QueryHelper {
      * @param entityList 实体对象集合
      */
     public static <T> boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, DEFAULT_BATCH_SIZE);
+        return updateBatchById(entityList, PluginConst.DEFAULT_BATCH_SIZE);
     }
 
     /**
