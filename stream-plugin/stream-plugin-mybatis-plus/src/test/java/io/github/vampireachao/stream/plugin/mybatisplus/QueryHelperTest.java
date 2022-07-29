@@ -54,6 +54,24 @@ class QueryHelperTest {
     }
 
     @Test
+    void testSaveFewSql() {
+        UserInfo entity = new UserInfo();
+        entity.setName("cat");
+        entity.setAge(20);
+        entity.setEmail("achao1441470436@gmail.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("ruben");
+        List<UserInfo> list = Arrays.asList(userInfo, entity);
+        boolean isSuccess = QueryHelper.saveFewSql(list);
+        Assertions.assertTrue(isSuccess);
+        Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
+        list.forEach(u -> u.setId(null));
+        isSuccess = QueryHelper.saveFewSql(list, 1);
+        Assertions.assertTrue(isSuccess);
+        Assertions.assertEquals(9, QueryHelper.count(UserInfo.class));
+    }
+
+    @Test
     void testSave() {
         UserInfo entity = new UserInfo();
         entity.setName("ruben");

@@ -122,6 +122,37 @@ public class QueryHelper {
     }
 
     /**
+     * 以几条sql方式插入（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean saveFewSql(Collection<T> entityList) {
+        if (CollectionUtils.isEmpty(entityList)) {
+            return false;
+        }
+        Class<T> entityClass = getEntityClass(entityList);
+        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList));
+    }
+
+    /**
+     * 以几条sql方式插入（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param batchSize  分批条数
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean saveFewSql(Collection<T> entityList, int batchSize) {
+        if (CollectionUtils.isEmpty(entityList)) {
+            return false;
+        }
+        Class<T> entityClass = getEntityClass(entityList);
+        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList, batchSize));
+    }
+
+    /**
      * 批量修改插入
      *
      * @param entityList 实体对象集合
