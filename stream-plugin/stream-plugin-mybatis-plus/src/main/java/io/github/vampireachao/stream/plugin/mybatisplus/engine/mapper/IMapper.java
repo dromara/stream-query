@@ -5,6 +5,7 @@ import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginCo
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -21,5 +22,13 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @return 条数
      */
     long insertOneSql(@Param(PluginConst.COLLECTION_PARAM_NAME) Collection<T> list);
+
+    /**
+     * 批量新增（mysql语法批量）
+     *
+     * @param batchList 批量数据
+     * @return 结果
+     */
+    int insertBatch(@Param("items") List<T> batchList);
 
 }
