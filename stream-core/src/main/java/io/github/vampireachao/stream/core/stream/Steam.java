@@ -1319,13 +1319,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     public Steam<List<T>> subList(int batchSize) {
-        List<T> list = toList();
-        if (list.size() <= batchSize) {
-            return Steam.<List<T>>of(list).parallel(isParallel());
-        }
-        return Steam.iterate(0, i -> i < list.size(), i -> i + batchSize)
-                .map(skip -> Steam.of(list).skip(skip).limit(batchSize).toList())
-                .parallel(isParallel());
+        return sub(batchSize).map(Steam::toList);
     }
 
     public interface Builder<T> extends Consumer<T> {
