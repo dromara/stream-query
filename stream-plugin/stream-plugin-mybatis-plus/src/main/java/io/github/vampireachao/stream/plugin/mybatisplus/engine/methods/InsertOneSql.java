@@ -21,7 +21,6 @@ import org.apache.ibatis.mapping.SqlSource;
  *
  * @author VampireAchao
  */
-@SuppressWarnings("serial")
 public class InsertOneSql extends AbstractMethod implements PluginConst {
 
     public InsertOneSql(String methodName) {
