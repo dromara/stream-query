@@ -39,10 +39,10 @@ import java.util.stream.Stream;
  * @author VampireAchao
  * @since 1.0
  */
-public class QueryHelper {
-    private static final Log log = LogFactory.getLog(QueryHelper.class);
+public class Database {
+    private static final Log log = LogFactory.getLog(Database.class);
 
-    private QueryHelper() {
+    private Database() {
         /* Do not new me! */
     }
 

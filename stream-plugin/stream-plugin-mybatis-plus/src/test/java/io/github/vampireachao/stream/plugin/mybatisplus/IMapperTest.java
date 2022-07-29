@@ -31,7 +31,7 @@ class IMapperTest {
         List<UserInfo> list = Arrays.asList(userInfo, entity);
         long affectRows = userInfoMapper.insertOneSql(list);
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
+        Assertions.assertEquals(7, Database.count(UserInfo.class));
     }
 
     @Test
@@ -45,7 +45,7 @@ class IMapperTest {
         List<UserInfo> list = Arrays.asList(userInfo, entity);
         long affectRows = userInfoMapper.insertFewSql(list);
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals(7, QueryHelper.count(UserInfo.class));
+        Assertions.assertEquals(7, Database.count(UserInfo.class));
     }
 
     @Test
@@ -59,8 +59,8 @@ class IMapperTest {
         ruben.setName("rabbit");
         long affectRows = userInfoMapper.updateOneSql(Arrays.asList(sheep, ruben));
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals("bee bee I'm a sheep", QueryHelper.getById(1L, UserInfo.class).getName());
-        Assertions.assertEquals("rabbit", QueryHelper.getById(2L, UserInfo.class).getName());
+        Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
+        Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
     }
 
 }
