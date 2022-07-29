@@ -34,7 +34,7 @@ public interface IMapper<T> extends BaseMapper<T> {
     }
 
     /**
-     * 批量插入, 默认一千分批
+     * 批量插入
      *
      * @param list      集合
      * @param batchSize 分割量
