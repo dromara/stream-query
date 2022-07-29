@@ -40,11 +40,11 @@ import java.util.stream.*;
  * @author VampireAchao
  * @see java.util.stream.Stream
  */
-public class Steam<T> implements Stream<T>, Iterable<T> {
+public class Stream<T> implements java.util.stream.Stream<T>, Iterable<T> {
 
-    protected final Stream<T> stream;
+    protected final java.util.stream.Stream<T> stream;
 
-    Steam(Stream<T> stream) {
+    Stream(java.util.stream.Stream<T> stream) {
         this.stream = stream;
     }
 
@@ -56,7 +56,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     public static <T> Builder<T> builder() {
         return new Builder<T>() {
-            private final Stream.Builder<T> builder = Stream.builder();
+            private final java.util.stream.Stream.Builder<T> builder = java.util.stream.Stream.builder();
 
             @Override
             public void accept(T t) {
@@ -64,8 +64,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
             }
 
             @Override
-            public Steam<T> build() {
-                return new Steam<>(builder.build());
+            public Stream<T> build() {
+                return new Stream<>(builder.build());
             }
         };
     }
@@ -76,8 +76,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <T> 元素类型
      * @return 一个空的串行流
      */
-    public static <T> Steam<T> empty() {
-        return new Steam<>(Stream.empty());
+    public static <T> Stream<T> empty() {
+        return new Stream<>(java.util.stream.Stream.empty());
     }
 
     /**
@@ -87,8 +87,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <T> 元素类型
      * @return 包含单个元素的串行流
      */
-    public static <T> Steam<T> of(T t) {
-        return new Steam<>(Stream.of(t));
+    public static <T> Stream<T> of(T t) {
+        return new Stream<>(java.util.stream.Stream.of(t));
     }
 
     /**
@@ -101,8 +101,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
-    public static <T> Steam<T> of(T... values) {
-        return new Steam<>(Arrays.stream(values));
+    public static <T> Stream<T> of(T... values) {
+        return new Stream<>(Arrays.stream(values));
     }
 
     /**
@@ -111,7 +111,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * <p>
      * 例如
      * {@code FastStream.iterate(0, i -> i + 1)}
-     * 就可以创建从0开始，每次+1的无限流，使用{@link Steam#limit(long)}可以限制元素个数
+     * 就可以创建从0开始，每次+1的无限流，使用{@link Stream#limit(long)}可以限制元素个数
      * </p>
      *
      * @param <T>  元素类型
@@ -119,8 +119,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param f    用上一个元素作为参数执行并返回一个新的元素
      * @return 无限有序流
      */
-    public static <T> Steam<T> iterate(final T seed, final UnaryOperator<T> f) {
-        return new Steam<>(Stream.iterate(seed, f));
+    public static <T> Stream<T> iterate(final T seed, final UnaryOperator<T> f) {
+        return new Stream<>(java.util.stream.Stream.iterate(seed, f));
     }
 
     /**
@@ -129,7 +129,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * <p>
      * 例如
      * {@code FastStream.iterate(0, i -> i < 3, i -> ++i)}
-     * 就可以创建包含元素0,1,2的流，使用{@link Steam#limit(long)}可以限制元素个数
+     * 就可以创建包含元素0,1,2的流，使用{@link Stream#limit(long)}可以限制元素个数
      * </p>
      *
      * @param <T>     元素类型
@@ -138,7 +138,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param next    用上一个元素作为参数执行并返回一个新的元素
      * @return 无限有序流
      */
-    public static <T> Steam<T> iterate(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
+    public static <T> Stream<T> iterate(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next) {
         Objects.requireNonNull(next);
         Objects.requireNonNull(hasNext);
         Spliterator<T> spliterator = new Spliterators.AbstractSpliterator<T>(Long.MAX_VALUE,
@@ -185,7 +185,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                 }
             }
         };
-        return new Steam<>(StreamSupport.stream(spliterator, false));
+        return new Stream<>(StreamSupport.stream(spliterator, false));
     }
 
     /**
@@ -197,8 +197,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param s   用来生成元素的 {@code Supplier}
      * @return 无限串行无序流
      */
-    public static <T> Steam<T> generate(Supplier<T> s) {
-        return new Steam<>(Stream.generate(s));
+    public static <T> Stream<T> generate(Supplier<T> s) {
+        return new Stream<>(java.util.stream.Stream.generate(s));
     }
 
     /**
@@ -212,8 +212,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 拼接两个流之后的流
      * @implNote 从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}
      */
-    public static <T> Steam<T> concat(Steam<? extends T> a, Steam<? extends T> b) {
-        return new Steam<>(Stream.concat(a, b));
+    public static <T> Stream<T> concat(Stream<? extends T> a, Stream<? extends T> b) {
+        return new Stream<>(java.util.stream.Stream.concat(a, b));
     }
 
     /**
@@ -223,7 +223,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <T>      元素类型
      * @return 流
      */
-    public static <T> Steam<T> of(Iterable<T> iterable) {
+    public static <T> Stream<T> of(Iterable<T> iterable) {
         return of(iterable, false);
     }
 
@@ -235,19 +235,19 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <T>      元素类型
      * @return 流
      */
-    public static <T> Steam<T> of(Iterable<T> iterable, boolean parallel) {
-        return Opp.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
+    public static <T> Stream<T> of(Iterable<T> iterable, boolean parallel) {
+        return Opp.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Stream::new).orElseGet(Stream::empty);
     }
 
     /**
-     * 通过传入的{@link Stream}创建流
+     * 通过传入的{@link java.util.stream.Stream}创建流
      *
-     * @param stream {@link Stream}
+     * @param stream {@link java.util.stream.Stream}
      * @param <T>    元素类型
      * @return 流
      */
-    public static <T> Steam<T> of(Stream<T> stream) {
-        return new Steam<>(stream);
+    public static <T> Stream<T> of(java.util.stream.Stream<T> stream) {
+        return new Stream<>(stream);
     }
 
     /**
@@ -257,8 +257,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param regex 正则
      * @return 拆分后元素组成的流
      */
-    public static Steam<String> split(CharSequence str, String regex) {
-        return Opp.blank(str).map(String::valueOf).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
+    public static Stream<String> split(CharSequence str, String regex) {
+        return Opp.blank(str).map(String::valueOf).map(s -> s.split(regex)).map(Stream::of).orElseGet(Stream::empty);
     }
 
     /**
@@ -269,8 +269,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 返回叠加过滤操作后的流
      */
     @Override
-    public Steam<T> filter(Predicate<? super T> predicate) {
-        return new Steam<>(stream.filter(predicate));
+    public Stream<T> filter(Predicate<? super T> predicate) {
+        return new Stream<>(stream.filter(predicate));
     }
 
     /**
@@ -281,7 +281,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param value  用来匹配的值
      * @return 与 指定操作结果 匹配 指定值 的元素组成的流
      */
-    public <R> Steam<T> filter(Function<? super T, ? extends R> mapper, R value) {
+    public <R> Stream<T> filter(Function<? super T, ? extends R> mapper, R value) {
         return filter(e -> Objects.equals(Opp.ofNullable(e).map(mapper).get(), value));
     }
 
@@ -293,7 +293,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param predicate 断言
      * @return 返回叠加过滤操作后的流
      */
-    public Steam<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
+    public Stream<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
         AtomicInteger index = new AtomicInteger(-1);
         return filter(e -> predicate.test(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
@@ -303,8 +303,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      *
      * @return 过滤后的流
      */
-    public Steam<T> nonNull() {
-        return new Steam<>(stream.filter(Objects::nonNull));
+    public Stream<T> nonNull() {
+        return new Stream<>(stream.filter(Objects::nonNull));
     }
 
     /**
@@ -316,8 +316,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 返回叠加操作后的流
      */
     @Override
-    public <R> Steam<R> map(Function<? super T, ? extends R> mapper) {
-        return new Steam<>(stream.map(mapper));
+    public <R> Stream<R> map(Function<? super T, ? extends R> mapper) {
+        return new Stream<>(stream.map(mapper));
     }
 
     /**
@@ -328,7 +328,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    函数执行后返回的类型
      * @return 返回叠加操作后的流
      */
-    public <R> Steam<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
+    public <R> Stream<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
         AtomicInteger index = new AtomicInteger(-1);
         return map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
@@ -346,8 +346,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 返回叠加拆分操作后的流
      */
     @Override
-    public <R> Steam<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return new Steam<>(stream.flatMap(mapper));
+    public <R> Stream<R> flatMap(Function<? super T, ? extends java.util.stream.Stream<? extends R>> mapper) {
+        return new Stream<>(stream.flatMap(mapper));
     }
 
     /**
@@ -358,13 +358,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> flatMapIdx(BiFunction<? super T, Integer, ? extends Stream<? extends R>> mapper) {
+    public <R> Stream<R> flatMapIdx(BiFunction<? super T, Integer, ? extends java.util.stream.Stream<? extends R>> mapper) {
         AtomicInteger index = new AtomicInteger(-1);
         return flatMap(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
     }
 
     /**
-     * 和{@link Steam#map(Function)}一样，只不过函数的返回值必须为int类型
+     * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为int类型
      * 这是一个无状态中间操作
      *
      * @param mapper 返回值为int类型的函数
@@ -376,7 +376,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
-     * 和{@link Steam#map(Function)}一样，只不过函数的返回值必须为long类型
+     * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为long类型
      * 这是一个无状态中间操作
      *
      * @param mapper 返回值为long类型的函数
@@ -388,7 +388,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
-     * 和{@link Steam#map(Function)}一样，只不过函数的返回值必须为double类型
+     * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为double类型
      * 这是一个无状态中间操作
      *
      * @param mapper 返回值为double类型的函数
@@ -411,8 +411,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMap(w -> Opp.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
+    public <R> Stream<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMap(w -> Opp.of(w).map(mapper).map(Stream::of).orElseGet(Stream::empty));
     }
 
     /**
@@ -459,10 +459,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
+    public <R> Stream<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
         Objects.requireNonNull(mapper);
         return flatMap(e -> {
-            Builder<R> buffer = Steam.builder();
+            Builder<R> buffer = Stream.builder();
             mapper.accept(e, buffer);
             return buffer.build();
         });
@@ -475,8 +475,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 一个具有去重特征的流
      */
     @Override
-    public Steam<T> distinct() {
-        return new Steam<>(stream.distinct());
+    public Stream<T> distinct() {
+        return new Stream<>(stream.distinct());
     }
 
     /**
@@ -486,8 +486,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param keyExtractor 去重依据
      * @return 一个具有去重特征的流
      */
-    public Steam<T> distinct(Function<? super T, ?> keyExtractor) {
-        return new Steam<>(toMap(keyExtractor).entrySet().stream()).parallel(isParallel()).map(Map.Entry::getValue);
+    public Stream<T> distinct(Function<? super T, ?> keyExtractor) {
+        return new Stream<>(toMap(keyExtractor).entrySet().stream()).parallel(isParallel()).map(Map.Entry::getValue);
     }
 
     /**
@@ -499,8 +499,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 一个元素按自然顺序排序的流
      */
     @Override
-    public Steam<T> sorted() {
-        return new Steam<>(stream.sorted());
+    public Stream<T> sorted() {
+        return new Stream<>(stream.sorted());
     }
 
     /**
@@ -513,8 +513,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 一个元素按指定的Comparator排序的流
      */
     @Override
-    public Steam<T> sorted(Comparator<? super T> comparator) {
-        return new Steam<>(stream.sorted(comparator));
+    public Stream<T> sorted(Comparator<? super T> comparator) {
+        return new Stream<>(stream.sorted(comparator));
     }
 
     /**
@@ -535,8 +535,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * }</pre>
      */
     @Override
-    public Steam<T> peek(Consumer<? super T> action) {
-        return new Steam<>(stream.peek(action));
+    public Stream<T> peek(Consumer<? super T> action) {
+        return new Stream<>(stream.peek(action));
     }
 
     /**
@@ -544,7 +544,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      *
      * @return 返回叠加操作后的Steam
      */
-    public Steam<T> log() {
+    public Stream<T> log() {
         return peek(System.out::println);
     }
 
@@ -556,8 +556,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 截取后的流
      */
     @Override
-    public Steam<T> limit(long maxSize) {
-        return new Steam<>(stream.limit(maxSize));
+    public Stream<T> limit(long maxSize) {
+        return new Stream<>(stream.limit(maxSize));
     }
 
     /**
@@ -568,8 +568,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 丢弃前面n个元素后的剩余元素组成的流
      */
     @Override
-    public Steam<T> skip(long n) {
-        return new Steam<>(stream.skip(n));
+    public Stream<T> skip(long n) {
+        return new Stream<>(stream.skip(n));
     }
 
     /**
@@ -578,8 +578,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 串行流
      */
     @Override
-    public Steam<T> sequential() {
-        return new Steam<>(stream.sequential());
+    public Stream<T> sequential() {
+        return new Stream<>(stream.sequential());
     }
 
     /**
@@ -903,10 +903,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      *
      * @return 反转元素顺序
      */
-    public Steam<T> reverse() {
+    public Stream<T> reverse() {
         List<T> list = toList();
         Collections.reverse(list);
-        return Steam.of(list, isParallel());
+        return Stream.of(list, isParallel());
     }
 
     /**
@@ -945,8 +945,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 并行流
      */
     @Override
-    public Steam<T> parallel() {
-        return new Steam<>(stream.parallel());
+    public Stream<T> parallel() {
+        return new Stream<>(stream.parallel());
     }
 
     /**
@@ -955,8 +955,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param parallel 是否并行
      * @return 流
      */
-    public Steam<T> parallel(boolean parallel) {
-        return new Steam<>(parallel ? stream.parallel() : stream.sequential());
+    public Stream<T> parallel(boolean parallel) {
+        return new Stream<>(parallel ? stream.parallel() : stream.sequential());
     }
 
     /**
@@ -965,8 +965,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 无序流
      */
     @Override
-    public Steam<T> unordered() {
-        return new Steam<>(stream.unordered());
+    public Stream<T> unordered() {
+        return new Stream<>(stream.unordered());
     }
 
     /**
@@ -976,8 +976,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     @Override
-    public Steam<T> onClose(Runnable closeHandler) {
-        return new Steam<>(stream.onClose(closeHandler));
+    public Stream<T> onClose(Runnable closeHandler) {
+        return new Stream<>(stream.onClose(closeHandler));
     }
 
     /**
@@ -986,8 +986,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param obj 元素
      * @return 流
      */
-    public Steam<T> push(T obj) {
-        return Steam.concat(this, Steam.of(obj));
+    public Stream<T> push(T obj) {
+        return Stream.concat(this, Stream.of(obj));
     }
 
     /**
@@ -997,8 +997,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     @SuppressWarnings("unchecked")
-    public Steam<T> push(T... obj) {
-        return Steam.concat(this, Steam.of(obj));
+    public Stream<T> push(T... obj) {
+        return Stream.concat(this, Stream.of(obj));
     }
 
     /**
@@ -1007,8 +1007,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param obj 元素
      * @return 流
      */
-    public Steam<T> unshift(T obj) {
-        return Steam.concat(Steam.of(obj), this);
+    public Stream<T> unshift(T obj) {
+        return Stream.concat(Stream.of(obj), this);
     }
 
     /**
@@ -1018,8 +1018,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     @SuppressWarnings("unchecked")
-    public Steam<T> unshift(T... obj) {
-        return Steam.concat(Steam.of(obj), this);
+    public Stream<T> unshift(T... obj) {
+        return Stream.concat(Stream.of(obj), this);
     }
 
     /**
@@ -1275,10 +1275,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return collect(Collective.groupingBy(classifier, mapFactory, downstream));
     }
 
-    public <U, R> Steam<R> zip(Iterable<U> other,
-                               BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> Stream<R> zip(Iterable<U> other,
+                                BiFunction<? super T, ? super U, ? extends R> zipper) {
         Iterator<U> iterator = other.iterator();
-        return new Steam<>(stream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
+        return new Stream<>(stream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
     }
 
     /**
@@ -1290,23 +1290,23 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 操作后的流
      */
     @SuppressWarnings("unchecked")
-    public Steam<T> splice(int start, int deleteCount, T... items) {
+    public Stream<T> splice(int start, int deleteCount, T... items) {
         List<T> list = toList();
         if (start > -1) {
             if (start >= list.size()) {
-                return Steam.concat(Steam.of(list), Steam.of(items));
+                return Stream.concat(Stream.of(list), Stream.of(items));
             }
             list.removeAll(list.subList(start, start + deleteCount));
             list.addAll(start, Arrays.asList(items));
-            return Steam.of(list);
+            return Stream.of(list);
         }
         if (-start > list.size()) {
-            return Steam.concat(Steam.of(items), Steam.of(list));
+            return Stream.concat(Stream.of(items), Stream.of(list));
         }
         start = list.size() + start;
         list.removeAll(list.subList(start, start + deleteCount));
         list.addAll(start, Arrays.asList(items));
-        return Steam.of(list);
+        return Stream.of(list);
     }
 
     public interface Builder<T> extends Consumer<T> {
@@ -1348,7 +1348,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
          * @throws IllegalStateException if the builder has already transitioned to
          *                               the built state
          */
-        Steam<T> build();
+        Stream<T> build();
 
     }
 
