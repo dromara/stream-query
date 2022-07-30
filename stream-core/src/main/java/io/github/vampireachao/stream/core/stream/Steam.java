@@ -250,15 +250,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return new Steam<>(stream);
     }
 
-    /**
-     *  通过传入的Stream<String> 和length得到流中字符串长度与length相等的个数
-     * @param stream 要进行查值的流
-     * @param length 想要得到流中字符串长度为length的个数
-     * @return 流中字符串长度为length的个数有多少个
-     */
-    public static long eqLengthStr(Stream<String> stream,Integer length){
-        return stream.filter(str -> str.length() == length).count();
-    }
+
 
     /**
      * 拆分字符串，转换为串行流
@@ -1184,7 +1176,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return map(String::valueOf).collect(Collective.joining(delimiter, prefix, suffix));
     }
 
-    /**
+   /**
      * 转换为map，key为给定操作执行后的返回值,value为当前元素
      *
      * @param keyMapper 指定的key操作
@@ -1207,6 +1199,23 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
                                   Function<? super T, ? extends U> valueMapper) {
         return toMap(keyMapper, valueMapper, (l, r) -> r);
+    }
+
+    /**
+     *
+     * @param list          指定要映射的Bean集合
+     * @param functionK     map的key字段
+     * @param functionV     map的value字段
+     * @return              map
+     * @param <E>           Bean类型
+     * @param <K>           key类型
+     * @param <V>           value类型
+     */
+    public static  <E,K,V> Map<K,V> beanToMap(List<E> list, Function<E,K> functionK, Function<E,V> functionV){
+        if (list == null || list.size()==0){
+            return Collections.emptyMap();
+        }
+        return list.stream().collect(Collective.toMap(functionK, functionV));
     }
 
     /**
@@ -1255,6 +1264,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public <K> Map<K, List<T>> group(Function<? super T, ? extends K> classifier) {
         return group(classifier, Collective.toList());
     }
+
 
     /**
      * 通过给定分组依据进行分组

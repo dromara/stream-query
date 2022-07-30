@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.core.stream;
 
+import io.github.vampireachao.stream.core.Bean.Student;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,16 +38,20 @@ class SteamTest {
     void testIterator() {
         List<Integer> list = Steam.iterate(0, i -> i < 3, i -> ++i).toList();
         Assertions.assertEquals(Arrays.asList(0, 1, 2), list);
-
-        List<Integer> limitList = Steam.iterate(0, i -> i + 1).limit(3).toList();
-        Assertions.assertEquals(Arrays.asList(0, 1, 2),limitList);
     }
 
     @Test
-    void testEQLengthStr(){
-        Stream<String> stream = Arrays.asList("1", "2", "3").stream();
-        long lengthStr = Steam.eqLengthStr(stream, 1);
-        Assertions.assertEquals(3, lengthStr);
+    void beanToMap(){
+        Student studentOne = new Student("臧臧",22,"河北保定");
+        Student studentTwo = new Student("阿超",22,"四川成都");
+        List<Student> list = new ArrayList<>();
+        list.add(studentOne);
+        list.add(studentTwo);
+        Map<String, String> beanToMap = Steam.beanToMap(list, Student::getName, Student::getAddress);
+        Assertions.assertEquals(new HashMap<String, String>() {{
+            put("臧臧", "河北保定");
+            put("阿超", "四川成都");
+        }}, beanToMap);
     }
 
     @Test
