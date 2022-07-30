@@ -39,10 +39,10 @@ import java.util.stream.Stream;
  * @author VampireAchao
  * @since 1.0
  */
-public class QueryHelper {
-    private static final Log log = LogFactory.getLog(QueryHelper.class);
+public class Database {
+    private static final Log log = LogFactory.getLog(Database.class);
 
-    private QueryHelper() {
+    private Database() {
         /* Do not new me! */
     }
 
@@ -119,6 +119,37 @@ public class QueryHelper {
         }
         Class<T> entityClass = getEntityClass(entityList);
         return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertOneSql(entityList));
+    }
+
+    /**
+     * 以几条sql方式插入（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean saveFewSql(Collection<T> entityList) {
+        if (CollectionUtils.isEmpty(entityList)) {
+            return false;
+        }
+        Class<T> entityClass = getEntityClass(entityList);
+        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList));
+    }
+
+    /**
+     * 以几条sql方式插入（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param batchSize  分批条数
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean saveFewSql(Collection<T> entityList, int batchSize) {
+        if (CollectionUtils.isEmpty(entityList)) {
+            return false;
+        }
+        Class<T> entityClass = getEntityClass(entityList);
+        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList, batchSize));
     }
 
     /**
@@ -202,7 +233,7 @@ public class QueryHelper {
     }
 
     /**
-     * 强制根据id更新，指定的字段不管是否为null也会更新
+     * 强制根据id修改，指定的字段不管是否为null也会修改
      *
      * @param entity     实体对象
      * @param updateKeys 指定字段
@@ -244,7 +275,7 @@ public class QueryHelper {
     }
 
     /**
-     * 根据ID 批量更新
+     * 根据ID 批量修改
      *
      * @param entityList 实体对象集合
      */
@@ -253,10 +284,10 @@ public class QueryHelper {
     }
 
     /**
-     * 根据ID 批量更新
+     * 根据ID 批量修改
      *
      * @param entityList 实体对象集合
-     * @param batchSize  更新批次数量
+     * @param batchSize  修改批次数量
      */
     public static <T> boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Class<T> entityClass = getEntityClass(entityList);
@@ -290,7 +321,7 @@ public class QueryHelper {
     }
 
     /**
-     * TableId 注解存在更新记录，否插入一条记录
+     * TableId 注解存在修改记录，否插入一条记录
      *
      * @param entity 实体对象
      */
@@ -510,7 +541,7 @@ public class QueryHelper {
 
     /**
      * <p>
-     * 根据updateWrapper尝试更新，否继续执行saveOrUpdate(T)方法
+     * 根据updateWrapper尝试修改，否继续执行saveOrUpdate(T)方法
      * 此次修改主要是减少了此项业务代码的代码量（存在性验证之后的saveOrUpdate操作）
      * </p>
      *
