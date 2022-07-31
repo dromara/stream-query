@@ -39,7 +39,7 @@ jobs:
         # 环境变量设置
         env:
           # Nexus用户名,如果觉得不想暴露也可以配置到secrets中
-          MAVEN_USERNAME: xxx
+          MAVEN_USERNAME: VampireaAchao
           # Nexus密码
           MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           # gpg短密码
