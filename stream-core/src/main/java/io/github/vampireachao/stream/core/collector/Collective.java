@@ -88,7 +88,7 @@ public class Collective {
      * control over the returned {@code Set} is required, use
      * {@link #toCollection(Supplier)}.
      *
-     * <p>This is an {@link Collector.Characteristics#UNORDERED unordered}
+     * <p>This is an {@link Collector.Characteristics#UNORDERED} unordered
      * Collector.
      *
      * @param <T> the type of the input elements
@@ -815,8 +815,8 @@ public class Collective {
      * operation on input elements of type {@code T}, grouping elements
      * according to a classification function.
      *
-     * <p>This is a {@link Collector.Characteristics#CONCURRENT concurrent} and
-     * {@link Collector.Characteristics#UNORDERED unordered} Collector.
+     * <p>This is a {@link Collector.Characteristics#CONCURRENT} concurrent and
+     * {@link Collector.Characteristics#UNORDERED} unordered Collector.
      *
      * <p>The classification function maps elements to some key type {@code K}.
      * The collector produces a {@code ConcurrentMap<K, List<T>>} whose keys are the
@@ -854,8 +854,8 @@ public class Collective {
      * operation on the values associated with a given key using the specified
      * downstream {@code Collector}.
      *
-     * <p>This is a {@link Collector.Characteristics#CONCURRENT concurrent} and
-     * {@link Collector.Characteristics#UNORDERED unordered} Collector.
+     * <p>This is a {@link Collector.Characteristics#CONCURRENT} concurrent and
+     * {@link Collector.Characteristics#UNORDERED} unordered Collector.
      *
      * <p>The classification function maps elements to some key type {@code K}.
      * The downstream collector operates on elements of type {@code T} and
@@ -895,8 +895,8 @@ public class Collective {
      * downstream {@code Collector}.  The {@code ConcurrentMap} produced by the
      * Collector is created with the supplied factory function.
      *
-     * <p>This is a {@link Collector.Characteristics#CONCURRENT concurrent} and
-     * {@link Collector.Characteristics#UNORDERED unordered} Collector.
+     * <p>This is a {@link Collector.Characteristics#CONCURRENT} concurrent and
+     * {@link Collector.Characteristics#UNORDERED} unordered Collector.
      *
      * <p>The classification function maps elements to some key type {@code K}.
      * The downstream collector operates on elements of type {@code T} and
@@ -1220,8 +1220,8 @@ public class Collective {
      *                                                   Functions.identity());
      * }</pre>
      *
-     * <p>This is a {@link Collector.Characteristics#CONCURRENT concurrent} and
-     * {@link Collector.Characteristics#UNORDERED unordered} Collector.
+     * <p>This is a {@link Collector.Characteristics#CONCURRENT} concurrent and
+     * {@link Collector.Characteristics#UNORDERED} unordered Collector.
      * @see #toMap(Function, Function)
      * @see #toConcurrentMap(Function, Function, BinaryOperator)
      * @see #toConcurrentMap(Function, Function, BinaryOperator, Supplier)
@@ -1269,8 +1269,8 @@ public class Collective {
      *                                                 (s, a) -> s + ", " + a));
      * }</pre>
      *
-     * <p>This is a {@link Collector.Characteristics#CONCURRENT concurrent} and
-     * {@link Collector.Characteristics#UNORDERED unordered} Collector.
+     * <p>This is a {@link Collector.Characteristics#CONCURRENT} concurrent and
+     * {@link Collector.Characteristics#UNORDERED} unordered Collector.
      * @see #toConcurrentMap(Function, Function)
      * @see #toConcurrentMap(Function, Function, BinaryOperator, Supplier)
      * @see #toMap(Function, Function, BinaryOperator)
@@ -1293,8 +1293,8 @@ public class Collective {
      * results are merged using the provided merging function.  The
      * {@code ConcurrentMap} is created by a provided supplier function.
      *
-     * <p>This is a {@link Collector.Characteristics#CONCURRENT concurrent} and
-     * {@link Collector.Characteristics#UNORDERED unordered} Collector.
+     * <p>This is a {@link Collector.Characteristics#CONCURRENT} concurrent and
+     * {@link Collector.Characteristics#UNORDERED} unordered Collector.
      *
      * @param <T>           the type of the input elements
      * @param <K>           the output type of the key mapping function
