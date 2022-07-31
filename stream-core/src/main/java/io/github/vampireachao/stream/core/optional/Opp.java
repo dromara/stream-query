@@ -280,7 +280,6 @@ public class Opp<T> {
      * @param action 值存在时执行的操作
      * @return this
      * @throws NullPointerException 如果值存在，并且传入的操作为 {@code null}
-     * @author VampireAchao
      */
     public Opp<T> peek(Consumer<T> action) throws NullPointerException {
         Objects.requireNonNull(action);
@@ -302,7 +301,6 @@ public class Opp<T> {
      * @param actions 值存在时执行的操作，动态参数，可传入数组，当数组为一个空数组时并不会抛出 {@code NPE}
      * @return this
      * @throws NullPointerException 如果值存在，并且传入的操作集中的元素为 {@code null}
-     * @author VampireAchao
      */
     @SafeVarargs
     public final Opp<T> peeks(Consumer<T>... actions) throws NullPointerException {
@@ -524,7 +522,6 @@ public class Opp<T> {
      * @return 包裹里不能为空的值
      * @throws X                    如果值不存在
      * @throws NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
-     * @author VampireAchao
      */
     public <X extends Throwable> T orElseThrow(Function<String, ? extends X> exceptionFunction, String message) throws X {
         if (isPresent()) {
