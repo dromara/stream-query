@@ -41,6 +41,6 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @return 是否成功
      */
     default long insertFewSql(Collection<T> list, int batchSize) {
-        return Steam.of(list).subList(batchSize).mapToLong(this::insertOneSql).sum();
+        return Steam.of(list).splitList(batchSize).mapToLong(this::insertOneSql).sum();
     }
 }
