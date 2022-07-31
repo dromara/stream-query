@@ -49,7 +49,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
-     * 返回{@code FastStream}的建造器
+     * 返回{@code Steam}的建造器
      *
      * @param <T> 元素的类型
      * @return a stream builder
@@ -110,7 +110,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
      * <p>
      * 例如
-     * {@code FastStream.iterate(0, i -> i + 1)}
+     * {@code Steam.iterate(0, i -> i + 1)}
      * 就可以创建从0开始，每次+1的无限流，使用{@link Steam#limit(long)}可以限制元素个数
      * </p>
      *
@@ -128,7 +128,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 该流由 初始值 然后判断条件 以及执行 迭代函数 进行迭代获取到元素
      * <p>
      * 例如
-     * {@code FastStream.iterate(0, i -> i < 3, i -> ++i)}
+     * {@code Steam.iterate(0, i -> i < 3, i -> ++i)}
      * 就可以创建包含元素0,1,2的流，使用{@link Steam#limit(long)}可以限制元素个数
      * </p>
      *
@@ -338,7 +338,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 这是一个无状态中间操作
      * 例如，将users里所有user的id和parentId组合在一起，形成一个新的流:
      * <pre>{@code
-     *     FastStream<Long> ids = FastStream.of(users).flatMap(user -> FastStream.of(user.getId(), user.getParentId()));
+     *     Steam<Long> ids = Steam.of(users).flatMap(user -> Steam.of(user.getId(), user.getParentId()));
      * }</pre>
      *
      * @param mapper 操作，返回流
@@ -404,7 +404,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 这是一个无状态中间操作
      * 例如，将users里所有user的id和parentId组合在一起，形成一个新的流:
      * <pre>{@code
-     *     FastStream<Long> ids = FastStream.of(users).flatMap(user -> FastStream.of(user.getId(), user.getParentId()));
+     *     Steam<Long> ids = Steam.of(users).flatMap(user -> Steam.of(user.getId(), user.getParentId()));
      * }</pre>
      *
      * @param mapper 操作，返回可迭代对象
