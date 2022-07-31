@@ -26,7 +26,6 @@ public class StreamPluginAutoConfiguration {
             public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
                 methodList.add(new InsertOneSql(SqlMethodEnum.INSERT_ONE_SQL.getMethod()));
-//                methodList.add(new UpdateOneSql(SqlMethodEnum.UPDATE_ONE_SQL.getMethod()));
                 return methodList;
             }
         };
