@@ -1,8 +1,6 @@
 package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
-import io.github.vampireachao.stream.core.mutable.MutableInt;
-import io.github.vampireachao.stream.core.mutable.MutableObj;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.util.CollUtil;
 
@@ -10,6 +8,8 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -313,8 +313,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             return filter(e -> predicate.test(e, NOT_FOUND_INDEX));
         } else {
-            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
-            return filter(e -> predicate.test(e, index.increment().get()));
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
+            return filter(e -> predicate.test(e, index.incrementAndGet()));
         }
     }
 
@@ -353,8 +353,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             return map(e -> mapper.apply(e, NOT_FOUND_INDEX));
         } else {
-            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
-            return map(e -> mapper.apply(e, index.increment().get()));
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
+            return map(e -> mapper.apply(e, index.incrementAndGet()));
         }
     }
 
@@ -388,8 +388,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             return flatMap(e -> mapper.apply(e, NOT_FOUND_INDEX));
         } else {
-            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
-            return flatMap(e -> mapper.apply(e, index.increment().get()));
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
+            return flatMap(e -> mapper.apply(e, index.incrementAndGet()));
         }
     }
 
@@ -660,8 +660,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             stream.forEach(e -> action.accept(e, NOT_FOUND_INDEX));
         } else {
-            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
-            stream.forEach(e -> action.accept(e, index.increment().get()));
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
+            stream.forEach(e -> action.accept(e, index.incrementAndGet()));
         }
     }
 
@@ -687,8 +687,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             stream.forEachOrdered(e -> action.accept(e, NOT_FOUND_INDEX));
         } else {
-            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
-            stream.forEachOrdered(e -> action.accept(e, index.increment().get()));
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
+            stream.forEachOrdered(e -> action.accept(e, index.incrementAndGet()));
         }
     }
 
@@ -710,10 +710,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <A>       给定的数组类型
      * @return 包含此流元素的指定的数组
      * @throws ArrayStoreException 如果元素转换失败，例如不是该元素类型及其父类，则抛出该异常
-     * 例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
-     * <pre>{@code
-     * String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
-     * }</pre>
+     *                             例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
+     *                             <pre>{@code
+     *                                                                                                                                                                                                                                                             String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
+     *                                                                                                                                                                                                                                                             }</pre>
      */
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
@@ -926,10 +926,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             return NOT_FOUND_INDEX;
         } else {
-            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
             //noinspection ResultOfMethodCallIgnored
             stream.filter(e -> {
-                index.increment();
+                index.incrementAndGet();
                 return predicate.test(e);
             }).findFirst();
             return index.get();
@@ -945,7 +945,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             return Optional.of(toList()).filter(l -> !l.isEmpty()).map(l -> l.get(l.size() - 1));
         } else {
-            MutableObj<T> last = new MutableObj<>(null);
+            AtomicReference<T> last = new AtomicReference<>(null);
             forEach(last::set);
             return Optional.ofNullable(last.get());
         }
@@ -964,7 +964,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
             final int index = CollUtil.lastIndexOf(list, predicate);
             return index == NOT_FOUND_INDEX ? null : list.get(index);
         } else {
-            MutableObj<T> last = new MutableObj<>(null);
+            AtomicReference<T> last = new AtomicReference<>(null);
             forEach(e -> {
                 if (predicate.test(e)) {
                     last.set(e);
@@ -985,7 +985,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (isParallel()) {
             return NOT_FOUND_INDEX;
         } else {
-            MutableInt idxRef = new MutableInt(NOT_FOUND_INDEX);
+            AtomicInteger idxRef = new AtomicInteger(NOT_FOUND_INDEX);
             forEachIdx((e, i) -> {
                 if (predicate.test(e)) {
                     idxRef.set(i);
