@@ -1,11 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.h2.Driver
+    schema: classpath:schema.sql
+    data: classpath:data.sql
     url: jdbc:h2:mem:test
-  sql:
-    init:
-      data-locations: classpath:data.sql
-      schema-locations: classpath:schema.sql
 
 logging:
   level:
