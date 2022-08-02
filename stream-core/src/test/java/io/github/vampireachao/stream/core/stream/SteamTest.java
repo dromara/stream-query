@@ -273,9 +273,9 @@ class SteamTest {
     }
 
     @Test
-    void testSub() {
+    void testListSplit() {
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
-        List<List<Integer>> lists = Steam.of(list).sub(2).map(Steam::toList).toList();
+        List<List<Integer>> lists = Steam.of(list).split(2).map(Steam::toList).toList();
         Assertions.assertEquals(Arrays.asList(Arrays.asList(1, 2),
                 Arrays.asList(3, 4),
                 singletonList(5)
@@ -283,9 +283,9 @@ class SteamTest {
     }
 
     @Test
-    void testSubList() {
+    void testSplitList() {
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
-        List<List<Integer>> lists = Steam.of(list).subList(2).toList();
+        List<List<Integer>> lists = Steam.of(list).splitList(2).toList();
         Assertions.assertEquals(Arrays.asList(Arrays.asList(1, 2),
                 Arrays.asList(3, 4),
                 singletonList(5)

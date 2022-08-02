@@ -1,11 +1,15 @@
 package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
+import io.github.vampireachao.stream.core.mutable.MutableInt;
+import io.github.vampireachao.stream.core.mutable.MutableObj;
 import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.util.CollUtil;
 
 import java.io.PrintStream;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -41,6 +45,10 @@ import java.util.stream.*;
  * @see java.util.stream.Stream
  */
 public class Steam<T> implements Stream<T>, Iterable<T> {
+    /**
+     * 代表不存在的下标, 一般用于并行流的下标, 或者未找到元素时的下标
+     */
+    private static final int NOT_FOUND_INDEX = -1;
 
     protected final Stream<T> stream;
 
@@ -48,8 +56,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         this.stream = stream;
     }
 
+    // --------------------------------------------------------------- Static method start
+
     /**
-     * 返回{@code FastStream}的建造器
+     * 返回{@code Steam}的建造器
      *
      * @param <T> 元素的类型
      * @return a stream builder
@@ -102,7 +112,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     @SafeVarargs
     @SuppressWarnings("varargs")
     public static <T> Steam<T> of(T... values) {
-        return new Steam<>(Arrays.stream(values));
+        return (values == null || values.length == 0) ? empty() : new Steam<>(Stream.of(values));
     }
 
     /**
@@ -110,7 +120,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
      * <p>
      * 例如
-     * {@code FastStream.iterate(0, i -> i + 1)}
+     * {@code Steam.iterate(0, i -> i + 1)}
      * 就可以创建从0开始，每次+1的无限流，使用{@link Steam#limit(long)}可以限制元素个数
      * </p>
      *
@@ -128,13 +138,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 该流由 初始值 然后判断条件 以及执行 迭代函数 进行迭代获取到元素
      * <p>
      * 例如
-     * {@code FastStream.iterate(0, i -> i < 3, i -> ++i)}
+     * {@code Steam.iterate(0, i -> i < 3, i -> ++i)}
      * 就可以创建包含元素0,1,2的流，使用{@link Steam#limit(long)}可以限制元素个数
      * </p>
      *
      * @param <T>     元素类型
-     * @param hasNext 条件值
      * @param seed    初始值
+     * @param hasNext 条件值
      * @param next    用上一个元素作为参数执行并返回一个新的元素
      * @return 无限有序流
      */
@@ -206,13 +216,14 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
      * 当结果流关闭时，两个输入流的关闭处理程序都会被调用。
      *
+     * <p>从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}</p>
+     *
      * @param <T> 元素类型
      * @param a   第一个流
      * @param b   第二个流
      * @return 拼接两个流之后的流
-     * @implNote 从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}
      */
-    public static <T> Steam<T> concat(Steam<? extends T> a, Steam<? extends T> b) {
+    public static <T> Steam<T> concat(Stream<? extends T> a, Stream<? extends T> b) {
         return new Steam<>(Stream.concat(a, b));
     }
 
@@ -247,7 +258,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     public static <T> Steam<T> of(Stream<T> stream) {
-        return new Steam<>(stream);
+        return new Steam<>(Objects.requireNonNull(stream));
     }
 
     /**
@@ -258,8 +269,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 拆分后元素组成的流
      */
     public static Steam<String> split(CharSequence str, String regex) {
-        return Opp.blank(str).map(String::valueOf).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
+        return Opp.blank(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
     }
+
+    // --------------------------------------------------------------- Static method end
 
     /**
      * 过滤元素，返回与指定断言匹配的元素组成的流
@@ -277,11 +290,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 过滤元素，返回与 指定操作结果 匹配 指定值 的元素组成的流
      * 这是一个无状态中间操作
      *
+     * @param <R>    返回类型
      * @param mapper 操作
      * @param value  用来匹配的值
      * @return 与 指定操作结果 匹配 指定值 的元素组成的流
      */
     public <R> Steam<T> filter(Function<? super T, ? extends R> mapper, R value) {
+        Objects.requireNonNull(mapper);
         return filter(e -> Objects.equals(Opp.ofNullable(e).map(mapper).get(), value));
     }
 
@@ -294,8 +309,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 返回叠加过滤操作后的流
      */
     public Steam<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
-        AtomicInteger index = new AtomicInteger(-1);
-        return filter(e -> predicate.test(e, isParallel() ? index.get() : index.incrementAndGet()));
+        Objects.requireNonNull(predicate);
+        if (isParallel()) {
+            return filter(e -> predicate.test(e, NOT_FOUND_INDEX));
+        } else {
+            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
+            return filter(e -> predicate.test(e, index.increment().get()));
+        }
     }
 
     /**
@@ -329,8 +349,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 返回叠加操作后的流
      */
     public <R> Steam<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
-        AtomicInteger index = new AtomicInteger(-1);
-        return map(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
+        Objects.requireNonNull(mapper);
+        if (isParallel()) {
+            return map(e -> mapper.apply(e, NOT_FOUND_INDEX));
+        } else {
+            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
+            return map(e -> mapper.apply(e, index.increment().get()));
+        }
     }
 
     /**
@@ -338,7 +363,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 这是一个无状态中间操作
      * 例如，将users里所有user的id和parentId组合在一起，形成一个新的流:
      * <pre>{@code
-     *     FastStream<Long> ids = FastStream.of(users).flatMap(user -> FastStream.of(user.getId(), user.getParentId()));
+     *     Steam<Long> ids = Steam.of(users).flatMap(user -> Steam.of(user.getId(), user.getParentId()));
      * }</pre>
      *
      * @param mapper 操作，返回流
@@ -359,8 +384,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 返回叠加拆分操作后的流
      */
     public <R> Steam<R> flatMapIdx(BiFunction<? super T, Integer, ? extends Stream<? extends R>> mapper) {
-        AtomicInteger index = new AtomicInteger(-1);
-        return flatMap(e -> mapper.apply(e, isParallel() ? index.get() : index.incrementAndGet()));
+        Objects.requireNonNull(mapper);
+        if (isParallel()) {
+            return flatMap(e -> mapper.apply(e, NOT_FOUND_INDEX));
+        } else {
+            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
+            return flatMap(e -> mapper.apply(e, index.increment().get()));
+        }
     }
 
     /**
@@ -404,7 +434,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 这是一个无状态中间操作
      * 例如，将users里所有user的id和parentId组合在一起，形成一个新的流:
      * <pre>{@code
-     *     FastStream<Long> ids = FastStream.of(users).flatMap(user -> FastStream.of(user.getId(), user.getParentId()));
+     *     Steam<Long> ids = Steam.of(users).flatMap(user -> Steam.of(user.getId(), user.getParentId()));
      * }</pre>
      *
      * @param mapper 操作，返回可迭代对象
@@ -412,6 +442,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 返回叠加拆分操作后的流
      */
     public <R> Steam<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        Objects.requireNonNull(mapper);
         return flatMap(w -> Opp.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
     }
 
@@ -459,7 +490,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
+    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Builder<R>> mapper) {
         Objects.requireNonNull(mapper);
         return flatMap(e -> {
             Builder<R> buffer = Steam.builder();
@@ -486,8 +517,31 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param keyExtractor 去重依据
      * @return 一个具有去重特征的流
      */
-    public Steam<T> distinct(Function<? super T, ?> keyExtractor) {
-        return new Steam<>(toMap(keyExtractor).entrySet().stream()).parallel(isParallel()).map(Map.Entry::getValue);
+    public <F> Steam<T> distinct(Function<? super T, F> keyExtractor) {
+        Objects.requireNonNull(keyExtractor);
+        if (isParallel()) {
+            ConcurrentHashMap<F, Boolean> exists = new ConcurrentHashMap<>(32);
+            // 标记是否出现过null值，用于保留第一个出现的null
+            // 由于ConcurrentHashMap的key不能为null，所以用此变量来标记
+            AtomicBoolean hasNull = new AtomicBoolean(false);
+            return of(stream.filter(e -> {
+                F key = keyExtractor.apply(e);
+                if (key == null) {
+                    // 已经出现过null值，跳过该值
+                    if (hasNull.get()) {
+                        return false;
+                    }
+                    hasNull.set(Boolean.TRUE);
+                    return true;
+                } else {
+                    // 第一次出现的key返回true
+                    return null == exists.putIfAbsent(key, Boolean.TRUE);
+                }
+            })).parallel();
+        } else {
+            Set<F> exists = new HashSet<>();
+            return of(stream.filter(e -> exists.add(keyExtractor.apply(e))));
+        }
     }
 
     /**
@@ -579,7 +633,9 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     @Override
     public Steam<T> sequential() {
-        return new Steam<>(stream.sequential());
+        //noinspection ResultOfMethodCallIgnored
+        stream.sequential();
+        return this;
     }
 
     /**
@@ -600,8 +656,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param action 操作
      */
     public void forEachIdx(BiConsumer<? super T, Integer> action) {
-        AtomicInteger index = new AtomicInteger(-1);
-        stream.forEach(e -> action.accept(e, isParallel() ? index.get() : index.incrementAndGet()));
+        Objects.requireNonNull(action);
+        if (isParallel()) {
+            stream.forEach(e -> action.accept(e, NOT_FOUND_INDEX));
+        } else {
+            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
+            stream.forEach(e -> action.accept(e, index.increment().get()));
+        }
     }
 
     /**
@@ -622,8 +683,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param action 操作
      */
     public void forEachOrderedIdx(BiConsumer<? super T, Integer> action) {
-        AtomicInteger index = new AtomicInteger(-1);
-        stream.forEachOrdered(e -> action.accept(e, isParallel() ? index.get() : index.incrementAndGet()));
+        Objects.requireNonNull(action);
+        if (isParallel()) {
+            stream.forEachOrdered(e -> action.accept(e, NOT_FOUND_INDEX));
+        } else {
+            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
+            stream.forEachOrdered(e -> action.accept(e, index.increment().get()));
+        }
     }
 
     /**
@@ -644,23 +710,21 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <A>       给定的数组类型
      * @return 包含此流元素的指定的数组
      * @throws ArrayStoreException 如果元素转换失败，例如不是该元素类型及其父类，则抛出该异常
-     * @apiNote 例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
+     * 例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
      * <pre>{@code
      * String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
      * }</pre>
      */
+    @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
+        //noinspection SuspiciousToArrayCall
         return stream.toArray(generator);
     }
 
     /**
      * 对元素进行聚合，并返回聚合后的值，相当于在for循环里写sum=sum+ints[i]
-     * 这是一个终端操作
-     *
-     * @param identity    初始值，还用于限定泛型
-     * @param accumulator 你想要的聚合操作
-     * @return 聚合计算后的值
-     * @apiNote 求和、最小值、最大值、平均值和转换成一个String字符串均为聚合操作
+     * 这是一个终端操作<br>
+     * 求和、最小值、最大值、平均值和转换成一个String字符串均为聚合操作
      * 例如这里对int进行求和可以写成：
      *
      * <pre>{@code
@@ -672,6 +736,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * <pre>{@code
      *     Integer sum = integers.reduce(0, Integer::sum);
      * }</pre>
+     *
+     * @param identity    初始值，还用于限定泛型
+     * @param accumulator 你想要的聚合操作
+     * @return 聚合计算后的值
      */
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator) {
@@ -695,15 +763,15 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      *     return foundAny ? Optional.of(result) : Optional.empty();
      * }</pre>
      * 但它不局限于顺序执行，例如并行流等情况下
-     * 这是一个终端操作
+     * 这是一个终端操作<br>
+     * 例如以下场景抛出 NPE ：
+     * <pre>{@code
+     *      Optional<Integer> reduce = Stream.<Integer>builder().add(1).add(1).build().reduce((a, b) -> null);
+     * }</pre>
      *
      * @param accumulator 你想要的聚合操作
      * @return 聚合后用 {@link Optional}包裹的值
      * @throws NullPointerException 如果给定的聚合操作中执行后结果为空，并用于下一次执行，则抛出该异常
-     * @apiNote 例如以下场景抛出 NPE ：
-     * <pre>{@code
-     *      Optional<Integer> reduce = Stream.<Integer>builder().add(1).add(1).build().reduce((a, b) -> null);
-     * }</pre>
      * @see #reduce(Object, BinaryOperator)
      * @see #min(Comparator)
      * @see #max(Comparator)
@@ -844,23 +912,28 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 与给定断言匹配的第一个元素
      */
     public T findFirst(Predicate<? super T> predicate) {
-        return filter(predicate).findFirst().orElse(null);
+        return stream.filter(predicate).findFirst().orElse(null);
     }
 
     /**
-     * 获取与给定断言匹配的第一个元素的下标
+     * 获取与给定断言匹配的第一个元素的下标，并行流下标永远为-1
      *
      * @param predicate 断言
-     * @return 与给定断言匹配的第一个元素的下标
+     * @return 与给定断言匹配的第一个元素的下标，如果不存在则返回-1
      */
     public Integer findFirstIdx(Predicate<? super T> predicate) {
-        AtomicInteger idxRef = new AtomicInteger(-1);
-        forEachIdx((e, i) -> {
-            if (predicate.test(e) && idxRef.get() == -1) {
-                idxRef.set(i);
-            }
-        });
-        return idxRef.get();
+        Objects.requireNonNull(predicate);
+        if (isParallel()) {
+            return NOT_FOUND_INDEX;
+        } else {
+            MutableInt index = new MutableInt(NOT_FOUND_INDEX);
+            //noinspection ResultOfMethodCallIgnored
+            stream.filter(e -> {
+                index.increment();
+                return predicate.test(e);
+            }).findFirst();
+            return index.get();
+        }
     }
 
     /**
@@ -869,7 +942,13 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 最后一个元素
      */
     public Optional<T> findLast() {
-        return Optional.of(toList()).filter(l -> !l.isEmpty()).map(l -> l.get(l.size() - 1));
+        if (isParallel()) {
+            return Optional.of(toList()).filter(l -> !l.isEmpty()).map(l -> l.get(l.size() - 1));
+        } else {
+            MutableObj<T> last = new MutableObj<>(null);
+            forEach(last::set);
+            return Optional.ofNullable(last.get());
+        }
     }
 
     /**
@@ -879,23 +958,41 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 与给定断言匹配的最后一个元素
      */
     public T findLast(Predicate<? super T> predicate) {
-        return reverse().filter(predicate).findFirst().orElse(null);
+        Objects.requireNonNull(predicate);
+        if (isParallel()) {
+            List<T> list = toList();
+            final int index = CollUtil.lastIndexOf(list, predicate);
+            return index == NOT_FOUND_INDEX ? null : list.get(index);
+        } else {
+            MutableObj<T> last = new MutableObj<>(null);
+            forEach(e -> {
+                if (predicate.test(e)) {
+                    last.set(e);
+                }
+            });
+            return last.get();
+        }
     }
 
     /**
-     * 获取与给定断言匹配的最后一个元素的下标
+     * 获取与给定断言匹配的最后一个元素的下标，并行流下标永远为-1
      *
      * @param predicate 断言
-     * @return 与给定断言匹配的最后一个元素的下标
+     * @return 与给定断言匹配的最后一个元素的下标，如果不存在则返回-1
      */
     public Integer findLastIdx(Predicate<? super T> predicate) {
-        AtomicInteger idxRef = new AtomicInteger(-1);
-        forEachIdx((e, i) -> {
-            if (predicate.test(e)) {
-                idxRef.set(i);
-            }
-        });
-        return idxRef.get();
+        Objects.requireNonNull(predicate);
+        if (isParallel()) {
+            return NOT_FOUND_INDEX;
+        } else {
+            MutableInt idxRef = new MutableInt(NOT_FOUND_INDEX);
+            forEachIdx((e, i) -> {
+                if (predicate.test(e)) {
+                    idxRef.set(i);
+                }
+            });
+            return idxRef.get();
+        }
     }
 
     /**
@@ -906,7 +1003,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public Steam<T> reverse() {
         List<T> list = toList();
         Collections.reverse(list);
-        return Steam.of(list, isParallel());
+        return of(list, isParallel());
     }
 
     /**
@@ -946,7 +1043,9 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     @Override
     public Steam<T> parallel() {
-        return new Steam<>(stream.parallel());
+        //noinspection ResultOfMethodCallIgnored
+        stream.parallel();
+        return this;
     }
 
     /**
@@ -956,7 +1055,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     public Steam<T> parallel(boolean parallel) {
-        return new Steam<>(parallel ? stream.parallel() : stream.sequential());
+        return parallel ? parallel() : sequential();
     }
 
     /**
@@ -977,7 +1076,9 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     @Override
     public Steam<T> onClose(Runnable closeHandler) {
-        return new Steam<>(stream.onClose(closeHandler));
+        //noinspection ResultOfMethodCallIgnored
+        stream.onClose(closeHandler);
+        return this;
     }
 
     /**
@@ -987,7 +1088,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     public Steam<T> push(T obj) {
-        return Steam.concat(this, Steam.of(obj));
+        return Steam.concat(this.stream, Stream.of(obj));
     }
 
     /**
@@ -998,7 +1099,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     @SuppressWarnings("unchecked")
     public Steam<T> push(T... obj) {
-        return Steam.concat(this, Steam.of(obj));
+        return Steam.concat(this.stream, of(obj));
     }
 
     /**
@@ -1008,7 +1109,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     public Steam<T> unshift(T obj) {
-        return Steam.concat(Steam.of(obj), this);
+        return Steam.concat(Stream.of(obj), this.stream);
     }
 
     /**
@@ -1017,9 +1118,9 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param obj 元素
      * @return 流
      */
-    @SuppressWarnings("unchecked")
-    public Steam<T> unshift(T... obj) {
-        return Steam.concat(Steam.of(obj), this);
+    @SafeVarargs
+    public final Steam<T> unshift(T... obj) {
+        return Steam.concat(of(obj), this.stream);
     }
 
     /**
@@ -1032,17 +1133,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (Objects.isNull(idx)) {
             return null;
         }
-        List<T> list = toList();
-        if (idx > -1) {
-            if (idx >= list.size()) {
-                return null;
-            }
-            return list.get(idx);
-        }
-        if (-idx > list.size()) {
-            return null;
-        }
-        return list.get(list.size() + idx);
+        return CollUtil.get(toList(), idx);
     }
 
     /**
@@ -1083,7 +1174,10 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     @Override
     public boolean equals(Object obj) {
-        return stream.equals(obj);
+        if (obj instanceof Stream) {
+            return stream.equals(obj);
+        }
+        return false;
     }
 
     /**
@@ -1126,15 +1220,28 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
-     * 与给定的可迭代对象转换成map，key为现有元素，value为给定可迭代对象迭代的元素
+     * 与给定的可迭代对象转换成map，key为现有元素，value为给定可迭代对象迭代的元素<br>
+     * 至少包含全部的key，如果对应位置上的value不存在，则为null
      *
      * @param other 可迭代对象
      * @param <R>   可迭代对象迭代的元素类型
-     * @return map，key为现有元素，value为给定可迭代对象迭代的元素
+     * @return map，key为现有元素，value为给定可迭代对象迭代的元素;<br>
+     * 至少包含全部的key，如果对应位置上的value不存在，则为null;<br>
+     * 如果key重复, 则保留最后一个关联的value;<br>
      */
     public <R> Map<T, R> toZip(Iterable<R> other) {
-        Iterator<R> iterator = other.iterator();
-        return toMap(Function.identity(), e -> iterator.hasNext() ? iterator.next() : null);
+        // value对象迭代器
+        final Iterator<R> iterator = Opp.ofNullable(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
+        if (isParallel()) {
+            List<T> keyList = toList();
+            final Map<T, R> map = CollUtil.newHashMap(keyList.size());
+            for (T key : keyList) {
+                map.put(key, iterator.hasNext() ? iterator.next() : null);
+            }
+            return map;
+        } else {
+            return toMap(Function.identity(), e -> iterator.hasNext() ? iterator.next() : null);
+        }
     }
 
     /**
@@ -1275,63 +1382,108 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return collect(Collective.groupingBy(classifier, mapFactory, downstream));
     }
 
+    /**
+     * 将 现有元素 与 给定迭代器中对应位置的元素 使用 zipper 转换为新的元素，并返回新元素组成的流<br>
+     * 新流的数量等于旧流元素的数量<br>
+     * 使用 zipper 转换时, 如果对应位置上已经没有other元素，则other元素为null<br>
+     *
+     * @param other  给定的迭代器
+     * @param zipper 两个元素的合并器
+     * @param <U>    给定的迭代对象类型
+     * @param <R>    合并后的结果对象类型
+     * @return 合并后的结果对象的流
+     */
     public <U, R> Steam<R> zip(Iterable<U> other,
                                BiFunction<? super T, ? super U, ? extends R> zipper) {
-        Iterator<U> iterator = other.iterator();
-        return new Steam<>(stream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
+        Objects.requireNonNull(zipper);
+        // 给定对象迭代器
+        final Iterator<U> iterator = Opp.ofNullable(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
+        Stream<T> resStream = this.stream;
+        if (isParallel()) {
+            resStream = toList().stream();
+        }
+        final Steam<R> newStream = of(resStream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
+        newStream.parallel(isParallel());
+        return newStream;
     }
 
     /**
      * 类似js的<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">splice</a>函数
      *
      * @param start       起始下标
-     * @param deleteCount 删除个数
+     * @param deleteCount 删除个数，正整数
      * @param items       放入值
      * @return 操作后的流
      */
     @SuppressWarnings("unchecked")
     public Steam<T> splice(int start, int deleteCount, T... items) {
         List<T> list = toList();
-        if (start > -1) {
-            if (start >= list.size()) {
-                return Steam.concat(Steam.of(list), Steam.of(items));
-            }
-            list.removeAll(list.subList(start, start + deleteCount));
-            list.addAll(start, Arrays.asList(items));
-            return Steam.of(list);
+        final int size = list.size();
+        // 从后往前查找
+        if (start < 0) {
+            start += size;
+        } else if (start >= size) {
+            // 直接在尾部追加，不删除
+            start = size;
+            deleteCount = 0;
         }
-        if (-start > list.size()) {
-            return Steam.concat(Steam.of(items), Steam.of(list));
+        // 起始位置 加上 删除的数量 超过 数据长度，需要重新计算需要删除的数量
+        if (start + deleteCount > size) {
+            deleteCount = size - start;
         }
-        start = list.size() + start;
-        list.removeAll(list.subList(start, start + deleteCount));
-        list.addAll(start, Arrays.asList(items));
-        return Steam.of(list);
+
+        // 新列表的长度
+        final int newSize = size - deleteCount + items.length;
+        List<T> resList = list;
+        // 新列表的长度 大于 旧列表，创建新列表
+        if (newSize > size) {
+            resList = new ArrayList<>(newSize);
+            resList.addAll(list);
+        }
+        // 需要删除的部分
+        if (deleteCount > 0) {
+            resList.subList(start, start + deleteCount).clear();
+        }
+        // 新增的部分
+        if (items.length > 0) {
+            resList.addAll(start, Arrays.asList(items));
+        }
+        return Steam.of(resList);
     }
 
     /**
-     * 按指定长度分割元素
+     * 按指定长度切分为双层流
+     * <p>
+     * 形如：[1,2,3,4,5] -> [[1,2], [3,4], [5,6]]
+     * </p>
      *
-     * @param batchSize 按指定长度分割元素
-     * @return 流里面的元素是分好的流
+     * @param batchSize 指定长度, 正整数
+     * @return 切好的流
      */
-    public Steam<Steam<T>> sub(int batchSize) {
+    public Steam<Steam<T>> split(final int batchSize) {
         List<T> list = toList();
-        if (list.size() <= batchSize) {
-            return Steam.<Steam<T>>of(Steam.of(list)).parallel(isParallel());
+        final int size = list.size();
+        // 指定长度 大于等于 列表长度
+        if (size <= batchSize) {
+            // 返回第一层只有单个元素的双层流，形如：[[1,2,3,4,5]]
+            return Steam.<Steam<T>>of(of(list, isParallel()));
         }
-        return Steam.iterate(0, i -> i < list.size(), i -> i + batchSize)
-                .map(skip -> Steam.of(list).skip(skip).limit(batchSize)).parallel(isParallel());
+        return Steam.iterate(0, i -> i < size, i -> i + batchSize)
+                .map(skip -> of(list.subList(skip, Math.min(size, skip + batchSize)), isParallel()))
+                .parallel(isParallel());
     }
 
     /**
-     * 按指定长度分割元素
+     * 按指定长度切分为元素为list的流
+     * <p>
+     * 形如：[1,2,3,4,5] -> [[1,2], [3,4], [5,6]]
+     * </p>
      *
-     * @param batchSize 按指定长度分割元素
-     * @return 流里面的元素是分好的list
+     * @param batchSize 指定长度, 正整数
+     * @return 切好的流
      */
-    public Steam<List<T>> subList(int batchSize) {
-        return sub(batchSize).map(Steam::toList);
+    public Steam<List<T>> splitList(final int batchSize) {
+        return split(batchSize).map(Steam::toList);
     }
 
     public interface Builder<T> extends Consumer<T> {
