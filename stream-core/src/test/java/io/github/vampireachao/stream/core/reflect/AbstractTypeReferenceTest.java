@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * @since 2022/7/15 14:44
  */
 class AbstractTypeReferenceTest {
+    
 
     @Test
     void testGetTypeName() {
