@@ -5,8 +5,17 @@ package io.github.vampireachao.stream.core.business.highlight;
  */
 public class FoundWord {
 
+    /**
+     * 查找到的词
+     */
     private String word;
+    /**
+     * ignore
+     */
     private String wordAfterHighlight;
+    /**
+     * 下标
+     */
     private Integer index;
 
     public FoundWord(String word, Integer index) {
