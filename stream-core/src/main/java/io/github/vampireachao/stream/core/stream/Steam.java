@@ -2,7 +2,6 @@ package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.optional.Opp;
-import io.github.vampireachao.stream.core.util.CollUtil;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -712,8 +711,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @throws ArrayStoreException 如果元素转换失败，例如不是该元素类型及其父类，则抛出该异常
      *                             例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
      *                             <pre>{@code
-     *                                                                                                                                                                                                                                                             String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
-     *                                                                                                                                                                                                                                                             }</pre>
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                     String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                     }</pre>
      */
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
@@ -960,9 +959,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public T findLast(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         if (isParallel()) {
-            List<T> list = toList();
-            final int index = CollUtil.lastIndexOf(list, predicate);
-            return index == NOT_FOUND_INDEX ? null : list.get(index);
+            return filter(predicate).findLast().orElse(null);
         } else {
             AtomicReference<T> last = new AtomicReference<>(null);
             forEach(e -> {
@@ -1133,7 +1130,17 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         if (Objects.isNull(idx)) {
             return null;
         }
-        return CollUtil.get(toList(), idx);
+        List<T> list = toList();
+        if (idx > -1) {
+            if (idx >= list.size()) {
+                return null;
+            }
+            return list.get(idx);
+        }
+        if (-idx > list.size()) {
+            return null;
+        }
+        return list.get(list.size() + idx);
     }
 
     /**
@@ -1234,7 +1241,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         final Iterator<R> iterator = Opp.ofNullable(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
         if (isParallel()) {
             List<T> keyList = toList();
-            final Map<T, R> map = CollUtil.newHashMap(keyList.size());
+            final Map<T, R> map = new HashMap<>(keyList.size());
             for (T key : keyList) {
                 map.put(key, iterator.hasNext() ? iterator.next() : null);
             }
