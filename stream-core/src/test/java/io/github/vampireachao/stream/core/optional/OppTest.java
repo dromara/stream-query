@@ -268,4 +268,9 @@ class OppTest {
             Assertions.assertTrue(opp.isEmpty());
         }).forEach(SerRunn::run);
     }
+
+    @Test
+    void testIsEqual() {
+        Assertions.assertTrue(Opp.ofNullable(1).isEqual(1));
+    }
 }
