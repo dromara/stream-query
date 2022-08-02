@@ -99,16 +99,12 @@ class OppTest {
 
     @Test
     void orElseThrowTest() {
-        Assertions.assertThrows(NoSuchElementException.class, () -> {
-            // 获取一个不可能为空的值，否则抛出NoSuchElementException异常
-            final Object obj = Opp.ofNullable(null).orElseThrow();
-            Assertions.assertNull(obj);
-        });
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            // 获取一个不可能为空的值，否则抛出自定义异常
-            final Object assignException = Opp.ofNullable(null).orElseThrow(IllegalStateException::new);
-            Assertions.assertNull(assignException);
-        });
+        Opp<Object> opp = Opp.ofNullable(null);
+        // 获取一个不可能为空的值，否则抛出NoSuchElementException异常
+        Assertions.assertThrows(NoSuchElementException.class, opp::orElseThrow);
+        // 获取一个不可能为空的值，否则抛出自定义异常
+        Assertions.assertThrows(IllegalStateException.class,
+                () -> opp.orElseThrow(IllegalStateException::new));
     }
 
     @Test
