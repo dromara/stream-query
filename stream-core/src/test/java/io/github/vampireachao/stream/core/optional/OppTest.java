@@ -1,7 +1,6 @@
-package io.github.vampireachao.stream.core.Optional;
+package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.function.SerRunn;
-import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.AbstractTypeReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
