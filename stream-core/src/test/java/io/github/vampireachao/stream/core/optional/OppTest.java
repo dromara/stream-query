@@ -28,9 +28,7 @@ class OppTest {
     void testTypeOfPeek() {
         Stream.<SerRunn>of(() -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<String> opp = Opp.ofNullable("").typeOfPeek((String str) -> {
-                isExecute.set(true);
-            });
+            Opp<String> opp = Opp.ofNullable("").typeOfPeek((String str) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
