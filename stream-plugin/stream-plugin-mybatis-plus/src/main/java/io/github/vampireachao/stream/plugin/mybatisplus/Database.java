@@ -97,7 +97,7 @@ public class Database {
      * @param batchSize  插入批次数量
      */
     public static <T> boolean saveBatch(Collection<T> entityList, int batchSize) {
-        if (CollectionUtils.isEmpty(entityList)) {
+        if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
@@ -145,7 +145,7 @@ public class Database {
      * @return 成功与否
      */
     public static <T> boolean saveFewSql(Collection<T> entityList, int batchSize) {
-        if (CollectionUtils.isEmpty(entityList)) {
+        if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
@@ -168,7 +168,7 @@ public class Database {
      * @param batchSize  每次的数量
      */
     public static <T> boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
-        if (CollectionUtils.isEmpty(entityList)) {
+        if (CollectionUtils.isEmpty(entityList) || batchSize < 0) {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
@@ -290,6 +290,9 @@ public class Database {
      * @param batchSize  修改批次数量
      */
     public static <T> boolean updateBatchById(Collection<T> entityList, int batchSize) {
+        if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
+            return false;
+        }
         Class<T> entityClass = getEntityClass(entityList);
         TableInfo tableInfo = getTableInfo(entityClass);
         String sqlStatement = SqlHelper.getSqlStatement(ClassUtils.toClassConfident(tableInfo.getCurrentNamespace()), SqlMethod.UPDATE_BY_ID);
