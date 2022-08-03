@@ -21,7 +21,7 @@ public class HighlightHelper {
     }
 
     public static String highlight(String text, List<FoundWord> fondWords, UnaryOperator<String> highlightOperator) {
-        if (Opp.empty(fondWords).isEmpty() || Opp.blank(text).isEmpty()) {
+        if (Opp.empty(fondWords).isNull() || Opp.blank(text).isNull()) {
             return text;
         }
         fondWords = Steam.of(fondWords)
@@ -54,7 +54,7 @@ public class HighlightHelper {
                 linkedList.add(new FoundWord(partOne, lastIdx));
             }
             // 获取本次需要高亮的词汇
-            word = Opp.ofNullable(word).orElseGet(fondWord::getWord);
+            word = Opp.of(word).orElseGet(fondWord::getWord);
             // 历史下标往前推进
             lastIdx += word.length();
             // 执行高亮操作

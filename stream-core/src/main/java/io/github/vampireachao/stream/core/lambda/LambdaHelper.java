@@ -105,7 +105,7 @@ public class LambdaHelper {
     }
 
     public static <T> String getPropertyName(SerFunc<T, ?> func) {
-        return Opp.ofNullable(func).map(LambdaHelper::resolve).map(LambdaExecutable::getName).map(BeanHelper::getPropertyName).get();
+        return Opp.of(func).map(LambdaHelper::resolve).map(LambdaExecutable::getName).map(BeanHelper::getPropertyName).get();
     }
 
 }

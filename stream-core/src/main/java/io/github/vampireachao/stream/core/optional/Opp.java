@@ -9,10 +9,7 @@ import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
@@ -61,7 +58,7 @@ public class Opp<T> {
      * @return 一个包裹里元素不可能为空的 {@code Opp}
      * @throws NullPointerException 如果传入的元素为空，抛出 {@code NPE}
      */
-    public static <T> Opp<T> of(T value) {
+    public static <T> Opp<T> required(T value) {
         return new Opp<>(Objects.requireNonNull(value));
     }
 
@@ -72,7 +69,7 @@ public class Opp<T> {
      * @param <T>   包裹里元素的类型
      * @return 一个包裹里元素可能为空的 {@code Opp}
      */
-    public static <T> Opp<T> ofNullable(T value) {
+    public static <T> Opp<T> of(T value) {
         return value == null ? empty()
                 : new Opp<>(value);
     }
@@ -84,7 +81,7 @@ public class Opp<T> {
      * @return 一个包裹里元素可能为空，或者为空字符串的 {@code Opp}
      */
     public static <T extends CharSequence> Opp<T> blank(T value) {
-        return Opp.ofNullable(value).filter(str -> !str.toString().trim().isEmpty());
+        return Opp.of(value).filter(str -> !str.toString().trim().isEmpty());
     }
 
     /**
@@ -95,10 +92,9 @@ public class Opp<T> {
      * @param <R>   集合值类型
      * @param value 传入需要包裹的元素
      * @return 一个包裹里元素可能为空的 {@code Opp}
-     * @since 5.7.17
      */
     public static <T, R extends Collection<T>> Opp<R> empty(R value) {
-        return Opp.ofNullable(value).filter(coll -> !coll.isEmpty() && !Objects.equals(Collections.frequency(value, null), value.size()));
+        return Opp.of(value).filter(coll -> !coll.isEmpty() && !Objects.equals(Collections.frequency(value, null), value.size()));
     }
 
     /**
@@ -108,7 +104,7 @@ public class Opp<T> {
      */
     public static <T> Opp<T> ofTry(Supplier<T> supplier) {
         try {
-            return Opp.ofNullable(supplier.get());
+            return Opp.of(supplier.get());
         } catch (Exception e) {
             final Opp<T> empty = new Opp<>(null);
             empty.exception = e;
@@ -131,13 +127,16 @@ public class Opp<T> {
         return this.value;
     }
 
+    public <R> R get(Function<T, R> mapper) {
+        return map(mapper).orElse(null);
+    }
+
     /**
      * 判断包裹里元素的值是否不存在，不存在为 {@code true}，否则为{@code false}
      *
      * @return 包裹里元素的值不存在 则为 {@code true}，否则为{@code false}
-     * @since 11 这是jdk11{@link java.util.Optional}中的新函数
      */
-    public boolean isEmpty() {
+    public boolean isNull() {
         return value == null;
     }
 
@@ -146,7 +145,6 @@ public class Opp<T> {
      * 当调用 {@link #ofTry(Supplier)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
      *
      * @return 异常
-     * @since 5.7.17
      */
     public Exception getException() {
         return this.exception;
@@ -157,7 +155,6 @@ public class Opp<T> {
      * 当调用 {@link #ofTry(Supplier)}时，抛出异常则表示失败
      *
      * @return 是否失败
-     * @since 5.7.17
      */
     public boolean isFail() {
         return null != this.exception;
@@ -168,7 +165,7 @@ public class Opp<T> {
      *
      * @return 包裹里元素的值存在为 {@code true}，否则为{@code false}
      */
-    public boolean isPresent() {
+    public boolean isNonNull() {
         return value != null;
     }
 
@@ -185,7 +182,7 @@ public class Opp<T> {
      * @throws NullPointerException 如果包裹里的值存在，但你传入的操作为{@code null}时抛出
      */
     public Opp<T> ifPresent(Consumer<? super T> action) {
-        if (isPresent()) {
+        if (isNonNull()) {
             action.accept(value);
         }
         return this;
@@ -202,7 +199,7 @@ public class Opp<T> {
      */
     public Opp<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        if (isEmpty()) {
+        if (isNull()) {
             return this;
         } else {
             return predicate.test(value) ? this : empty();
@@ -221,10 +218,10 @@ public class Opp<T> {
      */
     public <U> Opp<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
-        if (isEmpty()) {
+        if (isNull()) {
             return empty();
         } else {
-            return Opp.ofNullable(mapper.apply(value));
+            return Opp.of(mapper.apply(value));
         }
     }
 
@@ -241,7 +238,7 @@ public class Opp<T> {
      */
     public <U> Opp<U> flatMap(Function<? super T, ? extends Opp<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (isEmpty()) {
+        if (isNull()) {
             return empty();
         } else {
             @SuppressWarnings("unchecked") final Opp<U> r = (Opp<U>) mapper.apply(value);
@@ -260,14 +257,13 @@ public class Opp<T> {
      * 如果不存在，返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
      * @see Optional#flatMap(Function)
-     * @since 5.7.16
      */
     public <U> Opp<U> flattedMap(Function<? super T, Optional<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (isEmpty()) {
+        if (isNull()) {
             return empty();
         } else {
-            return ofNullable(mapper.apply(value).orElse(null));
+            return of(mapper.apply(value).orElse(null));
         }
     }
 
@@ -283,7 +279,7 @@ public class Opp<T> {
      */
     public Opp<T> peek(Consumer<T> action) throws NullPointerException {
         Objects.requireNonNull(action);
-        if (isEmpty()) {
+        if (isNull()) {
             return Opp.empty();
         }
         action.accept(value);
@@ -363,7 +359,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("unchecked")
     public <U> Opp<T> typeOfPeek(Type type, SerCons<U> action) {
-        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).peek(v -> action.accept((U) v)));
+        return of(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).peek(v -> action.accept((U) v)));
     }
 
     /**
@@ -377,7 +373,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("unchecked")
     public <U, R> Opp<R> typeOfMap(Type type, SerFunc<U, R> mapper) {
-        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).map(v -> mapper.apply((U) v)));
+        return of(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).map(v -> mapper.apply((U) v)));
     }
 
     /**
@@ -392,7 +388,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("unchecked")
     public <U> Opp<T> typeOfFilter(Type type, SerPred<U> predicate) {
-        return ofNullable(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).filter(v -> predicate.test((U) v)));
+        return of(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).filter(v -> predicate.test((U) v)));
     }
 
     /**
@@ -404,7 +400,7 @@ public class Opp<T> {
      */
     public Opp<T> or(Supplier<? extends Opp<? extends T>> supplier) {
         Objects.requireNonNull(supplier);
-        if (isPresent()) {
+        if (isNonNull()) {
             return this;
         } else {
             @SuppressWarnings("unchecked") final Opp<T> r = (Opp<T>) supplier.get();
@@ -425,7 +421,7 @@ public class Opp<T> {
      * @return 返回一个包含该元素的 {@link Stream}或空的 {@link Stream}
      */
     public Stream<T> stream() {
-        if (isEmpty()) {
+        if (isNull()) {
             return Stream.empty();
         } else {
             return Stream.of(value);
@@ -439,7 +435,7 @@ public class Opp<T> {
      * @return 如果包裹里元素的值存在，则返回该值，否则返回传入的{@code other}
      */
     public T orElse(T other) {
-        return isPresent() ? value : other;
+        return isNonNull() ? value : other;
     }
 
     /**
@@ -450,7 +446,7 @@ public class Opp<T> {
      * @throws NullPointerException 如果值不存在，并且传入的操作为 {@code null}
      */
     public <R extends Runnable> T orElseRun(R action) {
-        if (isPresent()) {
+        if (isNonNull()) {
             return value;
         } else {
             action.run();
@@ -463,7 +459,6 @@ public class Opp<T> {
      *
      * @param other 可选值
      * @return 如果未发生异常，则返回该值，否则返回传入的{@code other}
-     * @since 5.7.17
      */
     public T failOrElse(T other) {
         return isFail() ? other : value;
@@ -477,7 +472,7 @@ public class Opp<T> {
      * @throws NullPointerException 如果之不存在，并且传入的操作为空，则抛出 {@code NPE}
      */
     public T orElseGet(Supplier<? extends T> supplier) {
-        return isPresent() ? value : supplier.get();
+        return isNonNull() ? value : supplier.get();
     }
 
     /**
@@ -501,7 +496,7 @@ public class Opp<T> {
      * @throws NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (isPresent()) {
+        if (isNonNull()) {
             return value;
         } else {
             throw exceptionSupplier.get();
@@ -524,7 +519,7 @@ public class Opp<T> {
      * @throws NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
      */
     public <X extends Throwable> T orElseThrow(Function<String, ? extends X> exceptionFunction, String message) throws X {
-        if (isPresent()) {
+        if (isNonNull()) {
             return value;
         } else {
             throw exceptionFunction.apply(message);
@@ -535,7 +530,6 @@ public class Opp<T> {
      * 转换为 {@link Optional}对象
      *
      * @return {@link Optional}对象
-     * @since 5.7.16
      */
     public Optional<T> toOptional() {
         return Optional.ofNullable(this.value);
@@ -587,7 +581,7 @@ public class Opp<T> {
      */
     @Override
     public String toString() {
-        return isPresent() ? value.toString() : null;
+        return isNonNull() ? value.toString() : null;
     }
 
     public <R> Opp<T> filterEqual(R value) {
@@ -595,10 +589,30 @@ public class Opp<T> {
     }
 
     public <R> boolean isEqual(R value) {
-        return filterEqual(value).isPresent();
+        return filterEqual(value).isNonNull();
     }
 
     public boolean is(Predicate<T> predicate) {
-        return filter(predicate).isPresent();
+        return filter(predicate).isNonNull();
+    }
+
+    public <R> Opp<R> biMap(Opp<R> other, BiFunction<T, R, R> mapper) {
+        Objects.requireNonNull(mapper);
+        if (isNull() || other.isNull()) {
+            return empty();
+        } else {
+            return Opp.of(mapper.apply(value, other.value));
+        }
+    }
+
+    public Opp<T> biMapOrSelf(Opp<T> other, BinaryOperator<T> mapper) {
+        Objects.requireNonNull(mapper);
+        if (isNull()) {
+            return empty();
+        } else if (other.isNull()) {
+            return this;
+        } else {
+            return Opp.of(mapper.apply(value, other.value));
+        }
     }
 }

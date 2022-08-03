@@ -154,18 +154,18 @@ class SteamTest {
     }
 
     @Test
-    void testFlatMapIdx() {
+    void testFlatIdx() {
         List<String> list = Arrays.asList("dromara", "hutool", "sweet");
-        List<String> mapIndex = Steam.of(list).flatMapIdx((e, i) -> Steam.of(i + 1 + "." + e)).toList();
+        List<String> mapIndex = Steam.of(list).flatIdx((e, i) -> Steam.of(i + 1 + "." + e)).toList();
         Assertions.assertEquals(Arrays.asList("1.dromara", "2.hutool", "3.sweet"), mapIndex);
         // 并行流时为-1
         Assertions.assertEquals(Arrays.asList(-1, -1, -1), Steam.of(1, 2, 3).parallel().mapIdx((e, i) -> i).toList());
     }
 
     @Test
-    void testFlatMapIter() {
+    void testFlatIter() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        List<Integer> flatMapIter = Steam.of(list).<Integer>flatMapIter(e -> null).toList();
+        List<Integer> flatMapIter = Steam.of(list).<Integer>flatIter(e -> null).toList();
         Assertions.assertEquals(Collections.emptyList(), flatMapIter);
     }
 

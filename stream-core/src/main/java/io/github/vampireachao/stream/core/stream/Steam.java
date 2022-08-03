@@ -246,7 +246,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 流
      */
     public static <T> Steam<T> of(Iterable<T> iterable, boolean parallel) {
-        return Opp.ofNullable(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
+        return Opp.of(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
     }
 
     /**
@@ -296,7 +296,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     public <R> Steam<T> filter(Function<? super T, ? extends R> mapper, R value) {
         Objects.requireNonNull(mapper);
-        return filter(e -> Objects.equals(Opp.ofNullable(e).map(mapper).get(), value));
+        return filter(e -> Objects.equals(Opp.of(e).map(mapper).get(), value));
     }
 
 
@@ -382,7 +382,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> flatMapIdx(BiFunction<? super T, Integer, ? extends Stream<? extends R>> mapper) {
+    public <R> Steam<R> flatIdx(BiFunction<? super T, Integer, ? extends Stream<? extends R>> mapper) {
         Objects.requireNonNull(mapper);
         if (isParallel()) {
             return flatMap(e -> mapper.apply(e, NOT_FOUND_INDEX));
@@ -440,9 +440,9 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> flatMapIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    public <R> Steam<R> flatIter(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         Objects.requireNonNull(mapper);
-        return flatMap(w -> Opp.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
+        return flatMap(w -> Opp.required(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
     }
 
     /**
@@ -711,8 +711,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @throws ArrayStoreException 如果元素转换失败，例如不是该元素类型及其父类，则抛出该异常
      *                             例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
      *                             <pre>{@code
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                     String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                     }</pre>
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                 String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }</pre>
      */
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
@@ -1238,7 +1238,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     public <R> Map<T, R> toZip(Iterable<R> other) {
         // value对象迭代器
-        final Iterator<R> iterator = Opp.ofNullable(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
+        final Iterator<R> iterator = Opp.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
         if (isParallel()) {
             List<T> keyList = toList();
             final Map<T, R> map = new HashMap<>(keyList.size());
@@ -1404,7 +1404,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                                BiFunction<? super T, ? super U, ? extends R> zipper) {
         Objects.requireNonNull(zipper);
         // 给定对象迭代器
-        final Iterator<U> iterator = Opp.ofNullable(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
+        final Iterator<U> iterator = Opp.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
         Stream<T> resStream = this.stream;
         if (isParallel()) {
             resStream = toList().stream();
