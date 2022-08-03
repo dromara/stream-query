@@ -42,19 +42,6 @@ class SteamTest {
         Assertions.assertEquals(Arrays.asList(0, 1, 2), list);
     }
 
-    @Test
-    void beanToMap(){
-        Student studentOne = new Student("臧臧",22,"河北保定");
-        Student studentTwo = new Student("阿超",22,"四川成都");
-        List<Student> list = new ArrayList<>();
-        list.add(studentOne);
-        list.add(studentTwo);
-        Map<String, String> beanToMap = Steam.beanToMap(list, Student::getName, Student::getAddress);
-        Assertions.assertEquals(new HashMap<String, String>() {{
-            put("臧臧", "河北保定");
-            put("阿超", "四川成都");
-        }}, beanToMap);
-    }
 
     @Test
     void testToCollection() {
