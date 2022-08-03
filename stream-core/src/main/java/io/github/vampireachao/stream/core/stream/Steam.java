@@ -1298,7 +1298,38 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
 
         return toList().stream().filter(a -> toList.contains(pro.apply(a))).toList();
 
+    }
 
+    /**
+     * 取出两个Bean集合的交集（根据某个字段是否相等判断是否相交）
+     * @param right 右边集合
+     * @param pro 字段
+     * @return 两个集合的交集
+     * @param <K> 字段类型
+     */
+    public  <K> Collection<T> beanBeMix(Collection<T> right,
+                                           Function<T,K> pro){
+        List<T> left =  toList();
+        List<K> leftPro = left.stream().map(pro).toList();
+        List<K> rightPro = right.stream().map(pro).toList();
+        Iterator<T> leftIterator = left.iterator();
+        Iterator<T> rightIterator = right.iterator();
+        while (leftIterator.hasNext()) {
+            T next = leftIterator.next();
+            boolean contains = rightPro.contains(pro.apply(next));
+            if (!contains){
+                leftIterator.remove();
+            }
+        }
+        while (rightIterator.hasNext()) {
+            T next = rightIterator.next();
+            boolean contains = leftPro.contains(pro.apply(next));
+            if (!contains){
+                rightIterator.remove();
+            }
+        }
+        left.addAll(right);
+        return left;
     }
 
     /**
