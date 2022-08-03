@@ -1140,7 +1140,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     public <R> Map<T, R> toZip(Iterable<R> other) {
         Iterator<R> iterator = other.iterator();
-        return toMap(Function.identity(), e -> iterator.hasNext() ? iterator.next() : null);
+        return toMap(a->a, e -> iterator.hasNext() ? iterator.next() : null);
     }
 
     /**
@@ -1303,6 +1303,23 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                                BiFunction<? super T, ? super U, ? extends R> zipper) {
         Iterator<U> iterator = other.iterator();
         return new Steam<>(stream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
+    }
+
+    /**
+     * 根据某字段判断当前集合中的值存不存在在另一集合中
+     * @param item 另一集合
+     * @param pro 字段
+     * @return 另一集合也存在的值
+     * @param <U> 字段类型
+     */
+    public <U> List<T> beanQueryInclude(Collection<T> item,
+                                      Function<T,U> pro){
+
+        List<U> toList = item.stream().map(pro).toList();
+
+        return toList().stream().filter(a -> toList.contains(pro.apply(a))).toList();
+
+
     }
 
     /**
