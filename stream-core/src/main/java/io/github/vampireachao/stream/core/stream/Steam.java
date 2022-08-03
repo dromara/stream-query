@@ -1195,22 +1195,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return toMap(keyMapper, valueMapper, (l, r) -> r);
     }
 
-    /**
-     *
-     * @param list          指定要映射的Bean集合
-     * @param functionK     map的key字段
-     * @param functionV     map的value字段
-     * @return              map
-     * @param <E>           Bean类型
-     * @param <K>           key类型
-     * @param <V>           value类型
-     */
-    public static  <E,K,V> Map<K,V> beanToMap(List<E> list, Function<E,K> functionK, Function<E,V> functionV){
-        if (list == null || list.size()==0){
-            return Collections.emptyMap();
-        }
-        return list.stream().collect(Collective.toMap(functionK, functionV));
-    }
+
 
     /**
      * 转换为map，key,value为给定操作执行后的返回值
