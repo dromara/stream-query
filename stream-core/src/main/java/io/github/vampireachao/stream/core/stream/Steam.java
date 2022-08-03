@@ -711,8 +711,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @throws ArrayStoreException 如果元素转换失败，例如不是该元素类型及其父类，则抛出该异常
      *                             例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
      *                             <pre>{@code
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                 String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }</pre>
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new);
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }</pre>
      */
     @Override
     public <A> A[] toArray(IntFunction<A[]> generator) {
@@ -1284,7 +1284,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return map(String::valueOf).collect(Collective.joining(delimiter, prefix, suffix));
     }
 
-   /**
+    /**
      * 转换为map，key为给定操作执行后的返回值,value为当前元素
      *
      * @param keyMapper 指定的key操作
@@ -1308,7 +1308,6 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                                   Function<? super T, ? extends U> valueMapper) {
         return toMap(keyMapper, valueMapper, (l, r) -> r);
     }
-
 
 
     /**
@@ -1418,51 +1417,34 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
-     * 根据某字段判断当前集合中的值存不存在在另一集合中
-     * @param item 另一集合
-     * @param pro 字段
-     * @return 另一集合也存在的值
-     * @param <U> 字段类型
+     * 过滤同类型集合中某一操作相同值的数据
+     * {@link Steam#filter(Function, Object)}
+     *
+     * @param others 另一可迭代对象
+     * @param mapper 操作
+     * @param <R>    操作返回值类型
+     * @return 过滤同类型集合中某一操作相同值的数据
      */
-    public <U> List<T> beanQueryInclude(Collection<T> item,
-                                      Function<T,U> pro){
-
-        List<U> toList = item.stream().map(pro).toList();
-
-        return toList().stream().filter(a -> toList.contains(pro.apply(a))).toList();
-
+    public <R> Steam<T> filterIter(Function<? super T, ? extends R> mapper,
+                                   Iterable<T> others) {
+        return filter(a -> Steam.of(others).map(mapper).anyMatch(b -> Objects.equals(mapper.apply(a), b)));
     }
 
     /**
-     * 取出两个Bean集合的交集（根据某个字段是否相等判断是否相交）
-     * @param right 右边集合
-     * @param pro 字段
-     * @return 两个集合的交集
-     * @param <K> 字段类型
+     * 同类型集合中某一操作相同值的数据，相同的会都保留
+     *
+     * @param mapper 另一可迭代对象
+     * @param others 字段
+     * @param <R>    操作返回值类型
+     * @return 同类型集合中某一操作相同值的数据，相同的会都保留
      */
-    public  <K> Collection<T> beanBeMix(Collection<T> right,
-                                           Function<T,K> pro){
-        List<T> left =  toList();
-        List<K> leftPro = left.stream().map(pro).toList();
-        List<K> rightPro = right.stream().map(pro).toList();
-        Iterator<T> leftIterator = left.iterator();
-        Iterator<T> rightIterator = right.iterator();
-        while (leftIterator.hasNext()) {
-            T next = leftIterator.next();
-            boolean contains = rightPro.contains(pro.apply(next));
-            if (!contains){
-                leftIterator.remove();
-            }
-        }
-        while (rightIterator.hasNext()) {
-            T next = rightIterator.next();
-            boolean contains = leftPro.contains(pro.apply(next));
-            if (!contains){
-                rightIterator.remove();
-            }
-        }
-        left.addAll(right);
-        return left;
+    public <R> Steam<T> pushMatch(Function<? super T, ? extends R> mapper,
+                                  Iterable<T> others) {
+        return flatMap(e -> {
+            // TODO 回家再改
+//            Steam.of(others).filter();
+            return null;
+        });
     }
 
     /**
