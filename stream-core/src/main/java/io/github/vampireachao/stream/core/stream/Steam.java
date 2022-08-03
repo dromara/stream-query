@@ -250,8 +250,6 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return new Steam<>(stream);
     }
 
-
-
     /**
      * 拆分字符串，转换为串行流
      *
@@ -308,8 +306,6 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public Steam<T> nonNull() {
         return new Steam<>(stream.filter(Objects::nonNull));
     }
-
-
 
     /**
      * 返回与指定函数将元素作为参数执行的结果组成的流
@@ -787,8 +783,6 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public Optional<T> max(Comparator<? super T> comparator) {
         return stream.max(comparator);
     }
-
-
 
     /**
      * 返回流元素个数
@@ -1350,6 +1344,12 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return Steam.of(list);
     }
 
+    /**
+     * 按指定长度分割元素
+     *
+     * @param batchSize 按指定长度分割元素
+     * @return 流里面的元素是分好的流
+     */
     public Steam<Steam<T>> sub(int batchSize) {
         List<T> list = toList();
         if (list.size() <= batchSize) {
@@ -1359,6 +1359,12 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                 .map(skip -> Steam.of(list).skip(skip).limit(batchSize)).parallel(isParallel());
     }
 
+    /**
+     * 按指定长度分割元素
+     *
+     * @param batchSize 按指定长度分割元素
+     * @return 流里面的元素是分好的list
+     */
     public Steam<List<T>> subList(int batchSize) {
         return sub(batchSize).map(Steam::toList);
     }
