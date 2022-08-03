@@ -596,7 +596,7 @@ public class Opp<T> {
         return filter(predicate).isNonNull();
     }
 
-    public <R> Opp<R> biMap(Opp<R> other, BiFunction<T, R, R> mapper) {
+    public <R> Opp<R> zip(Opp<R> other, BiFunction<T, R, R> mapper) {
         Objects.requireNonNull(mapper);
         if (isNull() || other.isNull()) {
             return empty();
@@ -605,7 +605,7 @@ public class Opp<T> {
         }
     }
 
-    public Opp<T> biMapOrSelf(Opp<T> other, BinaryOperator<T> mapper) {
+    public Opp<T> zipOrSelf(Opp<T> other, BinaryOperator<T> mapper) {
         Objects.requireNonNull(mapper);
         if (isNull()) {
             return empty();

@@ -275,23 +275,23 @@ class OppTest {
     }
 
     @Test
-    void testBiMap() {
+    void testZip() {
         Stream.<SerRunn>of(() -> {
-            String biMap = Opp.of(1).biMap(Opp.of("st"), (l, r) -> l + r).get();
+            String biMap = Opp.of(1).zip(Opp.of("st"), (l, r) -> l + r).get();
             Assertions.assertEquals("1st", biMap);
         }, () -> {
-            String biMap = Opp.of(1).biMap(Opp.<String>empty(), (l, r) -> l + r).get();
+            String biMap = Opp.of(1).zip(Opp.<String>empty(), (l, r) -> l + r).get();
             Assertions.assertNull(biMap);
         }).forEach(SerRunn::run);
     }
 
     @Test
-    void testBiMapOrSelf() {
+    void testZipOrSelf() {
         Stream.<SerRunn>of(() -> {
-            String compose = Opp.blank("Vampire").biMapOrSelf(Opp.of("Achao"), String::concat).get();
+            String compose = Opp.blank("Vampire").zipOrSelf(Opp.of("Achao"), String::concat).get();
             Assertions.assertEquals("VampireAchao", compose);
         }, () -> {
-            String compose = Opp.blank("Vampire").biMapOrSelf(Opp.empty(), String::concat).get();
+            String compose = Opp.blank("Vampire").zipOrSelf(Opp.empty(), String::concat).get();
             Assertions.assertEquals("Vampire", compose);
         }).forEach(SerRunn::run);
     }
