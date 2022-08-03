@@ -1284,7 +1284,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return map(String::valueOf).collect(Collective.joining(delimiter, prefix, suffix));
     }
 
-    /**
+   /**
      * 转换为map，key为给定操作执行后的返回值,value为当前元素
      *
      * @param keyMapper 指定的key操作
@@ -1308,6 +1308,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
                                   Function<? super T, ? extends U> valueMapper) {
         return toMap(keyMapper, valueMapper, (l, r) -> r);
     }
+
+
 
     /**
      * 转换为map，key,value为给定操作执行后的返回值
@@ -1355,6 +1357,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     public <K> Map<K, List<T>> group(Function<? super T, ? extends K> classifier) {
         return group(classifier, Collective.toList());
     }
+
 
     /**
      * 通过给定分组依据进行分组
@@ -1412,6 +1415,54 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         final Steam<R> newStream = of(resStream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
         newStream.parallel(isParallel());
         return newStream;
+    }
+
+    /**
+     * 根据某字段判断当前集合中的值存不存在在另一集合中
+     * @param item 另一集合
+     * @param pro 字段
+     * @return 另一集合也存在的值
+     * @param <U> 字段类型
+     */
+    public <U> List<T> beanQueryInclude(Collection<T> item,
+                                      Function<T,U> pro){
+
+        List<U> toList = item.stream().map(pro).toList();
+
+        return toList().stream().filter(a -> toList.contains(pro.apply(a))).toList();
+
+    }
+
+    /**
+     * 取出两个Bean集合的交集（根据某个字段是否相等判断是否相交）
+     * @param right 右边集合
+     * @param pro 字段
+     * @return 两个集合的交集
+     * @param <K> 字段类型
+     */
+    public  <K> Collection<T> beanBeMix(Collection<T> right,
+                                           Function<T,K> pro){
+        List<T> left =  toList();
+        List<K> leftPro = left.stream().map(pro).toList();
+        List<K> rightPro = right.stream().map(pro).toList();
+        Iterator<T> leftIterator = left.iterator();
+        Iterator<T> rightIterator = right.iterator();
+        while (leftIterator.hasNext()) {
+            T next = leftIterator.next();
+            boolean contains = rightPro.contains(pro.apply(next));
+            if (!contains){
+                leftIterator.remove();
+            }
+        }
+        while (rightIterator.hasNext()) {
+            T next = rightIterator.next();
+            boolean contains = leftPro.contains(pro.apply(next));
+            if (!contains){
+                rightIterator.remove();
+            }
+        }
+        left.addAll(right);
+        return left;
     }
 
     /**

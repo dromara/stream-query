@@ -1,9 +1,15 @@
 package io.github.vampireachao.stream.core.stream;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
@@ -37,10 +43,8 @@ class SteamTest {
     void testIterator() {
         List<Integer> list = Steam.iterate(0, i -> i < 3, i -> ++i).toList();
         Assertions.assertEquals(Arrays.asList(0, 1, 2), list);
-
-        List<Integer> limitList = Steam.iterate(0, i -> i + 1).limit(3).toList();
-        Assertions.assertEquals(Arrays.asList(0, 1, 2), limitList);
     }
+
 
     @Test
     void testToCollection() {
@@ -106,6 +110,42 @@ class SteamTest {
                     put("3", singletonList(3));
                 }}, group);
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class Student {
+        private String name;
+        private Integer age;
+        private String address;
+    }
+    @Test
+    void testBeanQueryInclude(){
+        Student studentOne = new Student("臧臧",21,"河北保定");
+        Student studentTwo = new Student("阿超",23,"四川成都");
+        List<Student> list = new ArrayList<>();
+        list.add(studentOne);
+        list.add(studentTwo);
+        Student studentO = new Student("臧臧",22,"河北保定");
+        Student studentT = new Student("臧臧",21,"四川成都");
+        List<Student> list1 = new ArrayList<>();
+        list1.add(studentO);
+        list1.add(studentT);
+        List<Student> students = Steam.of(list).beanQueryInclude(list1, Student::getAge);
+        System.out.println(students);
+    }
+
+    @Test
+    void testBeanBeMix(){
+        List<Student> left = new ArrayList<>();
+        left.add(new Student("阿超",23,"四川成都"));
+        List<Student> right = new ArrayList<>();
+        right.add(new Student("臧臧",22,"河北保定"));
+        right.add(new Student("臧臧",21,"四川成都"));
+        List<Student> collect = new ArrayList<>(Steam.of(left).beanBeMix(right, Student::getAddress));
+        System.out.println(collect);
+    }
+
 
     @Test
     void testMapIdx() {
