@@ -1140,7 +1140,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     public <R> Map<T, R> toZip(Iterable<R> other) {
         Iterator<R> iterator = other.iterator();
-        return toMap(a->a, e -> iterator.hasNext() ? iterator.next() : null);
+        return toMap(Function.identity(), e -> iterator.hasNext() ? iterator.next() : null);
     }
 
     /**
