@@ -192,7 +192,8 @@ public class ReflectHelper {
 
     public static Type[] getGenericTypes(Type paramType) {
         Type type;
-        for (type = paramType; type instanceof Class;
+        for (type = paramType;
+             type instanceof Class;
              type = ((Class<?>) type).getGenericSuperclass()) {
             if (Object.class.equals(type)) {
                 Type[] genericInterfaces = ((Class<?>) type).getGenericInterfaces();
