@@ -122,23 +122,6 @@ class SteamTest {
         Assertions.assertEquals(Collections.singletonList(Student.builder().name("臧臧").age(23).build()), students);
     }
 
-    @Test
-    void testPushMatch() {
-        List<Student> list = Arrays.asList(
-                Student.builder().name("臧臧").age(23).build(),
-                Student.builder().name("阿超").age(21).build()
-        );
-        List<Student> others = Arrays.asList(
-                Student.builder().age(22).build(),
-                Student.builder().name("ruben").age(23).build()
-        );
-        List<Student> students = Steam.of(list).pushMatch(Student::getAge, others).toList();
-        Assertions.assertEquals(Arrays.asList(
-                Student.builder().name("臧臧").age(23).build(),
-                Student.builder().name("ruben").age(23).build()
-        ), students);
-    }
-
     @Data
     @Builder
     public static class Student {

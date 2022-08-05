@@ -1432,23 +1432,6 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
-     * 同类型集合中某一操作相同值的数据，相同的会都保留
-     *
-     * @param mapper 另一可迭代对象
-     * @param others 字段
-     * @param <R>    操作返回值类型
-     * @return 同类型集合中某一操作相同值的数据，相同的会都保留
-     */
-    public <R> Steam<T> pushMatch(Function<? super T, ? extends R> mapper,
-                                  Iterable<T> others) {
-        return flatMap(e -> {
-            // TODO 回家再改
-//            Steam.of(others).filter();
-            return null;
-        });
-    }
-
-    /**
      * 类似js的<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">splice</a>函数
      *
      * @param start       起始下标
