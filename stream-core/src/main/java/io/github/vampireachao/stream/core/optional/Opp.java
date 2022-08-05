@@ -74,6 +74,7 @@ public class Opp<T> {
                 : new Opp<>(value);
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Opp<T> of(Optional<T> optional) {
         return Opp.<Object>of(optional).flattedMap(SerFunc.castingIdentity());
     }
