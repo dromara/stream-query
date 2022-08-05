@@ -95,6 +95,9 @@ class OppTest {
         // 获取昵称，获取不到则获取用户名
         final String name = userOpp.map(User::getNickname).or(() -> userOpp.map(User::getUsername)).get();
         Assertions.assertEquals("hutool", name);
+
+        final String strOpt = Opp.of(Optional.of("Hello hutool!")).map(String::toUpperCase).orElseThrow();
+        Assertions.assertEquals("HELLO HUTOOL!", strOpt);
     }
 
     @Test

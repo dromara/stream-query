@@ -74,6 +74,10 @@ public class Opp<T> {
                 : new Opp<>(value);
     }
 
+    public static <T> Opp<T> of(Optional<T> optional) {
+        return Opp.<Object>of(optional).flattedMap(SerFunc.castingIdentity());
+    }
+
     /**
      * 返回一个包裹里元素可能为空的{@code Opp}，额外判断了空字符串的情况
      *
