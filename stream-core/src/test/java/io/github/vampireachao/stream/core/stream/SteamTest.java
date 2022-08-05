@@ -243,10 +243,11 @@ class SteamTest {
     @Test
     void testAt() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        Assertions.assertEquals(1, Steam.of(list).at(0));
-        Assertions.assertEquals(1, Steam.of(list).at(-3));
-        Assertions.assertEquals(3, Steam.of(list).at(-1));
-        Assertions.assertNull(Steam.of(list).at(-4));
+        Assertions.assertEquals(1, Steam.of(list).at(0).orElse(null));
+        Assertions.assertEquals(2, Steam.of(list).at(1).orElse(null));
+        Assertions.assertEquals(1, Steam.of(list).at(-3).orElse(null));
+        Assertions.assertEquals(3, Steam.of(list).at(-1).orElse(null));
+        Assertions.assertFalse(Steam.of(list).at(-4).isPresent());
     }
 
     @Test
