@@ -49,6 +49,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     private static final int NOT_FOUND_INDEX = -1;
 
+    private static final String FRIDENLYTIPS = "The current string does not contain indivisible %s";
+
     protected final Stream<T> stream;
 
     Steam(Stream<T> stream) {
@@ -268,7 +270,11 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @return 拆分后元素组成的流
      */
     public static Steam<String> split(CharSequence str, String regex) {
-        return Opp.blank(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
+        return Opp.blank(str).map(CharSequence::toString).map(s -> {
+            if (!s.contains(regex)){
+                throw new NumberFormatException(String.format(FRIDENLYTIPS,regex));
+            }
+            return s.split(regex);}).map(Steam::of).orElseGet(Steam::empty);
     }
 
     // --------------------------------------------------------------- Static method end
