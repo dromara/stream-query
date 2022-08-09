@@ -193,7 +193,7 @@ class SteamTest {
     @Test
     void testFlatIter() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        List<Integer> flatMapIter = Steam.of(list).<Integer>flatIter(e -> null).toList();
+        List<Integer> flatMapIter = Steam.of(list).<Integer>flat(e -> null).toList();
         Assertions.assertEquals(Collections.emptyList(), flatMapIter);
     }
 
@@ -291,6 +291,13 @@ class SteamTest {
         Integer idx = Steam.of(list).findLastIdx(Objects::nonNull);
         Assertions.assertEquals(2, idx);
         Assertions.assertEquals(-1, Steam.of(list).parallel().findLastIdx(Objects::nonNull));
+    }
+
+    @Test
+    void testReverse() {
+        List<Integer> list = Arrays.asList(1, 3, 2);
+        List<Integer> reverse = Steam.of(list).reverse().toList();
+        Assertions.assertEquals(Arrays.asList(2, 3, 1), reverse);
     }
 
     @Test
