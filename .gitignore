@@ -3,7 +3,3 @@
 **/pom.xml.versionsBackup
 /stream-plugin/stream-plugin-mybatis-plus/target/
 /target/
-*.iml
-.classpath
-.project
-.settings
