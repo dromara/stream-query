@@ -45,15 +45,17 @@ public class InsertOneSql extends AbstractMethod implements PluginConst {
                         .join(COMMA),
                 LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
         // value column script in loop
+        String safeProperty = SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty()) + COMMA;
+        String propertyOrDefault = SqlScriptUtils.convertChoose(
+                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + tableInfo.getKeyProperty()),
+                safeProperty,
+                DEFAULT + COMMA);
         String valuesScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList())
                         .map(i -> SqlScriptUtils.convertChoose(
                                 String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + i.getProperty()),
                                 i.getInsertSqlProperty(ENTITY_DOT),
                                 DEFAULT + COMMA))
-                        .unshift(SqlScriptUtils.convertChoose(
-                                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + tableInfo.getKeyProperty()),
-                                SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty()) + COMMA,
-                                DEFAULT + COMMA))
+                        .unshift(tableInfo.getIdType() == IdType.AUTO ? propertyOrDefault : safeProperty)
                         .nonNull().join(NEWLINE),
                 LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
         // value part into foreach

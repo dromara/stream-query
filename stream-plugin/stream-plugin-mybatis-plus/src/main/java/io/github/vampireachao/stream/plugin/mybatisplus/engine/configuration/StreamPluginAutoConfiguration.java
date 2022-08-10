@@ -7,6 +7,7 @@ import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMet
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.methods.InsertOneSql;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
@@ -17,8 +18,8 @@ import java.util.List;
  */
 public class StreamPluginAutoConfiguration {
 
-
     @Bean
+    @Order
     @ConditionalOnMissingBean(DefaultSqlInjector.class)
     public DefaultSqlInjector defaultSqlInjector() {
         return new DefaultSqlInjector() {

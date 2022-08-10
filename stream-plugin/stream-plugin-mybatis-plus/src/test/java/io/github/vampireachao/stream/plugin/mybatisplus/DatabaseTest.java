@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
 import org.junit.jupiter.api.Assertions;
@@ -51,6 +52,14 @@ class DatabaseTest {
         boolean isSuccess = Database.saveOneSql(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
+
+        RoleInfo role = new RoleInfo();
+        role.setRoleName("manager");
+        RoleInfo roleInfo = new RoleInfo();
+        roleInfo.setRoleName("employee");
+        List<RoleInfo> roles = Arrays.asList(role, roleInfo);
+        Assertions.assertTrue(Database.saveOneSql(roles));
+        Assertions.assertEquals(5, Database.count(RoleInfo.class));
     }
 
     @Test
