@@ -8,8 +8,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
+import java.lang.reflect.Executable;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -60,6 +63,12 @@ class LambdaHelperTest {
         String[] propertyNames = LambdaHelper.getPropertyNames(LambdaExecutable::getName, LambdaExecutable::getLambda);
         Assertions.assertEquals("name", propertyNames[0]);
         Assertions.assertEquals("lambda", propertyNames[1]);
+    }
+
+    @Test
+    void testProxy() {
+        LambdaExecutable lambdaExecutable = LambdaHelper.resolve((Serializable & BiFunction<Executable, SerializedLambda, LambdaExecutable>) LambdaExecutable::new);
+        LambdaExecutable resolve = LambdaHelper.resolve((Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
     }
 
 }

@@ -7,14 +7,14 @@ import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 
 /**
@@ -43,9 +43,6 @@ public class LambdaHelper {
         if (lambda instanceof SerializedLambda) {
             return (SerializedLambda) lambda;
         }
-        if (lambda instanceof Proxy) {
-            throw new IllegalStateException("Are you debugging?Get out!!!");
-        }
         final Class<? extends Serializable> clazz = lambda.getClass();
         if (!clazz.isSynthetic()) {
             throw new IllegalArgumentException("Not a lambda expression: " + clazz.getName());
@@ -71,6 +68,38 @@ public class LambdaHelper {
      */
     public static <T extends Serializable> LambdaExecutable resolve(T lambda) {
         Objects.requireNonNull(lambda, "lambda can not be null");
+        if (lambda instanceof Proxy) {
+            InvocationHandler handler = Proxy.getInvocationHandler(lambda);
+            MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
+            System.out.println("methodHandle: " + methodHandle + "fields: " + Steam.of(methodHandle.getClass().getDeclaredFields()).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
+            Member member = ReflectHelper.getFieldValue(methodHandle, "member");
+            System.out.println("member: " + member);
+            System.out.println(Steam.of(member.getClass().getDeclaredFields()).map(Field::getName).toMap(Function.identity(), fieldName -> ReflectHelper.getFieldValue(member, fieldName)));
+            Class<?> clazz = member.getDeclaringClass();
+            System.out.println("clazz: " + clazz);
+            String name = member.getName();
+            System.out.println("name: " + name);
+            MethodType type = ReflectHelper.getFieldValue(member, "type");
+            System.out.println("type: " + type + "type.getClass()): " + type.getClass());
+            System.out.println(Steam.of(type.getClass().getDeclaredFields()).map(Field::getName).toMap(Function.identity(), fieldName -> ReflectHelper.getFieldValue(type, fieldName)));
+            System.out.println("toMethodDescriptorString: " + type.toMethodDescriptorString());
+
+            if (CONSTRUCTOR_METHOD_NAME.equals(name)) {
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    if (ReflectHelper.getDescriptor(constructor).equals(type.toMethodDescriptorString())) {
+                        return new LambdaExecutable(constructor, type.toMethodDescriptorString());
+                    }
+                }
+            } else {
+                List<Method> methods = ReflectHelper.getAllDeclaredMethods(clazz);
+                for (Method method : methods) {
+                    if (method.getName().equals(name)
+                            && ReflectHelper.getDescriptor(method).equals(type.toMethodDescriptorString())) {
+                        return new LambdaExecutable(method, type.toMethodDescriptorString());
+                    }
+                }
+            }
+        }
         return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(), key -> {
             final SerializedLambda serializedLambda = serialize(lambda);
             final String methodName = serializedLambda.getImplMethodName();

@@ -84,6 +84,48 @@ public class LambdaExecutable {
         this.lambda = lambda;
     }
 
+    public LambdaExecutable(Executable executable, String instantiatedMethodType) {
+        if (executable instanceof Method) {
+            Method method = (Method) executable;
+            this.parameterTypes = method.getGenericParameterTypes();
+            this.returnType = method.getGenericReturnType();
+            this.name = method.getName();
+        } else if (executable instanceof Constructor) {
+            Constructor<?> constructor = (Constructor<?>) executable;
+            this.parameterTypes = constructor.getGenericParameterTypes();
+            this.returnType = constructor.getDeclaringClass();
+            this.name = constructor.getName();
+        } else {
+            throw new IllegalArgumentException("Unsupported executable type: " + executable.getClass());
+        }
+        int index = instantiatedMethodType.indexOf(";)");
+        if (index > -1) {
+            boolean isArray = instantiatedMethodType.startsWith("([");
+            if (isArray) {
+                try {
+                    this.instantiatedTypes = new Type[]{Class.forName(instantiatedMethodType.replace("/", ".").substring(0, index).substring(1) + ";", true, Thread.currentThread().getContextClassLoader())};
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalStateException(e);
+                }
+            } else {
+                String[] instantiatedTypeNames = instantiatedMethodType.substring(2, index).split(";L");
+                this.instantiatedTypes = new Type[instantiatedTypeNames.length];
+                for (int i = 0; i < instantiatedTypeNames.length; i++) {
+                    try {
+                        this.instantiatedTypes[i] = Thread.currentThread().getContextClassLoader().loadClass(instantiatedTypeNames[i].replace("/", "."));
+                    } catch (ClassNotFoundException e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
+            }
+        } else {
+            instantiatedTypes = new Type[0];
+        }
+        this.clazz = ReflectHelper.getFieldValue(executable, "clazz");
+        this.executable = executable;
+        this.lambda = null;
+    }
+
     public Type[] getInstantiatedTypes() {
         return instantiatedTypes;
     }
