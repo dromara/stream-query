@@ -69,6 +69,7 @@ public class LambdaHelper {
     public static <T extends Serializable> LambdaExecutable resolve(T lambda) {
         Objects.requireNonNull(lambda, "lambda can not be null");
         if (lambda instanceof Proxy) {
+            // TODO 抽空优化
             InvocationHandler handler = Proxy.getInvocationHandler(lambda);
             MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
             System.out.println("methodHandle: " + methodHandle + "fields: " + Steam.of(methodHandle.getClass().getDeclaredFields()).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
