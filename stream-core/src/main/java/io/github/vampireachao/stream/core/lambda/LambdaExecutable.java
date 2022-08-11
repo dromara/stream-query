@@ -149,7 +149,7 @@ public class LambdaExecutable {
         this.lambda = lambda;
     }
 
-    public void initInstantiatedTypes(MethodHandle methodHandle) {
+    public void initByMethodHandle(MethodHandle methodHandle) {
         System.out.println("executable: " + executable + " class: " + executable.getClass());
         System.out.println("methodHandle: " + methodHandle + " class: " + methodHandle.getClass());
         System.out.println(Steam.of(ReflectHelper.getFields(methodHandle.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
@@ -172,6 +172,7 @@ public class LambdaExecutable {
                 System.out.println("speciesData: " + speciesData + " class: " + speciesData.getClass());
                 System.out.println(Steam.of(ReflectHelper.getFields(speciesData.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(speciesData, name)));
             }
+
         }
     }
 }

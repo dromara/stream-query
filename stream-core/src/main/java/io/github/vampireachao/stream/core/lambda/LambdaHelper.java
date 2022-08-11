@@ -69,7 +69,7 @@ public class LambdaHelper {
             MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
             final Executable executable = MethodHandles.reflectAs(Executable.class, methodHandle);
             final LambdaExecutable lambdaExecutable = new LambdaExecutable(executable);
-            lambdaExecutable.initInstantiatedTypes(methodHandle);
+            lambdaExecutable.initByMethodHandle(methodHandle);
             return lambdaExecutable;
         }
         return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(), key -> new LambdaExecutable(serialize(lambda)));
