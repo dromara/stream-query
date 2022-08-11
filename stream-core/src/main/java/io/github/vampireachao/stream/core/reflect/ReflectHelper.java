@@ -18,14 +18,12 @@
 package io.github.vampireachao.stream.core.reflect;
 
 
+import io.github.vampireachao.stream.core.stream.Steam;
+
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.*;
 
 
 /**
@@ -35,6 +33,8 @@ import java.util.stream.Stream;
  * @since 2022/6/2 17:02
  */
 public class ReflectHelper {
+
+    private static final WeakHashMap<Class<?>, Field[]> CLASS_FIELDS_CACHE = new WeakHashMap<>();
 
     private ReflectHelper() {
         /* Do not new me! */
@@ -47,7 +47,7 @@ public class ReflectHelper {
      * @param clazz The class to get the declared methods for.
      * @return An array of all declared methods of the class.
      */
-    public static List<Method> getAllDeclaredMethods(Class<?> clazz) {
+    public static List<Method> getMethods(Class<?> clazz) {
         List<Method> result = new ArrayList<>();
         while (clazz != null) {
             Method[] methods = clazz.getDeclaredMethods();
@@ -166,7 +166,7 @@ public class ReflectHelper {
     @SuppressWarnings("unchecked")
     public static <T> T getFieldValue(Object obj, String fieldName) {
         if (Objects.isNull(obj) || Objects.isNull(fieldName)) {
-            return null;
+            throw new IllegalArgumentException("obj or fieldName is null");
         }
         try {
             return (T) getField(obj.getClass(), fieldName).get(obj);
@@ -175,19 +175,35 @@ public class ReflectHelper {
         }
     }
 
-    public static Field getField(Class<?> clazz, String fieldName) {
-        Stream.Builder<Field> fieldsBuilder = Stream.builder();
-        Class<?> currentClass;
-        for (currentClass = clazz;
-             currentClass != null;
-             currentClass = currentClass.getSuperclass()) {
-            for (Field field : currentClass.getDeclaredFields()) {
-                fieldsBuilder.add(field);
+    public static boolean hasField(Class<?> clazz, String fieldName) {
+        return Steam.of(getFields(clazz)).anyMatch(f -> fieldName.equals(f.getName()));
+    }
+
+    public static Field[] getFields(Class<?> clazz) {
+        return CLASS_FIELDS_CACHE.computeIfAbsent(clazz, k -> {
+            Steam.Builder<Field> fieldsBuilder = Steam.builder();
+            Class<?> currentClass;
+            for (currentClass = clazz;
+                 currentClass != null;
+                 currentClass = currentClass.getSuperclass()) {
+                for (Field field : currentClass.getDeclaredFields()) {
+                    fieldsBuilder.add(field);
+                }
             }
-        }
-        return fieldsBuilder.build().filter(field -> field.getName().equals(fieldName))
+            return fieldsBuilder.build().toArray(Field[]::new);
+        });
+    }
+
+    public static Field getField(Class<?> clazz, String fieldName) {
+        return Steam.of(getFields(clazz)).filter(field -> field.getName().equals(fieldName))
                 .findFirst().map(ReflectHelper::accessible)
                 .orElseThrow(() -> new IllegalArgumentException("No such field: " + fieldName));
+    }
+
+    public static Method getMethod(Class<?> clazz, String methodName) {
+        return Steam.of(getMethods(clazz)).filter(method -> method.getName().equals(methodName))
+                .findFirst().map(ReflectHelper::accessible)
+                .orElseThrow(() -> new IllegalArgumentException("No such method: " + methodName));
     }
 
     public static Type[] getGenericTypes(Type paramType) {
@@ -243,6 +259,70 @@ public class ReflectHelper {
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException(e);
         } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static Constructor<?> getConstructorByDescriptor(final Class<?> clazz, final String methodDescriptor) {
+        for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+            if (ReflectHelper.getDescriptor(constructor).equals(methodDescriptor)) {
+                return constructor;
+            }
+        }
+        throw new IllegalStateException(String.format("No constructor found with class %s and descriptor %s", clazz, methodDescriptor));
+    }
+
+    public static Method getMethodByDescriptor(final Class<?> clazz, final String methodDescriptor) {
+        for (Method method : ReflectHelper.getMethods(clazz)) {
+            if (ReflectHelper.getDescriptor(method).equals(methodDescriptor)) {
+                return method;
+            }
+        }
+        throw new IllegalStateException(String.format("No method found with class %s and descriptor %s", clazz, methodDescriptor));
+    }
+
+    public static Type[] getArgsFromDescriptor(final String methodDescriptor) {
+        int index = methodDescriptor.indexOf(";)");
+        if (index == -1) {
+            return new Type[0];
+        }
+        boolean isArray = methodDescriptor.startsWith("([");
+        if (isArray) {
+            final String className = methodDescriptor
+                    .substring(0, index)
+                    .substring(1)
+                    + ";";
+            return new Type[]{loadClass(className)};
+        } else {
+            String[] instantiatedTypeNames = methodDescriptor.substring(2, index).split(";L");
+            final Type[] types = new Type[instantiatedTypeNames.length];
+            for (int i = 0; i < instantiatedTypeNames.length; i++) {
+                try {
+                    types[i] = Thread.currentThread().getContextClassLoader()
+                            .loadClass(instantiatedTypeNames[i].replace("/", "."));
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+            return types;
+        }
+    }
+
+    public static Class<?> loadClass(final String className) {
+        try {
+            return Class.forName(className.replace("/", "."),
+                    true,
+                    Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <R> R invoke(Object obj, String methodName, Object... args) {
+        try {
+            return (R) accessible(getMethod(obj.getClass(), methodName)).invoke(obj, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -9,6 +9,7 @@ import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -107,9 +108,9 @@ public class Opp<T> {
      * @param <T>      类型
      * @return 操作执行后的值
      */
-    public static <T> Opp<T> ofTry(Supplier<T> supplier) {
+    public static <T> Opp<T> ofTry(Callable<T> supplier) {
         try {
-            return Opp.of(supplier.get());
+            return Opp.of(supplier.call());
         } catch (Exception e) {
             final Opp<T> empty = new Opp<>(null);
             empty.exception = e;

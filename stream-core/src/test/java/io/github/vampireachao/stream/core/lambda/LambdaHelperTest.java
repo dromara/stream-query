@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
-import java.lang.reflect.Executable;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -67,8 +65,9 @@ class LambdaHelperTest {
 
     @Test
     void testProxy() {
-        LambdaExecutable lambdaExecutable = LambdaHelper.resolve((Serializable & BiFunction<Executable, SerializedLambda, LambdaExecutable>) LambdaExecutable::new);
-        LambdaExecutable resolve = LambdaHelper.resolve((Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
+        LambdaHelper.resolve((Serializable & Function<SerializedLambda, LambdaExecutable>) LambdaExecutable::new);
+        LambdaHelper.resolve((Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
+        LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
     }
 
 }
