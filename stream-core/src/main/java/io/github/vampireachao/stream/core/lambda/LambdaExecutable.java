@@ -18,7 +18,6 @@
 
 package io.github.vampireachao.stream.core.lambda;
 
-import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
@@ -27,7 +26,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Similar to a Java 8 Executable but with a return type.
@@ -162,11 +160,7 @@ public class LambdaExecutable {
         try {
             return new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
         } catch (IllegalArgumentException e) {
-            System.out.println("methodHandle: " + methodHandle + " class: " + methodHandle.getClass());
-            System.out.println(Steam.of(ReflectHelper.getFields(methodHandle.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
             List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
-            System.out.println("internalValues: ");
-            Steam.of(internalValues).log().forEach(SerCons.nothing());
             Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
             LambdaExecutable lambdaExecutable = new LambdaExecutable();
             lambdaExecutable.setClazz(Array.class);
