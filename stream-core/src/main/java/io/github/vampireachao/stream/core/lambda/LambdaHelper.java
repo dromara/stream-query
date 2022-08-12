@@ -7,10 +7,10 @@ import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Objects;
 import java.util.WeakHashMap;
 
@@ -65,12 +65,7 @@ public class LambdaHelper {
     public static <T extends Serializable> LambdaExecutable resolve(T lambda) {
         Objects.requireNonNull(lambda, "lambda can not be null");
         if (lambda instanceof Proxy) {
-            InvocationHandler handler = Proxy.getInvocationHandler(lambda);
-            MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
-            final Executable executable = MethodHandles.reflectAs(Executable.class, methodHandle);
-            final LambdaExecutable lambdaExecutable = new LambdaExecutable(executable);
-            lambdaExecutable.initByMethodHandle(methodHandle);
-            return lambdaExecutable;
+            return LambdaExecutable.initProxy((Proxy) lambda);
         }
         return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(), key -> new LambdaExecutable(serialize(lambda)));
     }

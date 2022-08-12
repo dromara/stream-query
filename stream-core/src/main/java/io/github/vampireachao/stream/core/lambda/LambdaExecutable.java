@@ -19,13 +19,11 @@
 package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
-import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
-import java.util.function.Function;
 
 /**
  * Similar to a Java 8 Executable but with a return type.
@@ -149,8 +147,12 @@ public class LambdaExecutable {
         this.lambda = lambda;
     }
 
-    public void initByMethodHandle(MethodHandle methodHandle) {
-        System.out.println("executable: " + executable + " class: " + executable.getClass());
+    public static LambdaExecutable initProxy(Proxy proxy) {
+        final InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        final MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
+        final Executable executable = MethodHandles.reflectAs(Executable.class, methodHandle);
+        return new LambdaExecutable(executable);
+        /*System.out.println("executable: " + executable + " class: " + executable.getClass());
         System.out.println("methodHandle: " + methodHandle + " class: " + methodHandle.getClass());
         System.out.println(Steam.of(ReflectHelper.getFields(methodHandle.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
         if (ReflectHelper.hasField(methodHandle.getClass(), "member")) {
@@ -165,14 +167,14 @@ public class LambdaExecutable {
             System.out.println("type: " + type + " type.getClass()): " + type.getClass());
             System.out.println(Steam.of(type.getClass().getDeclaredFields()).map(Field::getName).toMap(Function.identity(), fieldName -> ReflectHelper.getFieldValue(type, fieldName)));
             System.out.println("toMethodDescriptorString: " + type.toMethodDescriptorString());
-            this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString());
+            lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
         } else {
             if (methodHandle.getClass().getName().equals("java.lang.invoke.BoundMethodHandle$Species_LL")) {
                 final Object speciesData = ReflectHelper.invoke(methodHandle, "speciesData");
                 System.out.println("speciesData: " + speciesData + " class: " + speciesData.getClass());
                 System.out.println(Steam.of(ReflectHelper.getFields(speciesData.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(speciesData, name)));
             }
-
         }
+        return lambdaExecutable;*/
     }
 }
