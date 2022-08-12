@@ -26,6 +26,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
+import java.security.SecureRandom;
 import java.util.List;
 
 /**
@@ -193,7 +194,7 @@ public class LambdaExecutable {
                             Array.newInstance(arrayType, 0).getClass(),
                             new Class[0],
                             Modifier.methodModifiers(),
-                            -1,
+                            new SecureRandom().nextInt(),
                             null,
                             null,
                             null,
