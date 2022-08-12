@@ -194,7 +194,7 @@ public class LambdaExecutable {
                             Array.newInstance(arrayType, 0).getClass(),
                             new Class[0],
                             Modifier.methodModifiers(),
-                            new SecureRandom().nextInt(),
+                            new SecureRandom().nextInt(10),
                             null,
                             null,
                             null,
