@@ -193,7 +193,7 @@ public class LambdaExecutable {
                             Array.newInstance(arrayType, 0).getClass(),
                             new Class[0],
                             Modifier.methodModifiers(),
-                            4,
+                            -1,
                             null,
                             null,
                             null,
