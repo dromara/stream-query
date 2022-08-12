@@ -65,9 +65,11 @@ class LambdaHelperTest {
 
     @Test
     void testProxy() {
+        LambdaHelper.resolve(SerCons.nothing());
         LambdaHelper.resolve((Serializable & Function<SerializedLambda, LambdaExecutable>) LambdaExecutable::new);
         LambdaHelper.resolve((Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
-        LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
+        LambdaExecutable resolve = LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
+        System.out.println(resolve);
     }
 
 }

@@ -23,6 +23,7 @@ import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
 import java.util.List;
@@ -45,7 +46,6 @@ public class LambdaExecutable {
     private String name;
     private Class<?> clazz;
     private SerializedLambda lambda;
-    private Class<?> arrayType;
 
     public LambdaExecutable() {
         // this is an accessible parameterless constructor.
@@ -157,49 +157,53 @@ public class LambdaExecutable {
     public static LambdaExecutable initProxy(Proxy proxy) {
         final InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         final MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
+        MethodType type = methodHandle.type();
+        LambdaExecutable lambdaExecutable;
         try {
-            return new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
+            lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
         } catch (IllegalArgumentException e) {
+            lambdaExecutable = initFakerArrayConstructor(methodHandle, type);
+        }
+        lambdaExecutable.setMethodHandle(methodHandle);
+        lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
+        return lambdaExecutable;
+    }
+
+    private static LambdaExecutable initFakerArrayConstructor(MethodHandle methodHandle, MethodType type) {
+        StackTraceElement traceElement = new Exception().getStackTrace()[3];
+        Class<?> clazz = ReflectHelper.loadClass(traceElement.getClassName());
+        try {
+            Constructor<Method> constructor = Method.class.getDeclaredConstructor(Class.class,
+                    String.class,
+                    Class[].class,
+                    Class.class,
+                    Class[].class,
+                    int.class,
+                    int.class,
+                    String.class,
+                    byte[].class,
+                    byte[].class,
+                    byte[].class);
             List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
             Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
-            LambdaExecutable lambdaExecutable = new LambdaExecutable();
-            lambdaExecutable.setClazz(Array.class);
-            lambdaExecutable.setParameterTypes(new Type[]{int.class});
-            lambdaExecutable.setName(CONSTRUCTOR_METHOD_NAME);
-            lambdaExecutable.setArrayType(arrayType);
-            return lambdaExecutable;
+            Method executable = ReflectHelper.accessible(constructor)
+                    .newInstance(clazz,
+                            "lambda$" + traceElement.getMethodName() + "$fake",
+                            type.parameterArray(),
+                            Array.newInstance(arrayType, 0).getClass(),
+                            new Class[0],
+                            Modifier.methodModifiers(),
+                            4,
+                            null,
+                            null,
+                            null,
+                            null
+                    );
+            return new LambdaExecutable(executable);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException |
+                 InstantiationException ex) {
+            throw new IllegalStateException(ex);
         }
-        /*System.out.println("executable: " + executable + " class: " + executable.getClass());
-        System.out.println("methodHandle: " + methodHandle + " class: " + methodHandle.getClass());
-        System.out.println(Steam.of(ReflectHelper.getFields(methodHandle.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
-        if (ReflectHelper.hasField(methodHandle.getClass(), "member")) {
-            Member member = ReflectHelper.getFieldValue(methodHandle, "member");
-            System.out.println("member: " + member);
-            System.out.println(Steam.of(member.getClass().getDeclaredFields()).map(Field::getName).toMap(Function.identity(), fieldName -> ReflectHelper.getFieldValue(member, fieldName)));
-            Class<?> clazz = member.getDeclaringClass();
-            System.out.println("clazz: " + clazz);
-            String name = member.getName();
-            System.out.println("name: " + name);
-            MethodType type = ReflectHelper.getFieldValue(member, "type");
-            System.out.println("type: " + type + " type.getClass()): " + type.getClass());
-            System.out.println(Steam.of(type.getClass().getDeclaredFields()).map(Field::getName).toMap(Function.identity(), fieldName -> ReflectHelper.getFieldValue(type, fieldName)));
-            System.out.println("toMethodDescriptorString: " + type.toMethodDescriptorString());
-            lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
-        } else {
-            if (methodHandle.getClass().getName().equals("java.lang.invoke.BoundMethodHandle$Species_LL")) {
-                final Object speciesData = ReflectHelper.invoke(methodHandle, "speciesData");
-                System.out.println("speciesData: " + speciesData + " class: " + speciesData.getClass());
-                System.out.println(Steam.of(ReflectHelper.getFields(speciesData.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(speciesData, name)));
-            }
-        }
-        return lambdaExecutable;*/
     }
 
-    public Class<?> getArrayType() {
-        return arrayType;
-    }
-
-    public void setArrayType(Class<?> arrayType) {
-        this.arrayType = arrayType;
-    }
 }

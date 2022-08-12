@@ -200,9 +200,7 @@ public class ReflectHelper {
      */
     public static List<Method> getMethods(Class<?> clazz) {
         return CLASS_METHODS_CACHE.computeIfAbsent(clazz, k -> Steam.<Class<?>>iterate(
-                        clazz,
-                        clz -> Objects.nonNull(clz.getSuperclass()),
-                        Class::getSuperclass)
+                        clazz, Objects::nonNull, Class::getSuperclass)
                 .flat(clz -> Steam.of(clz.getDeclaredMethods())).toList());
     }
 
