@@ -58,9 +58,9 @@ class LambdaHelperTest {
 
     @Test
     void testGetPropertyNames() {
-        String[] propertyNames = LambdaHelper.getPropertyNames(LambdaExecutable::getName, LambdaExecutable::getLambda);
-        Assertions.assertEquals("name", propertyNames[0]);
-        Assertions.assertEquals("lambda", propertyNames[1]);
+        List<String> propertyNames = LambdaHelper.getPropertyNames(LambdaExecutable::getName, LambdaExecutable::getLambda);
+        Assertions.assertEquals("name", propertyNames.get(0));
+        Assertions.assertEquals("lambda", propertyNames.get(1));
     }
 
     @Test

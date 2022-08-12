@@ -23,7 +23,9 @@ import io.github.vampireachao.stream.core.stream.Steam;
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.WeakHashMap;
 
 
 /**
@@ -34,27 +36,11 @@ import java.util.*;
  */
 public class ReflectHelper {
 
-    private static final WeakHashMap<Class<?>, Field[]> CLASS_FIELDS_CACHE = new WeakHashMap<>();
+    private static final WeakHashMap<Class<?>, List<Field>> CLASS_FIELDS_CACHE = new WeakHashMap<>();
+    private static final WeakHashMap<Class<?>, List<Method>> CLASS_METHODS_CACHE = new WeakHashMap<>();
 
     private ReflectHelper() {
         /* Do not new me! */
-    }
-
-
-    /**
-     * Returns all declared methods of a class including methods of superclasses.
-     *
-     * @param clazz The class to get the declared methods for.
-     * @return An array of all declared methods of the class.
-     */
-    public static List<Method> getMethods(Class<?> clazz) {
-        List<Method> result = new ArrayList<>();
-        while (clazz != null) {
-            Method[] methods = clazz.getDeclaredMethods();
-            Collections.addAll(result, methods);
-            clazz = clazz.getSuperclass();
-        }
-        return result;
     }
 
     /**
@@ -179,7 +165,7 @@ public class ReflectHelper {
         return Steam.of(getFields(clazz)).anyMatch(f -> fieldName.equals(f.getName()));
     }
 
-    public static Field[] getFields(Class<?> clazz) {
+    public static List<Field> getFields(Class<?> clazz) {
         return CLASS_FIELDS_CACHE.computeIfAbsent(clazz, k -> {
             Steam.Builder<Field> fieldsBuilder = Steam.builder();
             Class<?> currentClass;
@@ -190,7 +176,7 @@ public class ReflectHelper {
                     fieldsBuilder.add(field);
                 }
             }
-            return fieldsBuilder.build().toArray(Field[]::new);
+            return fieldsBuilder.build().toList();
         });
     }
 
@@ -200,10 +186,24 @@ public class ReflectHelper {
                 .orElseThrow(() -> new IllegalArgumentException("No such field: " + fieldName));
     }
 
-    public static Method getMethod(Class<?> clazz, String methodName) {
+    public static Method getMethodByName(Class<?> clazz, String methodName) {
         return Steam.of(getMethods(clazz)).filter(method -> method.getName().equals(methodName))
                 .findFirst().map(ReflectHelper::accessible)
                 .orElseThrow(() -> new IllegalArgumentException("No such method: " + methodName));
+    }
+
+    /**
+     * Returns all declared methods of a class including methods of superclasses.
+     *
+     * @param clazz The class to get the declared methods for.
+     * @return An array of all declared methods of the class.
+     */
+    public static List<Method> getMethods(Class<?> clazz) {
+        return CLASS_METHODS_CACHE.computeIfAbsent(clazz, k -> Steam.<Class<?>>iterate(
+                        clazz,
+                        clz -> Objects.nonNull(clz.getSuperclass()),
+                        Class::getSuperclass)
+                .flat(clz -> Steam.of(clz.getDeclaredMethods())).toList());
     }
 
     public static Type[] getGenericTypes(Type paramType) {
@@ -321,7 +321,7 @@ public class ReflectHelper {
     @SuppressWarnings("unchecked")
     public static <R> R invoke(Object obj, String methodName, Object... args) {
         try {
-            return (R) accessible(getMethod(obj.getClass(), methodName)).invoke(obj, args);
+            return (R) accessible(getMethodByName(obj.getClass(), methodName)).invoke(obj, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }

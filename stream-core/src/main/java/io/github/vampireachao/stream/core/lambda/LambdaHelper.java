@@ -11,6 +11,7 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
 
@@ -71,8 +72,8 @@ public class LambdaHelper {
     }
 
     @SafeVarargs
-    public static <T> String[] getPropertyNames(SerFunc<T, ?>... funcs) {
-        return Steam.of(funcs).map(LambdaHelper::getPropertyName).toArray(String[]::new);
+    public static <T> List<String> getPropertyNames(SerFunc<T, ?>... funcs) {
+        return Steam.of(funcs).map(LambdaHelper::getPropertyName).toList();
     }
 
     public static <T> String getPropertyName(SerFunc<T, ?> func) {

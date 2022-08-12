@@ -18,12 +18,16 @@
 
 package io.github.vampireachao.stream.core.lambda;
 
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Similar to a Java 8 Executable but with a return type.
@@ -43,6 +47,11 @@ public class LambdaExecutable {
     private String name;
     private Class<?> clazz;
     private SerializedLambda lambda;
+    private Class<?> arrayType;
+
+    public LambdaExecutable() {
+        // this is an accessible parameterless constructor.
+    }
 
     public LambdaExecutable(final SerializedLambda lambda) {
         this(ReflectHelper.loadClass(lambda.getImplClass()), lambda.getImplMethodName(), lambda.getImplMethodSignature());
@@ -150,8 +159,22 @@ public class LambdaExecutable {
     public static LambdaExecutable initProxy(Proxy proxy) {
         final InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         final MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
-        final Executable executable = MethodHandles.reflectAs(Executable.class, methodHandle);
-        return new LambdaExecutable(executable);
+        try {
+            return new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
+        } catch (IllegalArgumentException e) {
+            System.out.println("methodHandle: " + methodHandle + " class: " + methodHandle.getClass());
+            System.out.println(Steam.of(ReflectHelper.getFields(methodHandle.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
+            List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
+            System.out.println("internalValues: ");
+            Steam.of(internalValues).log().forEach(SerCons.nothing());
+            Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
+            LambdaExecutable lambdaExecutable = new LambdaExecutable();
+            lambdaExecutable.setClazz(Array.class);
+            lambdaExecutable.setParameterTypes(new Type[]{int.class});
+            lambdaExecutable.setName(CONSTRUCTOR_METHOD_NAME);
+            lambdaExecutable.setArrayType(arrayType);
+            return lambdaExecutable;
+        }
         /*System.out.println("executable: " + executable + " class: " + executable.getClass());
         System.out.println("methodHandle: " + methodHandle + " class: " + methodHandle.getClass());
         System.out.println(Steam.of(ReflectHelper.getFields(methodHandle.getClass())).map(Field::getName).toMap(Function.identity(), name -> ReflectHelper.getFieldValue(methodHandle, name)));
@@ -176,5 +199,13 @@ public class LambdaExecutable {
             }
         }
         return lambdaExecutable;*/
+    }
+
+    public Class<?> getArrayType() {
+        return arrayType;
+    }
+
+    public void setArrayType(Class<?> arrayType) {
+        this.arrayType = arrayType;
     }
 }
