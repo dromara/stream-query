@@ -17,7 +17,7 @@
     </a>
     <a target="_blank" href='https://github.com/VampireAchao/stream-query'>
         <img src="https://img.shields.io/github/stars/vampireachao/stream-query.svg?style=social" alt="github star"/>
-    </a> 
+    </a>
 </p>
 
 ## 📚简介
