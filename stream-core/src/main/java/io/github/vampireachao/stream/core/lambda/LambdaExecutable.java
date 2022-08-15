@@ -26,7 +26,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
-import java.security.SecureRandom;
 import java.util.List;
 
 /**
@@ -164,48 +163,20 @@ public class LambdaExecutable {
             lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
         } catch (IllegalArgumentException e) {
             // array constructor reference is not direct method handle
-            lambdaExecutable = fakeArrayConstructorHandler(methodHandle, type);
+            lambdaExecutable = arrayConstructorHandler(methodHandle, type);
         }
         lambdaExecutable.setMethodHandle(methodHandle);
         lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
         return lambdaExecutable;
     }
 
-    private static LambdaExecutable fakeArrayConstructorHandler(MethodHandle methodHandle, MethodType type) {
-        StackTraceElement traceElement = new Exception().getStackTrace()[3];
-        Class<?> clazz = ReflectHelper.loadClass(traceElement.getClassName());
-        try {
-            Constructor<Method> constructor = Method.class.getDeclaredConstructor(Class.class,
-                    String.class,
-                    Class[].class,
-                    Class.class,
-                    Class[].class,
-                    int.class,
-                    int.class,
-                    String.class,
-                    byte[].class,
-                    byte[].class,
-                    byte[].class);
-            List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
-            Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
-            Method executable = ReflectHelper.accessible(constructor)
-                    .newInstance(clazz,
-                            "lambda$" + traceElement.getMethodName() + "$fake",
-                            type.parameterArray(),
-                            Array.newInstance(arrayType, 0).getClass(),
-                            new Class[0],
-                            Modifier.methodModifiers(),
-                            new SecureRandom().nextInt(10),
-                            null,
-                            null,
-                            null,
-                            null
-                    );
-            return new LambdaExecutable(executable);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException |
-                 InstantiationException ex) {
-            throw new IllegalStateException(ex);
-        }
+    private static LambdaExecutable arrayConstructorHandler(MethodHandle methodHandle, MethodType type) {
+        LambdaExecutable lambdaExecutable = new LambdaExecutable();
+        List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
+        Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
+        lambdaExecutable.setParameterTypes(type.parameterArray());
+        lambdaExecutable.setClazz(Array.newInstance(arrayType, 0).getClass());
+        return lambdaExecutable;
     }
 
 }

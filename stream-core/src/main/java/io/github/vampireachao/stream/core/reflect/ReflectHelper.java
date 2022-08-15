@@ -308,9 +308,7 @@ public class ReflectHelper {
 
     public static Class<?> loadClass(final String className) {
         try {
-            return Class.forName(className.replace("/", "."),
-                    true,
-                    Thread.currentThread().getContextClassLoader());
+            return Thread.currentThread().getContextClassLoader().loadClass(className.replace("/", "."));
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
