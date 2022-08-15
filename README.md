@@ -2,7 +2,7 @@
 <p align="center">
   <strong>hardcore extreme opinionated.</strong>
 </p>
-<p align="center"> 
+<p align="center">
 	👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈
 </p>
 <p align="center">
