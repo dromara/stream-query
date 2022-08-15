@@ -163,14 +163,15 @@ public class LambdaExecutable {
         try {
             lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
         } catch (IllegalArgumentException e) {
-            lambdaExecutable = initFakerArrayConstructor(methodHandle, type);
+            // array constructor reference is not direct method handle
+            lambdaExecutable = fakeArrayConstructorHandler(methodHandle, type);
         }
         lambdaExecutable.setMethodHandle(methodHandle);
         lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
         return lambdaExecutable;
     }
 
-    private static LambdaExecutable initFakerArrayConstructor(MethodHandle methodHandle, MethodType type) {
+    private static LambdaExecutable fakeArrayConstructorHandler(MethodHandle methodHandle, MethodType type) {
         StackTraceElement traceElement = new Exception().getStackTrace()[3];
         Class<?> clazz = ReflectHelper.loadClass(traceElement.getClassName());
         try {
