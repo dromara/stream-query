@@ -29,7 +29,7 @@
 
 [中文文档](https://vampireachao.gitee.io/stream-query-docs/)
 
-## 📦安装
+## 📦安装 
 
 ### 🍊Maven
 在项目的pom.xml的dependencies中加入以下内容:
