@@ -1,5 +1,5 @@
 <h1 align="center">stream-query</h1>
-<p align="center">
+<p align="center">  
   <strong>hardcore extreme opinionated.</strong>
 </p>
 <p align="center">
