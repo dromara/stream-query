@@ -25,7 +25,7 @@ class OneToManyTest {
             Map<Integer, List<UserInfo>> ageUsersMap = OneToMany.query(userAges, UserInfo::getAge);
             Assertions.assertEquals(4, ageUsersMap.size());
 
-            List<String> userNames = Arrays.asList("Jone","Jack","Tom","Billie");
+            List<String> userNames = Arrays.asList("Jone", "Jack", "Tom", "Billie");
             Map<String, List<UserInfo>> nameUsersMap = OneToMany.query(w -> w.le(UserInfo::getAge, 21), userNames, UserInfo::getName);
             Assertions.assertEquals(2, nameUsersMap.size());
 
