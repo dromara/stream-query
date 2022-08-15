@@ -24,7 +24,7 @@
 
 封装 热门orm常用操作
 封装 使用`stream`进行数据返回处理
-  
+
 ## 📝文档 
 
 [中文文档](https://vampireachao.gitee.io/stream-query-docs/)
