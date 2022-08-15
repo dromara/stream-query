@@ -20,6 +20,7 @@ package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
+import sun.invoke.WrapperInstance;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -155,15 +156,21 @@ public class LambdaExecutable {
     }
 
     public static LambdaExecutable initProxy(Proxy proxy) {
-        final InvocationHandler handler = Proxy.getInvocationHandler(proxy);
-        final MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
+        InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
         MethodType type = methodHandle.type();
         LambdaExecutable lambdaExecutable;
         try {
             lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
         } catch (IllegalArgumentException e) {
             // array constructor reference is not direct method handle
-            lambdaExecutable = arrayConstructorHandler(methodHandle, type);
+            // TODO fixing
+            try {
+                methodHandle = (MethodHandle) handler.invoke(proxy, ReflectHelper.getMethodByName(WrapperInstance.class, "getWrapperInstanceTarget"), null);
+            } catch (Throwable ex) {
+                throw new RuntimeException(ex);
+            }
+            lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
         }
         lambdaExecutable.setMethodHandle(methodHandle);
         lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
