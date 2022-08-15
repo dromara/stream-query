@@ -1,7 +1,7 @@
 <h1 align="center">stream-query</h1>
 <p align="center">
   <strong>hardcore extreme opinionated.</strong>
-</p> 
+</p>
 <p align="center">
 	👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈
 </p>
