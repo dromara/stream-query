@@ -3,7 +3,7 @@
   <strong>hardcore extreme opinionated.</strong>
 </p>
 <p align="center">
-	👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈
+	⭐👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈⭐
 </p>
 <p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/io.github.vampireachao/stream-query">
