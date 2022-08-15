@@ -28,7 +28,7 @@
 ## 📝文档 
 
 [中文文档](https://vampireachao.gitee.io/stream-query-docs/)
- 
+
 ## 📦安装
 
 ### 🍊Maven
