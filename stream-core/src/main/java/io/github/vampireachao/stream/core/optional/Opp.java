@@ -488,7 +488,7 @@ public class Opp<T> {
      * @throws NoSuchElementException 如果包裹里的值不存在则抛出该异常
      */
     public T orElseThrow() {
-        return orElseThrow(NoSuchElementException::new, "No value present");
+        return orElseThrow(() -> new NoSuchElementException("No value present"));
     }
 
     /**
@@ -506,29 +506,6 @@ public class Opp<T> {
             return value;
         } else {
             throw exceptionSupplier.get();
-        }
-    }
-
-    /**
-     * 如果包裹里的值存在，则返回该值，否则执行传入的操作，获取异常类型的返回值并抛出
-     *
-     * <p>往往是一个包含 自定义消息 构造器的异常 例如
-     * <pre>{@code
-     * 		Opp.ofNullable(null).orElseThrow(IllegalStateException::new, "Ops!Something is wrong!");
-     * }</pre>
-     *
-     * @param <X>               异常类型
-     * @param exceptionFunction 值不存在时执行的操作，返回值继承 {@link Throwable}
-     * @param message           作为传入操作执行时的参数，一般作为异常自定义提示语
-     * @return 包裹里不能为空的值
-     * @throws X                    如果值不存在
-     * @throws NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
-     */
-    public <X extends Throwable> T orElseThrow(Function<String, ? extends X> exceptionFunction, String message) throws X {
-        if (isNonNull()) {
-            return value;
-        } else {
-            throw exceptionFunction.apply(message);
         }
     }
 
