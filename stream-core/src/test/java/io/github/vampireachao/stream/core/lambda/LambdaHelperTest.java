@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
-import java.lang.reflect.Executable;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -60,15 +58,18 @@ class LambdaHelperTest {
 
     @Test
     void testGetPropertyNames() {
-        String[] propertyNames = LambdaHelper.getPropertyNames(LambdaExecutable::getName, LambdaExecutable::getLambda);
-        Assertions.assertEquals("name", propertyNames[0]);
-        Assertions.assertEquals("lambda", propertyNames[1]);
+        List<String> propertyNames = LambdaHelper.getPropertyNames(LambdaExecutable::getName, LambdaExecutable::getLambda);
+        Assertions.assertEquals("name", propertyNames.get(0));
+        Assertions.assertEquals("lambda", propertyNames.get(1));
     }
 
     @Test
     void testProxy() {
-        LambdaExecutable lambdaExecutable = LambdaHelper.resolve((Serializable & BiFunction<Executable, SerializedLambda, LambdaExecutable>) LambdaExecutable::new);
-        LambdaExecutable resolve = LambdaHelper.resolve((Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
+        LambdaHelper.resolve(SerCons.nothing());
+        LambdaHelper.resolve((Serializable & Function<SerializedLambda, LambdaExecutable>) LambdaExecutable::new);
+        LambdaHelper.resolve((Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
+        LambdaExecutable resolve = LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
+        System.out.println(resolve);
     }
 
 }

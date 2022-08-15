@@ -19,12 +19,15 @@
 package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.core.stream.Steam;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.security.SecureRandom;
+import java.util.List;
 
 /**
  * Similar to a Java 8 Executable but with a return type.
@@ -34,115 +37,175 @@ import java.lang.reflect.Type;
  */
 public class LambdaExecutable {
 
-    private final Type[] instantiatedTypes;
-    private final Type[] parameterTypes;
-    private final Type returnType;
-    private final String name;
-    private final Executable executable;
-    private final Class<?> clazz;
-    private final SerializedLambda lambda;
+    public static final String CONSTRUCTOR_METHOD_NAME = "<init>";
 
-    public LambdaExecutable(Executable executable, SerializedLambda lambda) {
-        if (executable instanceof Method) {
-            Method method = (Method) executable;
-            this.parameterTypes = method.getGenericParameterTypes();
-            this.returnType = method.getGenericReturnType();
-            this.name = method.getName();
-        } else if (executable instanceof Constructor) {
-            Constructor<?> constructor = (Constructor<?>) executable;
-            this.parameterTypes = constructor.getGenericParameterTypes();
-            this.returnType = constructor.getDeclaringClass();
-            this.name = constructor.getName();
-        } else {
-            throw new IllegalArgumentException("Unsupported executable type: " + executable.getClass());
-        }
-        int index = lambda.getInstantiatedMethodType().indexOf(";)");
-        if (index > -1) {
-            boolean isArray = lambda.getInstantiatedMethodType().startsWith("([");
-            if (isArray) {
-                try {
-                    this.instantiatedTypes = new Type[]{Class.forName(lambda.getInstantiatedMethodType().replace("/", ".").substring(0, index).substring(1) + ";", true, Thread.currentThread().getContextClassLoader())};
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
-                }
-            } else {
-                String[] instantiatedTypeNames = lambda.getInstantiatedMethodType().substring(2, index).split(";L");
-                this.instantiatedTypes = new Type[instantiatedTypeNames.length];
-                for (int i = 0; i < instantiatedTypeNames.length; i++) {
-                    try {
-                        this.instantiatedTypes[i] = Thread.currentThread().getContextClassLoader().loadClass(instantiatedTypeNames[i].replace("/", "."));
-                    } catch (ClassNotFoundException e) {
-                        throw new IllegalStateException(e);
-                    }
-                }
-            }
-        } else {
-            instantiatedTypes = new Type[0];
-        }
-        this.clazz = ReflectHelper.getFieldValue(executable, "clazz");
-        this.executable = executable;
+    private Executable executable;
+    private MethodHandle methodHandle;
+    private Type[] instantiatedTypes;
+    private Type[] parameterTypes;
+    private Type returnType;
+    private String name;
+    private Class<?> clazz;
+    private SerializedLambda lambda;
+
+    public LambdaExecutable() {
+        // this is an accessible parameterless constructor.
+    }
+
+    public LambdaExecutable(final SerializedLambda lambda) {
+        this(ReflectHelper.loadClass(lambda.getImplClass()), lambda.getImplMethodName(), lambda.getImplMethodSignature());
         this.lambda = lambda;
     }
 
-    public LambdaExecutable(Executable executable, String instantiatedMethodType) {
-        if (executable instanceof Method) {
-            Method method = (Method) executable;
-            this.parameterTypes = method.getGenericParameterTypes();
-            this.returnType = method.getGenericReturnType();
-            this.name = method.getName();
-        } else if (executable instanceof Constructor) {
-            Constructor<?> constructor = (Constructor<?>) executable;
-            this.parameterTypes = constructor.getGenericParameterTypes();
-            this.returnType = constructor.getDeclaringClass();
-            this.name = constructor.getName();
+    public LambdaExecutable(final Class<?> implClass, final String methodName, final String methodDescriptor) {
+        if (CONSTRUCTOR_METHOD_NAME.equals(methodName)) {
+            initConstructor(ReflectHelper.getConstructorByDescriptor(implClass, methodDescriptor));
         } else {
-            throw new IllegalArgumentException("Unsupported executable type: " + executable.getClass());
+            initMethod(ReflectHelper.getMethodByDescriptor(implClass, methodDescriptor));
         }
-        int index = instantiatedMethodType.indexOf(";)");
-        if (index > -1) {
-            boolean isArray = instantiatedMethodType.startsWith("([");
-            if (isArray) {
-                this.instantiatedTypes = new Type[]{ReflectHelper.loadClass(instantiatedMethodType.replace("/", ".").substring(0, index).substring(1) + ";")};
-            } else {
-                String[] instantiatedTypeNames = instantiatedMethodType.substring(2, index).split(";L");
-                this.instantiatedTypes = new Type[instantiatedTypeNames.length];
-                for (int i = 0; i < instantiatedTypeNames.length; i++) {
-                    this.instantiatedTypes[i] = ReflectHelper.loadClass(instantiatedTypeNames[i].replace("/", "."));
-                }
-            }
+        this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(methodDescriptor);
+    }
+
+    public LambdaExecutable(final Executable executable) {
+        if (executable instanceof Constructor) {
+            initConstructor((Constructor<?>) executable);
         } else {
-            instantiatedTypes = new Type[0];
+            initMethod((Method) executable);
         }
-        this.clazz = ReflectHelper.getFieldValue(executable, "clazz");
+    }
+
+    private void initConstructor(Constructor<?> constructor) {
+        this.executable = constructor;
+        this.parameterTypes = constructor.getGenericParameterTypes();
+        this.returnType = constructor.getDeclaringClass();
+        this.name = constructor.getName();
+        this.clazz = constructor.getDeclaringClass();
+    }
+
+    private void initMethod(Method method) {
+        this.executable = method;
+        this.parameterTypes = method.getGenericParameterTypes();
+        this.returnType = method.getGenericReturnType();
+        this.name = method.getName();
+        this.clazz = method.getDeclaringClass();
+    }
+
+
+    public Executable getExecutable() {
+        return executable;
+    }
+
+    public void setExecutable(Executable executable) {
         this.executable = executable;
-        this.lambda = null;
+    }
+
+    public MethodHandle getMethodHandle() {
+        return methodHandle;
+    }
+
+    public void setMethodHandle(MethodHandle methodHandle) {
+        this.methodHandle = methodHandle;
     }
 
     public Type[] getInstantiatedTypes() {
         return instantiatedTypes;
     }
 
+    public void setInstantiatedTypes(Type[] instantiatedTypes) {
+        this.instantiatedTypes = instantiatedTypes;
+    }
+
     public Type[] getParameterTypes() {
         return parameterTypes;
+    }
+
+    public void setParameterTypes(Type[] parameterTypes) {
+        this.parameterTypes = parameterTypes;
     }
 
     public Type getReturnType() {
         return returnType;
     }
 
+    public void setReturnType(Type returnType) {
+        this.returnType = returnType;
+    }
+
     public String getName() {
         return name;
     }
 
-    public Executable getExecutable() {
-        return executable;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Class<?> getClazz() {
         return clazz;
     }
 
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
+    }
+
     public SerializedLambda getLambda() {
         return lambda;
     }
+
+    public void setLambda(SerializedLambda lambda) {
+        this.lambda = lambda;
+    }
+
+    public static LambdaExecutable initProxy(Proxy proxy) {
+        final InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        final MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
+        MethodType type = methodHandle.type();
+        LambdaExecutable lambdaExecutable;
+        try {
+            lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
+        } catch (IllegalArgumentException e) {
+            // array constructor reference is not direct method handle
+            lambdaExecutable = fakeArrayConstructorHandler(methodHandle, type);
+        }
+        lambdaExecutable.setMethodHandle(methodHandle);
+        lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
+        return lambdaExecutable;
+    }
+
+    private static LambdaExecutable fakeArrayConstructorHandler(MethodHandle methodHandle, MethodType type) {
+        StackTraceElement traceElement = new Exception().getStackTrace()[3];
+        Class<?> clazz = ReflectHelper.loadClass(traceElement.getClassName());
+        try {
+            Constructor<Method> constructor = Method.class.getDeclaredConstructor(Class.class,
+                    String.class,
+                    Class[].class,
+                    Class.class,
+                    Class[].class,
+                    int.class,
+                    int.class,
+                    String.class,
+                    byte[].class,
+                    byte[].class,
+                    byte[].class);
+            List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
+            Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
+            Method executable = ReflectHelper.accessible(constructor)
+                    .newInstance(clazz,
+                            "lambda$" + traceElement.getMethodName() + "$fake",
+                            type.parameterArray(),
+                            Array.newInstance(arrayType, 0).getClass(),
+                            new Class[0],
+                            Modifier.methodModifiers(),
+                            new SecureRandom().nextInt(10),
+                            null,
+                            null,
+                            null,
+                            null
+                    );
+            return new LambdaExecutable(executable);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException |
+                 InstantiationException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
 }
