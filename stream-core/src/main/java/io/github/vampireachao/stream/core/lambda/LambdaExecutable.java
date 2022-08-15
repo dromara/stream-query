@@ -102,20 +102,12 @@ public class LambdaExecutable {
         if (index > -1) {
             boolean isArray = instantiatedMethodType.startsWith("([");
             if (isArray) {
-                try {
-                    this.instantiatedTypes = new Type[]{Class.forName(instantiatedMethodType.replace("/", ".").substring(0, index).substring(1) + ";", true, Thread.currentThread().getContextClassLoader())};
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
-                }
+                this.instantiatedTypes = new Type[]{ReflectHelper.loadClass(instantiatedMethodType.replace("/", ".").substring(0, index).substring(1) + ";")};
             } else {
                 String[] instantiatedTypeNames = instantiatedMethodType.substring(2, index).split(";L");
                 this.instantiatedTypes = new Type[instantiatedTypeNames.length];
                 for (int i = 0; i < instantiatedTypeNames.length; i++) {
-                    try {
-                        this.instantiatedTypes[i] = Thread.currentThread().getContextClassLoader().loadClass(instantiatedTypeNames[i].replace("/", "."));
-                    } catch (ClassNotFoundException e) {
-                        throw new IllegalStateException(e);
-                    }
+                    this.instantiatedTypes[i] = ReflectHelper.loadClass(instantiatedTypeNames[i].replace("/", "."));
                 }
             }
         } else {
