@@ -265,8 +265,9 @@ class SteamTest {
     @Test
     void testFindFirst() {
         List<Integer> list = Arrays.asList(1, 2, 3);
-        Integer find = Steam.of(list).findFirst(Objects::nonNull);
-        Assertions.assertEquals(1, find);
+        Optional<Integer> find = Steam.of(list).findFirst(Objects::nonNull);
+        Assertions.assertEquals(1, find.orElse(null));
+
     }
 
     @Test
@@ -280,8 +281,8 @@ class SteamTest {
     @Test
     void testFindLast() {
         List<Integer> list = Arrays.asList(1, null, 3);
-        Integer find = Steam.of(list).findLast(Objects::nonNull);
-        Assertions.assertEquals(3, find);
+        Optional<Integer> find = Steam.of(list).findLast(Objects::nonNull);
+        Assertions.assertEquals(3, find.orElse(null));
         Assertions.assertEquals(3, Steam.of(list).findLast().orElse(null));
     }
 
