@@ -69,7 +69,7 @@ class LambdaHelperTest {
         LambdaHelper.resolve((Serializable & Function<SerializedLambda, LambdaExecutable>) LambdaExecutable::new);
         LambdaHelper.resolve((Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
         LambdaExecutable resolve = LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
-        System.out.println(resolve);
+        Assertions.assertNotNull(resolve);
     }
 
 }
