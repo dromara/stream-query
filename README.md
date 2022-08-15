@@ -32,7 +32,7 @@
 ## 📦安装
 
 ### 🍊Maven
-在项目的pom.xml的dependencies中加入以下内容:
+在项目的pom.xml文件里的dependencies中加入以下内容:
 
 ```xml
 <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-plugin-mybatis-plus -->
