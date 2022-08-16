@@ -39,6 +39,7 @@ public class ReflectHelper {
     public static final String LEFT_MIDDLE_BRACKET = "[";
     public static final String SEMICOLON = ";";
     public static final String L = "L";
+    public static final String V = "V";
 
 
     private static final WeakHashMap<Class<?>, List<Field>> CLASS_FIELDS_CACHE = new WeakHashMap<>();
@@ -298,6 +299,18 @@ public class ReflectHelper {
         return types;
     }
 
+    public static Type getReturnTypeFromDescriptor(final String methodDescriptor) {
+        int index = methodDescriptor.indexOf(";)");
+        if (index == -1) {
+            return null;
+        }
+        String className = methodDescriptor.substring(index + 2);
+        if (V.equals(className)) {
+            return null;
+        }
+        return forClassName(className);
+    }
+
     public static Class<?> loadClass(final String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className.replace("/", "."));
@@ -310,9 +323,13 @@ public class ReflectHelper {
         try {
             if (className.startsWith(LEFT_MIDDLE_BRACKET) && !className.endsWith(SEMICOLON)) {
                 className += SEMICOLON;
-            }
-            if (className.startsWith(L)) {
-                className = className.substring(1);
+            } else {
+                if (className.startsWith(L)) {
+                    className = className.substring(1);
+                }
+                if (className.endsWith(SEMICOLON)) {
+                    className = className.substring(0, className.length() - 1);
+                }
             }
             return Class.forName(className.replace("/", "."));
         } catch (ClassNotFoundException e) {

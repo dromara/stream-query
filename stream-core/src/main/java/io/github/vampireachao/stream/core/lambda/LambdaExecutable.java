@@ -59,7 +59,9 @@ public class LambdaExecutable {
                 initMethod(ReflectHelper.getMethodByDescriptor(implClass, lambda.getImplMethodSignature()));
             }
         } catch (IllegalStateException e) {
-            this.parameterTypes = ReflectHelper.getArgsFromDescriptor(lambda.getInstantiatedMethodType());
+            this.parameterTypes = ReflectHelper.getArgsFromDescriptor(lambda.getImplMethodSignature());
+            this.returnType = ReflectHelper.getReturnTypeFromDescriptor(lambda.getInstantiatedMethodType());
+            this.name = lambda.getImplMethodName();
         }
         this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(lambda.getInstantiatedMethodType());
         this.lambda = lambda;
