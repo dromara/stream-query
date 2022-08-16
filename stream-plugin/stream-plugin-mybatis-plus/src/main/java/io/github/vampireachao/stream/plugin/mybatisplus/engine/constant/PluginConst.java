@@ -21,5 +21,10 @@ public interface PluginConst {
      * collection parameter name
      */
     String COLLECTION_PARAM_NAME = "list";
+    /**
+     * wrapper not active
+     */
+    String WRAPPER_NOT_ACTIVE = "WRAPPER_NOT_ACTIVE";
+
 
 }
