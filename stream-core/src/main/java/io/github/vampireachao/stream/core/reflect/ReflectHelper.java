@@ -36,6 +36,11 @@ import java.util.WeakHashMap;
  */
 public class ReflectHelper {
 
+    public static final String LEFT_MIDDLE_BRACKET = "[";
+    public static final String SEMICOLON = ";";
+    public static final String L = "L";
+
+
     private static final WeakHashMap<Class<?>, List<Field>> CLASS_FIELDS_CACHE = new WeakHashMap<>();
     private static final WeakHashMap<Class<?>, List<Method>> CLASS_METHODS_CACHE = new WeakHashMap<>();
 
@@ -303,10 +308,10 @@ public class ReflectHelper {
 
     public static Class<?> forClassName(String className) {
         try {
-            if (className.startsWith("[") && !className.endsWith(";")) {
-                className = className + ";";
+            if (className.startsWith(LEFT_MIDDLE_BRACKET) && !className.endsWith(SEMICOLON)) {
+                className += SEMICOLON;
             }
-            if (className.startsWith("L")) {
+            if (className.startsWith(L)) {
                 className = className.substring(1);
             }
             return Class.forName(className.replace("/", "."));
