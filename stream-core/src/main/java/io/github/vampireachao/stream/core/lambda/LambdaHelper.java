@@ -70,7 +70,7 @@ public class LambdaHelper {
         }
         return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(), key -> {
             SerializedLambda serialize = serialize(lambda);
-            // TODO fixing
+            //  fixing
             ReflectHelper.getMethods(serialize.getClass()).stream().filter(m -> m.getParameterCount() < 1).forEach(m -> {
                 try {
                     System.out.println(m.getName() + ": " + ReflectHelper.accessible(m).invoke(serialize));
