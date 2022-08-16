@@ -290,17 +290,12 @@ public class ReflectHelper {
                     .substring(0, index)
                     .substring(1)
                     + ";";
-            return new Type[]{loadClass(className)};
+            return new Type[]{forClassName(className)};
         } else {
             String[] instantiatedTypeNames = methodDescriptor.substring(2, index).split(";L");
             final Type[] types = new Type[instantiatedTypeNames.length];
             for (int i = 0; i < instantiatedTypeNames.length; i++) {
-                try {
-                    types[i] = Thread.currentThread().getContextClassLoader()
-                            .loadClass(instantiatedTypeNames[i].replace("/", "."));
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
-                }
+                types[i] = loadClass(instantiatedTypeNames[i]);
             }
             return types;
         }
@@ -309,6 +304,14 @@ public class ReflectHelper {
     public static Class<?> loadClass(final String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className.replace("/", "."));
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static Class<?> forClassName(final String className) {
+        try {
+            return Class.forName(className.replace("/", "."));
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }

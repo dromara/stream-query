@@ -4,6 +4,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class LambdaHelperTest {
 
     @Test
     void testResolve() {
-        Assertions.assertAll(() -> {
+        Steam.<Runnable>of(() -> {
                     LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerSupp<Object>) Object::new);
                     Assertions.assertEquals(0, lambdaExecutable.getParameterTypes().length);
                     Assertions.assertEquals(Object.class, lambdaExecutable.getReturnType());
@@ -32,6 +33,10 @@ class LambdaHelperTest {
                     LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new);
                     Assertions.assertEquals(int.class, lambdaExecutable.getParameterTypes()[0]);
                     Assertions.assertEquals(Integer.class, ((Class<Array>) lambdaExecutable.getReturnType()).getComponentType());
+                }, () -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerFunc<Integer, Integer[][]>) Integer[][]::new);
+                    Assertions.assertEquals(int.class, lambdaExecutable.getParameterTypes()[0]);
+                    Assertions.assertEquals(Integer[].class, ((Class<Array>) lambdaExecutable.getReturnType()).getComponentType());
                 }, () -> {
                     LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerCons<Object>) System.out::println);
                     Assertions.assertEquals(Object.class, lambdaExecutable.getParameterTypes()[0]);
@@ -53,7 +58,7 @@ class LambdaHelperTest {
                     LambdaExecutable resolve = LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w);
                     Assertions.assertEquals(ReflectHelper.getDescriptor(resolve.getExecutable()), resolve.getLambda().getImplMethodSignature());
                 }
-        );
+        ).forEach(Runnable::run);
     }
 
     @Test

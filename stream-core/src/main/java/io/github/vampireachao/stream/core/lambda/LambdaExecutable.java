@@ -51,14 +51,17 @@ public class LambdaExecutable {
     }
 
     public LambdaExecutable(final SerializedLambda lambda) {
-        this.clazz = ReflectHelper.loadClass(lambda.getImplClass());
-        this.name = lambda.getImplMethodName();
-        if (CONSTRUCTOR_METHOD_NAME.equals(this.name)) {
-            initConstructor(ReflectHelper.getConstructorByDescriptor(this.clazz, lambda.getImplMethodSignature()));
-        } else {
-            initMethod(ReflectHelper.getMethodByDescriptor(this.clazz, lambda.getImplMethodSignature()));
+        try {
+            Class<?> implClass = ReflectHelper.loadClass(lambda.getImplClass());
+            if (CONSTRUCTOR_METHOD_NAME.equals(lambda.getImplMethodName())) {
+                initConstructor(ReflectHelper.getConstructorByDescriptor(implClass, lambda.getImplMethodSignature()));
+            } else {
+                initMethod(ReflectHelper.getMethodByDescriptor(implClass, lambda.getImplMethodSignature()));
+            }
+        } catch (IllegalStateException e) {
+            this.parameterTypes = ReflectHelper.getArgsFromDescriptor(lambda.getInstantiatedMethodType());
         }
-        this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(lambda.getImplMethodSignature());
+        this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(lambda.getInstantiatedMethodType());
         this.lambda = lambda;
     }
 
