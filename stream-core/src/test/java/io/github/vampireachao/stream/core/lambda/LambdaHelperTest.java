@@ -2,9 +2,9 @@ package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
-import io.github.vampireachao.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Array;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -25,7 +26,16 @@ class LambdaHelperTest {
 
     @Test
     void testResolve() {
-        Steam.<Runnable>of(() -> {
+        SerRunn.multi(
+                () -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((Serializable & BiConsumer<Integer[][], Integer>) (i, a) -> {});
+                    Assertions.assertEquals(Integer[].class, ((Class<Array>) lambdaExecutable.getParameterTypes()[0]).getComponentType());
+                    Assertions.assertEquals(Integer.class, lambdaExecutable.getParameterTypes()[1]);
+                }, () -> {
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((Serializable & BiConsumer<Integer, Integer[][][]>) (i, a) -> {});
+                    Assertions.assertEquals(Integer.class, lambdaExecutable.getParameterTypes()[0]);
+                    Assertions.assertEquals(Integer[][].class, ((Class<Array>) lambdaExecutable.getParameterTypes()[1]).getComponentType());
+                }, () -> {
                     LambdaExecutable lambdaExecutable = LambdaHelper.resolve((SerSupp<Object>) Object::new);
                     Assertions.assertEquals(0, lambdaExecutable.getParameterTypes().length);
                     Assertions.assertEquals(Object.class, lambdaExecutable.getReturnType());
@@ -55,10 +65,10 @@ class LambdaHelperTest {
                     Assertions.assertEquals(0, lambdaExecutable.getParameterTypes().length);
                     Assertions.assertEquals(String.class, lambdaExecutable.getReturnType());
                 }, () -> {
-                    LambdaExecutable resolve = LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w);
-                    Assertions.assertEquals(ReflectHelper.getDescriptor(resolve.getExecutable()), resolve.getLambda().getImplMethodSignature());
+                    LambdaExecutable lambdaExecutable = LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w);
+                    Assertions.assertEquals(ReflectHelper.getDescriptor(lambdaExecutable.getExecutable()), lambdaExecutable.getLambda().getImplMethodSignature());
                 }
-        ).forEach(Runnable::run);
+        ).run();
     }
 
     @Test

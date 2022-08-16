@@ -284,21 +284,13 @@ public class ReflectHelper {
         if (index == -1) {
             return new Type[0];
         }
-        boolean isArray = methodDescriptor.startsWith("([");
-        if (isArray) {
-            final String className = methodDescriptor
-                    .substring(0, index)
-                    .substring(1)
-                    + ";";
-            return new Type[]{forClassName(className)};
-        } else {
-            String[] instantiatedTypeNames = methodDescriptor.substring(2, index).split(";L");
-            final Type[] types = new Type[instantiatedTypeNames.length];
-            for (int i = 0; i < instantiatedTypeNames.length; i++) {
-                types[i] = loadClass(instantiatedTypeNames[i]);
-            }
-            return types;
+        final String className = methodDescriptor.substring(1, index + 1);
+        String[] instantiatedTypeNames = className.split(";");
+        final Type[] types = new Type[instantiatedTypeNames.length];
+        for (int i = 0; i < instantiatedTypeNames.length; i++) {
+            types[i] = forClassName(instantiatedTypeNames[i]);
         }
+        return types;
     }
 
     public static Class<?> loadClass(final String className) {
@@ -309,8 +301,14 @@ public class ReflectHelper {
         }
     }
 
-    public static Class<?> forClassName(final String className) {
+    public static Class<?> forClassName(String className) {
         try {
+            if (className.startsWith("[") && !className.endsWith(";")) {
+                className = className + ";";
+            }
+            if (className.startsWith("L")) {
+                className = className.substring(1);
+            }
             return Class.forName(className.replace("/", "."));
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
