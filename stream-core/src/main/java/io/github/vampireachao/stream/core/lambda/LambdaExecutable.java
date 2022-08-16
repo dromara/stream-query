@@ -51,17 +51,15 @@ public class LambdaExecutable {
     }
 
     public LambdaExecutable(final SerializedLambda lambda) {
-        this(ReflectHelper.loadClass(lambda.getImplClass()), lambda.getImplMethodName(), lambda.getImplMethodSignature());
-        this.lambda = lambda;
-    }
-
-    public LambdaExecutable(final Class<?> implClass, final String methodName, final String methodDescriptor) {
-        if (CONSTRUCTOR_METHOD_NAME.equals(methodName)) {
-            initConstructor(ReflectHelper.getConstructorByDescriptor(implClass, methodDescriptor));
+        this.clazz = ReflectHelper.loadClass(lambda.getImplClass());
+        this.name = lambda.getImplMethodName();
+        if (CONSTRUCTOR_METHOD_NAME.equals(this.name)) {
+            initConstructor(ReflectHelper.getConstructorByDescriptor(this.clazz, lambda.getImplMethodSignature()));
         } else {
-            initMethod(ReflectHelper.getMethodByDescriptor(implClass, methodDescriptor));
+            initMethod(ReflectHelper.getMethodByDescriptor(this.clazz, lambda.getImplMethodSignature()));
         }
-        this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(methodDescriptor);
+        this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(lambda.getImplMethodSignature());
+        this.lambda = lambda;
     }
 
     public LambdaExecutable(final Executable executable) {
