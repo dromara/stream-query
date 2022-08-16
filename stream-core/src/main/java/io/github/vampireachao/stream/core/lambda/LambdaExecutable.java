@@ -164,7 +164,7 @@ public class LambdaExecutable {
             lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
         } catch (IllegalArgumentException e) {
             // array constructor reference is not direct method handle
-            // TODO fixing
+            //  fixing
             try {
                 methodHandle = (MethodHandle) handler.invoke(proxy, ReflectHelper.getMethodByName(WrapperInstance.class, "getWrapperInstanceTarget"), null);
             } catch (Throwable ex) {
