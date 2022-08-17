@@ -192,10 +192,15 @@ public class ReflectHelper {
                 .orElseThrow(() -> new IllegalArgumentException("No such field: " + fieldName));
     }
 
-    public static Method getMethodByName(Class<?> clazz, String methodName) {
-        return Steam.of(getMethods(clazz)).filter(method -> method.getName().equals(methodName))
-                .findFirst().map(ReflectHelper::accessible)
-                .orElseThrow(() -> new IllegalArgumentException("No such method: " + methodName));
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+        try {
+            return accessible(clazz.getDeclaredMethod(methodName, parameterTypes));
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(
+                    String.format("No such method: %s args: %s",
+                            methodName
+                            , Steam.of(parameterTypes).map(Type::getTypeName).join(",")));
+        }
     }
 
     /**
@@ -321,15 +326,15 @@ public class ReflectHelper {
 
     public static Class<?> forClassName(String className) {
         try {
-            if (className.startsWith(LEFT_MIDDLE_BRACKET) && !className.endsWith(SEMICOLON)) {
+            boolean isArray = className.startsWith(LEFT_MIDDLE_BRACKET);
+            if (isArray && !className.endsWith(SEMICOLON)) {
                 className += SEMICOLON;
-            } else {
-                if (className.startsWith(L)) {
-                    className = className.substring(1);
-                }
-                if (className.endsWith(SEMICOLON)) {
-                    className = className.substring(0, className.length() - 1);
-                }
+            }
+            if (!isArray && className.startsWith(L)) {
+                className = className.substring(1);
+            }
+            if (!isArray && className.endsWith(SEMICOLON)) {
+                className = className.substring(0, className.length() - 1);
             }
             return Class.forName(className.replace("/", "."));
         } catch (ClassNotFoundException e) {
@@ -338,9 +343,9 @@ public class ReflectHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static <R> R invoke(Object obj, String methodName, Object... args) {
+    public static <R> R invoke(Object obj, Method method, Object... args) {
         try {
-            return (R) accessible(getMethodByName(obj.getClass(), methodName)).invoke(obj, args);
+            return (R) accessible(method).invoke(obj, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +44,16 @@ class ReflectHelperTest {
     void testIsInstance() {
         Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new AbstractTypeReference<Map<?, ?>>() {}.getClass()));
         Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), Map.class));
+    }
+
+    @Test
+    void testGetMethod() {
+        Assertions.assertNotNull(ReflectHelper.getMethod(Array.class, "newInstance", Class.class, int.class));
+    }
+
+    @Test
+    void testInvoke() {
+        Assertions.assertNotNull(ReflectHelper.invoke(null, ReflectHelper.getMethod(Array.class, "newInstance", Class.class, int.class), Class.class, 0));
     }
 }
 

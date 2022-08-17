@@ -19,7 +19,6 @@
 package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
-import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -38,13 +37,13 @@ public class LambdaExecutable {
     public static final String CONSTRUCTOR_METHOD_NAME = "<init>";
 
     private Executable executable;
-    private MethodHandle methodHandle;
     private Type[] instantiatedTypes;
     private Type[] parameterTypes;
     private Type returnType;
     private String name;
     private Class<?> clazz;
     private SerializedLambda lambda;
+    private Proxy proxy;
 
     public LambdaExecutable() {
         // this is an accessible parameterless constructor.
@@ -100,13 +99,6 @@ public class LambdaExecutable {
         this.executable = executable;
     }
 
-    public MethodHandle getMethodHandle() {
-        return methodHandle;
-    }
-
-    public void setMethodHandle(MethodHandle methodHandle) {
-        this.methodHandle = methodHandle;
-    }
 
     public Type[] getInstantiatedTypes() {
         return instantiatedTypes;
@@ -162,22 +154,35 @@ public class LambdaExecutable {
         LambdaExecutable lambdaExecutable;
         try {
             lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
+            lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
         } catch (IllegalArgumentException e) {
             // array constructor reference is not direct method handle
-            lambdaExecutable = arrayConstructorHandler(methodHandle);
+            e.printStackTrace();
+            lambdaExecutable = notDirectMethodHandle(methodHandle);
         }
-        lambdaExecutable.setMethodHandle(methodHandle);
-        lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
+        lambdaExecutable.setProxy(proxy);
         return lambdaExecutable;
     }
 
-    private static LambdaExecutable arrayConstructorHandler(MethodHandle methodHandle) {
-        LambdaExecutable lambdaExecutable = new LambdaExecutable();
-        List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
-        Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
-        lambdaExecutable.setParameterTypes(methodHandle.type().parameterArray());
-        lambdaExecutable.setClazz(Array.newInstance(arrayType, 0).getClass());
+    private static LambdaExecutable notDirectMethodHandle(MethodHandle methodHandle) {
+///        StackTraceElement stackTraceElement = new RuntimeException().getStackTrace()[3];
+        List<Object> internalValues = ReflectHelper.invoke(methodHandle, ReflectHelper.getMethod(methodHandle.getClass(), "internalValues"));
+        MethodHandle internalMethodHandle = (MethodHandle) internalValues.get(0);
+        Executable internalExecutable = MethodHandles.reflectAs(Executable.class, internalMethodHandle);
+        ReflectHelper.getMethod(Array.class, "newInstance", Class.class, int.class);
+        LambdaExecutable lambdaExecutable = new LambdaExecutable(internalExecutable);
+        lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
+///        lambdaExecutable.setClazz(ReflectHelper.forClassName(stackTraceElement.getClassName()));
+///        lambdaExecutable.setName("lambda$" + stackTraceElement.getMethodName() + "$" + Integer.toHexString(proxy.hashCode()) + "$2");
         return lambdaExecutable;
+    }
+
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
     }
 
 }
