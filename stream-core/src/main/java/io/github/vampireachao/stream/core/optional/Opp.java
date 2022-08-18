@@ -100,7 +100,16 @@ public class Opp<T> {
      * @return 一个包裹里元素可能为空的 {@code Opp}
      */
     public static <T, R extends Collection<T>> Opp<R> empty(R value) {
-        return Opp.of(value).filter(coll -> !coll.isEmpty() && !Objects.equals(Collections.frequency(value, null), value.size()));
+        if (value == null || value.isEmpty()) {
+            return empty();
+        }
+        for (T t : value) {
+            if (t != null) {
+                return new Opp<>(value);
+            }
+        }
+        // 集合中元素全部为空
+        return empty();
     }
 
     /**
@@ -148,7 +157,7 @@ public class Opp<T> {
 
     /**
      * 获取异常<br>
-     * 当调用 {@link #ofTry(Supplier)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
+     * 当调用 {@link #ofTry(Callable)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
      *
      * @return 异常
      */
@@ -158,7 +167,7 @@ public class Opp<T> {
 
     /**
      * 是否失败<br>
-     * 当调用 {@link #ofTry(Supplier)}时，抛出异常则表示失败
+     * 当调用 {@link #ofTry(Callable)}时，抛出异常则表示失败
      *
      * @return 是否失败
      */
