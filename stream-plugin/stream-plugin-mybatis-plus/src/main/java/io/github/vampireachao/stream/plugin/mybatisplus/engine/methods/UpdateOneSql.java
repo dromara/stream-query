@@ -3,7 +3,9 @@ package io.github.vampireachao.stream.plugin.mybatisplus.engine.methods;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * 修改多条数据（mysql语法批量）
@@ -26,7 +28,17 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      */
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-
-        return null;
+        SqlMethodEnum sqlMethod = SqlMethodEnum.UPDATE_ONE_SQL;
+        final String additional = optlockVersion(tableInfo) + tableInfo.getLogicDeleteSql(true, true);
+        // TODO sleepy
+        String sql = String.format(sqlMethod.getSql(),
+                tableInfo.getTableName(),
+                sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT),
+                tableInfo.getKeyColumn(),
+                ENTITY_DOT + tableInfo.getKeyProperty(),
+                additional
+        );
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        return addUpdateMappedStatement(mapperClass, modelClass, sqlSource);
     }
 }
