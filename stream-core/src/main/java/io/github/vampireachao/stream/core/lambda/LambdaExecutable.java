@@ -166,6 +166,7 @@ public class LambdaExecutable {
 
     private static LambdaExecutable notDirectMethodHandle(MethodHandle methodHandle) {
 ///        StackTraceElement stackTraceElement = new RuntimeException().getStackTrace()[3];
+        ReflectHelper.explain(methodHandle);
         List<Object> internalValues = ReflectHelper.invoke(methodHandle, ReflectHelper.getMethod(methodHandle.getClass(), "internalValues"));
         MethodHandle internalMethodHandle = (MethodHandle) internalValues.get(0);
         Executable internalExecutable = MethodHandles.reflectAs(Executable.class, internalMethodHandle);

@@ -18,11 +18,14 @@
 package io.github.vampireachao.stream.core.reflect;
 
 
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
+import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
@@ -179,7 +182,7 @@ public class ReflectHelper {
                  currentClass != null;
                  currentClass = currentClass.getSuperclass()) {
                 for (Field field : currentClass.getDeclaredFields()) {
-                    fieldsBuilder.add(field);
+                    fieldsBuilder.add(accessible(field));
                 }
             }
             return fieldsBuilder.build().toList();
@@ -193,14 +196,13 @@ public class ReflectHelper {
     }
 
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
-        try {
-            return accessible(clazz.getDeclaredMethod(methodName, parameterTypes));
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(
-                    String.format("No such method: %s args: %s",
-                            methodName
-                            , Steam.of(parameterTypes).map(Type::getTypeName).join(",")));
-        }
+        return Steam.of(getMethods(clazz)).filter(SerPred.multiAnd(
+                method -> method.getName().equals(methodName),
+                method -> Arrays.equals(method.getParameterTypes(), parameterTypes)
+        )).findFirst().map(ReflectHelper::accessible).orElseThrow(() -> new IllegalArgumentException(
+                String.format("No such method: %s args: %s",
+                        methodName
+                        , Steam.of(parameterTypes).map(Type::getTypeName).join(","))));
     }
 
     /**
@@ -349,5 +351,14 @@ public class ReflectHelper {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public static void explain(Object obj) {
+        System.out.printf("obj: %s class: %s\n", obj, obj.getClass());
+        System.out.println("fields: ");
+        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> System.out.println("field " +
+                "" + fieldName + ": " + getFieldValue(obj, fieldName)));
+        System.out.println("no arg methods: ");
+        Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName -> System.out.println("method " + methodName + ": " + Opp.ofTry(() -> getMethod(obj.getClass(), methodName).invoke(obj))));
     }
 }
