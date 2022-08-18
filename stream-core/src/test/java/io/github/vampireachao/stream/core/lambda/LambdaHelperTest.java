@@ -53,8 +53,8 @@ class LambdaHelperTest {
 
     @Test
     void testProxy() {
-        Assertions.assertEquals(int.class, LambdaHelper.resolve((SerFunc<Integer, Integer[]>) Integer[]::new).getParameterTypes()[0]);
-//        Assertions.assertEquals(int.class, LambdaHelper.resolve((SerFunc<Integer, Integer[][]>) Integer[][]::new).getParameterTypes()[0]);
+        Assertions.assertEquals(int.class, LambdaHelper.resolve((SerFunc<Integer, String[]>) String[]::new).getParameterTypes()[0]);
+        Assertions.assertEquals(int.class, LambdaHelper.resolve((SerFunc<Integer, Integer[][]>) Integer[][]::new).getParameterTypes()[0]);
         Assertions.assertEquals(Object.class, LambdaHelper.resolve((SerCons<Object>) System.out::println).getParameterTypes()[0]);
     }
 

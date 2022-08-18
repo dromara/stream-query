@@ -35,6 +35,7 @@ import java.util.List;
 public class LambdaExecutable {
 
     public static final String CONSTRUCTOR_METHOD_NAME = "<init>";
+    public static final String NEW_INSTANCE_METHOD_NAME = "newInstance";
 
     private Executable executable;
     private Type[] instantiatedTypes;
@@ -157,7 +158,6 @@ public class LambdaExecutable {
             lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
         } catch (IllegalArgumentException e) {
             // array constructor reference is not direct method handle
-            e.printStackTrace();
             lambdaExecutable = notDirectMethodHandle(methodHandle);
         }
         lambdaExecutable.setProxy(proxy);
@@ -165,16 +165,20 @@ public class LambdaExecutable {
     }
 
     private static LambdaExecutable notDirectMethodHandle(MethodHandle methodHandle) {
-///        StackTraceElement stackTraceElement = new RuntimeException().getStackTrace()[3];
-        ReflectHelper.explain(methodHandle);
         List<Object> internalValues = ReflectHelper.invoke(methodHandle, ReflectHelper.getMethod(methodHandle.getClass(), "internalValues"));
         MethodHandle internalMethodHandle = (MethodHandle) internalValues.get(0);
         Executable internalExecutable = MethodHandles.reflectAs(Executable.class, internalMethodHandle);
-        ReflectHelper.getMethod(Array.class, "newInstance", Class.class, int.class);
         LambdaExecutable lambdaExecutable = new LambdaExecutable(internalExecutable);
         lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
-///        lambdaExecutable.setClazz(ReflectHelper.forClassName(stackTraceElement.getClassName()));
-///        lambdaExecutable.setName("lambda$" + stackTraceElement.getMethodName() + "$" + Integer.toHexString(proxy.hashCode()) + "$2");
+        if (ReflectHelper.getMethod(Array.class, NEW_INSTANCE_METHOD_NAME, Class.class, int.class).equals(internalExecutable)) {
+            lambdaExecutable.setParameterTypes(new Type[]{int.class});
+            lambdaExecutable.setInstantiatedTypes(new Type[]{Integer.class});
+            lambdaExecutable.setReturnType(Array.newInstance((Class<?>) internalValues.get(1), 0).getClass());
+            StackTraceElement stackTraceElement = new RuntimeException().getStackTrace()[7];
+            lambdaExecutable.setClazz(ReflectHelper.forClassName(stackTraceElement.getClassName()));
+            lambdaExecutable.setName("lambda$" + stackTraceElement.getMethodName() + "$" + Integer.toHexString(methodHandle.hashCode()) + "$0");
+
+        }
         return lambdaExecutable;
     }
 
