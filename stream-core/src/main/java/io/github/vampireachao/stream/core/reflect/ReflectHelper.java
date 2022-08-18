@@ -313,7 +313,7 @@ public class ReflectHelper {
         }
         String className = methodDescriptor.substring(index + 2);
         if (V.equals(className)) {
-            return null;
+            return void.class;
         }
         return forClassName(className);
     }

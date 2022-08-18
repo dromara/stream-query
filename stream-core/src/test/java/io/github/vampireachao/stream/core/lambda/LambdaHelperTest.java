@@ -3,7 +3,6 @@ package io.github.vampireachao.stream.core.lambda;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
-import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +40,7 @@ class LambdaHelperTest {
         Assertions.assertEquals(void.class, LambdaHelper.resolve((SerCons<List<String>>) (List<String> stringList) -> {}).getReturnType());
         Assertions.assertEquals(0, LambdaHelper.resolve((SerFunc<Object, String>) Object::toString).getParameterTypes().length);
         Assertions.assertEquals(String.class, LambdaHelper.resolve((SerFunc<Object, String>) Object::toString).getReturnType());
-        Assertions.assertEquals(ReflectHelper.getDescriptor(LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w).getExecutable()), LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w).getLambda().getImplMethodSignature());
+        Assertions.assertEquals(Void.class, LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w).getReturnType());
     }
 
     @Test
