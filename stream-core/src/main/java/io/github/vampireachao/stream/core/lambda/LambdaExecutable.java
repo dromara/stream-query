@@ -176,7 +176,7 @@ public class LambdaExecutable {
             lambdaExecutable.setReturnType(Array.newInstance((Class<?>) internalValues.get(1), 0).getClass());
             StackTraceElement stackTraceElement = new RuntimeException().getStackTrace()[7];
             lambdaExecutable.setClazz(ReflectHelper.forClassName(stackTraceElement.getClassName()));
-            lambdaExecutable.setName("lambda$" + stackTraceElement.getMethodName() + "$" + Integer.toHexString(methodHandle.hashCode()) + "$0");
+            lambdaExecutable.setName("lambda$" + stackTraceElement.getMethodName() + "$" + Integer.toHexString(methodHandle.hashCode()) + "$1");
 
         }
         return lambdaExecutable;
