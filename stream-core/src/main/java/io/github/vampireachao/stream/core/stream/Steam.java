@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
+import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.io.PrintStream;
@@ -354,6 +355,16 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         } else {
             AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
             return map(e -> mapper.apply(e, index.incrementAndGet()));
+        }
+    }
+
+    public Steam<T> peekIdx(SerBiCons<? super T, Integer> action) {
+        Objects.requireNonNull(action);
+        if (isParallel()) {
+            return peek(e -> action.accept(e, NOT_FOUND_INDEX));
+        } else {
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
+            return peek(e -> action.accept(e, index.incrementAndGet()));
         }
     }
 
