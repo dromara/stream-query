@@ -4,7 +4,7 @@
 </p>
 <p align="center">
 	👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈
-</p>           
+</p>
 <p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/io.github.vampireachao/stream-query">
         <img src="https://img.shields.io/maven-central/v/io.github.vampireachao/stream-query.svg?label=Maven%20Central" />
