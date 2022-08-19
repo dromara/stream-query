@@ -48,19 +48,5 @@ class IMapperTest {
         Assertions.assertEquals(7, Database.count(UserInfo.class));
     }
 
-    @Test
-    void testUpdateOneSql() {
-        UserInfo sheep = new UserInfo();
-        sheep.setId(1L);
-        sheep.setName("bee bee I'm a sheep");
-
-        UserInfo ruben = new UserInfo();
-        ruben.setId(2L);
-        ruben.setName("rabbit");
-        long affectRows = userInfoMapper.updateOneSql(Arrays.asList(sheep, ruben));
-        Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
-        Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
-    }
 
 }

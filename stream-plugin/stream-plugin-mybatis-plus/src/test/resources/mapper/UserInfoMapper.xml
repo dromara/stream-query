@@ -3,22 +3,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.github.vampireachao.stream.plugin.mybatisplus.mapper.UserInfoMapper">
 
-    <update id="updateOneSql">
-        UPDATE user_info
-        SET
-        age = CASE id
-        <foreach collection="list" item="item" index="index">
-            WHEN #{item.id} THEN #{item.age}
-        </foreach>
-        END,
-        name = CASE id
-        <foreach collection="list" item="item" index="index">
-            WHEN #{item.id} THEN #{item.name}
-        </foreach>
-        END
-        WHERE id IN
-        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
-            #{item.id}
-        </foreach>
-    </update>
 </mapper>
