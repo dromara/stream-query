@@ -29,16 +29,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethodEnum sqlMethod = SqlMethodEnum.UPDATE_ONE_SQL;
-        final String additional = optlockVersion(tableInfo) + tableInfo.getLogicDeleteSql(true, true);
-        // TODO sleepy
-        String sql = String.format(sqlMethod.getSql(),
-                tableInfo.getTableName(),
-                sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT),
-                tableInfo.getKeyColumn(),
-                ENTITY_DOT + tableInfo.getKeyProperty(),
-                additional
-        );
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sqlMethod.getSql(), modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlSource);
     }
 }
