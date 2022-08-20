@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.stream.Steam;
-import io.github.vampireachao.stream.core.stream.StreamHelper;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -137,7 +135,7 @@ public class OneToOne {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, keyFunction, valueFunction))).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collective.toMap(keyFunction, valueFunction))).orElseGet(HashMap::new);
+        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, keyFunction, valueFunction))).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel).peekIdx(SerBiCons.multi(peeks)).toMap(keyFunction, valueFunction)).orElseGet(HashMap::new);
     }
 
 
