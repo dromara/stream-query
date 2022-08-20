@@ -500,7 +500,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Builder<R>> mapper) {
+    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
         Objects.requireNonNull(mapper);
         return flatMap(e -> {
             Builder<R> buffer = Steam.builder();
@@ -508,6 +508,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
             return buffer.build();
         });
     }
+
+
 
     /**
      * 返回一个具有去重特征的流 非并行流(顺序流)下对于重复元素，保留遇到顺序中最先出现的元素，并行流情况下不能保证具体保留哪一个
