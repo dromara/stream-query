@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.Collections.singletonList;
@@ -107,6 +108,18 @@ class SteamTest {
                     put("3", singletonList(3));
                 }}, group);
     }
+
+    @Test
+    void testGenerate() {
+
+        Random random = new Random();
+
+        Steam<Integer> limit = Steam.generate(() -> random.nextInt(10)).limit(10);
+
+        Assertions.assertEquals(Boolean.TRUE, limit.allMatch(v -> v >= 0 && v < 10));
+
+    }
+
 
     @Test
     void testFilterIter() {
@@ -231,6 +244,9 @@ class SteamTest {
         List<Integer> list = Arrays.asList(1, 2);
         List<Integer> push = Steam.of(list).push(3).toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 3), push);
+
+        List<Integer> lastPust = Steam.of(push).push(2, 1).toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3, 2, 1), lastPust);
     }
 
     @Test
@@ -238,6 +254,9 @@ class SteamTest {
         List<Integer> list = Arrays.asList(2, 3);
         List<Integer> unshift = Steam.of(list).unshift(1).toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 3), unshift);
+
+        List<Integer> lastUnshift = Steam.of(unshift).unshift(3, 2).toList();
+        Assertions.assertEquals(Arrays.asList(3, 2, 1, 2, 3), lastUnshift);
     }
 
     @Test

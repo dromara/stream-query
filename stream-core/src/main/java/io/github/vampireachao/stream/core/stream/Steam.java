@@ -500,7 +500,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
+    public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Builder<R>> mapper) {
         Objects.requireNonNull(mapper);
         return flatMap(e -> {
             Builder<R> buffer = Steam.builder();
@@ -508,7 +508,6 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
             return buffer.build();
         });
     }
-
 
 
     /**

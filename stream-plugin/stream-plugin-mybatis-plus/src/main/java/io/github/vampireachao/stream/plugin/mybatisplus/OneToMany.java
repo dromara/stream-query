@@ -55,7 +55,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, List<$ENTITY>> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return Database.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)) , isParallel).peekIdx(SerBiCons.multi(peeks)).group(keyFunction)).orElseGet(HashMap::new);
+        return Database.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel).peekIdx(SerBiCons.multi(peeks)).group(keyFunction)).orElseGet(HashMap::new);
     }
 
     // dataList key value
@@ -111,7 +111,7 @@ public class OneToMany {
 
     @SafeVarargs
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, A, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, Collector<$ENTITY, A, $VALUE> downstream, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return Database.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)) , isParallel).peekIdx(SerBiCons.multi(peeks)).group(keyFunction, downstream)).orElseGet(HashMap::new);
+        return Database.lambdaQuery(dataList, keyFunction).map(queryOperator).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel).peekIdx(SerBiCons.multi(peeks)).group(keyFunction, downstream)).orElseGet(HashMap::new);
     }
 
 
