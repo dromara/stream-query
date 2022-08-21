@@ -11,7 +11,7 @@
     </a>
     <a target="_blank" href='https://www.apache.org/licenses/LICENSE-2.0.html'>
         <img src='https://img.shields.io/badge/license-Apache%202-4EB1BA.svg'/>
-    </a>	
+    </a>
     <a target="_blank" href='https://gitee.com/VampireAchao/stream-query'>
         <img src='https://gitee.com/vampireachao/stream-query/badge/star.svg' alt='star'/>
     </a>
@@ -22,7 +22,7 @@
 
 ## 📚简介
 
-封装 热门orm常用操作
+封装 热门orm常用操作 让你的数据操作更简洁
 封装 使用`stream`进行数据返回处理
 
 ## 📝文档
@@ -50,4 +50,4 @@
 </dependency>
 ```
 
-powered by [GitHub Copilot](https://copilot.github.com/) 
+powered by [GitHub Copilot](https://copilot.github.com/)
