@@ -228,7 +228,7 @@ public class Opp<T> {
         if (isNull()) {
             return empty();
         } else {
-            return Opp.ofTry(() -> value, NullPointerException.class);
+            return Opp.ofTry(() -> predicate.test(value), NullPointerException.class).isNonNull() ? this : empty();
         }
     }
 

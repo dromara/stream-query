@@ -453,7 +453,7 @@ class SteamTest {
         private Long id;
         private Long parentId;
         private List<Student> children;
-        private Boolean matchParent = false;
+        private Boolean matchParent;
     }
 
 
