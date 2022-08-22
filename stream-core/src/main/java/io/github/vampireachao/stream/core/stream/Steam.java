@@ -1514,6 +1514,91 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         return split(batchSize).map(Steam::toList);
     }
 
+
+    /**
+     * 将集合转换为树，默认用 {@code parentId == null} 作为顶部，内置一个小递归
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作
+     *
+     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
+     * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
+     * @param childrenSetter children的setter对应的lambda，可以写作{ @code Student::setChildren}
+     * @param <R>            此处是id、parentId的泛型限制
+     * @return list 组装好的树
+     * eg:
+     * {@code List studentTree = EasyStream.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren) }
+     */
+    public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
+                                                    Function<T, R> pIdGetter,
+                                                    BiConsumer<T, List<T>> childrenSetter) {
+        Map<R, List<T>> pIdValuesMap = group(pIdGetter);
+        return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, pIdValuesMap, pIdValuesMap.get(null));
+    }
+
+    /**
+     * 将集合转换为树，自定义树顶部的判断条件，内置一个小递归(没错，lambda可以写递归)
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作
+     *
+     * @param idGetter        id的getter对应的lambda，可以写作 {@code Student::getId}
+     * @param pIdGetter       parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
+     * @param childrenSetter  children的setter对应的lambda，可以写作 {@code Student::setChildren}
+     * @param parentPredicate 树顶部的判断条件，可以写作 {@code s -> Objects.equals(s.getParentId(),0L) }
+     * @param <R>             此处是id、parentId的泛型限制
+     * @return list 组装好的树
+     * eg:
+     * {@code List studentTree = EasyStream.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent) }
+     */
+    public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
+                                                    Function<T, R> pIdGetter,
+                                                    BiConsumer<T, List<T>> childrenSetter,
+                                                    Predicate<T> parentPredicate) {
+        List<T> list = toList();
+        List<T> parents = Steam.of(list).filter(e -> Opp.of(e).is(parentPredicate)).toList();
+        return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, Steam.of(list).group(pIdGetter), parents);
+    }
+
+    /**
+     * toTree的内联函数，内置一个小递归(没错，lambda可以写递归)
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作
+     *
+     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
+     * @param childrenSetter children的setter对应的lambda，可以写作 {@code Student::setChildren}
+     * @param pIdValuesMap   parentId和值组成的map，用来降低复杂度
+     * @param parents        顶部数据
+     * @param <R>            此处是id的泛型限制
+     * @return list 组装好的树
+     */
+    private <R extends Comparable<R>> List<T> getChildrenFromMapByPidAndSet(Function<T, R> idGetter,
+                                                                            BiConsumer<T, List<T>> childrenSetter,
+                                                                            Map<R, List<T>> pIdValuesMap,
+                                                                            List<T> parents) {
+        AtomicReference<Consumer<List<T>>> recursiveRef = new AtomicReference<>();
+        Consumer<List<T>> recursive = values -> Steam.of(values).forEach(value -> {
+            List<T> children = pIdValuesMap.get(idGetter.apply(value));
+            childrenSetter.accept(value, children);
+            recursiveRef.get().accept(children);
+        });
+        recursiveRef.set(recursive);
+        recursive.accept(parents);
+        return parents;
+    }
+
+    /**
+     * 将树递归扁平化为集合，内置一个小递归(没错，lambda可以写递归)
+     * 这是一个无状态中间操作
+     *
+     * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
+     * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
+     * @return EasyStream 一个流
+     * eg:
+     * {@code List students = EasyStream.of(studentTree).flatTree(Student::getChildren, Student::setChildren).toList() }
+     */
+    public Steam<T> flatTree(Function<T, List<T>> childrenGetter, BiConsumer<T, List<T>> childrenSetter) {
+        AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
+        Function<T, Steam<T>> recursive = e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
+        recursiveRef.set(recursive);
+        return flat(recursive).peek(e -> childrenSetter.accept(e, null));
+    }
+
     public interface Builder<T> extends Consumer<T> {
 
         /**

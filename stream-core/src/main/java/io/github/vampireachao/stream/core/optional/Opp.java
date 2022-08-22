@@ -6,9 +6,13 @@ import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -113,17 +117,24 @@ public class Opp<T> {
     }
 
     /**
-     * @param supplier 操作
+     * @param callable 操作
      * @param <T>      类型
      * @return 操作执行后的值
      */
-    public static <T> Opp<T> ofTry(Callable<T> supplier) {
+    public static <T> Opp<T> ofTry(Callable<T> callable) {
+        return ofTry(callable, Exception.class);
+    }
+
+    public static <T> Opp<T> ofTry(Callable<T> callable, Class<? extends Exception> exceptionType) {
         try {
-            return Opp.of(supplier.call());
+            return Opp.of(callable.call());
         } catch (Exception e) {
-            final Opp<T> empty = new Opp<>(null);
-            empty.exception = e;
-            return empty;
+            if (exceptionType.isInstance(e)) {
+                final Opp<T> empty = new Opp<>(null);
+                empty.exception = e;
+                return empty;
+            }
+            throw new RuntimeException(e);
         }
     }
 
@@ -215,9 +226,9 @@ public class Opp<T> {
     public Opp<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         if (isNull()) {
-            return this;
+            return empty();
         } else {
-            return predicate.test(value) ? this : empty();
+            return Opp.ofTry(() -> value, NullPointerException.class);
         }
     }
 
@@ -435,11 +446,11 @@ public class Opp<T> {
      *
      * @return 返回一个包含该元素的 {@link Stream}或空的 {@link Stream}
      */
-    public Stream<T> stream() {
+    public Steam<T> steam() {
         if (isNull()) {
-            return Stream.empty();
+            return Steam.empty();
         } else {
-            return Stream.of(value);
+            return Steam.of(value);
         }
     }
 
