@@ -354,12 +354,13 @@ class SteamTest {
                     .toTree(Student::getId, Student::getParentId, Student::setChildren);
             Assertions.assertEquals(asList(
                     Student.builder().id(1L).name("dromara")
-                            .children(asList(Student.builder().id(3L).name("hutool").parentId(1L)
-                                            .children(singletonList(Student.builder().id(6L).name("looly").parentId(3L).build()))
-                                            .build(),
+                            .children(asList(
+                                    Student.builder().id(3L).name("hutool").parentId(1L)
+                                        .children(singletonList(Student.builder().id(6L).name("looly").parentId(3L).build()))
+                                        .build(),
                                     Student.builder().id(4L).name("sa-token").parentId(1L)
-                                            .children(singletonList(Student.builder().id(7L).name("click33").parentId(4L).build()))
-                                            .build()))
+                                        .children(singletonList(Student.builder().id(7L).name("click33").parentId(4L).build()))
+                                        .build()))
                             .build(),
                     Student.builder().id(2L).name("baomidou")
                             .children(singletonList(
@@ -387,7 +388,8 @@ class SteamTest {
                     .toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent);
             Assertions.assertEquals(asList(
                     Student.builder().id(1L).name("dromara").matchParent(true)
-                            .children(asList(Student.builder().id(3L).name("hutool").parentId(1L)
+                            .children(asList(
+                                    Student.builder().id(3L).name("hutool").parentId(1L)
                                             .children(singletonList(Student.builder().id(6L).name("looly").parentId(3L).build()))
                                             .build(),
                                     Student.builder().id(4L).name("sa-token").parentId(1L)
