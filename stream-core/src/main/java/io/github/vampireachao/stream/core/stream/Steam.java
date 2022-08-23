@@ -1521,7 +1521,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      *
      * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
      * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
-     * @param childrenSetter children的setter对应的lambda，可以写作{ @code Student::setChildren}
+     * @param childrenSetter children的setter对应的lambda，可以写作 {@code Student::setChildren}
      * @param <R>            此处是id、parentId的泛型限制
      * @return list 组装好的树
      * eg:
@@ -1545,7 +1545,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * @param <R>             此处是id、parentId的泛型限制
      * @return list 组装好的树
      * eg:
-     * {@code List studentTree = EasyStream.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent) }
+     * {@code List studentTree = Steam.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent) }
      */
     public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
                                                     Function<T, R> pIdGetter,
@@ -1588,10 +1588,11 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      *
      * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
      * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
-     * @return EasyStream 一个流
+     * @return Steam<T> 返回Steam流方便后续操作
      * eg:
-     * {@code List students = EasyStream.of(studentTree).flatTree(Student::getChildren, Student::setChildren).toList() }
+     * {@code List students = Steam.of(studentTree).flatTree(Student::getChildren, Student::setChildren).toList() }
      */
+
     public Steam<T> flatTree(Function<T, List<T>> childrenGetter, BiConsumer<T, List<T>> childrenSetter) {
         AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
         Function<T, Steam<T>> recursive = e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
