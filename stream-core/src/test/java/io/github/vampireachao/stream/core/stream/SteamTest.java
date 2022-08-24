@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -48,7 +51,7 @@ class SteamTest {
     @Test
     void testToCollection() {
         List<Integer> list = asList(1, 2, 3);
-        List<String> toCollection = Steam.of(list).map(String::valueOf).toColl(LinkedList::new);
+        List<String> toCollection = Steam.of(list).map(String::valueOf).toCollection(LinkedList::new);
         Assertions.assertEquals(asList("1", "2", "3"), toCollection);
     }
 
@@ -60,10 +63,24 @@ class SteamTest {
     }
 
     @Test
+    void testToUnmodifiableList() {
+        List<Integer> list = Steam.of(1, 2, 3)
+            .toUnmodifiableList();
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> list.remove(0));
+    }
+
+    @Test
     void testToSet() {
         List<Integer> list = asList(1, 2, 3);
         Set<String> toSet = Steam.of(list).map(String::valueOf).toSet();
         Assertions.assertEquals(new HashSet<>(asList("1", "2", "3")), toSet);
+    }
+
+    @Test
+    void testToUnmodifiableSet() {
+        Set<Integer> set = Steam.of(1, 2, 3)
+            .toUnmodifiableSet();
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> set.remove(0));
     }
 
     @Test
@@ -99,6 +116,14 @@ class SteamTest {
     }
 
     @Test
+    void testToUnmodifiableMap() {
+        Map<Integer, Integer> map1 = Steam.of(1, 2, 3).toUnmodifiableMap(Function.identity(), Function.identity());
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> map1.remove(1));
+        Map<Integer, Integer> map2 = Steam.of(1, 2, 3).toUnmodifiableMap(Function.identity(), Function.identity(), (t1, t2) -> t1);
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> map2.remove(1));
+    }
+
+    @Test
     void testGroup() {
         List<Integer> list = asList(1, 2, 3);
         Map<String, List<Integer>> group = Steam.of(list).group(String::valueOf);
@@ -108,6 +133,24 @@ class SteamTest {
                     put("2", singletonList(2));
                     put("3", singletonList(3));
                 }}, group);
+    }
+
+    @Test
+    void testPartition() {
+        // 是否为奇数
+        Predicate<Integer> predicate = t -> (t & 1) == 1;
+
+        Map<Boolean, List<Integer>> map = Steam.of(1, 1, 2, 3).partition(predicate, Collectors.toList());
+        Assertions.assertEquals(3, map.get(Boolean.TRUE).size());
+        Assertions.assertEquals(1, map.get(Boolean.FALSE).size());
+
+        map = Steam.of(1, 1, 2, 3).partition(predicate);
+        Assertions.assertEquals(3, map.get(Boolean.TRUE).size());
+        Assertions.assertEquals(1, map.get(Boolean.FALSE).size());
+
+        Map<Boolean, Set<Integer>> map2 = Steam.of(1, 1, 2, 3).partition(predicate, HashSet::new);
+        Assertions.assertEquals(2, map2.get(Boolean.TRUE).size());
+        Assertions.assertEquals(1, map2.get(Boolean.FALSE).size());
     }
 
     @Test
