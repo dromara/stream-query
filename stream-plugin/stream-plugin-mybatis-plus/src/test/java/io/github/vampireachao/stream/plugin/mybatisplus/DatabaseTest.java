@@ -63,7 +63,7 @@ class DatabaseTest {
     }
 
     @Test
-    void testSaveFewSql() {
+    void testInsertFewSql() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -71,13 +71,26 @@ class DatabaseTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        boolean isSuccess = Database.saveFewSql(list);
+        boolean isSuccess = Database.insertFewSql(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
         list.forEach(u -> u.setId(null));
-        isSuccess = Database.saveFewSql(list, 1);
+        isSuccess = Database.insertFewSql(list, 1);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(9, Database.count(UserInfo.class));
+    }
+
+    @Test
+    void testUpdateFewSql() {
+        UserInfo entity = new UserInfo();
+        entity.setName("cat");
+        entity.setAge(20);
+        entity.setEmail("achao1441470436@gmail.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("ruben");
+        List<UserInfo> list = Arrays.asList(userInfo, entity);
+        Assertions.assertTrue(Database.insertFewSql(list));
+        Assertions.assertEquals(7, Database.count(UserInfo.class));
     }
 
     @Test

@@ -31,6 +31,28 @@ public interface IMapper<T> extends BaseMapper<T> {
      */
     long updateOneSql(@Param(PluginConst.COLLECTION_PARAM_NAME) Collection<T> list);
 
+
+    /**
+     * 批量插入, 默认一千分批
+     *
+     * @param list 集合
+     * @return 是否成功
+     */
+    default long updateFewSql(Collection<T> list) {
+        return this.updateFewSql(list, PluginConst.DEFAULT_BATCH_SIZE);
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param list      集合
+     * @param batchSize 分割量
+     * @return 是否成功
+     */
+    default long updateFewSql(Collection<T> list, int batchSize) {
+        return Steam.of(list).splitList(batchSize).mapToLong(this::updateFewSql).sum();
+    }
+
     /**
      * 批量插入, 默认一千分批
      *
