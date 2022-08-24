@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.core.stream;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
@@ -498,5 +499,11 @@ class SteamTest {
         private Boolean matchParent;
     }
 
+    @Test
+    @Ignore
+    void testLog() {
+        List<Integer> list = asList(0, 1, 2);
+        Assertions.assertEquals(asList(1, 2, 3), Steam.of(list).map(i -> i + 1).log().toList());
+    }
 
 }

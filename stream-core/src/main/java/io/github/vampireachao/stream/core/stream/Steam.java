@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
+import java.util.logging.Logger;
 import java.util.stream.*;
 
 /**
@@ -600,7 +601,7 @@ public class Steam<T> implements Stream<T>, Iterable<T>, CollectableStream<T> {
      */
     @Override
     public Steam<T> peek(Consumer<? super T> action) {
-        return new Steam<>(stream.peek(action));
+        return Opp.of(action).map(stream::peek).map(Steam::of).orElseThrow();
     }
 
     /**
@@ -609,7 +610,7 @@ public class Steam<T> implements Stream<T>, Iterable<T>, CollectableStream<T> {
      * @return 返回叠加操作后的Steam
      */
     public Steam<T> log() {
-        return peek(System.out::println);
+        return peek(s -> Logger.getGlobal().info(String.valueOf(s)));
     }
 
     /**
