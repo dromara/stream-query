@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
-import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
@@ -29,7 +28,6 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      */
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethodEnum sqlMethod = SqlMethodEnum.UPDATE_ONE_SQL;
         StringBuilder sqlResult = new StringBuilder();
         sqlResult.append("<script>\n");
         String updateTableBuilder = "UPDATE " + tableInfo.getTableName() + " SET ";
