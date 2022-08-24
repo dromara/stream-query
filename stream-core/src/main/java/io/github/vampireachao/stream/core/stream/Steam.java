@@ -933,17 +933,7 @@ public class Steam<T> implements Stream<T>, Iterable<T>, CollectableStream<T> {
      */
     public Integer findFirstIdx(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        if (isParallel()) {
-            return NOT_FOUND_INDEX;
-        } else {
-            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
-            //noinspection ResultOfMethodCallIgnored
-            stream.filter(e -> {
-                index.incrementAndGet();
-                return predicate.test(e);
-            }).findFirst();
-            return index.get();
-        }
+        return filter(predicate).mapIdx((e, i) -> i).findAny().orElse(NOT_FOUND_INDEX);
     }
 
     /**
