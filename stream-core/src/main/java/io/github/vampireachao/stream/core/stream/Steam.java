@@ -644,8 +644,7 @@ public class Steam<T> implements Stream<T>, Iterable<T>, CollectableStream<T> {
      */
     @Override
     public Steam<T> sequential() {
-        //noinspection ResultOfMethodCallIgnored
-        stream.sequential();
+        this.stream = stream.sequential();
         return this;
     }
 
