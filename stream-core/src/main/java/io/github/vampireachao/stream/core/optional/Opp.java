@@ -9,10 +9,7 @@ import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -34,6 +31,7 @@ public class Opp<T> {
      */
     private final T value;
     private Exception exception;
+
 
     /**
      * {@code Opp}的构造函数
@@ -122,19 +120,32 @@ public class Opp<T> {
      * @return 操作执行后的值
      */
     public static <T> Opp<T> ofTry(Callable<T> callable) {
-        return ofTry(callable, Exception.class);
+        return ofTryCat(callable);
     }
 
-    public static <T> Opp<T> ofTry(Callable<T> callable, Class<? extends Exception> exceptionType) {
+    /**
+     * 如果当前操作发生异常的话只抛出不在想要捕获的范围内的异常，如果在想要捕获的范围内就捕获到Opp对象中
+     * @param callable 操作
+     * @param exceptionType 指定想要捕获的若干个异常类型
+     * @return 操作执行后的值如果发生异常则返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
+     * @param <T> 类型
+     */
+    @SafeVarargs
+    public static <T> Opp<T> ofTryCat(Callable<T> callable, Class<? extends Exception>... exceptionType) {
         try {
             return Opp.of(callable.call());
         } catch (Exception e) {
-            if (exceptionType.isInstance(e)) {
-                final Opp<T> empty = new Opp<>(null);
-                empty.exception = e;
-                return empty;
+            Opp<T> empty = empty();
+            if (exceptionType != null) {
+                long count = Arrays.stream(exceptionType).filter(aClass -> !aClass.isAssignableFrom(e.getClass())).count();
+                if (count > 0) {
+                    throw new RuntimeException(e);
+                }else {
+                    empty.exception = e;
+                    return empty;
+                }
             }
-            throw new RuntimeException(e);
+            return empty;
         }
     }
 
