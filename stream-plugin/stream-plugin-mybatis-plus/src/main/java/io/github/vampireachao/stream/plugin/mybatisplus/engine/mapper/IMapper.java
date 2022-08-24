@@ -24,6 +24,14 @@ public interface IMapper<T> extends BaseMapper<T> {
     long insertOneSql(@Param(PluginConst.COLLECTION_PARAM_NAME) Collection<T> list);
 
     /**
+     * 更新多条数据（mysql语法批量）
+     *
+     * @param list 数据
+     * @return 条数
+     */
+    long updateOneSql(@Param(PluginConst.COLLECTION_PARAM_NAME) Collection<T> list);
+
+    /**
      * 批量插入, 默认一千分批
      *
      * @param list 集合
