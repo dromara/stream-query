@@ -184,6 +184,18 @@ class OppTest {
                             (i % 2 != 0 && opp.getException() instanceof NullPointerException)
             );
         });
+
+        Assertions.assertDoesNotThrow(() -> Opp.ofTry(() -> {
+            throw new NullPointerException();
+        }, NullPointerException.class, IllegalStateException.class));
+        Assertions.assertDoesNotThrow(() -> Opp.ofTry(() -> {
+            throw new IllegalStateException();
+        }, NullPointerException.class, IllegalStateException.class));
+
+        Assertions.assertThrows(RuntimeException.class, () -> Opp.ofTry(() -> {
+            throw new IllegalStateException();
+        }, NullPointerException.class));
+
     }
 
     @Test

@@ -9,7 +9,10 @@ import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -120,31 +123,28 @@ public class Opp<T> {
      * @return 操作执行后的值
      */
     public static <T> Opp<T> ofTry(Callable<T> callable) {
-        return ofTryCat(callable);
+        return Opp.ofTry(callable, Exception.class);
     }
 
     /**
      * 如果当前操作发生异常的话只抛出不在想要捕获的范围内的异常，如果在想要捕获的范围内就捕获到Opp对象中
-     * @param callable 操作
+     *
+     * @param callable      操作
      * @param exceptionType 指定想要捕获的若干个异常类型
+     * @param <T>           类型
      * @return 操作执行后的值如果发生异常则返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
-     * @param <T> 类型
      */
     @SafeVarargs
-    public static <T> Opp<T> ofTryCat(Callable<T> callable, Class<? extends Exception>... exceptionType) {
+    public static <T> Opp<T> ofTry(Callable<T> callable, Class<? extends Exception> exceptionType,
+                                   Class<? extends Exception>... exceptionTypes) {
         try {
             return Opp.of(callable.call());
         } catch (Exception e) {
-            Opp<T> empty = empty();
-            if (exceptionType != null) {
-                long count = Arrays.stream(exceptionType).filter(aClass -> !aClass.isAssignableFrom(e.getClass())).count();
-                if (count > 0) {
-                    throw new RuntimeException(e);
-                }else {
-                    empty.exception = e;
-                    return empty;
-                }
+            if (Steam.of(exceptionTypes).unshift(exceptionType).noneMatch(clazz -> clazz.isInstance(e))) {
+                throw new RuntimeException(e);
             }
+            Opp<T> empty = new Opp<>(null);
+            empty.exception = e;
             return empty;
         }
     }
