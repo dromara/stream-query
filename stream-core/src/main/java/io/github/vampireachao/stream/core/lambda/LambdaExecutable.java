@@ -19,12 +19,9 @@
 package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
-import io.github.vampireachao.stream.core.stream.Steam;
-import sun.invoke.WrapperInstance;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
 import java.util.List;
@@ -38,32 +35,36 @@ import java.util.List;
 public class LambdaExecutable {
 
     public static final String CONSTRUCTOR_METHOD_NAME = "<init>";
+    public static final String NEW_INSTANCE_METHOD_NAME = "newInstance";
 
     private Executable executable;
-    private MethodHandle methodHandle;
     private Type[] instantiatedTypes;
     private Type[] parameterTypes;
     private Type returnType;
     private String name;
     private Class<?> clazz;
     private SerializedLambda lambda;
+    private Proxy proxy;
 
     public LambdaExecutable() {
         // this is an accessible parameterless constructor.
     }
 
     public LambdaExecutable(final SerializedLambda lambda) {
-        this(ReflectHelper.loadClass(lambda.getImplClass()), lambda.getImplMethodName(), lambda.getImplMethodSignature());
-        this.lambda = lambda;
-    }
-
-    public LambdaExecutable(final Class<?> implClass, final String methodName, final String methodDescriptor) {
-        if (CONSTRUCTOR_METHOD_NAME.equals(methodName)) {
-            initConstructor(ReflectHelper.getConstructorByDescriptor(implClass, methodDescriptor));
-        } else {
-            initMethod(ReflectHelper.getMethodByDescriptor(implClass, methodDescriptor));
+        try {
+            Class<?> implClass = ReflectHelper.loadClass(lambda.getImplClass());
+            if (CONSTRUCTOR_METHOD_NAME.equals(lambda.getImplMethodName())) {
+                initConstructor(ReflectHelper.getConstructorByDescriptor(implClass, lambda.getImplMethodSignature()));
+            } else {
+                initMethod(ReflectHelper.getMethodByDescriptor(implClass, lambda.getImplMethodSignature()));
+            }
+        } catch (IllegalStateException e) {
+            this.parameterTypes = ReflectHelper.getArgsFromDescriptor(lambda.getImplMethodSignature());
+            this.returnType = ReflectHelper.getReturnTypeFromDescriptor(lambda.getInstantiatedMethodType());
+            this.name = lambda.getImplMethodName();
         }
-        this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(methodDescriptor);
+        this.instantiatedTypes = ReflectHelper.getArgsFromDescriptor(lambda.getInstantiatedMethodType());
+        this.lambda = lambda;
     }
 
     public LambdaExecutable(final Executable executable) {
@@ -99,13 +100,6 @@ public class LambdaExecutable {
         this.executable = executable;
     }
 
-    public MethodHandle getMethodHandle() {
-        return methodHandle;
-    }
-
-    public void setMethodHandle(MethodHandle methodHandle) {
-        this.methodHandle = methodHandle;
-    }
 
     public Type[] getInstantiatedTypes() {
         return instantiatedTypes;
@@ -158,32 +152,42 @@ public class LambdaExecutable {
     public static LambdaExecutable initProxy(Proxy proxy) {
         InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
-        MethodType type = methodHandle.type();
         LambdaExecutable lambdaExecutable;
         try {
             lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
+            lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
         } catch (IllegalArgumentException e) {
             // array constructor reference is not direct method handle
-            // TODO fixing
-            try {
-                methodHandle = (MethodHandle) handler.invoke(proxy, ReflectHelper.getMethodByName(WrapperInstance.class, "getWrapperInstanceTarget"), null);
-            } catch (Throwable ex) {
-                throw new RuntimeException(ex);
-            }
-            lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
+            lambdaExecutable = notDirectMethodHandle(methodHandle);
         }
-        lambdaExecutable.setMethodHandle(methodHandle);
-        lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(type.toMethodDescriptorString()));
+        lambdaExecutable.setProxy(proxy);
         return lambdaExecutable;
     }
 
-    private static LambdaExecutable arrayConstructorHandler(MethodHandle methodHandle, MethodType type) {
-        LambdaExecutable lambdaExecutable = new LambdaExecutable();
-        List<Object> internalValues = ReflectHelper.invoke(methodHandle, "internalValues");
-        Class<?> arrayType = (Class<?>) Steam.of(internalValues).findLast().orElseThrow(() -> new RuntimeException("clazz not found"));
-        lambdaExecutable.setParameterTypes(type.parameterArray());
-        lambdaExecutable.setClazz(Array.newInstance(arrayType, 0).getClass());
+    private static LambdaExecutable notDirectMethodHandle(MethodHandle methodHandle) {
+        List<Object> internalValues = ReflectHelper.invoke(methodHandle, ReflectHelper.getMethod(methodHandle.getClass(), "internalValues"));
+        MethodHandle internalMethodHandle = (MethodHandle) internalValues.get(0);
+        Executable internalExecutable = MethodHandles.reflectAs(Executable.class, internalMethodHandle);
+        LambdaExecutable lambdaExecutable = new LambdaExecutable(internalExecutable);
+        lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
+        if (ReflectHelper.getMethod(Array.class, NEW_INSTANCE_METHOD_NAME, Class.class, int.class).equals(internalExecutable)) {
+            lambdaExecutable.setParameterTypes(new Type[]{int.class});
+            lambdaExecutable.setInstantiatedTypes(new Type[]{Integer.class});
+            lambdaExecutable.setReturnType(Array.newInstance((Class<?>) internalValues.get(1), 0).getClass());
+            StackTraceElement stackTraceElement = new RuntimeException().getStackTrace()[7];
+            lambdaExecutable.setClazz(ReflectHelper.forClassName(stackTraceElement.getClassName()));
+            lambdaExecutable.setName("lambda$" + stackTraceElement.getMethodName() + "$" + Integer.toHexString(methodHandle.hashCode()) + "$1");
+
+        }
         return lambdaExecutable;
+    }
+
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
     }
 
 }

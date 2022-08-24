@@ -15,7 +15,6 @@ import java.util.Objects;
  */
 public class QueryCondition<T> extends LambdaQueryWrapper<T> {
 
-    protected boolean isActive = true;
 
     public QueryCondition(T entity) {
         super(Opp.of(entity).orElseThrow(() -> new IllegalArgumentException("entity can not be null")));
@@ -55,34 +54,23 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
 
 
     public QueryCondition<T> activeEq(SFunction<T, String> column, String data) {
-        Opp.blank(data).map(v -> super.eq(column, v)).orElseRun(this::notActive);
+        Opp.blank(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 
     public <R extends Comparable<R>> QueryCondition<T> activeEq(SFunction<T, R> column, R data) {
-        Opp.of(data).map(v -> super.eq(column, v)).orElseRun(this::notActive);
+        Opp.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 
     public QueryCondition<T> activeLike(SFunction<T, String> column, String data) {
-        Opp.blank(data).map(v -> super.like(column, v)).orElseRun(this::notActive);
+        Opp.blank(data).map(v -> super.like(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 
     public <R extends Comparable<R>> QueryCondition<T> activeIn(SFunction<T, R> column, Collection<R> dataList) {
-        Opp.empty(dataList).map(v -> super.in(column, v)).orElseRun(this::notActive);
+        Opp.empty(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public QueryCondition<T> notActive() {
-        synchronized (this) {
-            this.isActive = false;
-        }
-        return this;
-    }
 }

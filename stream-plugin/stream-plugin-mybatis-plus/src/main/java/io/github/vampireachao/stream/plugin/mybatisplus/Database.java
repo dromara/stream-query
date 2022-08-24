@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
@@ -18,6 +19,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.core.stream.Steam;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.apache.ibatis.binding.MapperMethod;
@@ -31,6 +33,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -46,12 +49,29 @@ public class Database {
         /* Do not new me! */
     }
 
+    public static boolean isActive(AbstractWrapper<?, ?, ?> wrapper) {
+        return (Objects.nonNull(wrapper)) && (!PluginConst.WRAPPER_NOT_ACTIVE.equals(wrapper.getSqlComment()));
+    }
+
+    public static <W extends AbstractWrapper<T, ?, ?>, T, U extends R, R> R activeOrElse(W wrapper, Function<? super W, U> mapper, U other) {
+        return isActive(wrapper) ? mapper.apply(wrapper) : other;
+    }
+
+    public static <T extends Join<?>> T notActive(T wrapper) {
+        return notActive(true, wrapper);
+    }
+
+    public static <T extends Join<?>> T notActive(Boolean condition, T wrapper) {
+        wrapper.comment(Boolean.TRUE.equals(condition), PluginConst.WRAPPER_NOT_ACTIVE);
+        return wrapper;
+    }
+
     public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(E data, SFunction<T, E> condition) {
-        return Opp.of(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).eq(condition, value));
+        return Opp.of(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).eq(condition, value)).filter(Database::isActive);
     }
 
     public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
-        return Opp.empty(dataList).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value)));
+        return Opp.empty(dataList).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
     }
 
     @SafeVarargs
@@ -216,7 +236,7 @@ public class Database {
      * @param queryWrapper 实体包装类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> boolean remove(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.retBool(baseMapper.delete(queryWrapper)));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> SqlHelper.retBool(baseMapper.delete(w)), false));
     }
 
     /**
@@ -271,7 +291,7 @@ public class Database {
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     public static <T> boolean update(T entity, AbstractWrapper<T, ?, ?> updateWrapper) {
-        return execute(getEntityClass(updateWrapper), baseMapper -> SqlHelper.retBool(baseMapper.update(entity, updateWrapper)));
+        return execute(getEntityClass(updateWrapper), baseMapper -> activeOrElse(updateWrapper, w -> SqlHelper.retBool(baseMapper.update(entity, w)), false));
     }
 
     /**
@@ -368,6 +388,9 @@ public class Database {
      * @param throwEx      有多个 result 是否抛出异常
      */
     public static <T> T getOne(AbstractWrapper<T, ?, ?> queryWrapper, boolean throwEx) {
+        if (!isActive(queryWrapper)) {
+            return null;
+        }
         Class<T> entityClass = getEntityClass(queryWrapper);
         if (throwEx) {
             return execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper));
@@ -401,7 +424,7 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> Map<String, Object> getMap(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper)));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> SqlHelper.getObject(log, baseMapper.selectMaps(w)), null));
     }
 
     /**
@@ -420,7 +443,7 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> long count(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectCount(queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectCount, 0L));
     }
 
     /**
@@ -429,8 +452,7 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<T> list(AbstractWrapper<T, ?, ?> queryWrapper) {
-        Class<T> entityClass = getEntityClass(queryWrapper);
-        return execute(entityClass, baseMapper -> baseMapper.selectList(queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectList, new ArrayList<>()));
     }
 
     /**
@@ -449,7 +471,7 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<Map<String, Object>> listMaps(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMaps(queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectMaps, new ArrayList<>()));
     }
 
     /**
@@ -477,7 +499,7 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<Object> listObjs(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectObjs(queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectObjs, new ArrayList<>()));
     }
 
     /**
@@ -487,7 +509,7 @@ public class Database {
      * @param mapper       转换函数
      */
     public static <T, V> List<V> listObjs(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(queryWrapper).stream().map(mapper).collect(Collective.toList()));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> Steam.of(baseMapper.selectList(w)).map(mapper).toList(), new ArrayList<>()));
     }
 
     /**
@@ -518,7 +540,7 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T, E extends IPage<Map<String, Object>>> E pageMaps(E page, AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMapsPage(page, queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> baseMapper.selectMapsPage(page, w), page));
     }
 
     /**
@@ -539,7 +561,7 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> IPage<T> page(IPage<T> page, AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectPage(page, queryWrapper));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> baseMapper.selectPage(page, w), page));
     }
 
     /**
@@ -551,6 +573,9 @@ public class Database {
      * @param entity 实体对象
      */
     public static <T> boolean saveOrUpdate(T entity, AbstractWrapper<T, ?, ?> updateWrapper) {
+        if (!isActive(updateWrapper)) {
+            return false;
+        }
         return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
 
@@ -561,7 +586,7 @@ public class Database {
      * @param mapper       转换函数
      */
     public static <T, V> V getObj(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> mapper.apply(baseMapper.selectOne(queryWrapper)));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> mapper.apply(baseMapper.selectOne(w)), null));
     }
 
     /**

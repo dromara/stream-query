@@ -8,12 +8,12 @@
         SET
         age = CASE id
         <foreach collection="list" item="item" index="index">
-            WHEN #{item.id} THEN #{item.age}
+            WHEN #{item.id} THEN IFNULL(#{item.age},age)
         </foreach>
         END,
         name = CASE id
         <foreach collection="list" item="item" index="index">
-            WHEN #{item.id} THEN #{item.name}
+            WHEN #{item.id} THEN IFNULL(#{item.name},name)
         </foreach>
         END
         WHERE id IN

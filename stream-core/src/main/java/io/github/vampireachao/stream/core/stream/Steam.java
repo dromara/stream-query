@@ -1,6 +1,6 @@
 package io.github.vampireachao.stream.core.stream;
 
-import io.github.vampireachao.stream.core.collector.Collective;
+import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.io.PrintStream;
@@ -43,7 +43,7 @@ import java.util.stream.*;
  * @author VampireAchao
  * @see java.util.stream.Stream
  */
-public class Steam<T> implements Stream<T>, Iterable<T> {
+public class Steam<T> implements Stream<T>, Iterable<T>, CollectableStream<T> {
     /**
      * 代表不存在的下标, 一般用于并行流的下标, 或者未找到元素时的下标
      */
@@ -357,6 +357,16 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
         }
     }
 
+    public Steam<T> peekIdx(SerBiCons<? super T, Integer> action) {
+        Objects.requireNonNull(action);
+        if (isParallel()) {
+            return peek(e -> action.accept(e, NOT_FOUND_INDEX));
+        } else {
+            AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
+            return peek(e -> action.accept(e, index.incrementAndGet()));
+        }
+    }
+
     /**
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
@@ -485,8 +495,8 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流，操作带一个方法，调用该方法可增加元素
      * 这是一个无状态中间操作
      *
-     * @param mapper 操作，返回流
      * @param <R>    拆分后流的元素类型
+     * @param mapper 操作，返回流
      * @return 返回叠加拆分操作后的流
      */
     public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
@@ -497,6 +507,7 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
             return buffer.build();
         });
     }
+
 
     /**
      * 返回一个具有去重特征的流 非并行流(顺序流)下对于重复元素，保留遇到顺序中最先出现的元素，并行流情况下不能保证具体保留哪一个
@@ -1190,200 +1201,6 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
     }
 
     /**
-     * 转换成集合
-     *
-     * @param collectionFactory 集合工厂(可以是集合构造器)
-     * @param <C>               集合类型
-     * @return 集合
-     */
-    public <C extends Collection<T>> C toColl(Supplier<C> collectionFactory) {
-        return collect(Collective.toCollection(collectionFactory));
-    }
-
-    /**
-     * 转换为ArrayList
-     *
-     * @return list
-     */
-    public List<T> toList() {
-        return collect(Collective.toList());
-    }
-
-    /**
-     * 转换为HashSet
-     *
-     * @return hashSet
-     */
-    public Set<T> toSet() {
-        return collect(Collective.toSet());
-    }
-
-    /**
-     * 与给定的可迭代对象转换成map，key为现有元素，value为给定可迭代对象迭代的元素<br>
-     * 至少包含全部的key，如果对应位置上的value不存在，则为null
-     *
-     * @param other 可迭代对象
-     * @param <R>   可迭代对象迭代的元素类型
-     * @return map，key为现有元素，value为给定可迭代对象迭代的元素;<br>
-     * 至少包含全部的key，如果对应位置上的value不存在，则为null;<br>
-     * 如果key重复, 则保留最后一个关联的value;<br>
-     */
-    public <R> Map<T, R> toZip(Iterable<R> other) {
-        // value对象迭代器
-        final Iterator<R> iterator = Opp.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
-        if (isParallel()) {
-            List<T> keyList = toList();
-            final Map<T, R> map = new HashMap<>(keyList.size());
-            for (T key : keyList) {
-                map.put(key, iterator.hasNext() ? iterator.next() : null);
-            }
-            return map;
-        } else {
-            return toMap(Function.identity(), e -> iterator.hasNext() ? iterator.next() : null);
-        }
-    }
-
-    /**
-     * 返回拼接后的字符串
-     *
-     * @return 拼接后的字符串
-     */
-    public String join() {
-        return join("");
-    }
-
-    /**
-     * 返回拼接后的字符串
-     *
-     * @param delimiter 分隔符
-     * @return 拼接后的字符串
-     */
-    public String join(CharSequence delimiter) {
-        return join(delimiter, "", "");
-    }
-
-    /**
-     * 返回拼接后的字符串
-     *
-     * @param delimiter 分隔符
-     * @param prefix    前缀
-     * @param suffix    后缀
-     * @return 拼接后的字符串
-     */
-    public String join(CharSequence delimiter,
-                       CharSequence prefix,
-                       CharSequence suffix) {
-        return map(String::valueOf).collect(Collective.joining(delimiter, prefix, suffix));
-    }
-
-    /**
-     * 转换为map，key为给定操作执行后的返回值,value为当前元素
-     *
-     * @param keyMapper 指定的key操作
-     * @param <K>       key类型
-     * @return map
-     */
-    public <K> Map<K, T> toMap(Function<? super T, ? extends K> keyMapper) {
-        return toMap(keyMapper, Function.identity());
-    }
-
-    /**
-     * 转换为map，key,value为给定操作执行后的返回值
-     *
-     * @param keyMapper   指定的key操作
-     * @param valueMapper 指定value操作
-     * @param <K>         key类型
-     * @param <U>         value类型
-     * @return map
-     */
-    public <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
-                                  Function<? super T, ? extends U> valueMapper) {
-        return toMap(keyMapper, valueMapper, (l, r) -> r);
-    }
-
-
-    /**
-     * 转换为map，key,value为给定操作执行后的返回值
-     *
-     * @param keyMapper     指定的key操作
-     * @param valueMapper   指定value操作
-     * @param mergeFunction 合并操作
-     * @param <K>           key类型
-     * @param <U>           value类型
-     * @return map
-     */
-    public <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
-                                  Function<? super T, ? extends U> valueMapper,
-                                  BinaryOperator<U> mergeFunction) {
-        return toMap(keyMapper, valueMapper, mergeFunction, HashMap::new);
-    }
-
-    /**
-     * 转换为map，key,value为给定操作执行后的返回值
-     *
-     * @param keyMapper     指定的key操作
-     * @param valueMapper   指定value操作
-     * @param mergeFunction 合并操作
-     * @param mapSupplier   map工厂
-     * @param <K>           key类型
-     * @param <U>           value类型
-     * @param <M>           map类型
-     * @return map
-     */
-    public <K, U, M extends Map<K, U>> M toMap(Function<? super T, ? extends K> keyMapper,
-                                               Function<? super T, ? extends U> valueMapper,
-                                               BinaryOperator<U> mergeFunction,
-                                               Supplier<M> mapSupplier) {
-        return collect(Collective.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
-    }
-
-
-    /**
-     * 通过给定分组依据进行分组
-     *
-     * @param classifier 分组依据
-     * @param <K>        实体中的分组依据对应类型，也是Map中key的类型
-     * @return {@link Collector}
-     */
-    public <K> Map<K, List<T>> group(Function<? super T, ? extends K> classifier) {
-        return group(classifier, Collective.toList());
-    }
-
-
-    /**
-     * 通过给定分组依据进行分组
-     *
-     * @param classifier 分组依据
-     * @param downstream 下游操作
-     * @param <K>        实体中的分组依据对应类型，也是Map中key的类型
-     * @param <D>        下游操作对应返回类型，也是Map中value的类型
-     * @param <A>        下游操作在进行中间操作时对应类型
-     * @return {@link Collector}
-     */
-    public <K, A, D> Map<K, D> group(Function<? super T, ? extends K> classifier,
-                                     Collector<? super T, A, D> downstream) {
-        return group(classifier, HashMap::new, downstream);
-    }
-
-    /**
-     * 通过给定分组依据进行分组
-     *
-     * @param classifier 分组依据
-     * @param mapFactory 提供的map
-     * @param downstream 下游操作
-     * @param <K>        实体中的分组依据对应类型，也是Map中key的类型
-     * @param <D>        下游操作对应返回类型，也是Map中value的类型
-     * @param <A>        下游操作在进行中间操作时对应类型
-     * @param <M>        最后返回结果Map类型
-     * @return {@link Collector}
-     */
-    public <K, D, A, M extends Map<K, D>> M group(Function<? super T, ? extends K> classifier,
-                                                  Supplier<M> mapFactory,
-                                                  Collector<? super T, A, D> downstream) {
-        return collect(Collective.groupingBy(classifier, mapFactory, downstream));
-    }
-
-    /**
      * 将 现有元素 与 给定迭代器中对应位置的元素 使用 zipper 转换为新的元素，并返回新元素组成的流<br>
      * 新流的数量等于旧流元素的数量<br>
      * 使用 zipper 转换时, 如果对应位置上已经没有other元素，则other元素为null<br>
@@ -1500,6 +1317,92 @@ public class Steam<T> implements Stream<T>, Iterable<T> {
      */
     public Steam<List<T>> splitList(final int batchSize) {
         return split(batchSize).map(Steam::toList);
+    }
+
+
+    /**
+     * 将集合转换为树，默认用 {@code parentId == null} 作为顶部，内置一个小递归
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作
+     *
+     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
+     * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
+     * @param childrenSetter children的setter对应的lambda，可以写作 {@code Student::setChildren}
+     * @param <R>            此处是id、parentId的泛型限制
+     * @return list 组装好的树
+     * eg:
+     * {@code List studentTree = EasyStream.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren) }
+     */
+    public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
+                                                    Function<T, R> pIdGetter,
+                                                    BiConsumer<T, List<T>> childrenSetter) {
+        Map<R, List<T>> pIdValuesMap = group(pIdGetter);
+        return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, pIdValuesMap, pIdValuesMap.get(null));
+    }
+
+    /**
+     * 将集合转换为树，自定义树顶部的判断条件，内置一个小递归(没错，lambda可以写递归)
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作
+     *
+     * @param idGetter        id的getter对应的lambda，可以写作 {@code Student::getId}
+     * @param pIdGetter       parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
+     * @param childrenSetter  children的setter对应的lambda，可以写作 {@code Student::setChildren}
+     * @param parentPredicate 树顶部的判断条件，可以写作 {@code s -> Objects.equals(s.getParentId(),0L) }
+     * @param <R>             此处是id、parentId的泛型限制
+     * @return list 组装好的树
+     * eg:
+     * {@code List studentTree = Steam.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent) }
+     */
+    public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
+                                                    Function<T, R> pIdGetter,
+                                                    BiConsumer<T, List<T>> childrenSetter,
+                                                    Predicate<T> parentPredicate) {
+        List<T> list = toList();
+        List<T> parents = Steam.of(list).filter(e -> Opp.of(e).is(parentPredicate)).toList();
+        return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, Steam.of(list).group(pIdGetter), parents);
+    }
+
+    /**
+     * toTree的内联函数，内置一个小递归(没错，lambda可以写递归)
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作
+     *
+     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
+     * @param childrenSetter children的setter对应的lambda，可以写作 {@code Student::setChildren}
+     * @param pIdValuesMap   parentId和值组成的map，用来降低复杂度
+     * @param parents        顶部数据
+     * @param <R>            此处是id的泛型限制
+     * @return list 组装好的树
+     */
+    private <R extends Comparable<R>> List<T> getChildrenFromMapByPidAndSet(Function<T, R> idGetter,
+                                                                            BiConsumer<T, List<T>> childrenSetter,
+                                                                            Map<R, List<T>> pIdValuesMap,
+                                                                            List<T> parents) {
+        AtomicReference<Consumer<List<T>>> recursiveRef = new AtomicReference<>();
+        Consumer<List<T>> recursive = values -> Steam.of(values).forEach(value -> {
+            List<T> children = pIdValuesMap.get(idGetter.apply(value));
+            childrenSetter.accept(value, children);
+            recursiveRef.get().accept(children);
+        });
+        recursiveRef.set(recursive);
+        recursive.accept(parents);
+        return parents;
+    }
+
+    /**
+     * 将树递归扁平化为集合，内置一个小递归(没错，lambda可以写递归)
+     * 这是一个无状态中间操作
+     *
+     * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
+     * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
+     * @return Steam<T> 返回Steam流方便后续操作
+     * eg:
+     * {@code List students = Steam.of(studentTree).flatTree(Student::getChildren, Student::setChildren).toList() }
+     */
+
+    public Steam<T> flatTree(Function<T, List<T>> childrenGetter, BiConsumer<T, List<T>> childrenSetter) {
+        AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
+        Function<T, Steam<T>> recursive = e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
+        recursiveRef.set(recursive);
+        return flat(recursive).peek(e -> childrenSetter.accept(e, null));
     }
 
     public interface Builder<T> extends Consumer<T> {

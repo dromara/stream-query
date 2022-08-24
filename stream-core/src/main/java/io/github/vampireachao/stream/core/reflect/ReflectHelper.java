@@ -18,11 +18,14 @@
 package io.github.vampireachao.stream.core.reflect;
 
 
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
+import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
@@ -35,6 +38,12 @@ import java.util.WeakHashMap;
  * @since 2022/6/2 17:02
  */
 public class ReflectHelper {
+
+    public static final String LEFT_MIDDLE_BRACKET = "[";
+    public static final String SEMICOLON = ";";
+    public static final String L = "L";
+    public static final String V = "V";
+
 
     private static final WeakHashMap<Class<?>, List<Field>> CLASS_FIELDS_CACHE = new WeakHashMap<>();
     private static final WeakHashMap<Class<?>, List<Method>> CLASS_METHODS_CACHE = new WeakHashMap<>();
@@ -173,7 +182,7 @@ public class ReflectHelper {
                  currentClass != null;
                  currentClass = currentClass.getSuperclass()) {
                 for (Field field : currentClass.getDeclaredFields()) {
-                    fieldsBuilder.add(field);
+                    fieldsBuilder.add(accessible(field));
                 }
             }
             return fieldsBuilder.build().toList();
@@ -186,10 +195,14 @@ public class ReflectHelper {
                 .orElseThrow(() -> new IllegalArgumentException("No such field: " + fieldName));
     }
 
-    public static Method getMethodByName(Class<?> clazz, String methodName) {
-        return Steam.of(getMethods(clazz)).filter(method -> method.getName().equals(methodName))
-                .findFirst().map(ReflectHelper::accessible)
-                .orElseThrow(() -> new IllegalArgumentException("No such method: " + methodName));
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+        return Steam.of(getMethods(clazz)).filter(SerPred.multiAnd(
+                method -> method.getName().equals(methodName),
+                method -> Arrays.equals(method.getParameterTypes(), parameterTypes)
+        )).findFirst().map(ReflectHelper::accessible).orElseThrow(() -> new IllegalArgumentException(
+                String.format("No such method: %s args: %s",
+                        methodName
+                        , Steam.of(parameterTypes).map(Type::getTypeName).join(","))));
     }
 
     /**
@@ -284,26 +297,25 @@ public class ReflectHelper {
         if (index == -1) {
             return new Type[0];
         }
-        boolean isArray = methodDescriptor.startsWith("([");
-        if (isArray) {
-            final String className = methodDescriptor
-                    .substring(0, index)
-                    .substring(1)
-                    + ";";
-            return new Type[]{loadClass(className)};
-        } else {
-            String[] instantiatedTypeNames = methodDescriptor.substring(2, index).split(";L");
-            final Type[] types = new Type[instantiatedTypeNames.length];
-            for (int i = 0; i < instantiatedTypeNames.length; i++) {
-                try {
-                    types[i] = Thread.currentThread().getContextClassLoader()
-                            .loadClass(instantiatedTypeNames[i].replace("/", "."));
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-            return types;
+        final String className = methodDescriptor.substring(1, index + 1);
+        String[] instantiatedTypeNames = className.split(";");
+        final Type[] types = new Type[instantiatedTypeNames.length];
+        for (int i = 0; i < instantiatedTypeNames.length; i++) {
+            types[i] = forClassName(instantiatedTypeNames[i]);
         }
+        return types;
+    }
+
+    public static Type getReturnTypeFromDescriptor(final String methodDescriptor) {
+        int index = methodDescriptor.indexOf(";)");
+        if (index == -1) {
+            return null;
+        }
+        String className = methodDescriptor.substring(index + 2);
+        if (V.equals(className)) {
+            return void.class;
+        }
+        return forClassName(className);
     }
 
     public static Class<?> loadClass(final String className) {
@@ -314,12 +326,39 @@ public class ReflectHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <R> R invoke(Object obj, String methodName, Object... args) {
+    public static Class<?> forClassName(String className) {
         try {
-            return (R) accessible(getMethodByName(obj.getClass(), methodName)).invoke(obj, args);
+            boolean isArray = className.startsWith(LEFT_MIDDLE_BRACKET);
+            if (isArray && !className.endsWith(SEMICOLON)) {
+                className += SEMICOLON;
+            }
+            if (!isArray && className.startsWith(L)) {
+                className = className.substring(1);
+            }
+            if (!isArray && className.endsWith(SEMICOLON)) {
+                className = className.substring(0, className.length() - 1);
+            }
+            return Class.forName(className.replace("/", "."));
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <R> R invoke(Object obj, Method method, Object... args) {
+        try {
+            return (R) accessible(method).invoke(obj, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public static void explain(Object obj) {
+        System.out.printf("obj: %s class: %s\n", obj, obj.getClass());
+        System.out.println("fields: ");
+        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> System.out.println("field " +
+                "" + fieldName + ": " + getFieldValue(obj, fieldName)));
+        System.out.println("no arg methods: ");
+        Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName -> System.out.println("method " + methodName + ": " + Opp.ofTry(() -> getMethod(obj.getClass(), methodName).invoke(obj))));
     }
 }

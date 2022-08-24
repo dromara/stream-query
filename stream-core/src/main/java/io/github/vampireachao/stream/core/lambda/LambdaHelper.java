@@ -68,19 +68,8 @@ public class LambdaHelper {
         if (lambda instanceof Proxy) {
             return LambdaExecutable.initProxy((Proxy) lambda);
         }
-        return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(), key -> {
-            SerializedLambda serialize = serialize(lambda);
-            // TODO fixing
-            ReflectHelper.getMethods(serialize.getClass()).stream().filter(m -> m.getParameterCount() < 1).forEach(m -> {
-                try {
-                    System.out.println(m.getName() + ": " + ReflectHelper.accessible(m).invoke(serialize));
-                } catch (IllegalAccessException | InvocationTargetException e) {
-
-                }
-            });
-
-            return new LambdaExecutable(serialize);
-        });
+        return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(),
+                key -> new LambdaExecutable(serialize(lambda)));
     }
 
     @SafeVarargs

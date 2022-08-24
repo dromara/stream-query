@@ -546,7 +546,7 @@ public class Collective {
      * @return a {@code Collector} which implements the reduction operation
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
-     * {@code partitioningBy}.  To perform a simple reduction on a stream,
+     * {@code partition}.  To perform a simple reduction on a stream,
      * use {@link Stream#reduce(Object, BinaryOperator)}} instead.
      * @see #reducing(BinaryOperator)
      * @see #reducing(Object, Function, BinaryOperator)
@@ -579,7 +579,7 @@ public class Collective {
      * @return a {@code Collector} which implements the reduction operation
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
-     * {@code partitioningBy}.  To perform a simple reduction on a stream,
+     * {@code partition}.  To perform a simple reduction on a stream,
      * use {@link Stream#reduce(BinaryOperator)} instead.
      *
      * <p>For example, given a stream of {@code Person}, to calculate tallest
@@ -636,7 +636,7 @@ public class Collective {
      * @return a {@code Collector} implementing the map-reduce operation
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
-     * {@code partitioningBy}.  To perform a simple map-reduce on a stream,
+     * {@code partition}.  To perform a simple map-reduce on a stream,
      * use {@link Stream#map(Function)} and {@link Stream#reduce(Object, BinaryOperator)}
      * instead.
      *
@@ -1459,7 +1459,7 @@ public class Collective {
     }
 
     /**
-     * Implementation class used by partitioningBy.
+     * Implementation class used by partition.
      */
     private static final class Partition<T>
             extends AbstractMap<Boolean, T>
