@@ -6,6 +6,7 @@ import lombok.experimental.Tolerate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -65,7 +66,7 @@ class SteamTest {
     @Test
     void testToUnmodifiableList() {
         List<Integer> list = Steam.of(1, 2, 3)
-            .toUnmodifiableList();
+                .toUnmodifiableList();
         Assertions.assertThrows(UnsupportedOperationException.class, () -> list.remove(0));
     }
 
@@ -79,7 +80,7 @@ class SteamTest {
     @Test
     void testToUnmodifiableSet() {
         Set<Integer> set = Steam.of(1, 2, 3)
-            .toUnmodifiableSet();
+                .toUnmodifiableSet();
         Assertions.assertThrows(UnsupportedOperationException.class, () -> set.remove(0));
     }
 
@@ -155,13 +156,9 @@ class SteamTest {
 
     @Test
     void testGenerate() {
-
-        Random random = new Random();
-
+        Random random = new SecureRandom();
         Steam<Integer> limit = Steam.generate(() -> random.nextInt(10)).limit(10);
-
         Assertions.assertEquals(Boolean.TRUE, limit.allMatch(v -> v >= 0 && v < 10));
-
     }
 
 
@@ -399,11 +396,11 @@ class SteamTest {
                     Student.builder().id(1L).name("dromara")
                             .children(asList(
                                     Student.builder().id(3L).name("hutool").parentId(1L)
-                                        .children(singletonList(Student.builder().id(6L).name("looly").parentId(3L).build()))
-                                        .build(),
+                                            .children(singletonList(Student.builder().id(6L).name("looly").parentId(3L).build()))
+                                            .build(),
                                     Student.builder().id(4L).name("sa-token").parentId(1L)
-                                        .children(singletonList(Student.builder().id(7L).name("click33").parentId(4L).build()))
-                                        .build()))
+                                            .children(singletonList(Student.builder().id(7L).name("click33").parentId(4L).build()))
+                                            .build()))
                             .build(),
                     Student.builder().id(2L).name("baomidou")
                             .children(singletonList(
