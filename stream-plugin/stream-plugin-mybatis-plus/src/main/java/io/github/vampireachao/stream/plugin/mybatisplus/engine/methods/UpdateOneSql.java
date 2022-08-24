@@ -38,7 +38,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
         sqlResult.append(updateTableBuilder).append(caseWhenSqlBuild).append(whereSqlBuilder);
         sqlResult.append("</script>");
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sqlResult.toString(), modelClass);
-        return this.addUpdateMappedStatement(mapperClass, modelClass, "updateBatchCaseWhen", sqlSource);
+        return this.addUpdateMappedStatement(mapperClass, modelClass, sqlSource);
     }
 
     /**
