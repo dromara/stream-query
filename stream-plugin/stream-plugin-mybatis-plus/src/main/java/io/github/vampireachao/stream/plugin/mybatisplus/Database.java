@@ -133,12 +133,25 @@ public class Database {
      * @param <T>        类型
      * @return 成功与否
      */
-    public static <T> boolean saveOneSql(Collection<T> entityList) {
+    public static <T> boolean insertOneSql(Collection<T> entityList) {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
-        Class<T> entityClass = getEntityClass(entityList);
-        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertOneSql(entityList));
+        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.insertOneSql(entityList));
+    }
+
+    /**
+     * 以单条sql方式更新（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean updateOneSql(Collection<T> entityList) {
+        if (CollectionUtils.isEmpty(entityList)) {
+            return false;
+        }
+        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.updateOneSql(entityList));
     }
 
     /**
@@ -152,8 +165,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
-        Class<T> entityClass = getEntityClass(entityList);
-        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList));
+        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList));
     }
 
     /**
@@ -168,8 +180,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
-        Class<T> entityClass = getEntityClass(entityList);
-        return execute(entityClass, baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList, batchSize));
+        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList, batchSize));
     }
 
     /**

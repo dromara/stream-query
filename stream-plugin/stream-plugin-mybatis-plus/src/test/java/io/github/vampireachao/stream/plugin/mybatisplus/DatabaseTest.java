@@ -49,7 +49,7 @@ class DatabaseTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        boolean isSuccess = Database.saveOneSql(list);
+        boolean isSuccess = Database.insertOneSql(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
 
@@ -58,7 +58,7 @@ class DatabaseTest {
         RoleInfo roleInfo = new RoleInfo();
         roleInfo.setRoleName("employee");
         List<RoleInfo> roles = Arrays.asList(role, roleInfo);
-        Assertions.assertTrue(Database.saveOneSql(roles));
+        Assertions.assertTrue(Database.insertOneSql(roles));
         Assertions.assertEquals(5, Database.count(RoleInfo.class));
     }
 
