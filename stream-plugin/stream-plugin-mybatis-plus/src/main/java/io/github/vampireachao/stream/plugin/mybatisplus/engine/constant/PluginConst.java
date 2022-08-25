@@ -26,6 +26,10 @@ public interface PluginConst {
      */
     String NON_NULL_CONDITION = "%s != null and %s != null";
     /**
+     * db keyword when then template
+     */
+    String WHEN_THEN = "when %s then %s";
+    /**
      * collection parameter name
      */
     String COLLECTION_PARAM_NAME = "list";
