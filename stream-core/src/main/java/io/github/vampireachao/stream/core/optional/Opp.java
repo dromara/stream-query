@@ -148,7 +148,7 @@ public class Opp<T> {
 
     /**
      * 获取异常<br>
-     * 当调用 {@link #ofTry(Supplier)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
+     * 当调用 {@link #ofTry(Callable)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
      *
      * @return 异常
      */
@@ -158,7 +158,7 @@ public class Opp<T> {
 
     /**
      * 是否失败<br>
-     * 当调用 {@link #ofTry(Supplier)}时，抛出异常则表示失败
+     * 当调用 {@link #ofTry(Callable)}时，抛出异常则表示失败
      *
      * @return 是否失败
      */
