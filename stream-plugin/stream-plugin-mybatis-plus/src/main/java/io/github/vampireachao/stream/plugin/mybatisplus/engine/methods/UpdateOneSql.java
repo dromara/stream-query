@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
@@ -28,16 +29,11 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      */
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        StringBuilder sqlResult = new StringBuilder();
-        sqlResult.append("<script>\n");
-        String updateTableBuilder = "UPDATE " + tableInfo.getTableName() + " SET ";
-        // 构建caseWhen的语句
-        StringBuilder caseWhenSqlBuild = buildCaseWhen(tableInfo);
-        // 构建where的语句
-        StringBuilder whereSqlBuilder = buildWhereSql(tableInfo);
-        sqlResult.append(updateTableBuilder).append(caseWhenSqlBuild).append(whereSqlBuilder);
-        sqlResult.append("</script>");
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sqlResult.toString(), modelClass);
+        SqlMethodEnum sqlMethod = SqlMethodEnum.UPDATE_ONE_SQL;
+        StringBuilder caseWhenScript = buildCaseWhen(tableInfo);
+        StringBuilder whereScript = buildWhereSql(tableInfo);
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), caseWhenScript, whereScript);
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addUpdateMappedStatement(mapperClass, modelClass, sqlSource);
     }
 
@@ -90,7 +86,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      */
     private StringBuilder buildWhereSql(TableInfo tableInfo) {
         StringBuilder whereSqlBuilder = new StringBuilder();
-        whereSqlBuilder.append("WHERE ").append(tableInfo.getKeyColumn()).append(" IN\n");
+        whereSqlBuilder.append(tableInfo.getKeyColumn()).append(" IN\n");
         whereSqlBuilder.append("<foreach collection=\"list\" item=\"item\" index=\"index\" open=\"(\" separator=\",\" close=\")\">\n");
         whereSqlBuilder.append("#{item.").append(tableInfo.getKeyProperty()).append("}").append("\n");
         whereSqlBuilder.append("</foreach>");
