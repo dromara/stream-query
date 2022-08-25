@@ -50,7 +50,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      */
     private String buildCaseWhen(TableInfo tableInfo) {
         String safeKeyProperty = SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty());
-        String caseWhenSqlScript = Steam.of(tableInfo.getFieldList())
+        return Steam.of(tableInfo.getFieldList())
                 .map(i -> i.getColumn() + EQUALS + CASE + SPACE + tableInfo.getKeyColumn() + NEWLINE +
                         SqlScriptUtils.convertForeach(SqlScriptUtils.convertChoose(
                                 String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + tableInfo.getKeyProperty())
@@ -59,31 +59,6 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
                         + END
                 )
                 .join(COMMA + NEWLINE);
-        return caseWhenSqlScript;
-        /*StringBuilder caseWhenSqlBuild = new StringBuilder();
-        int count = 0;
-        int fieldSize = tableInfo.getFieldList().size();
-        for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {
-            count++;
-            caseWhenSqlBuild.append(fieldInfo.getColumn()).append(" = CASE ").append(tableInfo.getKeyColumn()).append("\n");
-            caseWhenSqlBuild.append("<foreach collection=\"list\" item=\"item\" index=\"index\">\n");
-            caseWhenSqlBuild.append("<choose>\n");
-            caseWhenSqlBuild.append("<when test=\"item.").append(fieldInfo.getProperty()).append(" != null\">\n");
-            caseWhenSqlBuild.append("WHEN #{item.").append(tableInfo.getKeyProperty()).append("} THEN #{item.").append(fieldInfo.getProperty()).append("}");
-            caseWhenSqlBuild.append("</when>\n");
-            caseWhenSqlBuild.append("<otherwise>\n");
-            caseWhenSqlBuild.append("WHEN #{item.").append(tableInfo.getKeyProperty()).append("} THEN ").append(fieldInfo.getColumn());
-            caseWhenSqlBuild.append("</otherwise>\n");
-            caseWhenSqlBuild.append("</choose>\n");
-            caseWhenSqlBuild.append("</foreach>\n");
-            caseWhenSqlBuild.append("END");
-            if (count < fieldSize) {
-                caseWhenSqlBuild.append(",\n");
-            } else {
-                caseWhenSqlBuild.append("\n");
-            }
-        }
-        return caseWhenSqlBuild;*/
     }
 
     /**
