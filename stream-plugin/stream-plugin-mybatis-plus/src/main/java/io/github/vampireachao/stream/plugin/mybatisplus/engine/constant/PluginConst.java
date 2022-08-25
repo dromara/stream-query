@@ -18,6 +18,10 @@ public interface PluginConst {
      */
     String CASE = "case";
     /**
+     * db keyword end
+     */
+    String END = "end";
+    /**
      * mapper non null condition
      */
     String NON_NULL_CONDITION = "%s != null and %s != null";
