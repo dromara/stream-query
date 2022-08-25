@@ -10,7 +10,7 @@ import org.apache.ibatis.mapping.SqlSource;
 /**
  * 修改多条数据（mysql语法批量）
  *
- * @author VampireAchao
+ * @author sikadai VampireAchao
  */
 public class UpdateOneSql extends AbstractMethod implements PluginConst {
 
