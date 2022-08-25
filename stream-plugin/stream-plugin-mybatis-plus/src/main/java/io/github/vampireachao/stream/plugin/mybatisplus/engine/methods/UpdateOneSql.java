@@ -1,8 +1,9 @@
 package io.github.vampireachao.stream.plugin.mybatisplus.engine.methods;
 
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+import io.github.vampireachao.stream.core.stream.Steam;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -30,7 +31,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethodEnum sqlMethod = SqlMethodEnum.UPDATE_ONE_SQL;
-        StringBuilder caseWhenScript = buildCaseWhen(tableInfo);
+        String caseWhenScript = buildCaseWhen(tableInfo);
         StringBuilder whereScript = buildWhereSql(tableInfo);
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), caseWhenScript, whereScript);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
@@ -47,8 +48,19 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      * @author sikadai
      * @since 2022/8/24 18:42
      */
-    private StringBuilder buildCaseWhen(TableInfo tableInfo) {
-        StringBuilder caseWhenSqlBuild = new StringBuilder();
+    private String buildCaseWhen(TableInfo tableInfo) {
+        String safeKeyProperty = SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty());
+        String caseWhenSqlScript = Steam.of(tableInfo.getFieldList())
+                .map(i -> i.getColumn() + EQUALS + CASE + SPACE + tableInfo.getKeyColumn() + NEWLINE +
+                        SqlScriptUtils.convertForeach(SqlScriptUtils.convertChoose(
+                                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + tableInfo.getKeyProperty())
+                                , String.format(WHEN_THEN, safeKeyProperty, SqlScriptUtils.safeParam(ENTITY_DOT + i.getProperty())),
+                                String.format(WHEN_THEN, safeKeyProperty, i.getColumn())), COLLECTION_PARAM_NAME, null, ENTITY, null)
+                        + END
+                )
+                .join(COMMA + NEWLINE);
+        return caseWhenSqlScript;
+        /*StringBuilder caseWhenSqlBuild = new StringBuilder();
         int count = 0;
         int fieldSize = tableInfo.getFieldList().size();
         for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {
@@ -71,7 +83,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
                 caseWhenSqlBuild.append("\n");
             }
         }
-        return caseWhenSqlBuild;
+        return caseWhenSqlBuild;*/
     }
 
     /**
