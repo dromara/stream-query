@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * @author huangchengxing
  */
 public interface CollectableStream<T> extends Stream<T> {
-    
+
     // region ============ join ============
 
     /**
@@ -48,11 +48,11 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return 拼接后的字符串
      */
     default String join(CharSequence delimiter,
-        CharSequence prefix,
-        CharSequence suffix) {
+                        CharSequence prefix,
+                        CharSequence suffix) {
         return map(String::valueOf).collect(Collective.joining(delimiter, prefix, suffix));
     }
-    
+
     // endregion
 
     // region ============ to collection ============
@@ -107,7 +107,7 @@ public interface CollectableStream<T> extends Stream<T> {
     }
 
     // endregion
-    
+
     // region ============ to map ============
 
     /**
@@ -131,7 +131,7 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return map
      */
     default <K, U> Map<K, U> toMap(
-        Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends U> valueMapper) {
+            Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends U> valueMapper) {
         return toMap(keyMapper, valueMapper, (l, r) -> r);
     }
 
@@ -145,7 +145,7 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return map
      */
     default <K, U> Map<K, U> toUnmodifiableMap(
-        Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends U> valueMapper) {
+            Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends U> valueMapper) {
         Map<K, U> result = toMap(keyMapper, valueMapper);
         return Collections.unmodifiableMap(result);
     }
@@ -161,9 +161,9 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return map
      */
     default <K, U> Map<K, U> toMap(
-        Function<? super T, ? extends K> keyMapper,
-        Function<? super T, ? extends U> valueMapper,
-        BinaryOperator<U> mergeFunction) {
+            Function<? super T, ? extends K> keyMapper,
+            Function<? super T, ? extends U> valueMapper,
+            BinaryOperator<U> mergeFunction) {
         return toMap(keyMapper, valueMapper, mergeFunction, HashMap::new);
     }
 
@@ -178,9 +178,9 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return map
      */
     default <K, U> Map<K, U> toUnmodifiableMap(
-        Function<? super T, ? extends K> keyMapper,
-        Function<? super T, ? extends U> valueMapper,
-        BinaryOperator<U> mergeFunction) {
+            Function<? super T, ? extends K> keyMapper,
+            Function<? super T, ? extends U> valueMapper,
+            BinaryOperator<U> mergeFunction) {
         Map<K, U> result = toMap(keyMapper, valueMapper, mergeFunction, HashMap::new);
         return Collections.unmodifiableMap(result);
     }
@@ -198,15 +198,15 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return map
      */
     default <K, U, M extends Map<K, U>> M toMap(
-        Function<? super T, ? extends K> keyMapper,
-        Function<? super T, ? extends U> valueMapper,
-        BinaryOperator<U> mergeFunction,
-        Supplier<M> mapSupplier) {
+            Function<? super T, ? extends K> keyMapper,
+            Function<? super T, ? extends U> valueMapper,
+            BinaryOperator<U> mergeFunction,
+            Supplier<M> mapSupplier) {
         return collect(Collective.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier));
     }
 
     // endregion
-    
+
     // region ============ to zip ============
 
     /**
@@ -260,7 +260,7 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return map
      */
     default <K, A, D> Map<K, D> group(
-        Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
+            Function<? super T, ? extends K> classifier, Collector<? super T, A, D> downstream) {
         return group(classifier, HashMap::new, downstream);
     }
 
@@ -277,9 +277,9 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return map
      */
     default <K, D, A, M extends Map<K, D>> M group(
-        Function<? super T, ? extends K> classifier,
-        Supplier<M> mapFactory,
-        Collector<? super T, A, D> downstream) {
+            Function<? super T, ? extends K> classifier,
+            Supplier<M> mapFactory,
+            Collector<? super T, A, D> downstream) {
         return collect(Collective.groupingBy(classifier, mapFactory, downstream));
     }
 
@@ -296,7 +296,7 @@ public interface CollectableStream<T> extends Stream<T> {
     /**
      * 根据给定判断条件分组
      *
-     * @param predicate 判断条件
+     * @param predicate   判断条件
      * @param collFactory 提供的集合
      * @return map
      */
@@ -309,7 +309,7 @@ public interface CollectableStream<T> extends Stream<T> {
      *
      * @param predicate  判断条件
      * @param downstream 下游操作
-     * @param <R> 返回值类型
+     * @param <R>        返回值类型
      * @return map
      */
     default <R> Map<Boolean, R> partition(Predicate<T> predicate, Collector<T, ?, R> downstream) {
@@ -317,7 +317,6 @@ public interface CollectableStream<T> extends Stream<T> {
     }
 
     // endregion
-
 
 
 }
