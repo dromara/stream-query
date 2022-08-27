@@ -141,7 +141,7 @@ public class Opp<T> {
             return Opp.of(callable.call());
         } catch (Exception e) {
             if (Steam.of(exceptionTypes).unshift(exceptionType).noneMatch(clazz -> clazz.isInstance(e))) {
-                throw new RuntimeException(e);
+                throw new IllegalArgumentException(e);
             }
             Opp<T> empty = new Opp<>(null);
             empty.exception = e;
