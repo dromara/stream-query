@@ -101,6 +101,14 @@ class OppTest {
     }
 
     @Test
+    void testSteam() {
+        List<Integer> collToSteam = Opp.empty(Arrays.asList(1, 2, 2, 3)).<Integer>steam().distinct().toList();
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), collToSteam);
+
+        Assertions.assertEquals(1, Opp.of(1).<Integer>steam().findAny().orElse(null));
+    }
+
+    @Test
     void orElseThrowTest() {
         Opp<Object> opp = Opp.of(null);
         // 获取一个不可能为空的值，否则抛出NoSuchElementException异常

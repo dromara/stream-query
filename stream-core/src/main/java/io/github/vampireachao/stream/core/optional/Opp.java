@@ -457,11 +457,11 @@ public class Opp<T> {
      *
      * @return 返回一个包含该元素的 {@link Stream}或空的 {@link Stream}
      */
-    public Steam<T> steam() {
+    public <R> Steam<R> steam() {
         if (isNull()) {
             return Steam.empty();
         } else {
-            return Steam.of(value);
+            return typeOfMap((Iterable<?> iterable) -> (Steam) Steam.of(iterable)).orElseGet(() -> Steam.of(value));
         }
     }
 
