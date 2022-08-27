@@ -53,7 +53,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
         return Steam.of(tableInfo.getFieldList())
                 .map(i -> i.getColumn() + EQUALS + CASE + SPACE + tableInfo.getKeyColumn() + NEWLINE +
                         SqlScriptUtils.convertForeach(SqlScriptUtils.convertChoose(
-                                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + tableInfo.getKeyProperty())
+                                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + i.getProperty())
                                 , String.format(WHEN_THEN, safeKeyProperty, SqlScriptUtils.safeParam(ENTITY_DOT + i.getProperty())),
                                 String.format(WHEN_THEN, safeKeyProperty, i.getColumn())), COLLECTION_PARAM_NAME, null, ENTITY, null)
                         + END
