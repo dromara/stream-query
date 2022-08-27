@@ -51,6 +51,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
     private String buildCaseWhen(TableInfo tableInfo) {
         String safeKeyProperty = SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty());
         return Steam.of(tableInfo.getFieldList())
+                .filter(i -> !i.isLogicDelete())
                 .map(i -> i.getColumn() + EQUALS + CASE + SPACE + tableInfo.getKeyColumn() + NEWLINE +
                         SqlScriptUtils.convertForeach(SqlScriptUtils.convertChoose(
                                 String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + i.getProperty())
@@ -77,6 +78,8 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
         whereSqlBuilder.append("<foreach collection=\"list\" item=\"item\" index=\"index\" open=\"(\" separator=\",\" close=\")\">\n");
         whereSqlBuilder.append("#{item.").append(tableInfo.getKeyProperty()).append("}").append("\n");
         whereSqlBuilder.append("</foreach>");
+        whereSqlBuilder.append(optlockVersion(tableInfo));
+        whereSqlBuilder.append(tableInfo.getLogicDeleteSql(true, true));
         return whereSqlBuilder;
     }
 }
