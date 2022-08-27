@@ -77,7 +77,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
         whereSqlBuilder.append(tableInfo.getKeyColumn()).append(" IN\n");
         whereSqlBuilder.append("<foreach collection=\"list\" item=\"item\" index=\"index\" open=\"(\" separator=\",\" close=\")\">\n");
         whereSqlBuilder.append("#{item.").append(tableInfo.getKeyProperty()).append("}").append("\n");
-        whereSqlBuilder.append("</foreach>");
+        whereSqlBuilder.append("</foreach>").append("\n");
         whereSqlBuilder.append(tableInfo.getLogicDeleteSql(true, true));
         return whereSqlBuilder;
     }
