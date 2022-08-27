@@ -21,7 +21,7 @@ public class HighlightHelper {
     }
 
     public static String highlight(String text, List<FoundWord> fondWords, UnaryOperator<String> highlightOperator) {
-        if (Opp.empty(fondWords).isNull() || Opp.blank(text).isNull()) {
+        if (Opp.ofColl(fondWords).isNull() || Opp.ofStr(text).isNull()) {
             return text;
         }
         fondWords = Steam.of(fondWords)

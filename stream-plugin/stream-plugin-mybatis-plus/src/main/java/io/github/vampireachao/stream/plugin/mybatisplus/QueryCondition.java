@@ -54,7 +54,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
 
 
     public QueryCondition<T> activeEq(SFunction<T, String> column, String data) {
-        Opp.blank(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
+        Opp.ofStr(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 
@@ -64,12 +64,12 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
     }
 
     public QueryCondition<T> activeLike(SFunction<T, String> column, String data) {
-        Opp.blank(data).map(v -> super.like(column, v)).orElseRun(() -> Database.notActive(this));
+        Opp.ofStr(data).map(v -> super.like(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 
     public <R extends Comparable<R>> QueryCondition<T> activeIn(SFunction<T, R> column, Collection<R> dataList) {
-        Opp.empty(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
+        Opp.ofColl(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 

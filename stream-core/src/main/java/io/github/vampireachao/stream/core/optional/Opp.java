@@ -91,7 +91,7 @@ public class Opp<T> {
      * @param value 传入需要包裹的元素
      * @return 一个包裹里元素可能为空，或者为空字符串的 {@code Opp}
      */
-    public static <T extends CharSequence> Opp<T> blank(T value) {
+    public static <T extends CharSequence> Opp<T> ofStr(T value) {
         return Opp.of(value).filter(str -> !str.toString().trim().isEmpty());
     }
 
@@ -104,7 +104,7 @@ public class Opp<T> {
      * @param value 传入需要包裹的元素
      * @return 一个包裹里元素可能为空的 {@code Opp}
      */
-    public static <T, R extends Collection<T>> Opp<R> empty(R value) {
+    public static <T, R extends Collection<T>> Opp<R> ofColl(R value) {
         if (value == null || value.isEmpty()) {
             return empty();
         }

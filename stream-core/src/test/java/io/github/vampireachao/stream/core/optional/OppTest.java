@@ -22,7 +22,7 @@ class OppTest {
     @Test
     void blankTest() {
         // blank相对于ofNullable考虑了字符串为空串的情况
-        final String hutool = Opp.blank("").orElse("hutool");
+        final String hutool = Opp.ofStr("").orElse("hutool");
         Assertions.assertEquals("hutool", hutool);
     }
 
@@ -102,7 +102,7 @@ class OppTest {
 
     @Test
     void testSteam() {
-        List<Integer> collToSteam = Opp.empty(Arrays.asList(1, 2, 2, 3)).<Integer>steam().distinct().toList();
+        List<Integer> collToSteam = Opp.ofColl(Arrays.asList(1, 2, 2, 3)).<Integer>steam().distinct().toList();
         Assertions.assertEquals(Arrays.asList(1, 2, 3), collToSteam);
 
         Assertions.assertEquals(1, Opp.of(1).<Integer>steam().findAny().orElse(null));
@@ -149,10 +149,10 @@ class OppTest {
         // 关键它还很常用，判空和判空集合真的太常用了...
         final List<String> past = Opp.of(Collections.<String>emptyList()).filter(l -> !l.isEmpty()).orElseGet(() -> Collections.singletonList("hutool"));
         // 现在，一个empty搞定
-        final List<String> hutool = Opp.empty(Collections.<String>emptyList()).orElseGet(() -> Collections.singletonList("hutool"));
+        final List<String> hutool = Opp.ofColl(Collections.<String>emptyList()).orElseGet(() -> Collections.singletonList("hutool"));
         Assertions.assertEquals(past, hutool);
         Assertions.assertEquals(Collections.singletonList("hutool"), hutool);
-        Assertions.assertTrue(Opp.empty(Arrays.asList(null, null, null)).isNull());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isNull());
     }
 
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "ConstantConditions"})
@@ -163,8 +163,8 @@ class OppTest {
 
         // 以前这种写法，简洁但可读性稍低，对资深程序员不太友好
         final List<String> last = null;
-        final String npeSituation = Opp.empty(last).flattedMap(l -> l.stream().findFirst()).orElse("hutool");
-        final String indexOutSituation = Opp.empty(last).map(l -> l.get(0)).orElse("hutool");
+        final String npeSituation = Opp.ofColl(last).flattedMap(l -> l.stream().findFirst()).orElse("hutool");
+        final String indexOutSituation = Opp.ofColl(last).map(l -> l.get(0)).orElse("hutool");
 
         // 现在代码整洁度降低，但可读性up，如果再人说看不懂这代码...
         final String npe = Opp.ofTry(() -> last.get(0)).failOrElse("hutool");
@@ -208,8 +208,8 @@ class OppTest {
 
     @Test
     void testEmpty() {
-        Assertions.assertTrue(Opp.empty(Arrays.asList(null, null, null)).isNull());
-        Assertions.assertTrue(Opp.empty(Arrays.asList(null, 1, null)).isNonNull());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isNull());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, 1, null)).isNonNull());
     }
 
     @Data
@@ -311,10 +311,10 @@ class OppTest {
     @Test
     void testZipOrSelf() {
         Stream.<SerRunn>of(() -> {
-            String compose = Opp.blank("Vampire").zipOrSelf(Opp.of("Achao"), String::concat).get();
+            String compose = Opp.ofStr("Vampire").zipOrSelf(Opp.of("Achao"), String::concat).get();
             Assertions.assertEquals("VampireAchao", compose);
         }, () -> {
-            String compose = Opp.blank("Vampire").zipOrSelf(Opp.empty(), String::concat).get();
+            String compose = Opp.ofStr("Vampire").zipOrSelf(Opp.empty(), String::concat).get();
             Assertions.assertEquals("Vampire", compose);
         }).forEach(SerRunn::run);
     }
