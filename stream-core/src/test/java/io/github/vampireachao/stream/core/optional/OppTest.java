@@ -30,7 +30,7 @@ class OppTest {
     void getTest() {
         // 和原版Optional有区别的是，get不会抛出NoSuchElementException
         // 如果想使用原版Optional中的get这样，获取一个一定不为空的值，则应该使用orElseThrow
-        final Object opp = Opp.of(null).get();
+        final Object opp = Opp.empty().get();
         Assertions.assertNull(opp);
     }
 
@@ -110,7 +110,7 @@ class OppTest {
 
     @Test
     void orElseThrowTest() {
-        Opp<Object> opp = Opp.of(null);
+        Opp<Object> opp = Opp.empty();
         // 获取一个不可能为空的值，否则抛出NoSuchElementException异常
         Assertions.assertThrows(NoSuchElementException.class, opp::orElseThrow);
         // 获取一个不可能为空的值，否则抛出自定义异常
