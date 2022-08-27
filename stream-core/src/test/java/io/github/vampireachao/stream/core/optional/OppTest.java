@@ -78,7 +78,7 @@ class OppTest {
 
         // 当然，以下情况不会抛出NPE，但也没什么意义
         Opp.of("hutool").peeks().peeks().peeks();
-        Opp.of(null).peeks(i -> {
+        Opp.empty().peeks(i -> {
         });
 
     }
@@ -87,7 +87,7 @@ class OppTest {
     void orTest() {
         // 这是jdk9 Optional中的新函数，直接照搬了过来
         // 给一个替代的Opp
-        final String str = Opp.<String>of(null).or(() -> Opp.of("Hello hutool!")).map(String::toUpperCase).orElseThrow();
+        final String str = Opp.<String>empty().or(() -> Opp.of("Hello hutool!")).map(String::toUpperCase).orElseThrow();
         Assertions.assertEquals("HELLO HUTOOL!", str);
 
         final User user = User.builder().username("hutool").build();
