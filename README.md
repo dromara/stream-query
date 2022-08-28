@@ -63,7 +63,7 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1
 [Gitee issue](https://gitee.com/VampireAchao/stream-query/issues)<br/>
 [Github issue](https://github.com/VampireAchao/stream-query/issues)
 
-## 🏗️舔砖加瓦️
+## 🏗️添砖加瓦️
 如果您感觉我们的代码有需要优化的地方或者有更好的方案欢迎随时提pr
 ### 📚包说明
 | 包名            | 内容                       |
