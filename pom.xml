@@ -22,7 +22,7 @@
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <lombok.version>1.18.24</lombok.version>
         <spring-boot.version>2.7.0</spring-boot.version>
-        <h2.version>2.1.212</h2.version>
+        <h2.version>2.1.214</h2.version>
         <junit.version>5.8.2</junit.version>
         <jmh.version>1.35</jmh.version>
     </properties>
