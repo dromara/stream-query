@@ -46,7 +46,7 @@ import java.util.stream.StreamSupport;
  * @see java.util.stream.Stream
  */
 public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
-    implements Stream<T>, Iterable<T>, CollectableStream<T> {
+        implements Stream<T>, Iterable<T>, CollectableStream<T> {
     /**
      * 代表不存在的下标, 一般用于并行流的下标, 或者未找到元素时的下标
      */
@@ -519,10 +519,10 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     public Integer findFirstIdx(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         return isParallel() ? NOT_FOUND_INDEX : this.mapIdx((e, i) -> new EntrySteam.Entry<>(i, e))
-            .filter(e -> predicate.test(e.getValue()))
-            .findFirst()
-            .map(Map.Entry::getKey)
-            .orElse(NOT_FOUND_INDEX);
+                .filter(e -> predicate.test(e.getValue()))
+                .findFirst()
+                .map(Map.Entry::getKey)
+                .orElse(NOT_FOUND_INDEX);
     }
 
     /**
@@ -722,13 +722,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
         Objects.requireNonNull(zipper);
         // 给定对象迭代器
         final Iterator<U> iterator = Opp.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
-        Stream<T> resStream = this.stream;
-        if (isParallel()) {
-            resStream = toList().stream();
-        }
-        final Steam<R> newStream = of(resStream.map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null)));
-        newStream.parallel(isParallel());
-        return newStream;
+        Steam<R> steam = map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null));
+        steam = steam.parallel(isParallel());
+        return steam;
     }
 
     /**
