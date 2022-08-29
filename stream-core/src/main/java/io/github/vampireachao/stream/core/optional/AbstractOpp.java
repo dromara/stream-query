@@ -1,148 +1,38 @@
 package io.github.vampireachao.stream.core.optional;
 
-import io.github.vampireachao.stream.core.lambda.LambdaExecutable;
-import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
-import io.github.vampireachao.stream.core.reflect.ReflectHelper;
-import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
- * 拓展hutool中的Opt
+ * AbstractOpp
  *
- * @param <T> 包裹里元素的类型
  * @author VampireAchao
- * @see java.util.Optional
+ * @since 2022/8/29
  */
-public class Opp<T> extends AbstractOpp<T, Opp<T>> {
+@SuppressWarnings("unchecked")
+public abstract class AbstractOpp<T, P extends AbstractOpp<T, P>> {
 
     /**
-     * 一个空的{@code Opp}
+     * 包裹里实际的元素
      */
-    protected static final Opp<?> EMPTY = new Opp<>(null);
-
+    protected final T value;
+    protected Exception exception;
 
     /**
-     * {@code Opp}的构造函数
+     * {@code AbstractOpp}的构造函数
      *
      * @param value 包裹里的元素
      */
-    protected Opp(T value) {
-        super(value);
-    }
-
-    /**
-     * 返回一个空的{@code Opp}
-     *
-     * @param <T> 包裹里元素的类型
-     * @return Opp
-     */
-    public static <T> Opp<T> empty() {
-        @SuppressWarnings("unchecked") final Opp<T> t = (Opp<T>) EMPTY;
-        return t;
-    }
-
-    /**
-     * 返回一个包裹里元素不可能为空的{@code Opp}
-     *
-     * @param value 包裹里的元素
-     * @param <T>   包裹里元素的类型
-     * @return 一个包裹里元素不可能为空的 {@code Opp}
-     * @throws NullPointerException 如果传入的元素为空，抛出 {@code NPE}
-     */
-    public static <T> Opp<T> required(T value) {
-        return new Opp<>(Objects.requireNonNull(value));
-    }
-
-    /**
-     * 返回一个包裹里元素可能为空的{@code Opp}
-     *
-     * @param value 传入需要包裹的元素
-     * @param <T>   包裹里元素的类型
-     * @return 一个包裹里元素可能为空的 {@code Opp}
-     */
-    public static <T> Opp<T> of(T value) {
-        return value == null ? empty()
-                : new Opp<>(value);
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Opp<T> of(Optional<T> optional) {
-        return Opp.<Object>of(optional).flattedMap(SerFunc.castingIdentity());
-    }
-
-    /**
-     * 返回一个包裹里元素可能为空的{@code Opp}，额外判断了空字符串的情况
-     *
-     * @param value 传入需要包裹的元素
-     * @return 一个包裹里元素可能为空，或者为空字符串的 {@code Opp}
-     */
-    public static <T extends CharSequence> Opp<T> ofStr(T value) {
-        return Opp.of(value).filter(str -> !str.toString().trim().isEmpty());
-    }
-
-    /**
-     * +
-     * 返回一个包裹里{@code List}集合可能为空的{@code Opp}，额外判断了集合内元素为空的情况
-     *
-     * @param <T>   包裹里元素的类型
-     * @param <R>   集合值类型
-     * @param value 传入需要包裹的元素
-     * @return 一个包裹里元素可能为空的 {@code Opp}
-     */
-    public static <T, R extends Collection<T>> Opp<R> ofColl(R value) {
-        if (value == null || value.isEmpty()) {
-            return empty();
-        }
-        for (T t : value) {
-            if (t != null) {
-                return new Opp<>(value);
-            }
-        }
-        // 集合中元素全部为空
-        return empty();
-    }
-
-    /**
-     * @param callable 操作
-     * @param <T>      类型
-     * @return 操作执行后的值
-     */
-    public static <T> Opp<T> ofTry(Callable<T> callable) {
-        return Opp.ofTry(callable, Exception.class);
-    }
-
-    /**
-     * 如果当前操作发生异常的话只抛出不在想要捕获的范围内的异常，如果在想要捕获的范围内就捕获到Opp对象中
-     *
-     * @param callable      操作
-     * @param exceptionType 指定想要捕获的若干个异常类型
-     * @param <T>           类型
-     * @return 操作执行后的值如果发生异常则返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
-     */
-    @SafeVarargs
-    public static <T> Opp<T> ofTry(Callable<T> callable, Class<? extends Exception> exceptionType,
-                                   Class<? extends Exception>... exceptionTypes) {
-        try {
-            return Opp.of(callable.call());
-        } catch (Exception e) {
-            if (Steam.of(exceptionTypes).unshift(exceptionType).noneMatch(clazz -> clazz.isInstance(e))) {
-                throw new IllegalArgumentException(e);
-            }
-            Opp<T> empty = new Opp<>(null);
-            empty.exception = e;
-            return empty;
-        }
+    protected AbstractOpp(T value) {
+        this.value = value;
     }
 
     /**
@@ -160,9 +50,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
         return this.value;
     }
 
-    public <R> R get(Function<T, R> mapper) {
-        return map(mapper).orElse(null);
-    }
+    public abstract <R> R get(Function<T, R> mapper);
 
     /**
      * 判断包裹里元素的值是否不存在，不存在为 {@code true}，否则为{@code false}
@@ -175,7 +63,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
 
     /**
      * 获取异常<br>
-     * 当调用 {@link #ofTry(Callable)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
+     * 当调用 {@link Opp#ofTry(Callable)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
      *
      * @return 异常
      */
@@ -185,7 +73,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
 
     /**
      * 是否失败<br>
-     * 当调用 {@link #ofTry(Callable)}时，抛出异常则表示失败
+     * 当调用 {@link Opp#ofTry(Callable)}时，抛出异常则表示失败
      *
      * @return 是否失败
      */
@@ -214,11 +102,11 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @return this
      * @throws NullPointerException 如果包裹里的值存在，但你传入的操作为{@code null}时抛出
      */
-    public Opp<T> ifPresent(Consumer<? super T> action) {
+    public P ifPresent(Consumer<? super T> action) {
         if (isNonNull()) {
             action.accept(value);
         }
-        return this;
+        return (P) this;
     }
 
     /**
@@ -230,14 +118,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
-    public Opp<T> filter(Predicate<? super T> predicate) {
-        Objects.requireNonNull(predicate);
-        if (isNull()) {
-            return empty();
-        } else {
-            return Opp.ofTry(() -> predicate.test(value), NullPointerException.class).orElse(false) ? this : empty();
-        }
-    }
+    public abstract P filter(Predicate<? super T> predicate);
 
     /**
      * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回一个包裹了该操作返回值的{@code Opp}
@@ -249,14 +130,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * 如果不存在，返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的操作为 {@code null}，抛出 {@code NPE}
      */
-    public <U> Opp<U> map(Function<? super T, ? extends U> mapper) {
-        Objects.requireNonNull(mapper);
-        if (isNull()) {
-            return empty();
-        } else {
-            return Opp.of(mapper.apply(value));
-        }
-    }
+    public abstract <U> Opp<U> map(Function<? super T, ? extends U> mapper);
 
     /**
      * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
@@ -269,15 +143,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * 如果不存在，返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
      */
-    public <U> Opp<U> flatMap(Function<? super T, ? extends Opp<? extends U>> mapper) {
-        Objects.requireNonNull(mapper);
-        if (isNull()) {
-            return empty();
-        } else {
-            @SuppressWarnings("unchecked") final Opp<U> r = (Opp<U>) mapper.apply(value);
-            return Objects.requireNonNull(r);
-        }
-    }
+    public abstract <U> Opp<U> flatMap(Function<? super T, ? extends Opp<? extends U>> mapper);
 
     /**
      * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
@@ -291,14 +157,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
      * @see Optional#flatMap(Function)
      */
-    public <U> Opp<U> flattedMap(Function<? super T, Optional<? extends U>> mapper) {
-        Objects.requireNonNull(mapper);
-        if (isNull()) {
-            return empty();
-        } else {
-            return of(mapper.apply(value).orElse(null));
-        }
-    }
+    public abstract <U> Opp<U> flattedMap(Function<? super T, Optional<? extends U>> mapper);
 
     /**
      * 如果包裹里元素的值存在，就执行对应的操作，并返回本身
@@ -310,15 +169,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @return this
      * @throws NullPointerException 如果值存在，并且传入的操作为 {@code null}
      */
-    public Opp<T> peek(Consumer<T> action) throws NullPointerException {
-        Objects.requireNonNull(action);
-        if (isNull()) {
-            return Opp.empty();
-        }
-        action.accept(value);
-        return this;
-    }
-
+    public abstract P peek(Consumer<T> action);
 
     /**
      * 如果包裹里元素的值存在，就执行对应的操作集，并返回本身
@@ -331,10 +182,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @return this
      * @throws NullPointerException 如果值存在，并且传入的操作集中的元素为 {@code null}
      */
-    @SafeVarargs
-    public final Opp<T> peeks(Consumer<T>... actions) throws NullPointerException {
-        return peek(Stream.of(actions).reduce(Consumer::andThen).orElseGet(() -> o -> {}));
-    }
+    public abstract Opp<T> peeks(Consumer<T>... actions);
 
     /**
      * 如果传入的lambda入参类型一致，或者是父类，就执行，目前不支持子泛型
@@ -343,13 +191,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @param <U>    操作入参类型
      * @return 如果传入的lambda入参类型一致，就执行对应的操作，并返回本身
      */
-    public <U> Opp<T> typeOfPeek(SerCons<U> action) {
-        return ofTry(() -> {
-            LambdaExecutable resolve = LambdaHelper.resolve(action);
-            Type[] types = resolve.getParameterTypes();
-            return types[types.length - 1];
-        }).flatMap(type -> typeOfPeek(type, action));
-    }
+    public abstract <U> P typeOfPeek(SerCons<U> action);
 
     /**
      * 如果传入的lambda入参类型一致，或者是父类，就执行并获取返回值，目前不支持子泛型
@@ -359,12 +201,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @param <R>    操作返回值类型
      * @return 如果传入的lambda入参类型一致，就执行并获取返回值
      */
-    public <U, R> Opp<R> typeOfMap(SerFunc<U, R> mapper) {
-        return ofTry(() -> {
-            Type[] types = LambdaHelper.resolve(mapper).getParameterTypes();
-            return types[types.length - 1];
-        }).flatMap(type -> typeOfMap(type, mapper));
-    }
+    public abstract <U, R> Opp<R> typeOfMap(SerFunc<U, R> mapper);
 
     /**
      * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
@@ -375,12 +212,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
-    public <U> Opp<T> typeOfFilter(SerPred<U> predicate) {
-        return ofTry(() -> {
-            Type[] types = LambdaHelper.resolve(predicate).getParameterTypes();
-            return types[types.length - 1];
-        }).flatMap(type -> typeOfFilter(type, predicate));
-    }
+    public abstract <U> P typeOfFilter(SerPred<U> predicate);
 
     /**
      * 如果传入的类型一致，或者是父类，就执行，支持子泛型
@@ -390,10 +222,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @param <U>    操作入参类型
      * @return 如果传入的lambda入参类型一致，就执行对应的操作，并返回本身
      */
-    @SuppressWarnings("unchecked")
-    public <U> Opp<T> typeOfPeek(Type type, SerCons<U> action) {
-        return of(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).peek(v -> action.accept((U) v)));
-    }
+    public abstract <U> P typeOfPeek(Type type, SerCons<U> action);
 
     /**
      * 如果传入的类型一致，或者是父类，就执行并获取返回值，目前不支持子泛型
@@ -404,10 +233,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @param <R>    操作返回值类型
      * @return 如果传入的lambda入参类型一致，就执行并获取返回值
      */
-    @SuppressWarnings("unchecked")
-    public <U, R> Opp<R> typeOfMap(Type type, SerFunc<U, R> mapper) {
-        return of(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).map(v -> mapper.apply((U) v)));
-    }
+    public abstract <U, R> Opp<R> typeOfMap(Type type, SerFunc<U, R> mapper);
 
     /**
      * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
@@ -419,10 +245,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
-    @SuppressWarnings("unchecked")
-    public <U> Opp<T> typeOfFilter(Type type, SerPred<U> predicate) {
-        return of(type).flatMap(t -> filter(obj -> ReflectHelper.isInstance(obj, t)).filter(v -> predicate.test((U) v)));
-    }
+    public abstract <U> P typeOfFilter(Type type, SerPred<U> predicate);
 
     /**
      * 如果包裹里元素的值存在，就返回本身，如果不存在，则使用传入的操作执行后获得的 {@code Opp}
@@ -431,36 +254,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @return 如果包裹里元素的值存在，就返回本身，如果不存在，则使用传入的函数执行后获得的 {@code Opp}
      * @throws NullPointerException 如果传入的操作为空，或者传入的操作执行后返回值为空，则抛出 {@code NPE}
      */
-    public Opp<T> or(Supplier<? extends Opp<? extends T>> supplier) {
-        Objects.requireNonNull(supplier);
-        if (isNonNull()) {
-            return this;
-        } else {
-            @SuppressWarnings("unchecked") final Opp<T> r = (Opp<T>) supplier.get();
-            return Objects.requireNonNull(r);
-        }
-    }
-
-    /**
-     * 如果包裹里元素的值存在，就返回一个包含该元素的 {@link Stream},
-     * 否则返回一个空元素的 {@link Stream}
-     *
-     * <p> 该方法能将 Opp 中的元素传递给 {@link Stream}
-     * <pre>{@code
-     *     Stream<Opp<T>> os = ..
-     *     Stream<T> s = os.flatMap(Opp::stream)
-     * }</pre>
-     *
-     * @return 返回一个包含该元素的 {@link Stream}或空的 {@link Stream}
-     */
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
-    public Steam<T> steam() {
-        if (isNull()) {
-            return Steam.empty();
-        } else {
-            return Steam.of(Stream.of(value));
-        }
-    }
+    public abstract P or(Supplier<? extends Opp<? extends T>> supplier);
 
     /**
      * 如果包裹里元素的值存在，则返回该值，否则返回传入的{@code other}
@@ -595,7 +389,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
         return isNonNull() ? value.toString() : null;
     }
 
-    public <R> Opp<T> filterEqual(R value) {
+    public <R> P filterEqual(R value) {
         return filter(Predicate.isEqual(value));
     }
 
@@ -607,23 +401,8 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
         return filter(predicate).isNonNull();
     }
 
-    public <R> Opp<R> zip(Opp<R> other, BiFunction<T, R, R> mapper) {
-        Objects.requireNonNull(mapper);
-        if (isNull() || other.isNull()) {
-            return empty();
-        } else {
-            return Opp.of(mapper.apply(value, other.value));
-        }
-    }
+    public abstract <R> Opp<R> zip(Opp<R> other, BiFunction<T, R, R> mapper);
 
-    public Opp<T> zipOrSelf(Opp<T> other, BinaryOperator<T> mapper) {
-        Objects.requireNonNull(mapper);
-        if (isNull()) {
-            return empty();
-        } else if (other.isNull()) {
-            return this;
-        } else {
-            return Opp.of(mapper.apply(value, other.value));
-        }
-    }
+    public abstract P zipOrSelf(P other, BinaryOperator<T> mapper);
+
 }
