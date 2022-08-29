@@ -25,15 +25,16 @@ import java.util.stream.Stream;
  * @see java.util.Optional
  */
 public class Opp<T> {
+
     /**
      * 一个空的{@code Opp}
      */
-    private static final Opp<?> EMPTY = new Opp<>(null);
+    protected static final Opp<?> EMPTY = new Opp<>(null);
     /**
      * 包裹里实际的元素
      */
-    private final T value;
-    private Exception exception;
+    protected final T value;
+    protected Exception exception;
 
 
     /**
@@ -41,7 +42,7 @@ public class Opp<T> {
      *
      * @param value 包裹里的元素
      */
-    private Opp(T value) {
+    protected Opp(T value) {
         this.value = value;
     }
 
