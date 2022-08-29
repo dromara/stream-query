@@ -518,8 +518,11 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public Integer findFirstIdx(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        // FIXME 当输入{null,a,b}，寻找第一个非null元素时，由于先执行了filter操作，串行流返回的下标为0而不是1
-        return filter(predicate).mapIdx((e, i) -> i).findAny().orElse(NOT_FOUND_INDEX);
+        return isParallel() ? NOT_FOUND_INDEX : this.mapIdx((e, i) -> new EntrySteam.Entry<>(i, e))
+            .filter(e -> predicate.test(e.getValue()))
+            .findFirst()
+            .map(Map.Entry::getKey)
+            .orElse(NOT_FOUND_INDEX);
     }
 
     /**
