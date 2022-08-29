@@ -4,6 +4,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.stream.EntrySteam;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.util.*;
@@ -1509,4 +1510,76 @@ public class Collective {
             return Objects.hash(super.hashCode(), forTrue, forFalse);
         }
     }
+
+
+    /**
+     * 将流转为{@link EntrySteam}
+     *
+     * @param keyMapper   键的映射方法
+     * @param valueMapper 值的映射方法
+     * @param <T>         输入元素类型
+     * @param <K>         元素的键类型
+     * @param <V>         元素的值类型
+     * @return 收集器
+     */
+    public static <T, K, V> Collector<T, List<T>, EntrySteam<K, V>> toEntrySteam(
+        Function<T, K> keyMapper, Function<T, V> valueMapper) {
+        Objects.requireNonNull(keyMapper);
+        Objects.requireNonNull(valueMapper);
+        return transform(ArrayList::new, list -> EntrySteam.of(list, keyMapper, valueMapper));
+    }
+
+    /**
+     * 将流转为{@link Steam}
+     *
+     * @param <T> 输入元素类型
+     * @return 收集器
+     */
+    public static <T> Collector<T, ?, Steam<T>> toSteam() {
+        return transform(ArrayList::new, Steam::of);
+    }
+
+    /**
+     * 收集元素，将其转为指定{@link Collection}集合后，再对该集合进行转换，并最终返回转换后的结果。
+     * 返回的收集器的效果等同于：
+     * <pre>{@code
+     * 	Collection<T> coll = Stream.of(a, b, c, d)
+     * 		.collect(Collectors.toCollection(collFactory));
+     * 	R result = mapper.apply(coll);
+     * }</pre>
+     *
+     * @param collFactory 中间收集输入元素的集合的创建方法
+     * @param mapper      最终将元素集合映射为返回值的方法
+     * @param <R>         返回值类型
+     * @param <T>         输入元素类型
+     * @param <C>         中间收集输入元素的集合类型
+     * @return 收集器
+     */
+    public static <T, R, C extends Collection<T>> Collector<T, C, R> transform(
+        Supplier<C> collFactory, Function<C, R> mapper) {
+        Objects.requireNonNull(collFactory);
+        Objects.requireNonNull(mapper);
+        return new CollectorImpl<>(
+            collFactory, C::add, (l1, l2) -> { l1.addAll(l2); return l1; }, mapper, CH_NOID
+        );
+    }
+
+    /**
+     * 收集元素，将其转为{@link ArrayList}集合后，再对该集合进行转换，并最终返回转换后的结果。
+     * 返回的收集器的效果等同于：
+     * <pre>{@code
+     * 	List<T> coll = Stream.of(a, b, c, d)
+     * 		.collect(Collectors.toList());
+     * 	R result = mapper.apply(coll);
+     * }</pre>
+     *
+     * @param mapper 最终将元素集合映射为返回值的方法
+     * @param <R>    返回值类型
+     * @param <T>    输入元素类型
+     * @return 收集器
+     */
+    public static <T, R> Collector<T, List<T>, R> transform(Function<List<T>, R> mapper) {
+        return transform(ArrayList::new, mapper);
+    }
+
 }
