@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -12,6 +14,27 @@ import java.util.stream.Stream;
  */
 @FunctionalInterface
 public interface SerSupp<T> extends Supplier<T>, Serializable {
+
+    /**
+     * Gets a result.
+     *
+     * @return a result
+     */
+    T getting() throws Exception;
+
+    /**
+     * Gets a result.
+     *
+     * @return a result
+     */
+    @Override
+    default T get() {
+        try {
+            return getting();
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * last

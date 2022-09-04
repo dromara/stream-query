@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
@@ -13,6 +15,33 @@ import java.util.function.BinaryOperator;
  */
 @FunctionalInterface
 public interface SerBiOp<T> extends BinaryOperator<T>, Serializable {
+
+    /**
+     * Applies this function to the given arguments.
+     *
+     * @param t the first function argument
+     * @param u the second function argument
+     * @return the function result
+     */
+    @SuppressWarnings("all")
+    T applying(T t, T u) throws Exception;
+
+    /**
+     * Applies this function to the given arguments.
+     *
+     * @param t the first function argument
+     * @param u the second function argument
+     * @return the function result
+     */
+    @Override
+    default T apply(T t, T u) {
+        try {
+            return this.applying(t, u);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
+
     /**
      * Returns a {@link SerBiOp} which returns the lesser of two elements
      * according to the specified {@code Comparator}.

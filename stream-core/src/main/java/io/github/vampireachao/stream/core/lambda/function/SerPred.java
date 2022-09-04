@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -13,6 +15,31 @@ import java.util.stream.Stream;
  */
 @FunctionalInterface
 public interface SerPred<T> extends Predicate<T>, Serializable {
+
+    /**
+     * Evaluates this predicate on the given argument.
+     *
+     * @param t the input argument
+     * @return {@code true} if the input argument matches the predicate,
+     * otherwise {@code false}
+     */
+    boolean testing(T t) throws Exception;
+
+    /**
+     * Evaluates this predicate on the given argument.
+     *
+     * @param t the input argument
+     * @return {@code true} if the input argument matches the predicate,
+     * otherwise {@code false}
+     */
+    @Override
+    default boolean test(T t) {
+        try {
+            return testing(t);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * multi

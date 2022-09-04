@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -30,8 +32,22 @@ public interface SerArgsCons<T> extends Serializable {
      *
      * @param t the input arguments
      */
+    @SuppressWarnings("all")
+    void accepting(T... t) throws Exception;
+
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input arguments
+     */
     @SuppressWarnings("unchecked")
-    void accept(T... t);
+    default void accept(T... t) {
+        try {
+            accepting(t);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a composed {@code SerArgsCons} that performs, in sequence, this
@@ -48,7 +64,7 @@ public interface SerArgsCons<T> extends Serializable {
     default SerArgsCons<T> andThen(SerArgsCons<? super T> after) {
         Objects.requireNonNull(after);
         return (T... t) -> {
-            accept(t);
+            this.accept(t);
             after.accept(t);
         };
     }

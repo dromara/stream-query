@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -13,6 +15,28 @@ import java.util.stream.Stream;
  */
 @FunctionalInterface
 public interface SerCons<T> extends Consumer<T>, Serializable {
+
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     */
+    @SuppressWarnings("all")
+    void accepting(T t) throws Exception;
+
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     */
+    @Override
+    default void accept(T t) {
+        try {
+            accepting(t);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * multi

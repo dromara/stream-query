@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.BiPredicate;
@@ -12,6 +14,36 @@ import java.util.function.BiPredicate;
  */
 @FunctionalInterface
 public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
+
+
+    /**
+     * Evaluates this predicate on the given arguments.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     * @return {@code true} if the input arguments match the predicate,
+     * otherwise {@code false}
+     */
+    @SuppressWarnings("all")
+    boolean testing(T t, U u) throws Exception;
+
+    /**
+     * Evaluates this predicate on the given arguments.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     * @return {@code true} if the input arguments match the predicate,
+     * otherwise {@code false}
+     */
+    @Override
+    default boolean test(T t, U u) {
+        try {
+            return testing(t, u);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
+
 
     /**
      * Returns a composed predicate that represents a short-circuiting logical

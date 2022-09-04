@@ -1,7 +1,8 @@
 package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.StrOp;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -247,7 +248,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @return 流
      */
     public static <T> Steam<T> of(Iterable<T> iterable, boolean parallel) {
-        return Opp.of(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
+        return Op.of(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
     }
 
     /**
@@ -269,7 +270,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @return 拆分后元素组成的流
      */
     public static Steam<String> split(CharSequence str, String regex) {
-        return Opp.ofStr(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
+        return StrOp.of(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
     }
 
     // --------------------------------------------------------------- Static method end
@@ -285,7 +286,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public <R> Steam<T> filter(Function<? super T, ? extends R> mapper, R value) {
         Objects.requireNonNull(mapper);
-        return filter(e -> Objects.equals(Opp.of(e).map(mapper).get(), value));
+        return filter(e -> Objects.equals(Op.of(e).map(mapper).get(), value));
     }
 
 
@@ -405,7 +406,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public <R> Steam<R> flat(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         Objects.requireNonNull(mapper);
-        return flatMap(w -> Opp.required(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
+        return flatMap(w -> Op.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
     }
 
     /**
@@ -721,7 +722,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
                                BiFunction<? super T, ? super U, ? extends R> zipper) {
         Objects.requireNonNull(zipper);
         // 给定对象迭代器
-        final Iterator<U> iterator = Opp.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
+        final Iterator<U> iterator = Op.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
         Steam<R> steam = map(e -> zipper.apply(e, iterator.hasNext() ? iterator.next() : null));
         steam = steam.parallel(isParallel());
         return steam;
@@ -859,7 +860,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
                                                     BiConsumer<T, List<T>> childrenSetter,
                                                     Predicate<T> parentPredicate) {
         List<T> list = toList();
-        List<T> parents = Steam.of(list).filter(e -> Opp.of(e).is(parentPredicate)).toList();
+        List<T> parents = Steam.of(list).filter(e -> Op.of(e).is(parentPredicate)).toList();
         return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, Steam.of(list).group(pIdGetter), parents);
     }
 

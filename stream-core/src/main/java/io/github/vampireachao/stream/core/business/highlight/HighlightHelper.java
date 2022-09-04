@@ -1,6 +1,8 @@
 package io.github.vampireachao.stream.core.business.highlight;
 
-import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.optional.CollOp;
+import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.StrOp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.util.Comparator;
@@ -21,7 +23,7 @@ public class HighlightHelper {
     }
 
     public static String highlight(String text, List<FoundWord> fondWords, UnaryOperator<String> highlightOperator) {
-        if (Opp.ofColl(fondWords).isNull() || Opp.ofStr(text).isNull()) {
+        if (CollOp.of(fondWords).isEmpty() || StrOp.of(text).isEmpty()) {
             return text;
         }
         fondWords = Steam.of(fondWords)
@@ -54,7 +56,7 @@ public class HighlightHelper {
                 linkedList.add(new FoundWord(partOne, lastIdx));
             }
             // 获取本次需要高亮的词汇
-            word = Opp.of(word).orElseGet(fondWord::getWord);
+            word = Op.of(word).orElseGet(fondWord::getWord);
             // 历史下标往前推进
             lastIdx += word.length();
             // 执行高亮操作

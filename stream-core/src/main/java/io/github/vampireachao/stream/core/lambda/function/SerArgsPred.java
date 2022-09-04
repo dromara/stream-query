@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -61,8 +63,24 @@ public interface SerArgsPred<T> extends Serializable {
      * @return {@code true} if the input argument matches the predicate,
      * otherwise {@code false}
      */
+    @SuppressWarnings("all")
+    boolean testing(T... t) throws Exception;
+
+    /**
+     * Evaluates this predicate on the given argument.
+     *
+     * @param t the input argument
+     * @return {@code true} if the input argument matches the predicate,
+     * otherwise {@code false}
+     */
     @SuppressWarnings("unchecked")
-    boolean test(T... t);
+    default boolean test(T... t) {
+        try {
+            return testing(t);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a composed predicate that represents a short-circuiting logical

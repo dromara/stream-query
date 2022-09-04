@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -26,6 +28,30 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
     }
 
     /**
+     * Performs this operation on the given arguments.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     */
+    @SuppressWarnings("all")
+    void accepting(T t, U u) throws Exception;
+
+    /**
+     * Performs this operation on the given arguments.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     */
+    @Override
+    default void accept(T t, U u) {
+        try {
+            accepting(t, u);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
+
+    /**
      * Returns a composed {@code SerBiCons} that performs, in sequence, this
      * operation followed by the {@code after} operation. If performing either
      * operation throws an exception, it is relayed to the caller of the
@@ -40,11 +66,10 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
     default SerBiCons<T, U> andThen(SerBiCons<? super T, ? super U> after) {
         Objects.requireNonNull(after);
         return (l, r) -> {
-            accept(l, r);
-            after.accept(l, r);
+            accepting(l, r);
+            after.accepting(l, r);
         };
     }
-
 
     /**
      * nothing

@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -12,6 +14,30 @@ import java.util.function.UnaryOperator;
  */
 @FunctionalInterface
 public interface SerUnOp<T> extends UnaryOperator<T>, Serializable {
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param t the function argument
+     * @return the function result
+     */
+    @SuppressWarnings("all")
+    T applying(T t) throws Exception;
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param t the function argument
+     * @return the function result
+     */
+    @Override
+    default T apply(T t) {
+        try {
+            return applying(t);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a unary operator that always returns its input argument.

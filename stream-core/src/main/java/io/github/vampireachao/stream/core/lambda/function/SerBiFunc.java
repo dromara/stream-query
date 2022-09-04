@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -12,6 +14,32 @@ import java.util.function.BiFunction;
  */
 @FunctionalInterface
 public interface SerBiFunc<T, U, R> extends BiFunction<T, U, R>, Serializable {
+
+    /**
+     * Applies this function to the given arguments.
+     *
+     * @param t the first function argument
+     * @param u the second function argument
+     * @return the function result
+     */
+    @SuppressWarnings("all")
+    R applying(T t, U u) throws Exception;
+
+    /**
+     * Applies this function to the given arguments.
+     *
+     * @param t the first function argument
+     * @param u the second function argument
+     * @return the function result
+     */
+    @Override
+    default R apply(T t, U u) {
+        try {
+            return this.applying(t, u);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a composed function that first applies this function to
@@ -28,7 +56,7 @@ public interface SerBiFunc<T, U, R> extends BiFunction<T, U, R>, Serializable {
      */
     default <V> SerBiFunc<T, U, V> andThen(SerFunc<? super R, ? extends V> after) {
         Objects.requireNonNull(after);
-        return (T t, U u) -> after.apply(apply(t, u));
+        return (T t, U u) -> after.apply(this.apply(t, u));
     }
 }
 

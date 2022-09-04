@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -9,7 +11,7 @@ import java.util.Objects;
  * @author VampireAchao
  * @see SerArgsFunc
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 @FunctionalInterface
 public interface SerArgsFunc<T, R> extends Serializable {
 
@@ -29,7 +31,21 @@ public interface SerArgsFunc<T, R> extends Serializable {
      * @param t the function argument
      * @return the function result
      */
-    R apply(T... t);
+    R applying(T... t) throws Exception;
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param t the function argument
+     * @return the function result
+     */
+    default R apply(T... t) {
+        try {
+            return applying(t);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a composed function that first applies the {@code before}

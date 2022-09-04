@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.function.Function;
 
@@ -12,6 +14,29 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface SerFunc<T, R> extends Function<T, R>, Serializable {
 
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param t the function argument
+     * @return the function result
+     */
+    @SuppressWarnings("all")
+    R applying(T t) throws Exception;
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param t the function argument
+     * @return the function result
+     */
+    @Override
+    default R apply(T t) {
+        try {
+            return applying(t);
+        } catch (Exception e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a function that always returns its input argument.

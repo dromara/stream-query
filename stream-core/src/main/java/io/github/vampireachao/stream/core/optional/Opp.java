@@ -24,13 +24,18 @@ import java.util.stream.Stream;
  * @author VampireAchao
  * @see java.util.Optional
  */
-public class Opp<T> extends AbstractOpp<T, Opp<T>> {
+public class Opp<T> {
 
     /**
      * 一个空的{@code Opp}
      */
     protected static final Opp<?> EMPTY = new Opp<>(null);
 
+    /**
+     * 包裹里实际的元素
+     */
+    protected final T value;
+    protected Exception exception;
 
     /**
      * {@code Opp}的构造函数
@@ -38,7 +43,7 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      * @param value 包裹里的元素
      */
     protected Opp(T value) {
-        super(value);
+        this.value = value;
     }
 
     /**
@@ -453,7 +458,6 @@ public class Opp<T> extends AbstractOpp<T, Opp<T>> {
      *
      * @return 返回一个包含该元素的 {@link Stream}或空的 {@link Stream}
      */
-    @SuppressWarnings({"unchecked", "rawtypes", "cast"})
     public Steam<T> steam() {
         if (isNull()) {
             return Steam.empty();
