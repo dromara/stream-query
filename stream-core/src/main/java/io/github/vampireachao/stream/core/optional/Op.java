@@ -40,7 +40,7 @@ public interface Op<T> extends BaseOp<T>, IOptional<T, Op<T>>, ITypeOp<T> {
 
     <U> CollOp<U> mapToColl(SerFunc<? super T, ? extends Collection<U>> mapper);
 
-    StrOp mapToStr(SerFunc<? super T, ? extends CharSequence> mapper);
+    StrOp mapToStr(SerFunc<? super T, ? extends String> mapper);
 
     <U> Op<U> flatMap(Function<? super T, ? extends Op<? extends U>> mapper);
 

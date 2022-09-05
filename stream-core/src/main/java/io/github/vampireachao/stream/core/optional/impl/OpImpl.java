@@ -174,7 +174,7 @@ public class OpImpl<T> implements Op<T> {
     }
 
     @Override
-    public StrOp mapToStr(SerFunc<? super T, ? extends CharSequence> mapper) {
+    public StrOp mapToStr(SerFunc<? super T, String> mapper) {
         return isPresent() ? StrOp.of(mapper.apply(this.value)) : StrOp.empty();
     }
 

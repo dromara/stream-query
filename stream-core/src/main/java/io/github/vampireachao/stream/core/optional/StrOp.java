@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.optional.impl.StrOpImpl;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.util.Collection;
@@ -18,10 +19,10 @@ import java.util.function.Supplier;
  */
 public interface StrOp extends BaseOp<String> {
 
-    StrOp EMPTY = null;
+    StrOp EMPTY = new StrOpImpl(null);
 
-    static StrOp of(CharSequence value) {
-        return null;
+    static StrOp of(String value) {
+        return new StrOpImpl(value);
     }
 
     static StrOp empty() {
@@ -33,8 +34,6 @@ public interface StrOp extends BaseOp<String> {
     <U> ThrowOp<U> mapToThrow(SerFunc<String, ? extends U> mapper);
 
     <U> CollOp<U> mapToColl(SerFunc<String, ? extends Collection<U>> mapper);
-
-    StrOp mapToStr(SerFunc<String, ? extends CharSequence> mapper);
 
     <U> Op<U> flatMap(Function<String, ? extends Op<? extends U>> mapper);
 
