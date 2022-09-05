@@ -269,7 +269,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @param regex 正则
      * @return 拆分后元素组成的流
      */
-    public static Steam<String> split(CharSequence str, String regex) {
+    public static Steam<String> split(String str, String regex) {
         return StrOp.of(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
     }
 
