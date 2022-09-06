@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 /**
  * 可序列化的Runnable
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @see java.lang.Runnable
  */
 @FunctionalInterface

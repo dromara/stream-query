@@ -19,7 +19,7 @@ import org.apache.ibatis.mapping.SqlSource;
 /**
  * 插入多条数据（mysql语法批量）
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  */
 public class InsertOneSql extends AbstractMethod implements PluginConst {
 

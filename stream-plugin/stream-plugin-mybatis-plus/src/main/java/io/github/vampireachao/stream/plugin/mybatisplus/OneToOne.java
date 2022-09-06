@@ -16,7 +16,7 @@ import java.util.function.UnaryOperator;
 /**
  * 一对一
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/20
  */
 public class OneToOne {

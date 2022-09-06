@@ -12,7 +12,7 @@ import java.util.function.UnaryOperator;
 /**
  * 单条
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/6/18 14:47
  */
 public class One {

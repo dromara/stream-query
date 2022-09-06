@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 /**
  * ITypeOp
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/9/4
  */
 public interface ITypeOp<T> extends BaseOp<T> {

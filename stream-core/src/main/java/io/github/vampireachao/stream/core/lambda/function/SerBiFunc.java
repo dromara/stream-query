@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 /**
  * SerBiFunc
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/6/8
  */
 @FunctionalInterface

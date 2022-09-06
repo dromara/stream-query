@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 /**
  * OpImpl
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/9/4
  */
 public class OpImpl<T> implements Op<T> {
@@ -174,7 +174,7 @@ public class OpImpl<T> implements Op<T> {
     }
 
     @Override
-    public StrOp mapToStr(SerFunc<? super T, String> mapper) {
+    public StrOp mapToStr(SerFunc<? super T, ? extends String> mapper) {
         return isPresent() ? StrOp.of(mapper.apply(this.value)) : StrOp.empty();
     }
 
