@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 /**
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/7/15 14:44
  */
 class AbstractTypeReferenceTest {

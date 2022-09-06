@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 /**
  * 收集器
  *
- * @author VampireAchao
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/29 8:55
  */
 public class Collective {
