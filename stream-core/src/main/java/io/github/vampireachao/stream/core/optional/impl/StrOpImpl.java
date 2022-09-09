@@ -14,9 +14,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * @Author: ZVerify
- * @Description: StrOpImpl
- * @DateTime: 2022/9/5 10:23
+ * StrOpImpl
+ *
+ * @author ZVerify
+ * @since 2022/9/5 10:23
  **/
 public class StrOpImpl implements StrOp {
 
@@ -140,8 +141,6 @@ public class StrOpImpl implements StrOp {
     public Steam<String> steam() {
         return Steam.of(this.value);
     }
-
-
 
 
 }
