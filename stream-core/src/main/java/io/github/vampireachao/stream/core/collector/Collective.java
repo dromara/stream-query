@@ -1401,6 +1401,10 @@ public class Collective {
                 }, CH_ID);
     }
 
+    public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> entryToMap() {
+        return toMap(Map.Entry::getKey, Map.Entry::getValue);
+    }
+
     /**
      * Simple implementation class for {@code Collector}.
      *
