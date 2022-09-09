@@ -34,8 +34,8 @@ class StrOpTest {
 
     @Test
     void testMapToThrow() {
-        ThrowOp<Integer> zVerify = StrOp.of("ZVerify").mapToThrow(String::length);
-        // TODO ThrowOp
+        ThrowOp<Integer> zVerify = StrOp.of("").mapToThrow(String::length);
+        Assertions.assertNotNull(zVerify.getException());
     }
 
     @Test

@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 /**
  * StrOpImpl
  *
- * @author ZVerify
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/9/5 10:23
  **/
 public class StrOpImpl implements StrOp {
