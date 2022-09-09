@@ -151,7 +151,7 @@ public class OpImpl<T> implements Op<T> {
     }
 
     @Override
-    public Op<T> typeOfFilter(Type type, SerPred<? super T> SerPred) {
+    public Op<T> typeOfFilter(Type type, SerPred<? super T> serPred) {
         if (!ReflectHelper.isInstance(this.value, type)) {
             return Op.empty();
         }
