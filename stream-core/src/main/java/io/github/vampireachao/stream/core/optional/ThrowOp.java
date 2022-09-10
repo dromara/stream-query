@@ -1,9 +1,11 @@
 package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.optional.impl.ThrowOpImpl;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -19,24 +21,29 @@ import java.util.function.Supplier;
  */
 public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
 
+    ThrowOp EMPTY = new ThrowOpImpl<>(null, Exception.class);
+
     static <T> ThrowOp<T> of(Callable<T> callable) {
-        // TODO not implement yet
-        return null;
+
+        return new ThrowOpImpl<>(callable, Exception.class);
     }
 
     static <T> ThrowOp<T> of(Callable<T> callable, Class<? extends Exception>... exceptionClazz) {
-        // TODO not implement yet
-        return null;
+
+        return new ThrowOpImpl<>(callable, exceptionClazz);
     }
 
     static <T> ThrowOp<T> empty() {
-        // TODO not implement yet
-        return null;
+
+        return EMPTY;
+    }
+
+    static <T> ThrowOp<T> ofOptional(Optional<T> apply){
+        return new ThrowOpImpl<>(()->apply.orElse(null));
     }
 
     <U> Op<U> map(Function<? super T, ? extends U> mapper);
 
-    <U> ThrowOp<U> mapToThrow(SerFunc<? super T, ? extends U> callable);
 
     <U> CollOp<U> mapToColl(SerFunc<? super T, ? extends Collection<U>> callable);
 
@@ -44,15 +51,19 @@ public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
 
     <U> Op<U> flatMap(Function<? super T, ? extends Op<? extends U>> mapper);
 
-    <U> Optional<U> flatMapToOptional(Function<? super T, ? extends Optional<? extends U>> mapper);
+    <U> Optional<U> flatMapToOptional(Function<T, ? extends Optional<U>> mapper);
 
-    Op<T> filter(Predicate<? super T> predicate);
+    ThrowOp<T> filter(Predicate<? super T> predicate);
 
-    <R> Op<T> filterEqual(R value);
+    <R> ThrowOp<T> filterEqual(R value);
 
-    Op<T> ifPresent(Consumer<? super T> action);
+    ThrowOp<T> ifPresent(Consumer<? super T> action);
 
-    Op<T> or(Supplier<Op<? extends T>> other);
+    ThrowOp<T> or(Supplier<ThrowOp<T>> other);
+
+    boolean isPresentV();
+
+    boolean isEmptyV();
 
     Steam<T> steam();
 

@@ -15,7 +15,7 @@ public interface BaseOp<T> {
 
     boolean isEmpty();
 
-    boolean isEqual(Object value);
+    boolean isEqual(T value);
 
     boolean is(Predicate<T> predicate);
 
