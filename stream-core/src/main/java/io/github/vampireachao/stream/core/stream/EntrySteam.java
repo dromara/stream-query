@@ -16,7 +16,6 @@ import java.util.stream.StreamSupport;
  *
  * <p>可以通过静态方法基于{@link java.lang.Iterable}、{@link java.util.Collection}或者{@link java.util.Map}获得一个键值对流，
  * 或在原生{@link java.util.stream.Stream#collect(Collector)}通过{@link io.github.vampireachao.stream.core.collector.Collective#toEntrySteam(Function, Function)}获得。
- * TODO 为当前及后续可能存在的扩展类提取公共增强流接口&抽象父类
  *
  * @author huangchengxing
  */

@@ -4,7 +4,10 @@ import io.github.vampireachao.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -28,16 +31,16 @@ class ThrowOpTest {
     void testIsPresent() {
         ThrowOp<String> of = ThrowOp.of(() -> list.get(0));
         ThrowOp<String> ofTry = ThrowOp.of(() -> list.get(1));
-        Assertions.assertTrue(ofTry.isPresent());
-        Assertions.assertFalse(of.isPresent());
+        Assertions.assertTrue(of.isPresent());
+        Assertions.assertFalse(ofTry.isPresent());
     }
 
     @Test
     void testIsEmpty() {
         ThrowOp<String> of = ThrowOp.of(() -> list.get(0));
         ThrowOp<String> ofTry = ThrowOp.of(() -> list.get(1));
-        Assertions.assertFalse(ofTry.isEmpty());
-        Assertions.assertTrue(of.isEmpty());
+        Assertions.assertTrue(ofTry.isEmpty());
+        Assertions.assertFalse(of.isEmpty());
     }
 
     @Test
@@ -62,7 +65,7 @@ class ThrowOpTest {
     void testOrElseThrow() {
         ThrowOp<String> of = ThrowOp.of(() -> list.get(1));
         // 获取一个不可能为空的值，否则抛出NoSuchElementException异常
-        Assertions.assertThrows(NoSuchElementException.class, of::orElseThrow);
+        Assertions.assertThrows(IndexOutOfBoundsException.class, of::orElseThrow);
         // 获取一个不可能为空的值，否则抛出自定义异常
         Assertions.assertThrows(IllegalStateException.class,
                 () -> of.orElseThrow(IllegalStateException::new));
@@ -106,8 +109,8 @@ class ThrowOpTest {
 
     @Test
     void testOr() {
-        final String str = ThrowOp.of(() -> "   ").or(() -> ThrowOp.of(() -> "Hello Stream-Query!")).map(String::toUpperCase).orElseThrow();
-        Assertions.assertEquals("HELLO STREAM-QUERY!", str);
+        final String str = ThrowOp.of(() -> "   ").or(() -> ThrowOp.of(() -> "Hello Stream-Query!")).map(String::toUpperCase).get();
+        Assertions.assertEquals("   ", str);
 
     }
 

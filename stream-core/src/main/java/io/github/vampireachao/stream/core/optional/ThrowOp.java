@@ -21,12 +21,6 @@ import java.util.function.Supplier;
 public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
 
     /**
-     * Constant <code>EMPTY</code>
-     */
-    @SuppressWarnings("safevarargs")
-    ThrowOp<?> EMPTY = new ThrowOpImpl<>(null, Exception.class);
-
-    /**
      * <p>of.</p>
      *
      * @param callable a {@link java.util.concurrent.Callable} object
@@ -34,7 +28,7 @@ public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
      * @return a {@link io.github.vampireachao.stream.core.optional.ThrowOp} object
      */
     static <T> ThrowOp<T> of(Callable<T> callable) {
-        return new ThrowOpImpl<>(callable, Exception.class);
+        return ThrowOpImpl.of(callable, Exception.class);
     }
 
     /**
@@ -47,7 +41,7 @@ public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
      */
     @SafeVarargs
     static <T> ThrowOp<T> of(Callable<T> callable, Class<? extends Exception>... exceptionClazz) {
-        return new ThrowOpImpl<>(callable, exceptionClazz);
+        return ThrowOpImpl.of(callable, exceptionClazz);
     }
 
     /**
@@ -58,7 +52,7 @@ public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
      */
     @SuppressWarnings("unchecked")
     static <T> ThrowOp<T> empty() {
-        return (ThrowOp<T>) EMPTY;
+        return new ThrowOpImpl<>(null);
     }
 
     /**
@@ -68,9 +62,8 @@ public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
      * @param <T>   a T class
      * @return a {@link io.github.vampireachao.stream.core.optional.ThrowOp} object
      */
-    @SuppressWarnings("safevarargs")
     static <T> ThrowOp<T> ofOptional(Optional<T> apply) {
-        return new ThrowOpImpl<>(() -> apply.orElse(null));
+        return ThrowOpImpl.of(() -> apply.orElse(null));
     }
 
     /**
@@ -152,18 +145,11 @@ public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
     ThrowOp<T> or(Supplier<ThrowOp<T>> other);
 
     /**
-     * <p>isPresentV.</p>
+     * <p>hasException</p>
      *
      * @return a boolean
      */
-    boolean isPresentV();
-
-    /**
-     * <p>isEmptyV.</p>
-     *
-     * @return a boolean
-     */
-    boolean isEmptyV();
+    boolean hasException();
 
     /**
      * <p>steam.</p>

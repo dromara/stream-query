@@ -77,7 +77,7 @@ public interface BaseOp<T> {
      *
      * @return a T object
      */
-    T orElseThrow();
+    <X extends Throwable> T orElseThrow() throws X;
 
     /**
      * <p>orElseThrow.</p>

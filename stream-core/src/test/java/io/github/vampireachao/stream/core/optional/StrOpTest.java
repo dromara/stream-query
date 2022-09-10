@@ -35,13 +35,13 @@ class StrOpTest {
     @Test
     void testMapToThrow() {
         ThrowOp<Integer> zVerify = StrOp.of("").mapToThrow(String::length);
-        Assertions.assertNotNull(zVerify.getException());
+        Assertions.assertNull(zVerify.getException());
     }
 
     @Test
     void testMapToColl() {
         CollOp<String> zVerify = StrOp.of("ZVerify").mapToColl(Arrays::asList);
-        // TODO CollOp
+        Assertions.assertNotNull(zVerify.get());
     }
 
     @Test

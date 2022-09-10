@@ -1,7 +1,10 @@
 package io.github.vampireachao.stream.core.optional.impl;
 
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
-import io.github.vampireachao.stream.core.optional.*;
+import io.github.vampireachao.stream.core.optional.CollOp;
+import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.StrOp;
+import io.github.vampireachao.stream.core.optional.ThrowOp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.util.Collection;
@@ -28,16 +31,30 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
     protected T value;
     protected Exception exception;
 
-    @SafeVarargs
     @SuppressWarnings("safevarargs")
-    public ThrowOpImpl(Callable<T> callable, Class<? extends Exception>... exceptionClazz) {
+    public ThrowOpImpl(T value) {
+        this.value = value;
+    }
+
+    /**
+     * <p>of.</p>
+     *
+     * @param callable       a {@link java.util.concurrent.Callable} object
+     * @param exceptionClazz a {@link java.lang.Class} object
+     * @param <T>            a T class
+     * @return a {@link io.github.vampireachao.stream.core.optional.ThrowOp} object
+     */
+    @SafeVarargs
+    public static <T> ThrowOp<T> of(Callable<T> callable, Class<? extends Exception>... exceptionClazz) {
         try {
-            this.value = Opp.of(callable.call()).get();
+            return new ThrowOpImpl<>(callable.call());
         } catch (Exception e) {
             if (Steam.of(exceptionClazz).noneMatch(clazz -> clazz.isInstance(e))) {
                 throw new IllegalArgumentException(e);
             }
-            this.exception = e;
+            ThrowOpImpl<T> op = new ThrowOpImpl<>(null);
+            op.exception = e;
+            return op;
         }
     }
 
@@ -46,25 +63,16 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
      */
     @Override
     public boolean isPresent() {
-        return Objects.nonNull(this.exception);
-    }
-
-    /**
-     * <p>isPresentV.</p>
-     *
-     * @return a boolean
-     */
-    public boolean isPresentV() {
         return Objects.nonNull(this.value);
     }
 
     /**
-     * <p>isEmptyV.</p>
+     * <p>hasException</p>
      *
      * @return a boolean
      */
-    public boolean isEmptyV() {
-        return Objects.isNull(this.value);
+    public boolean hasException() {
+        return Objects.nonNull(this.exception);
     }
 
     /**
@@ -72,7 +80,7 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
      */
     @Override
     public boolean isEmpty() {
-        return Objects.isNull(this.exception);
+        return Objects.isNull(this.value);
     }
 
     /**
@@ -80,7 +88,6 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
      */
     @Override
     public boolean isEqual(Object value) {
-
         return Objects.equals(this.value, value);
     }
 
@@ -113,7 +120,7 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
      */
     @Override
     public T orElse(T other) {
-        return isPresentV() ? value : other;
+        return isPresent() ? value : other;
     }
 
     /**
@@ -121,30 +128,31 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
      */
     @Override
     public T orElseGet(Supplier<T> other) {
-        return isPresentV() ? this.value : other.get();
+        return isPresent() ? this.value : other.get();
     }
 
     /** {@inheritDoc} */
     @Override
     public T orElseRun(Runnable other) {
-        if (isEmptyV()) {
+        if (isEmpty()) {
             other.run();
         }
         return this.value;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public T orElseThrow() {
-        return orElseThrow(NoSuchElementException::new);
+    public T orElseThrow() throws Exception {
+        return orElseThrow(() -> hasException() ? this.exception : new NoSuchElementException());
     }
 
     /** {@inheritDoc} */
     @Override
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (isPresent()) {
+        if (isEmpty()) {
             throw exceptionSupplier.get();
-
         }
         return this.value;
     }
@@ -163,7 +171,7 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
     /** {@inheritDoc} */
     @Override
     public ThrowOp<T> flatOptional(Function<? super T, Optional<T>> mapper) {
-        if (isEmptyV()) {
+        if (isEmpty()) {
             return ThrowOp.empty();
         }
         return ThrowOp.ofOptional(mapper.apply(this.value));
@@ -172,45 +180,45 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
     /** {@inheritDoc} */
     @Override
     public <U> Op<U> map(Function<? super T, ? extends U> mapper) {
-        return isPresentV() ? Op.of(mapper.apply(this.value)) : Op.empty();
+        return isPresent() ? Op.of(mapper.apply(this.value)) : Op.empty();
     }
 
     /** {@inheritDoc} */
     @Override
     public <U> CollOp<U> mapToColl(SerFunc<? super T, ? extends Collection<U>> callable) {
-        return isPresentV() ? CollOp.of(callable.apply(this.value)) : CollOp.empty();
+        return isPresent() ? CollOp.of(callable.apply(this.value)) : CollOp.empty();
 
     }
 
     /** {@inheritDoc} */
     @Override
     public StrOp mapToStr(SerFunc<? super T, ? extends CharSequence> callable) {
-        return isPresentV() ? StrOp.of(callable.apply(this.value).toString()) : StrOp.empty();
+        return isPresent() ? StrOp.of(callable.apply(this.value).toString()) : StrOp.empty();
     }
 
     /** {@inheritDoc} */
     @Override
     public <U> Op<U> flatMap(Function<? super T, ? extends Op<? extends U>> mapper) {
-        return isPresentV() ? Op.of(mapper.apply(this.value).get()) : Op.empty();
+        return isPresent() ? Op.of(mapper.apply(this.value).get()) : Op.empty();
     }
 
     /** {@inheritDoc} */
     @Override
     public <U> Optional<U> flatMapToOptional(Function<T, ? extends Optional<U>> mapper) {
-        return isPresentV() ? mapper.apply(this.value) : Optional.empty();
+        return isPresent() ? mapper.apply(this.value) : Optional.empty();
     }
 
     /** {@inheritDoc} */
     @Override
     public ThrowOp<T> filter(Predicate<? super T> predicate) {
-        return isPresentV() && predicate.test(this.value) ? this : ThrowOp.empty();
+        return isPresent() && predicate.test(this.value) ? this : ThrowOp.empty();
     }
 
 
     /** {@inheritDoc} */
     @Override
     public ThrowOp<T> ifPresent(Consumer<? super T> action) {
-        if (isPresentV()) {
+        if (isPresent()) {
             action.accept(this.value);
         }
         return this;
