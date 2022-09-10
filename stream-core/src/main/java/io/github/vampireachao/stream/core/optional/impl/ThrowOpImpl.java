@@ -29,6 +29,7 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
     protected Exception exception;
 
     @SafeVarargs
+    @SuppressWarnings("safevarargs")
     public ThrowOpImpl(Callable<T> callable, Class<? extends Exception>... exceptionClazz) {
         try {
             this.value = Opp.of(callable.call()).get();
