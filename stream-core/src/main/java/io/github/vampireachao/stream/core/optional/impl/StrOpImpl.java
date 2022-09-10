@@ -39,7 +39,7 @@ public class StrOpImpl implements StrOp {
     }
 
     @Override
-    public boolean isEqual(Object value) {
+    public boolean isEqual(String value) {
         return Objects.equals(this.value, value);
     }
 

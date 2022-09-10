@@ -93,7 +93,7 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
 
     @Override
     public T orElseGet(Supplier<T> other) {
-        return Objects.nonNull(this.value) ? this.value : other.get();
+        return isPresentV() ? this.value : other.get();
     }
 
     @Override

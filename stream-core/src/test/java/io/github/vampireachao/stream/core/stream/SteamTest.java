@@ -447,7 +447,6 @@ class SteamTest {
                             .build()
             ), studentTree);
         });
-        test.accept(new Object());
     }
 
     @Test

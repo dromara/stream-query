@@ -24,17 +24,17 @@ public interface ThrowOp<T> extends BaseOp<T>, IOptional<T, ThrowOp<T>> {
     ThrowOp EMPTY = new ThrowOpImpl<>(null, Exception.class);
 
     static <T> ThrowOp<T> of(Callable<T> callable) {
-        // TODO not implement yet
+
         return new ThrowOpImpl<>(callable, Exception.class);
     }
 
     static <T> ThrowOp<T> of(Callable<T> callable, Class<? extends Exception>... exceptionClazz) {
-        // TODO not implement yet
+
         return new ThrowOpImpl<>(callable, exceptionClazz);
     }
 
     static <T> ThrowOp<T> empty() {
-        // TODO not implement yet
+
         return EMPTY;
     }
 
