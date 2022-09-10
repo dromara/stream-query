@@ -14,11 +14,17 @@ import org.springframework.context.annotation.Bean;
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/21
+
  */
 @EnableMybatisPlusPlugin
 @SpringBootApplication
 @MapperScan({"io.github.vampireachao.stream.plugin.mybatisplus.mapper**"})
 public class MybatisPlusTestApplication {
+    /**
+     * <p>mybatisPlusInterceptor.</p>
+     *
+     * @return a {@link com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor} object
+     */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();

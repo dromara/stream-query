@@ -31,6 +31,7 @@ public interface SerArgsFunc<T, R> extends Serializable {
      * @param t the function argument
      * @return the function result
      */
+    @SuppressWarnings("unchecked")
     R applying(T... t) throws Exception;
 
     /**
@@ -39,6 +40,7 @@ public interface SerArgsFunc<T, R> extends Serializable {
      * @param t the function argument
      * @return the function result
      */
+    @SuppressWarnings("unchecked")
     default R apply(T... t) {
         try {
             return applying(t);
@@ -61,6 +63,7 @@ public interface SerArgsFunc<T, R> extends Serializable {
      * @throws NullPointerException if before is null
      * @see #andThen(SerArgsFunc)
      */
+    @SuppressWarnings("unchecked")
     default <V> SerArgsFunc<V, R> compose(SerArgsFunc<? super V, ? extends T> before) {
         Objects.requireNonNull(before);
         return (V... v) -> apply(before.apply(v));
@@ -80,6 +83,7 @@ public interface SerArgsFunc<T, R> extends Serializable {
      * @throws NullPointerException if after is null
      * @see #compose(SerArgsFunc)
      */
+    @SuppressWarnings("unchecked")
     default <V> SerArgsFunc<T, V> andThen(SerArgsFunc<? super R, ? extends V> after) {
         Objects.requireNonNull(after);
         return (T... t) -> after.apply(apply(t));

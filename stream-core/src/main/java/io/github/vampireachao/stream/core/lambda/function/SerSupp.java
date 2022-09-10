@@ -19,6 +19,7 @@ public interface SerSupp<T> extends Supplier<T>, Serializable {
      * Gets a result.
      *
      * @return a result
+     * @throws Exception exception
      */
     T getting() throws Exception;
 

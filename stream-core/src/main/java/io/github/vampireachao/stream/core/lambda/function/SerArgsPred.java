@@ -63,7 +63,7 @@ public interface SerArgsPred<T> extends Serializable {
      * @return {@code true} if the input argument matches the predicate,
      * otherwise {@code false}
      */
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     boolean testing(T... t) throws Exception;
 
     /**

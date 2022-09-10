@@ -5,7 +5,6 @@ import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.optional.Op;
 import io.github.vampireachao.stream.core.optional.StrOp;
 
-import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,11 +40,12 @@ import java.util.stream.StreamSupport;
  * 流只有在 结束操作 时才会真正触发执行以往的 中间操作
  * <p>
  * 它分为串行流和并行流
- * 并行流会使用拆分器{@link Spliterator}将操作拆分为多个异步任务{@link java.util.concurrent.ForkJoinTask}执行
+ * 并行流会使用拆分器{@link java.util.Spliterator}将操作拆分为多个异步任务{@link java.util.concurrent.ForkJoinTask}执行
  * 这些异步任务默认使用{@link java.util.concurrent.ForkJoinPool}线程池进行管理
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @see java.util.stream.Stream
+
  */
 public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
         implements Stream<T>, Iterable<T>, CollectableStream<T> {
@@ -118,6 +118,8 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     * {@inheritDoc}
+     * <p>
      * 返回无限有序流
      * 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
      * <p>
@@ -125,11 +127,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * {@code Steam.iterate(0, i -> i + 1)}
      * 就可以创建从0开始，每次+1的无限流，使用{@link Steam#limit(long)}可以限制元素个数
      * </p>
-     *
-     * @param <T>  元素类型
-     * @param seed 初始值
-     * @param f    用上一个元素作为参数执行并返回一个新的元素
-     * @return 无限有序流
      */
     public static <T> Steam<T> iterate(final T seed, final UnaryOperator<T> f) {
         return new Steam<>(Stream.iterate(seed, f));
@@ -141,7 +138,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * <p>
      * 例如
      * {@code Steam.iterate(0, i -> i < 3, i -> ++i)}
-     * 就可以创建包含元素0,1,2的流，使用{@link Steam#limit(long)}可以限制元素个数
+     * 就可以创建包含元素0,1,2的流，使用{@link io.github.vampireachao.stream.core.stream.Steam#limit(long)}可以限制元素个数
      * </p>
      *
      * @param <T>     元素类型
@@ -201,38 +198,33 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     * {@inheritDoc}
+     * <p>
      * 返回无限串行无序流
      * 其中每一个元素都由给定的{@code Supplier}生成
      * 适用场景在一些生成常量流、随机元素等
-     *
-     * @param <T> 元素类型
-     * @param s   用来生成元素的 {@code Supplier}
-     * @return 无限串行无序流
      */
     public static <T> Steam<T> generate(Supplier<T> s) {
         return new Steam<>(Stream.generate(s));
     }
 
     /**
+     * {@inheritDoc}
+     * <p>
      * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。
      * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
      * 当结果流关闭时，两个输入流的关闭处理程序都会被调用。
      *
      * <p>从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}</p>
-     *
-     * @param <T> 元素类型
-     * @param a   第一个流
-     * @param b   第二个流
-     * @return 拼接两个流之后的流
      */
     public static <T> Steam<T> concat(Stream<? extends T> a, Stream<? extends T> b) {
         return new Steam<>(Stream.concat(a, b));
     }
 
     /**
-     * 通过实现了{@link Iterable}接口的对象创建串行流
+     * 通过实现了{@link java.lang.Iterable}接口的对象创建串行流
      *
-     * @param iterable 实现了{@link Iterable}接口的对象
+     * @param iterable 实现了{@link java.lang.Iterable}接口的对象
      * @param <T>      元素类型
      * @return 流
      */
@@ -241,9 +233,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * 通过传入的{@link Iterable}创建流
+     * 通过传入的{@link java.lang.Iterable}创建流
      *
-     * @param iterable {@link Iterable}
+     * @param iterable {@link java.lang.Iterable}
      * @param parallel 是否并行
      * @param <T>      元素类型
      * @return 流
@@ -253,9 +245,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * 通过传入的{@link Stream}创建流
+     * 通过传入的{@link java.util.stream.Stream}创建流
      *
-     * @param stream {@link Stream}
+     * @param stream {@link java.util.stream.Stream}
      * @param <T>    元素类型
      * @return 流
      */
@@ -318,12 +310,10 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     * {@inheritDoc}
+     *
      * 返回与指定函数将元素作为参数执行的结果组成的流
      * 这是一个无状态中间操作
-     *
-     * @param mapper 指定的函数
-     * @param <R>    函数执行后返回的类型
-     * @return 返回叠加操作后的流
      */
     @Override
     public <R> Steam<R> map(Function<? super T, ? extends R> mapper) {
@@ -348,6 +338,12 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
         }
     }
 
+    /**
+     * <p>peekIdx.</p>
+     *
+     * @param action a {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
+     * @return a {@link io.github.vampireachao.stream.core.stream.Steam} object
+     */
     public Steam<T> peekIdx(SerBiCons<? super T, Integer> action) {
         Objects.requireNonNull(action);
         if (isParallel()) {
@@ -359,16 +355,14 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     * {@inheritDoc}
+     *
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
      * 例如，将users里所有user的id和parentId组合在一起，形成一个新的流:
      * <pre>{@code
      *     Steam<Long> ids = Steam.of(users).flatMap(user -> Steam.of(user.getId(), user.getParentId()));
      * }</pre>
-     *
-     * @param mapper 操作，返回流
-     * @param <R>    拆分后流的元素类型
-     * @return 返回叠加拆分操作后的流
      */
     @Override
     public <R> Steam<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
@@ -433,6 +427,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      *
      * @param keyExtractor 去重依据
      * @return 一个具有去重特征的流
+     * @param <F> a F class
      */
     public <F> Steam<T> distinct(Function<? super T, F> keyExtractor) {
         Objects.requireNonNull(keyExtractor);
@@ -462,7 +457,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * 返回叠加调用{@link PrintStream#println(Object)}打印出结果的流
+     * 返回叠加调用{@link java.io.PrintStream#println(Object)}打印出结果的流
      *
      * @return 返回叠加操作后的Steam
      */
@@ -665,9 +660,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * 构建一个{@link Steam}实例
+     * {@inheritDoc}
      *
-     * @param stream 包装的流
+     * 构建一个{@link Steam}实例
      */
     @Override
     protected Steam<T> convertToStreamImpl(Stream<T> stream) {
@@ -675,9 +670,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * hashcode
+     * {@inheritDoc}
      *
-     * @return hashcode
+     * hashcode
      */
     @Override
     public int hashCode() {
@@ -685,10 +680,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * equals
+     * {@inheritDoc}
      *
-     * @param obj 对象
-     * @return 结果
+     * equals
      */
     @Override
     public boolean equals(Object obj) {
@@ -699,9 +693,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * toString
+     * {@inheritDoc}
      *
-     * @return string
+     * toString
      */
     @Override
     public String toString() {
@@ -732,7 +726,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     /**
      * 过滤同类型集合中某一操作相同值的数据
-     * {@link Steam#filter(Function, Object)}
+     * {@link io.github.vampireachao.stream.core.stream.Steam#filter(Function, Object)}
      *
      * @param others 另一可迭代对象
      * @param mapper 操作
@@ -902,7 +896,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * eg:
      * {@code List students = Steam.of(studentTree).flatTree(Student::getChildren, Student::setChildren).toList() }
      */
-
     public Steam<T> flatTree(Function<T, List<T>> childrenGetter, BiConsumer<T, List<T>> childrenSetter) {
         AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
         Function<T, Steam<T>> recursive = e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);

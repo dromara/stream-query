@@ -20,6 +20,7 @@ import java.util.stream.Stream;
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/29 8:55
+
  */
 public class Collective {
 
@@ -213,6 +214,17 @@ public class Collective {
                 downstream.characteristics());
     }
 
+    /**
+     * <p>flatMapping.</p>
+     *
+     * @param mapper     a {@link java.util.function.Function} object
+     * @param downstream a {@link java.util.stream.Collector} object
+     * @param <T>        a T class
+     * @param <U>        a U class
+     * @param <A>        a A class
+     * @param <R>        a R class
+     * @return a {@link java.util.stream.Collector} object
+     */
     public static <T, U, A, R>
     Collector<T, ?, R> flatMapping(Function<? super T, Stream<? extends U>> mapper,
                                    Collector<? super U, A, R> downstream) {
@@ -224,6 +236,17 @@ public class Collective {
                 downstream.characteristics());
     }
 
+    /**
+     * <p>flatMappingIter.</p>
+     *
+     * @param mapper     a {@link java.util.function.Function} object
+     * @param downstream a {@link java.util.stream.Collector} object
+     * @param <T>        a T class
+     * @param <U>        a U class
+     * @param <A>        a A class
+     * @param <R>        a R class
+     * @return a {@link java.util.stream.Collector} object
+     */
     public static <T, U, A, R>
     Collector<T, ?, R> flatMappingIter(Function<? super T, Iterable<? extends U>> mapper,
                                        Collector<? super U, A, R> downstream) {
@@ -548,7 +571,7 @@ public class Collective {
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
      * {@code partition}.  To perform a simple reduction on a stream,
-     * use {@link Stream#reduce(Object, BinaryOperator)}} instead.
+     * use {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}} instead.
      * @see #reducing(BinaryOperator)
      * @see #reducing(Object, Function, BinaryOperator)
      */
@@ -581,7 +604,7 @@ public class Collective {
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
      * {@code partition}.  To perform a simple reduction on a stream,
-     * use {@link Stream#reduce(BinaryOperator)} instead.
+     * use {@link java.util.stream.Stream#reduce(BinaryOperator)} instead.
      *
      * <p>For example, given a stream of {@code Person}, to calculate tallest
      * person in each city:
@@ -638,7 +661,7 @@ public class Collective {
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
      * {@code partition}.  To perform a simple map-reduce on a stream,
-     * use {@link Stream#map(Function)} and {@link Stream#reduce(Object, BinaryOperator)}
+     * use {@link java.util.stream.Stream#map(Function)} and {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * instead.
      *
      * <p>For example, given a stream of {@code Person}, to calculate the longest
@@ -1038,7 +1061,7 @@ public class Collective {
      * mapping functions to the input elements.
      *
      * <p>If the mapped keys contains duplicates (according to
-     * {@link Object#equals(Object)}), an {@code IllegalStateException} is
+     * {@link java.lang.Object#equals(Object)}), an {@code IllegalStateException} is
      * thrown when the collection operation is performed.  If the mapped keys
      * may have duplicates, use {@link #toMap(Function, Function, BinaryOperator)}
      * instead.
@@ -1090,7 +1113,7 @@ public class Collective {
      * mapping functions to the input elements.
      *
      * <p>If the mapped
-     * keys contains duplicates (according to {@link Object#equals(Object)}),
+     * keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.
      *
@@ -1101,7 +1124,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @return a {@code Collector} which collects elements into a {@code Map}
      * whose keys are the result of applying a key mapping function to the input
      * elements, and whose values are the result of applying a value mapping
@@ -1144,7 +1167,7 @@ public class Collective {
      * mapping functions to the input elements.
      *
      * <p>If the mapped
-     * keys contains duplicates (according to {@link Object#equals(Object)}),
+     * keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.  The {@code Map}
      * is created by a provided supplier function.
@@ -1157,7 +1180,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @param mapSupplier   a function which returns a new, empty {@code Map} into
      *                      which the results will be inserted
      * @return a {@code Collector} which collects elements into a {@code Map}
@@ -1196,7 +1219,7 @@ public class Collective {
      * the provided mapping functions to the input elements.
      *
      * <p>If the mapped keys contains duplicates (according to
-     * {@link Object#equals(Object)}), an {@code IllegalStateException} is
+     * {@link java.lang.Object#equals(Object)}), an {@code IllegalStateException} is
      * thrown when the collection operation is performed.  If the mapped keys
      * may have duplicates, use
      * {@link #toConcurrentMap(Function, Function, BinaryOperator)} instead.
@@ -1245,7 +1268,7 @@ public class Collective {
      * {@code ConcurrentMap} whose keys and values are the result of applying
      * the provided mapping functions to the input elements.
      *
-     * <p>If the mapped keys contains duplicates (according to {@link Object#equals(Object)}),
+     * <p>If the mapped keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.
      *
@@ -1256,7 +1279,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @return a concurrent, unordered {@code Collector} which collects elements into a
      * {@code ConcurrentMap} whose keys are the result of applying a key mapping
      * function to the input elements, and whose values are the result of
@@ -1296,7 +1319,7 @@ public class Collective {
      * {@code ConcurrentMap} whose keys and values are the result of applying
      * the provided mapping functions to the input elements.
      *
-     * <p>If the mapped keys contains duplicates (according to {@link Object#equals(Object)}),
+     * <p>If the mapped keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.  The
      * {@code ConcurrentMap} is created by a provided supplier function.
@@ -1312,7 +1335,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @param mapSupplier   a function which returns a new, empty {@code Map} into
      *                      which the results will be inserted
      * @return a concurrent, unordered {@code Collector} which collects elements into a
@@ -1401,6 +1424,13 @@ public class Collective {
                 }, CH_ID);
     }
 
+    /**
+     * <p>entryToMap.</p>
+     *
+     * @param <K> a K class
+     * @param <V> a V class
+     * @return a {@link java.util.stream.Collector} object
+     */
     public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> entryToMap() {
         return toMap(Map.Entry::getKey, Map.Entry::getValue);
     }
@@ -1517,7 +1547,7 @@ public class Collective {
 
 
     /**
-     * 将流转为{@link EntrySteam}
+     * 将流转为{@link io.github.vampireachao.stream.core.stream.EntrySteam}
      *
      * @param keyMapper   键的映射方法
      * @param valueMapper 值的映射方法
@@ -1534,7 +1564,7 @@ public class Collective {
     }
 
     /**
-     * 将流转为{@link Steam}
+     * 将流转为{@link io.github.vampireachao.stream.core.stream.Steam}
      *
      * @param <T> 输入元素类型
      * @return 收集器
@@ -1544,7 +1574,7 @@ public class Collective {
     }
 
     /**
-     * 收集元素，将其转为指定{@link Collection}集合后，再对该集合进行转换，并最终返回转换后的结果。
+     * 收集元素，将其转为指定{@link java.util.Collection}集合后，再对该集合进行转换，并最终返回转换后的结果。
      * 返回的收集器的效果等同于：
      * <pre>{@code
      * 	Collection<T> coll = Stream.of(a, b, c, d)
@@ -1572,7 +1602,7 @@ public class Collective {
     }
 
     /**
-     * 收集元素，将其转为{@link ArrayList}集合后，再对该集合进行转换，并最终返回转换后的结果。
+     * 收集元素，将其转为{@link java.util.ArrayList}集合后，再对该集合进行转换，并最终返回转换后的结果。
      * 返回的收集器的效果等同于：
      * <pre>{@code
      * 	List<T> coll = Stream.of(a, b, c, d)

@@ -12,7 +12,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 /**
- * 允许实现类直接跳过{@link Stream#collect(Collector)}使用{@link java.util.stream.Collector}中一些常用方法
+ * 允许实现类直接跳过{@link java.util.stream.Stream#collect(Collector)}使用{@link java.util.stream.Collector}中一些常用方法
  *
  * @author huangchengxing
  */
@@ -69,7 +69,7 @@ public interface CollectableStream<T> extends Stream<T> {
     }
 
     /**
-     * 转换为{@link ArrayList}
+     * 转换为{@link java.util.ArrayList}
      *
      * @return 集合
      */
@@ -298,6 +298,7 @@ public interface CollectableStream<T> extends Stream<T> {
      *
      * @param predicate   判断条件
      * @param collFactory 提供的集合
+     * @param <C>         a C class
      * @return map
      */
     default <C extends Collection<T>> Map<Boolean, C> partition(Predicate<T> predicate, Supplier<C> collFactory) {

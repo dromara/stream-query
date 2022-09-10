@@ -39,9 +39,21 @@ import java.util.WeakHashMap;
  */
 public class ReflectHelper {
 
+    /**
+     * Constant <code>LEFT_MIDDLE_BRACKET="["</code>
+     */
     public static final String LEFT_MIDDLE_BRACKET = "[";
+    /**
+     * Constant <code>SEMICOLON=";"</code>
+     */
     public static final String SEMICOLON = ";";
+    /**
+     * Constant <code>L="L"</code>
+     */
     public static final String L = "L";
+    /**
+     * Constant <code>V="V"</code>
+     */
     public static final String V = "V";
 
 
@@ -56,8 +68,8 @@ public class ReflectHelper {
      * return accessible accessibleObject
      *
      * @param accessibleObject     accessibleObject method
-     * @param <$ACCESSIBLE_OBJECT> accessibleObject type
      * @return accessibleObject
+     * @param <$ACCESSIBLE_OBJECT> a $ACCESSIBLE_OBJECT class
      */
     public static <$ACCESSIBLE_OBJECT extends AccessibleObject> $ACCESSIBLE_OBJECT accessible($ACCESSIBLE_OBJECT accessibleObject) {
         return AccessController.doPrivileged((PrivilegedAction<$ACCESSIBLE_OBJECT>) () -> {
@@ -158,6 +170,14 @@ public class ReflectHelper {
     }
 
 
+    /**
+     * <p>getFieldValue.</p>
+     *
+     * @param obj       a {@link java.lang.Object} object
+     * @param fieldName a {@link java.lang.String} object
+     * @param <T>       a T class
+     * @return a T object
+     */
     @SuppressWarnings("unchecked")
     public static <T> T getFieldValue(Object obj, String fieldName) {
         if (Objects.isNull(obj) || Objects.isNull(fieldName)) {
@@ -170,10 +190,23 @@ public class ReflectHelper {
         }
     }
 
+    /**
+     * <p>hasField.</p>
+     *
+     * @param clazz     a {@link java.lang.Class} object
+     * @param fieldName a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean hasField(Class<?> clazz, String fieldName) {
         return Steam.of(getFields(clazz)).anyMatch(f -> fieldName.equals(f.getName()));
     }
 
+    /**
+     * <p>getFields.</p>
+     *
+     * @param clazz a {@link java.lang.Class} object
+     * @return a {@link java.util.List} object
+     */
     public static List<Field> getFields(Class<?> clazz) {
         return CLASS_FIELDS_CACHE.computeIfAbsent(clazz, k -> {
             Steam.Builder<Field> fieldsBuilder = Steam.builder();
@@ -189,12 +222,27 @@ public class ReflectHelper {
         });
     }
 
+    /**
+     * <p>getField.</p>
+     *
+     * @param clazz     a {@link java.lang.Class} object
+     * @param fieldName a {@link java.lang.String} object
+     * @return a {@link java.lang.reflect.Field} object
+     */
     public static Field getField(Class<?> clazz, String fieldName) {
         return Steam.of(getFields(clazz)).filter(field -> field.getName().equals(fieldName))
                 .findFirst().map(ReflectHelper::accessible)
                 .orElseThrow(() -> new IllegalArgumentException("No such field: " + fieldName));
     }
 
+    /**
+     * <p>getMethod.</p>
+     *
+     * @param clazz          a {@link java.lang.Class} object
+     * @param methodName     a {@link java.lang.String} object
+     * @param parameterTypes a {@link java.lang.Class} object
+     * @return a {@link java.lang.reflect.Method} object
+     */
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         return Steam.of(getMethods(clazz)).filter(SerPred.multiAnd(
                 method -> method.getName().equals(methodName),
@@ -217,6 +265,12 @@ public class ReflectHelper {
                 .flat(clz -> Steam.of(clz.getDeclaredMethods())).toList());
     }
 
+    /**
+     * <p>getGenericTypes.</p>
+     *
+     * @param paramType a {@link java.lang.reflect.Type} object
+     * @return an array of {@link java.lang.reflect.Type} objects
+     */
     public static Type[] getGenericTypes(Type paramType) {
         Type type;
         for (type = paramType;
@@ -236,6 +290,14 @@ public class ReflectHelper {
         return new Type[0];
     }
 
+    /**
+     * <p>isInstance.</p>
+     *
+     * @param obj a T object
+     * @param t   a {@link java.lang.reflect.Type} object
+     * @param <T> a T class
+     * @return a boolean
+     */
     public static <T> boolean isInstance(T obj, Type t) {
         if (Objects.isNull(obj)) {
             return false;
@@ -254,6 +316,13 @@ public class ReflectHelper {
         return false;
     }
 
+    /**
+     * <p>typeOf.</p>
+     *
+     * @param obj   a {@link java.lang.Object} object
+     * @param eType a {@link java.lang.reflect.Type} object
+     * @return a boolean
+     */
     public static boolean typeOf(Object obj, Type eType) {
         if (eType instanceof Class) {
             Class<?> clazz = (Class<?>) eType;
@@ -262,6 +331,14 @@ public class ReflectHelper {
         return false;
     }
 
+    /**
+     * <p>setFieldValue.</p>
+     *
+     * @param bean        a T object
+     * @param keyProperty a {@link java.lang.String} object
+     * @param fieldValue  a {@link java.lang.Object} object
+     * @param <T>         a T class
+     */
     public static <T> void setFieldValue(T bean, String keyProperty, Object fieldValue) {
         if (Objects.isNull(bean) || Objects.isNull(keyProperty)) {
             return;
@@ -277,6 +354,13 @@ public class ReflectHelper {
         }
     }
 
+    /**
+     * <p>getConstructorByDescriptor.</p>
+     *
+     * @param clazz            a {@link java.lang.Class} object
+     * @param methodDescriptor a {@link java.lang.String} object
+     * @return a {@link java.lang.reflect.Constructor} object
+     */
     public static Constructor<?> getConstructorByDescriptor(final Class<?> clazz, final String methodDescriptor) {
         for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
             if (ReflectHelper.getDescriptor(constructor).equals(methodDescriptor)) {
@@ -286,6 +370,13 @@ public class ReflectHelper {
         throw new IllegalStateException(String.format("No constructor found with class %s and descriptor %s", clazz, methodDescriptor));
     }
 
+    /**
+     * <p>getMethodByDescriptor.</p>
+     *
+     * @param clazz            a {@link java.lang.Class} object
+     * @param methodDescriptor a {@link java.lang.String} object
+     * @return a {@link java.lang.reflect.Method} object
+     */
     public static Method getMethodByDescriptor(final Class<?> clazz, final String methodDescriptor) {
         for (Method method : ReflectHelper.getMethods(clazz)) {
             if (ReflectHelper.getDescriptor(method).equals(methodDescriptor)) {
@@ -295,6 +386,12 @@ public class ReflectHelper {
         throw new IllegalStateException(String.format("No method found with class %s and descriptor %s", clazz, methodDescriptor));
     }
 
+    /**
+     * <p>getArgsFromDescriptor.</p>
+     *
+     * @param methodDescriptor a {@link java.lang.String} object
+     * @return an array of {@link java.lang.reflect.Type} objects
+     */
     public static Type[] getArgsFromDescriptor(final String methodDescriptor) {
         int index = methodDescriptor.indexOf(";)");
         if (index == -1) {
@@ -309,6 +406,12 @@ public class ReflectHelper {
         return types;
     }
 
+    /**
+     * <p>getReturnTypeFromDescriptor.</p>
+     *
+     * @param methodDescriptor a {@link java.lang.String} object
+     * @return a {@link java.lang.reflect.Type} object
+     */
     public static Type getReturnTypeFromDescriptor(final String methodDescriptor) {
         int index = methodDescriptor.indexOf(";)");
         if (index == -1) {
@@ -321,6 +424,12 @@ public class ReflectHelper {
         return forClassName(className);
     }
 
+    /**
+     * <p>loadClass.</p>
+     *
+     * @param className a {@link java.lang.String} object
+     * @return a {@link java.lang.Class} object
+     */
     public static Class<?> loadClass(final String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className.replace("/", "."));
@@ -329,6 +438,12 @@ public class ReflectHelper {
         }
     }
 
+    /**
+     * <p>forClassName.</p>
+     *
+     * @param className a {@link java.lang.String} object
+     * @return a {@link java.lang.Class} object
+     */
     public static Class<?> forClassName(String className) {
         try {
             boolean isArray = className.startsWith(LEFT_MIDDLE_BRACKET);
@@ -347,6 +462,15 @@ public class ReflectHelper {
         }
     }
 
+    /**
+     * <p>invoke.</p>
+     *
+     * @param obj    a {@link java.lang.Object} object
+     * @param method a {@link java.lang.reflect.Method} object
+     * @param args   a {@link java.lang.Object} object
+     * @param <R>    a R class
+     * @return a R object
+     */
     @SuppressWarnings("unchecked")
     public static <R> R invoke(Object obj, Method method, Object... args) {
         try {
@@ -356,6 +480,11 @@ public class ReflectHelper {
         }
     }
 
+    /**
+     * <p>explain.</p>
+     *
+     * @param obj a {@link java.lang.Object} object
+     */
     public static void explain(Object obj) {
         System.out.printf("obj: %s class: %s\n", obj, obj.getClass());
         System.out.println("fields: ");

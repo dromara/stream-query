@@ -21,6 +21,7 @@ import java.util.WeakHashMap;
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/29 9:19
+
  */
 public class LambdaHelper {
 
@@ -58,9 +59,10 @@ public class LambdaHelper {
 
 
     /**
-     * Resolve the lambda to a {@link LambdaExecutable} instance.
+     * Resolve the lambda to a {@link io.github.vampireachao.stream.core.lambda.LambdaExecutable} instance.
      *
      * @param lambda The lambda to resolve.
+     * @param <T>    a T class
      * @return LambdaExecutable
      */
     public static <T extends Serializable> LambdaExecutable resolve(T lambda) {
@@ -72,11 +74,25 @@ public class LambdaHelper {
                 key -> new LambdaExecutable(serialize(lambda)));
     }
 
+    /**
+     * <p>getPropertyNames.</p>
+     *
+     * @param funcs a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param <T>   a T class
+     * @return a {@link java.util.List} object
+     */
     @SafeVarargs
     public static <T> List<String> getPropertyNames(SerFunc<T, ?>... funcs) {
         return Steam.of(funcs).map(LambdaHelper::getPropertyName).toList();
     }
 
+    /**
+     * <p>getPropertyName.</p>
+     *
+     * @param func a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param <T>  a T class
+     * @return a {@link java.lang.String} object
+     */
     public static <T> String getPropertyName(SerFunc<T, ?> func) {
         return Op.of(func).map(LambdaHelper::resolve).map(LambdaExecutable::getName).map(BeanHelper::getPropertyName).get();
     }

@@ -22,6 +22,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * @param t the input argument
      * @return {@code true} if the input argument matches the predicate,
      * otherwise {@code false}
+     * @throws Exception exception
      */
     boolean testing(T t) throws Exception;
 

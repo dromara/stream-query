@@ -9,17 +9,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
- * @Description: ThrowOpTest
- * @DateTime: 2022/9/9 16:55
+ * @since 2022/9/9 16:55
  **/
 class ThrowOpTest {
     List<String> list = Collections.singletonList("臧臧");
+
     @Test
     void testOf() {
 
         ThrowOp<String> of = ThrowOp.of(() -> list.get(0));
         ThrowOp<String> ofTry = ThrowOp.of(() -> list.get(1));
-        Assertions.assertEquals("臧臧",of.get());
+        Assertions.assertEquals("臧臧", of.get());
         Assertions.assertNull(of.getException());
         Assertions.assertTrue(ofTry.getException() instanceof IndexOutOfBoundsException);
     }
@@ -33,7 +33,7 @@ class ThrowOpTest {
     }
 
     @Test
-    void testIsEmpty(){
+    void testIsEmpty() {
         ThrowOp<String> of = ThrowOp.of(() -> list.get(0));
         ThrowOp<String> ofTry = ThrowOp.of(() -> list.get(1));
         Assertions.assertFalse(ofTry.isEmpty());
@@ -41,13 +41,13 @@ class ThrowOpTest {
     }
 
     @Test
-    void testIsEqual(){
+    void testIsEqual() {
         ThrowOp<String> of = ThrowOp.of(() -> list.get(0));
         Assertions.assertTrue(of.isEqual("臧臧"));
     }
 
     @Test
-    void testOrElseM(){
+    void testOrElseM() {
         ThrowOp<String> of = ThrowOp.of(() -> list.get(1));
         AtomicInteger zz = new AtomicInteger(0);
         String orElse = of.orElse("臧臧");
@@ -59,7 +59,7 @@ class ThrowOpTest {
     }
 
     @Test
-    void testOrElseThrow(){
+    void testOrElseThrow() {
         ThrowOp<String> of = ThrowOp.of(() -> list.get(1));
         // 获取一个不可能为空的值，否则抛出NoSuchElementException异常
         Assertions.assertThrows(NoSuchElementException.class, of::orElseThrow);
@@ -106,14 +106,14 @@ class ThrowOpTest {
 
     @Test
     void testOr() {
-        final String str = ThrowOp.of(()->"   ").or(() -> ThrowOp.of(() -> "Hello Stream-Query!")).map(String::toUpperCase).orElseThrow();
+        final String str = ThrowOp.of(() -> "   ").or(() -> ThrowOp.of(() -> "Hello Stream-Query!")).map(String::toUpperCase).orElseThrow();
         Assertions.assertEquals("HELLO STREAM-QUERY!", str);
 
     }
 
     @Test
     void testSteam() {
-        Steam<String> zVerify = ThrowOp.of(() ->"ZVerify").steam();
+        Steam<String> zVerify = ThrowOp.of(() -> "ZVerify").steam();
         List<String> list = zVerify.toList();
         Assertions.assertEquals(Collections.singletonList("ZVerify"), list);
     }

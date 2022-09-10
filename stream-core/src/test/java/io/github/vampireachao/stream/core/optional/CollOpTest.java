@@ -1,21 +1,22 @@
 package io.github.vampireachao.stream.core.optional;
 
-import io.github.vampireachao.stream.core.stream.Steam;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Arrays.asList;
 
 /**
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
- * @Description: TODO
- * @DateTime: 2022/9/10 8:26
+ * @since 2022/9/10 8:26
  **/
 class CollOpTest {
     @Data

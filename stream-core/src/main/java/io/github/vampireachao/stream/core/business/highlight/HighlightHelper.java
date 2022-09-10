@@ -15,6 +15,7 @@ import java.util.function.UnaryOperator;
  * 高亮封装
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+
  */
 public class HighlightHelper {
 
@@ -22,6 +23,14 @@ public class HighlightHelper {
         /* Do not new me! */
     }
 
+    /**
+     * <p>highlight.</p>
+     *
+     * @param text              a {@link java.lang.String} object
+     * @param fondWords         a {@link java.util.List} object
+     * @param highlightOperator a {@link java.util.function.UnaryOperator} object
+     * @return a {@link java.lang.String} object
+     */
     public static String highlight(String text, List<FoundWord> fondWords, UnaryOperator<String> highlightOperator) {
         if (CollOp.of(fondWords).isEmpty() || StrOp.of(text).isEmpty()) {
             return text;

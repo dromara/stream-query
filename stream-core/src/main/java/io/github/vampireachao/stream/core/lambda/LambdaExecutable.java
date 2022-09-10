@@ -34,7 +34,13 @@ import java.util.List;
  */
 public class LambdaExecutable {
 
+    /**
+     * Constant <code>CONSTRUCTOR_METHOD_NAME="&lt;init&gt;"</code>
+     */
     public static final String CONSTRUCTOR_METHOD_NAME = "<init>";
+    /**
+     * Constant <code>NEW_INSTANCE_METHOD_NAME="newInstance"</code>
+     */
     public static final String NEW_INSTANCE_METHOD_NAME = "newInstance";
 
     private Executable executable;
@@ -46,10 +52,18 @@ public class LambdaExecutable {
     private SerializedLambda lambda;
     private Proxy proxy;
 
+    /**
+     * <p>Constructor for LambdaExecutable.</p>
+     */
     public LambdaExecutable() {
         // this is an accessible parameterless constructor.
     }
 
+    /**
+     * <p>Constructor for LambdaExecutable.</p>
+     *
+     * @param lambda a {@link java.lang.invoke.SerializedLambda} object
+     */
     public LambdaExecutable(final SerializedLambda lambda) {
         try {
             Class<?> implClass = ReflectHelper.loadClass(lambda.getImplClass());
@@ -67,6 +81,11 @@ public class LambdaExecutable {
         this.lambda = lambda;
     }
 
+    /**
+     * <p>Constructor for LambdaExecutable.</p>
+     *
+     * @param executable a {@link java.lang.reflect.Executable} object
+     */
     public LambdaExecutable(final Executable executable) {
         if (executable instanceof Constructor) {
             initConstructor((Constructor<?>) executable);
@@ -91,64 +110,12 @@ public class LambdaExecutable {
         this.clazz = method.getDeclaringClass();
     }
 
-
-    public Executable getExecutable() {
-        return executable;
-    }
-
-    public void setExecutable(Executable executable) {
-        this.executable = executable;
-    }
-
-
-    public Type[] getInstantiatedTypes() {
-        return instantiatedTypes;
-    }
-
-    public void setInstantiatedTypes(Type[] instantiatedTypes) {
-        this.instantiatedTypes = instantiatedTypes;
-    }
-
-    public Type[] getParameterTypes() {
-        return parameterTypes;
-    }
-
-    public void setParameterTypes(Type[] parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
-
-    public Type getReturnType() {
-        return returnType;
-    }
-
-    public void setReturnType(Type returnType) {
-        this.returnType = returnType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Class<?> getClazz() {
-        return clazz;
-    }
-
-    public void setClazz(Class<?> clazz) {
-        this.clazz = clazz;
-    }
-
-    public SerializedLambda getLambda() {
-        return lambda;
-    }
-
-    public void setLambda(SerializedLambda lambda) {
-        this.lambda = lambda;
-    }
-
+    /**
+     * <p>initProxy.</p>
+     *
+     * @param proxy a {@link java.lang.reflect.Proxy} object
+     * @return a {@link io.github.vampireachao.stream.core.lambda.LambdaExecutable} object
+     */
     public static LambdaExecutable initProxy(Proxy proxy) {
         InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
@@ -162,6 +129,132 @@ public class LambdaExecutable {
         }
         lambdaExecutable.setProxy(proxy);
         return lambdaExecutable;
+    }
+
+    /**
+     * <p>Getter for the field <code>executable</code>.</p>
+     *
+     * @return a {@link java.lang.reflect.Executable} object
+     */
+    public Executable getExecutable() {
+        return executable;
+    }
+
+    /**
+     * <p>Setter for the field <code>executable</code>.</p>
+     *
+     * @param executable a {@link java.lang.reflect.Executable} object
+     */
+    public void setExecutable(Executable executable) {
+        this.executable = executable;
+    }
+
+    /**
+     * <p>Getter for the field <code>instantiatedTypes</code>.</p>
+     *
+     * @return an array of {@link java.lang.reflect.Type} objects
+     */
+    public Type[] getInstantiatedTypes() {
+        return instantiatedTypes;
+    }
+
+    /**
+     * <p>Setter for the field <code>instantiatedTypes</code>.</p>
+     *
+     * @param instantiatedTypes an array of {@link java.lang.reflect.Type} objects
+     */
+    public void setInstantiatedTypes(Type[] instantiatedTypes) {
+        this.instantiatedTypes = instantiatedTypes;
+    }
+
+    /**
+     * <p>Getter for the field <code>parameterTypes</code>.</p>
+     *
+     * @return an array of {@link java.lang.reflect.Type} objects
+     */
+    public Type[] getParameterTypes() {
+        return parameterTypes;
+    }
+
+    /**
+     * <p>Setter for the field <code>parameterTypes</code>.</p>
+     *
+     * @param parameterTypes an array of {@link java.lang.reflect.Type} objects
+     */
+    public void setParameterTypes(Type[] parameterTypes) {
+        this.parameterTypes = parameterTypes;
+    }
+
+    /**
+     * <p>Getter for the field <code>returnType</code>.</p>
+     *
+     * @return a {@link java.lang.reflect.Type} object
+     */
+    public Type getReturnType() {
+        return returnType;
+    }
+
+    /**
+     * <p>Setter for the field <code>returnType</code>.</p>
+     *
+     * @param returnType a {@link java.lang.reflect.Type} object
+     */
+    public void setReturnType(Type returnType) {
+        this.returnType = returnType;
+    }
+
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * <p>Getter for the field <code>clazz</code>.</p>
+     *
+     * @return a {@link java.lang.Class} object
+     */
+    public Class<?> getClazz() {
+        return clazz;
+    }
+
+    /**
+     * <p>Setter for the field <code>clazz</code>.</p>
+     *
+     * @param clazz a {@link java.lang.Class} object
+     */
+    public void setClazz(Class<?> clazz) {
+        this.clazz = clazz;
+    }
+
+    /**
+     * <p>Getter for the field <code>lambda</code>.</p>
+     *
+     * @return a {@link java.lang.invoke.SerializedLambda} object
+     */
+    public SerializedLambda getLambda() {
+        return lambda;
+    }
+
+    /**
+     * <p>Setter for the field <code>lambda</code>.</p>
+     *
+     * @param lambda a {@link java.lang.invoke.SerializedLambda} object
+     */
+    public void setLambda(SerializedLambda lambda) {
+        this.lambda = lambda;
     }
 
     private static LambdaExecutable notDirectMethodHandle(MethodHandle methodHandle) {
@@ -182,10 +275,20 @@ public class LambdaExecutable {
         return lambdaExecutable;
     }
 
+    /**
+     * <p>Getter for the field <code>proxy</code>.</p>
+     *
+     * @return a {@link java.lang.reflect.Proxy} object
+     */
     public Proxy getProxy() {
         return proxy;
     }
 
+    /**
+     * <p>Setter for the field <code>proxy</code>.</p>
+     *
+     * @param proxy a {@link java.lang.reflect.Proxy} object
+     */
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;
     }

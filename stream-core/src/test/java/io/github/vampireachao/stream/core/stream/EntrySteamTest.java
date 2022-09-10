@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 /**
  * test for {@link EntrySteam}
  *
- * @author huangchengxing 
+ * @author huangchengxing
  * @date 2022/8/29 16:44
  */
 class EntrySteamTest {

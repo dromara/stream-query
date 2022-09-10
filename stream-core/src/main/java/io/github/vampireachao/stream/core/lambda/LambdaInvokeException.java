@@ -8,6 +8,11 @@ package io.github.vampireachao.stream.core.lambda;
  */
 public class LambdaInvokeException extends RuntimeException {
 
+    /**
+     * <p>Constructor for LambdaInvokeException.</p>
+     *
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public LambdaInvokeException(Throwable cause) {
         super(cause);
     }

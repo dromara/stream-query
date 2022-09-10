@@ -5,18 +5,35 @@ import io.github.vampireachao.stream.core.optional.StrOp;
 import java.util.Objects;
 
 /**
+ * <p>BeanHelper class.</p>
+ *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  */
 public class BeanHelper {
 
+    /**
+     * Constant <code>GETTER_PREFIX="get"</code>
+     */
     public static final String GETTER_PREFIX = "get";
+    /**
+     * Constant <code>GETTER_BOOLEAN_PREFIX="is"</code>
+     */
     public static final String GETTER_BOOLEAN_PREFIX = "is";
+    /**
+     * Constant <code>SETTER_PREFIX="set"</code>
+     */
     public static final String SETTER_PREFIX = "set";
 
     private BeanHelper() {
         /* Do not new me! */
     }
 
+    /**
+     * <p>getPropertyName.</p>
+     *
+     * @param getterOrSetter a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     public static String getPropertyName(String getterOrSetter) {
         String originProperty = null;
         if (isGetterBoolean(getterOrSetter)) {
@@ -32,14 +49,32 @@ public class BeanHelper {
         return originProperty.substring(0, 1).toLowerCase() + originProperty.substring(1);
     }
 
+    /**
+     * <p>isGetter.</p>
+     *
+     * @param methodName a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean isGetter(String methodName) {
         return StrOp.of(methodName).is(s -> s.startsWith(GETTER_PREFIX) || s.startsWith(GETTER_BOOLEAN_PREFIX));
     }
 
+    /**
+     * <p>isGetterBoolean.</p>
+     *
+     * @param methodName a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean isGetterBoolean(String methodName) {
         return StrOp.of(methodName).is(s -> s.startsWith(GETTER_BOOLEAN_PREFIX));
     }
 
+    /**
+     * <p>isSetter.</p>
+     *
+     * @param methodName a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean isSetter(String methodName) {
         return StrOp.of(methodName).is(s -> s.startsWith(SETTER_PREFIX));
     }

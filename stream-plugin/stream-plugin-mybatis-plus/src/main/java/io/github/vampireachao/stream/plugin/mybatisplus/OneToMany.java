@@ -8,7 +8,6 @@ import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.stream.Steam;
 
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,7 +20,7 @@ import java.util.stream.Collector;
 /**
  * 一对多
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt; 
+ * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/23 17:40
  */
 public class OneToMany {
