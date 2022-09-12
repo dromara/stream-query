@@ -50,7 +50,7 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @return 是否成功
      */
     default long updateFewSql(Collection<T> list, int batchSize) {
-        return Steam.of(list).splitList(batchSize).mapToLong(this::updateFewSql).sum();
+        return Steam.of(list).splitList(batchSize).mapToLong(this::updateOneSql).sum();
     }
 
     /**

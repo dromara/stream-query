@@ -82,15 +82,16 @@ class DatabaseTest {
 
     @Test
     void testUpdateFewSql() {
-        UserInfo entity = new UserInfo();
-        entity.setName("cat");
-        entity.setAge(20);
-        entity.setEmail("achao1441470436@gmail.com");
-        UserInfo userInfo = new UserInfo();
-        userInfo.setName("ruben");
-        List<UserInfo> list = Arrays.asList(userInfo, entity);
-        Assertions.assertTrue(Database.insertFewSql(list));
-        Assertions.assertEquals(7, Database.count(UserInfo.class));
+        UserInfo sheep = new UserInfo();
+        sheep.setId(1L);
+        sheep.setName("bee bee I'm a sheep");
+
+        UserInfo ruben = new UserInfo();
+        ruben.setId(2L);
+        ruben.setName("rabbit");
+        Assertions.assertTrue(Database.updateFewSql(Arrays.asList(sheep, ruben)));
+        Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
+        Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
     }
 
     @Test

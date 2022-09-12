@@ -144,8 +144,11 @@ public class ThrowOpImpl<T> implements ThrowOp<T> {
      * {@inheritDoc}
      */
     @Override
-    public T orElseThrow() throws Exception {
-        return orElseThrow(() -> hasException() ? this.exception : new NoSuchElementException());
+    @SuppressWarnings("unchecked")
+    public <X extends Throwable> T orElseThrow() throws X {
+        return orElseThrow(() -> hasException() ?
+                SerFunc.<Exception, X>castingIdentity().apply(this.exception) :
+                SerFunc.<Exception, X>castingIdentity().apply(new NoSuchElementException()));
     }
 
     /** {@inheritDoc} */
