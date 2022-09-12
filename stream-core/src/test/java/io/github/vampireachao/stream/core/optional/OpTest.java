@@ -1,8 +1,10 @@
 package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.reflect.AbstractTypeReference;
+import io.github.vampireachao.stream.core.stream.Steam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +25,10 @@ class OpTest {
 
     @Test
     void blankTest() {
+        SerFunc<Object, String> serFunc = Objects::toString;
+        List<String> strings = Steam.of("", null).map(i -> null).map(Op.of(serFunc).orElse(i -> (String) i)).toList();
+
+
         // blank相对于ofNullable考虑了字符串为空串的情况
         final String hutool = StrOp.of("").orElse("hutool");
         Assertions.assertEquals("hutool", hutool);
