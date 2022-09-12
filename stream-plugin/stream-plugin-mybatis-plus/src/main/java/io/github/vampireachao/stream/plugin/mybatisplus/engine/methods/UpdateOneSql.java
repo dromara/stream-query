@@ -9,6 +9,8 @@ import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMet
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
+
 /**
  * 修改多条数据（mysql语法批量）
  *
@@ -45,7 +47,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      *
      * @param tableInfo 表信息
      * @return java.lang.StringBuilder
-     * @author sikadai
+     * @author VampireAchao sikadai
      * @since 2022/8/24 18:42
      */
     private String buildCaseWhen(TableInfo tableInfo) {
@@ -69,16 +71,17 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      *
      * @param tableInfo 表信息
      * @return java.lang.StringBuilder
-     * @author sikadai
+     * @author VampireAchao sikadai
      * @since 2022/8/24 18:43
      */
     private StringBuilder buildWhereSql(TableInfo tableInfo) {
-        StringBuilder whereSqlBuilder = new StringBuilder();
-        whereSqlBuilder.append(tableInfo.getKeyColumn()).append(" IN\n");
-        whereSqlBuilder.append("<foreach collection=\"list\" item=\"item\" index=\"index\" open=\"(\" separator=\",\" close=\")\">\n");
-        whereSqlBuilder.append("#{item.").append(tableInfo.getKeyProperty()).append("}").append("\n");
-        whereSqlBuilder.append("</foreach>").append("\n");
-        whereSqlBuilder.append(tableInfo.getLogicDeleteSql(true, true));
-        return whereSqlBuilder;
+        return new StringBuilder().append(NEWLINE)
+                .append(tableInfo.getKeyColumn()).append(NEWLINE)
+                .append(IN.getSqlSegment()).append(NEWLINE)
+                .append(LEFT_BRACKET)
+                .append(SqlScriptUtils.convertForeach(SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty()),
+                        COLLECTION_PARAM_NAME, null, ENTITY, COMMA))
+                .append(RIGHT_BRACKET).append(NEWLINE)
+                .append(tableInfo.getLogicDeleteSql(true, true));
     }
 }
