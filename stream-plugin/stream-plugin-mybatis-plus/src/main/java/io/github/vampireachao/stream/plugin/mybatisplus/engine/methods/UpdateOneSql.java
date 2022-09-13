@@ -42,11 +42,11 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
 
     /**
      * <p>
-     * 构建caseWhen的跟新语句
+     * 构建caseWhen的更新语句
      * </p>
      *
      * @param tableInfo 表信息
-     * @return java.lang.StringBuilder
+     * @return caseWhen的更新语句
      * @author VampireAchao sikadai
      * @since 2022/8/24 18:42
      */
