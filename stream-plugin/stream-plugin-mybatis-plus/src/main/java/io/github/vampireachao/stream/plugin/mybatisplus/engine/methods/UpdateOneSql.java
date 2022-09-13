@@ -61,7 +61,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
                                 String.format(WHEN_THEN, safeKeyProperty, i.getColumn())), COLLECTION_PARAM_NAME, null, ENTITY, null)
                         + END
                 )
-                .join(COMMA + NEWLINE);
+                .join(COMMA + NEWLINE) + NEWLINE;
     }
 
     /**
@@ -76,8 +76,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
      */
     private StringBuilder buildWhereSql(TableInfo tableInfo) {
         return new StringBuilder().append(NEWLINE)
-                .append(tableInfo.getKeyColumn()).append(NEWLINE)
-                .append(IN.getSqlSegment()).append(NEWLINE)
+                .append(tableInfo.getKeyColumn()).append(SPACE).append(IN.getSqlSegment()).append(NEWLINE)
                 .append(LEFT_BRACKET)
                 .append(SqlScriptUtils.convertForeach(SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty()),
                         COLLECTION_PARAM_NAME, null, ENTITY, COMMA))
