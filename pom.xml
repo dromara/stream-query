@@ -18,12 +18,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <revision>1.1.8</revision>
+        <revision>1.1.9</revision>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <lombok.version>1.18.24</lombok.version>
         <spring-boot.version>2.7.0</spring-boot.version>
         <h2.version>2.1.214</h2.version>
-        <junit.version>5.8.2</junit.version>
+        <junit.version>5.9.0</junit.version>
         <jmh.version>1.35</jmh.version>
     </properties>
 
