@@ -17,7 +17,6 @@ import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
-import io.github.vampireachao.stream.core.optional.CollOp;
 import io.github.vampireachao.stream.core.optional.Op;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
@@ -72,7 +71,7 @@ public class Database {
     }
 
     public static <T, E extends Serializable> Op<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
-        return Op.of(dataList).map(value ->  Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
+        return Op.of(dataList).filter(s -> !s.isEmpty()).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
     }
 
     @SafeVarargs
