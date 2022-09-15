@@ -2,8 +2,7 @@ package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.optional.Sf;
-import io.github.vampireachao.stream.core.optional.StrOp;
+import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -241,7 +240,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @return 流
      */
     public static <T> Steam<T> of(Iterable<T> iterable, boolean parallel) {
-        return Sf.of(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
+        return Opp.of(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
     }
 
     /**
@@ -263,7 +262,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @return 拆分后元素组成的流
      */
     public static Steam<String> split(String str, String regex) {
-        return StrOp.of(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
+        return Opp.of(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
     }
 
     // --------------------------------------------------------------- Static method end
@@ -279,7 +278,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public <R> Steam<T> filter(Function<? super T, ? extends R> mapper, R value) {
         Objects.requireNonNull(mapper);
-        return filter(e -> Objects.equals(Sf.of(e).map(mapper).get(), value));
+        return filter(e -> Objects.equals(Opp.of(e).map(mapper).get(), value));
     }
 
 
@@ -401,7 +400,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public <R> Steam<R> flat(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         Objects.requireNonNull(mapper);
-        return flatMap(w -> Sf.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
+        return flatMap(w -> Opp.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
     }
 
     /**
@@ -856,7 +855,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
                                                     BiConsumer<T, List<T>> childrenSetter,
                                                     Predicate<T> parentPredicate) {
         List<T> list = toList();
-        List<T> parents = Steam.of(list).filter(e -> Sf.of(e).is(parentPredicate)).toList();
+        List<T> parents = Steam.of(list).filter(e -> Opp.of(e).is(parentPredicate)).toList();
         return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, Steam.of(list).group(pIdGetter), parents);
     }
 

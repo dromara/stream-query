@@ -38,7 +38,7 @@ class OppTest {
     void isEmptyTest() {
         // 这是jdk11 Optional中的新函数，直接照搬了过来
         // 判断包裹内元素是否为空，注意并没有判断空字符串的情况
-        final boolean isEmpty = Opp.empty().isNull();
+        final boolean isEmpty = Opp.empty().isEmpty();
         Assertions.assertTrue(isEmpty);
     }
 
@@ -144,7 +144,7 @@ class OppTest {
         final List<String> hutool = Opp.ofColl(Collections.<String>emptyList()).orElseGet(() -> Collections.singletonList("hutool"));
         Assertions.assertEquals(past, hutool);
         Assertions.assertEquals(Collections.singletonList("hutool"), hutool);
-        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isNull());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
     }
 
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "ConstantConditions"})
@@ -200,8 +200,8 @@ class OppTest {
 
     @Test
     void testEmpty() {
-        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isNull());
-        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, 1, null)).isNonNull());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, 1, null)).isPresent());
     }
 
     @Test
@@ -209,37 +209,37 @@ class OppTest {
         Stream.<SerRunn>of(() -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<String> opp = Opp.of("").typeOfPeek((String str) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<String> opp = Opp.of("").typeOfPeek(Object.class, (Object str) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<int[]> opp = Opp.of(new int[]{1, 2}).typeOfPeek((int[] array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<List<Integer>> opp = Opp.of(Arrays.asList(1, 2, 3, 4)).typeOfPeek((List<Integer> array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<List<Integer>> opp = Opp.of(Arrays.asList(1, 2, 3)).typeOfPeek(List.class, (array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }).forEach(SerRunn::run);
     }
@@ -259,7 +259,7 @@ class OppTest {
                 isExecute.set(true);
                 return isExecute.get();
             }).typeOfMap(Object.class, i -> false).typeOfMap(new AbstractTypeReference<String>() {}, i -> true);
-            Assertions.assertTrue(opp.isNull());
+            Assertions.assertTrue(opp.isEmpty());
         }).forEach(SerRunn::run);
     }
 
@@ -267,10 +267,10 @@ class OppTest {
     void testTypeOfFilter() {
         Stream.<SerRunn>of(() -> {
             Opp<String> opp = Opp.of("").typeOfFilter((String str) -> str.trim().isEmpty());
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
         }, () -> {
             Opp<String> opp = Opp.of("").typeOfFilter((String str) -> !str.trim().isEmpty());
-            Assertions.assertTrue(opp.isNull());
+            Assertions.assertTrue(opp.isEmpty());
         }).forEach(SerRunn::run);
     }
 

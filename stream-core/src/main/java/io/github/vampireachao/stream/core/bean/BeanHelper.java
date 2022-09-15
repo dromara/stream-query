@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.core.bean;
 
-import io.github.vampireachao.stream.core.optional.StrOp;
+
+import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.Objects;
 
@@ -56,7 +57,7 @@ public class BeanHelper {
      * @return a boolean
      */
     public static boolean isGetter(String methodName) {
-        return StrOp.of(methodName).is(s -> s.startsWith(GETTER_PREFIX) || s.startsWith(GETTER_BOOLEAN_PREFIX));
+        return Opp.ofStr(methodName).is(s -> s.startsWith(GETTER_PREFIX) || s.startsWith(GETTER_BOOLEAN_PREFIX));
     }
 
     /**
@@ -66,7 +67,7 @@ public class BeanHelper {
      * @return a boolean
      */
     public static boolean isGetterBoolean(String methodName) {
-        return StrOp.of(methodName).is(s -> s.startsWith(GETTER_BOOLEAN_PREFIX));
+        return Opp.ofStr(methodName).is(s -> s.startsWith(GETTER_BOOLEAN_PREFIX));
     }
 
     /**
@@ -76,7 +77,7 @@ public class BeanHelper {
      * @return a boolean
      */
     public static boolean isSetter(String methodName) {
-        return StrOp.of(methodName).is(s -> s.startsWith(SETTER_PREFIX));
+        return Opp.ofStr(methodName).is(s -> s.startsWith(SETTER_PREFIX));
     }
 
 }

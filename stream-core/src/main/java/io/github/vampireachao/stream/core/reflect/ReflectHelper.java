@@ -19,7 +19,7 @@ package io.github.vampireachao.stream.core.reflect;
 
 
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
-import io.github.vampireachao.stream.core.optional.ThrowOp;
+import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.*;
@@ -491,6 +491,6 @@ public class ReflectHelper {
         Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> System.out.println("field " +
                 "" + fieldName + ": " + getFieldValue(obj, fieldName)));
         System.out.println("no arg methods: ");
-        Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName -> System.out.println("method " + methodName + ": " + ThrowOp.of(() -> getMethod(obj.getClass(), methodName).invoke(obj))));
+        Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName -> System.out.println("method " + methodName + ": " + Opp.ofTry(() -> getMethod(obj.getClass(), methodName).invoke(obj))));
     }
 }
