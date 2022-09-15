@@ -2,7 +2,7 @@ package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.optional.StrOp;
 
 import java.util.*;
@@ -241,7 +241,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @return 流
      */
     public static <T> Steam<T> of(Iterable<T> iterable, boolean parallel) {
-        return Op.of(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
+        return Sf.of(iterable).map(Iterable::spliterator).map(spliterator -> StreamSupport.stream(spliterator, parallel)).map(Steam::new).orElseGet(Steam::empty);
     }
 
     /**
@@ -279,7 +279,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public <R> Steam<T> filter(Function<? super T, ? extends R> mapper, R value) {
         Objects.requireNonNull(mapper);
-        return filter(e -> Objects.equals(Op.of(e).map(mapper).get(), value));
+        return filter(e -> Objects.equals(Sf.of(e).map(mapper).get(), value));
     }
 
 
@@ -401,7 +401,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public <R> Steam<R> flat(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         Objects.requireNonNull(mapper);
-        return flatMap(w -> Op.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
+        return flatMap(w -> Sf.of(w).map(mapper).map(Steam::of).orElseGet(Steam::empty));
     }
 
     /**
@@ -856,7 +856,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
                                                     BiConsumer<T, List<T>> childrenSetter,
                                                     Predicate<T> parentPredicate) {
         List<T> list = toList();
-        List<T> parents = Steam.of(list).filter(e -> Op.of(e).is(parentPredicate)).toList();
+        List<T> parents = Steam.of(list).filter(e -> Sf.of(e).is(parentPredicate)).toList();
         return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, Steam.of(list).group(pIdGetter), parents);
     }
 

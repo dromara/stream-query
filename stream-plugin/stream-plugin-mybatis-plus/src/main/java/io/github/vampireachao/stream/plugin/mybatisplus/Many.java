@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
@@ -80,7 +80,7 @@ public class Many {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <$ENTITY, $KEY extends Serializable, $VALUE> List<$VALUE> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel).nonNull().peekIdx(SerBiCons.multi(peeks)).map(Op.of(valueFunction).orElse(i -> ($VALUE) i)).toList()).orElseGet(ArrayList::new);
+        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel).nonNull().peekIdx(SerBiCons.multi(peeks)).map(Sf.of(valueFunction).orElse(i -> ($VALUE) i)).toList()).orElseGet(ArrayList::new);
     }
 
     // dataList key
@@ -137,7 +137,7 @@ public class Many {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <$ENTITY, $KEY extends Serializable, $VALUE> List<$VALUE> query(SerUnOp<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean parallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return Database.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel).nonNull().peekIdx(SerBiCons.multi(peeks)).map(Op.of(valueFunction).orElse(i -> ($VALUE) i)).toList()).orElseGet(ArrayList::new);
+        return Database.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> Steam.of(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), parallel).nonNull().peekIdx(SerBiCons.multi(peeks)).map(Sf.of(valueFunction).orElse(i -> ($VALUE) i)).toList()).orElseGet(ArrayList::new);
     }
 
 

@@ -2,7 +2,7 @@ package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.bean.BeanHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
@@ -94,7 +94,7 @@ public class LambdaHelper {
      * @return a {@link java.lang.String} object
      */
     public static <T> String getPropertyName(SerFunc<T, ?> func) {
-        return Op.of(func).map(LambdaHelper::resolve).map(LambdaExecutable::getName).map(BeanHelper::getPropertyName).get();
+        return Sf.of(func).map(LambdaHelper::resolve).map(LambdaExecutable::getName).map(BeanHelper::getPropertyName).get();
     }
 
 }

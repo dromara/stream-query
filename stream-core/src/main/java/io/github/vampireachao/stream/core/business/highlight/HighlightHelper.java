@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.core.business.highlight;
 
 import io.github.vampireachao.stream.core.optional.CollOp;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.optional.StrOp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
@@ -65,7 +65,7 @@ public class HighlightHelper {
                 linkedList.add(new FoundWord(partOne, lastIdx));
             }
             // 获取本次需要高亮的词汇
-            word = Op.of(word).orElseGet(fondWord::getWord);
+            word = Sf.of(word).orElseGet(fondWord::getWord);
             // 历史下标往前推进
             lastIdx += word.length();
             // 执行高亮操作

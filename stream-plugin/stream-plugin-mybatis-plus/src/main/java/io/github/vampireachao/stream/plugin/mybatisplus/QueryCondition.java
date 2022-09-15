@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.github.vampireachao.stream.core.optional.CollOp;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.optional.StrOp;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
      * @param entity a T object
      */
     public QueryCondition(T entity) {
-        super(Op.of(entity).orElseThrow(() -> new IllegalArgumentException("entity can not be null")));
+        super(Sf.of(entity).orElseThrow(() -> new IllegalArgumentException("entity can not be null")));
     }
 
     /**
@@ -35,7 +35,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
      * @param entityClass a {@link java.lang.Class} object
      */
     public QueryCondition(Class<T> entityClass) {
-        super(Op.of(entityClass).orElseThrow(() -> new IllegalArgumentException("entityClass can not be null")));
+        super(Sf.of(entityClass).orElseThrow(() -> new IllegalArgumentException("entityClass can not be null")));
     }
 
     /**
@@ -132,7 +132,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.QueryCondition} object
      */
     public <R extends Comparable<R>> QueryCondition<T> activeEq(SFunction<T, R> column, R data) {
-        Op.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
+        Sf.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
 

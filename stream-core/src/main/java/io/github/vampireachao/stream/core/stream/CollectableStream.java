@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -221,7 +221,7 @@ public interface CollectableStream<T> extends Stream<T> {
      */
     default <R> Map<T, R> toZip(Iterable<R> other) {
         // value对象迭代器
-        final Iterator<R> iterator = Op.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
+        final Iterator<R> iterator = Sf.of(other).map(Iterable::iterator).orElseGet(Collections::emptyIterator);
         if (isParallel()) {
             List<T> keyList = toList();
             final Map<T, R> map = new HashMap<>(keyList.size());

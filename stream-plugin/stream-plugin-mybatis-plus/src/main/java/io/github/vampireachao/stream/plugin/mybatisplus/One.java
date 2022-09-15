@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
 import java.util.function.UnaryOperator;
@@ -43,7 +43,7 @@ public class One {
 
     @SuppressWarnings("unchecked")
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
-        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectOne(wrapper))).map(Op.of(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
+        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectOne(wrapper))).map(Sf.of(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
     }
 
 

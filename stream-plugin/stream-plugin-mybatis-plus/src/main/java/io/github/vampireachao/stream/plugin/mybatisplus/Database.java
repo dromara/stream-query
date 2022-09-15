@@ -17,8 +17,7 @@ import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
-import io.github.vampireachao.stream.core.optional.CollOp;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
@@ -67,12 +66,12 @@ public class Database {
         return wrapper;
     }
 
-    public static <T, E extends Serializable> Op<LambdaQueryWrapper<T>> lambdaQuery(E data, SFunction<T, E> condition) {
-        return Op.of(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).eq(condition, value)).filter(Database::isActive);
+    public static <T, E extends Serializable> Sf<LambdaQueryWrapper<T>> lambdaQuery(E data, SFunction<T, E> condition) {
+        return Sf.of(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).eq(condition, value)).filter(Database::isActive);
     }
 
-    public static <T, E extends Serializable> Op<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
-        return Op.of(dataList).map(value ->  Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
+    public static <T, E extends Serializable> Sf<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
+        return Sf.of(dataList).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
     }
 
     @SafeVarargs

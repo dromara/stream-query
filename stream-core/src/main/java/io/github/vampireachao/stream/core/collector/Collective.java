@@ -3,7 +3,7 @@ package io.github.vampireachao.stream.core.collector;
 import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
-import io.github.vampireachao.stream.core.optional.Op;
+import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.EntrySteam;
 import io.github.vampireachao.stream.core.stream.Steam;
 
@@ -209,7 +209,7 @@ public class Collective {
                                Collector<? super U, A, R> downstream) {
         BiConsumer<A, ? super U> downstreamAccumulator = downstream.accumulator();
         return new Collective.CollectorImpl<>(downstream.supplier(),
-                (r, t) -> downstreamAccumulator.accept(r, Op.of(t).map(mapper).get()),
+                (r, t) -> downstreamAccumulator.accept(r, Opp.of(t).map(mapper).get()),
                 downstream.combiner(), downstream.finisher(),
                 downstream.characteristics());
     }
@@ -230,7 +230,7 @@ public class Collective {
                                    Collector<? super U, A, R> downstream) {
         BiConsumer<A, ? super U> downstreamAccumulator = downstream.accumulator();
         return new Collective.CollectorImpl<>(downstream.supplier(),
-                (r, t) -> Op.of(t).map(mapper).ifPresent(s -> s.sequential()
+                (r, t) -> Opp.of(t).map(mapper).ifPresent(s -> s.sequential()
                         .forEach(v -> downstreamAccumulator.accept(r, v))),
                 downstream.combiner(), downstream.finisher(),
                 downstream.characteristics());
@@ -250,7 +250,7 @@ public class Collective {
     public static <T, U, A, R>
     Collector<T, ?, R> flatMappingIter(Function<? super T, Iterable<? extends U>> mapper,
                                        Collector<? super U, A, R> downstream) {
-        return flatMapping(t -> Op.of(t).map(mapper).map(Steam::of).get(), downstream);
+        return flatMapping(t -> Opp.of(t).map(mapper).map(Steam::of).get(), downstream);
     }
 
     /**
@@ -821,9 +821,9 @@ public class Collective {
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
         BiConsumer<Map<K, A>, T> accumulator = (m, t) -> {
             // stream-core changed this line
-            K key = Op.of(t).map(classifier).orElse(null);
+            K key = Opp.of(t).map(classifier).orElse(null);
             A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());
-            Op.of(t).ifPresent(o -> downstreamAccumulator.accept(container, o));
+            Opp.of(t).ifPresent(o -> downstreamAccumulator.accept(container, o));
         };
         BinaryOperator<Map<K, A>> merger = Collective.mapMerger(downstream.combiner());
         @SuppressWarnings("unchecked")
@@ -1205,10 +1205,10 @@ public class Collective {
                              Supplier<M> mapSupplier) {
         BiConsumer<M, T> accumulator
                 = (map, element) -> {
-            Op<? extends K> keyOp = Op.of(element).map(keyMapper);
-            U value = Op.of(element).map(valueMapper).map(newValue -> keyOp.map(map::get)
+            Opp<? extends K> keyOpp = Opp.of(element).map(keyMapper);
+            U value = Opp.of(element).map(valueMapper).map(newValue -> keyOpp.map(map::get)
                     .map(oldValue -> mergeFunction.apply(oldValue, newValue)).orElse(newValue)).get();
-            map.put(keyOp.get(), value);
+            map.put(keyOpp.get(), value);
         };
         return new Collective.CollectorImpl<>(mapSupplier, accumulator, mapMerger(mergeFunction), CH_ID);
     }
