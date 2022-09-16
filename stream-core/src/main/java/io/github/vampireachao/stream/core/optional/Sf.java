@@ -3,7 +3,9 @@ package io.github.vampireachao.stream.core.optional;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
+import io.github.vampireachao.stream.core.stream.Steam;
 
+import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -26,6 +28,22 @@ public class Sf<T> {
 
     public static <T> Sf<T> of(T value) {
         return new Sf<>(value);
+    }
+
+    public static <E, T extends Collection<E>> Sf<T> ofColl(T value) {
+        return of(value).$takeIf(c -> !c.isEmpty());
+    }
+
+    public static <E, T extends Collection<E>> Sf<T> $ofColl(T value) {
+        return ofColl(value).$takeIf(c -> Steam.of(c).anyMatch(Objects::nonNull));
+    }
+
+    public static <T extends CharSequence> Sf<T> ofStr(T value) {
+        return of(value).$takeIf(c -> !c.toString().trim().isEmpty());
+    }
+
+    public static <T extends CharSequence> Sf<T> $ofStr(T value) {
+        return ofStr(value).$takeIf(c -> Steam.split(c, "").anyMatch(e -> !"".equals(e)));
     }
 
     private <R> Sf<R> empty() {

@@ -44,7 +44,6 @@ import java.util.stream.StreamSupport;
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @see java.util.stream.Stream
-
  */
 public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
         implements Stream<T>, Iterable<T>, CollectableStream<T> {
@@ -261,7 +260,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @param regex 正则
      * @return 拆分后元素组成的流
      */
-    public static Steam<String> split(String str, String regex) {
+    public static <T extends CharSequence> Steam<String> split(T str, String regex) {
         return Opp.of(str).map(CharSequence::toString).map(s -> s.split(regex)).map(Steam::of).orElseGet(Steam::empty);
     }
 
@@ -310,7 +309,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 返回与指定函数将元素作为参数执行的结果组成的流
      * 这是一个无状态中间操作
      */
@@ -355,7 +354,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
      * 例如，将users里所有user的id和parentId组合在一起，形成一个新的流:
@@ -425,8 +424,8 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * 这是一个有状态中间操作
      *
      * @param keyExtractor 去重依据
+     * @param <F>          a F class
      * @return 一个具有去重特征的流
-     * @param <F> a F class
      */
     public <F> Steam<T> distinct(Function<? super T, F> keyExtractor) {
         Objects.requireNonNull(keyExtractor);
@@ -660,7 +659,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 构建一个{@link Steam}实例
      */
     @Override
@@ -670,7 +669,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * hashcode
      */
     @Override
@@ -680,7 +679,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * equals
      */
     @Override
@@ -693,7 +692,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * toString
      */
     @Override
