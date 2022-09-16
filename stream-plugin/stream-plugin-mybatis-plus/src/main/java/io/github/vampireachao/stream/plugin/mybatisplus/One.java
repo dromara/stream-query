@@ -62,7 +62,7 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
             return (One<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
         }
         this.valueFunction = (SFunction<$ENTITY, $VALUE>) valueFunction;
-        Database.select(wrapper, keyFunction, valueFunction);
+        Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
         return (One<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
     }
 
