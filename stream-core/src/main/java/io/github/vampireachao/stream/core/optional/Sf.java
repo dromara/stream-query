@@ -2,9 +2,9 @@ package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
-import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -69,14 +69,14 @@ public class Sf<T> {
         return also(mapper);
     }
 
-    public Sf<T> takeIf(SerPred<T> mapper) {
-        if (!mapper.test(value)) {
+    public Sf<T> takeIf(SerFunc<T, Boolean> mapper) {
+        if (!Boolean.TRUE.equals(mapper.apply(value))) {
             return empty();
         }
         return this;
     }
 
-    public Sf<T> $takeIf(SerPred<T> mapper) {
+    public Sf<T> $takeIf(SerFunc<T, Boolean> mapper) {
         if (isEmpty()) {
             return this;
         }
@@ -84,23 +84,62 @@ public class Sf<T> {
     }
 
 
-    public Sf<T> takeUnless(SerPred<T> mapper) {
-        return takeIf(mapper.negate());
+    public Sf<T> takeUnless(SerFunc<T, Boolean> mapper) {
+        return takeIf(v -> Boolean.TRUE.equals(mapper.apply(v)));
     }
 
-    public Sf<T> $takeUnless(SerPred<T> mapper) {
+    public Sf<T> $takeUnless(SerFunc<T, Boolean> mapper) {
         if (isEmpty()) {
             return this;
         }
         return takeUnless(mapper);
     }
 
-    public Sf<T> $_(SerSupp<Sf<T>> mapper) {
+    public boolean is(SerFunc<T, Boolean> mapper) {
+        return isPresent() && Boolean.TRUE.equals(mapper.apply(value));
+    }
+
+    public <X extends Throwable> Sf<T> require(SerSupp<X> mapper) throws X {
+        if (isPresent()) {
+            return this;
+        }
+        throw mapper.get();
+    }
+
+    public Sf<T> require() {
+        return require(NoSuchElementException::new);
+    }
+
+    public Sf<T> or(SerSupp<Sf<T>> mapper) {
         if (isPresent()) {
             return this;
         }
         return mapper.get();
     }
 
+    public T orElse(T other) {
+        if (isPresent()) {
+            return value;
+        }
+        return other;
+    }
+
+    public T orGet(SerSupp<T> mapper) {
+        if (isPresent()) {
+            return value;
+        }
+        return mapper.get();
+    }
+
+    public <X extends Throwable> T orThrow(SerSupp<X> mapper) throws X {
+        if (isPresent()) {
+            return value;
+        }
+        throw mapper.get();
+    }
+
+    public T orThrow() {
+        return orThrow(NoSuchElementException::new);
+    }
 
 }
