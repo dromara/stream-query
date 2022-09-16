@@ -17,9 +17,18 @@ class OneTest {
 
     @Test
     void testQuery() {
-        Assertions.assertNotNull(One.query(1L, UserInfo::getId));
+        /*Assertions.assertNotNull(One.query(1L, UserInfo::getId));
         Assertions.assertNotNull(One.query(1L, UserInfo::getId, UserInfo::getName));
-        Assertions.assertNotNull(One.query(w -> w.le(UserInfo::getAge, 20), 1L, UserInfo::getId, UserInfo::getName));
+        Assertions.assertNotNull(One.query(w -> w.le(UserInfo::getAge, 20), 1L, UserInfo::getId, UserInfo::getName));*/
+
+        UserInfo userInfo = One.of(UserInfo::getId).eq(1L).query();
+        String name = One.of(UserInfo::getId).eq(1L).value(UserInfo::getName).query();
+        String leAgeName = One.of(UserInfo::getId).eq(1L).value(UserInfo::getName)
+                .condition(w -> w.le(UserInfo::getAge, 20))
+                .query();
+        Assertions.assertNotNull(userInfo);
+        Assertions.assertNotNull(name);
+        Assertions.assertNotNull(leAgeName);
     }
 
 }

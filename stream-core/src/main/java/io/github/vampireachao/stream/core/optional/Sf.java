@@ -27,6 +27,9 @@ public class Sf<T> {
     }
 
     public static <T> Sf<T> of(T value) {
+        if (value == null) {
+            return empty();
+        }
         return new Sf<>(value);
     }
 
@@ -46,7 +49,7 @@ public class Sf<T> {
         return ofStr(value).$takeIf(c -> Steam.split(c, "").anyMatch(e -> !"".equals(e)));
     }
 
-    private <R> Sf<R> empty() {
+    public static <R> Sf<R> empty() {
         @SuppressWarnings("unchecked")
         Sf<R> empty = (Sf<R>) EMPTY;
         return empty;

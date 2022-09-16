@@ -53,6 +53,10 @@ public class Database {
         return (Objects.nonNull(wrapper)) && (!PluginConst.WRAPPER_NOT_ACTIVE.equals(wrapper.getSqlComment()));
     }
 
+    public static boolean isNotActive(AbstractWrapper<?, ?, ?> wrapper) {
+        return !isActive(wrapper);
+    }
+
     public static <W extends AbstractWrapper<T, ?, ?>, T, U extends R, R> R activeOrElse(W wrapper, Function<? super W, U> mapper, U other) {
         return isActive(wrapper) ? mapper.apply(wrapper) : other;
     }
@@ -716,4 +720,6 @@ public class Database {
     private static <T> TableInfo getTableInfo(Class<T> entityClass) {
         return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
     }
+
+
 }
