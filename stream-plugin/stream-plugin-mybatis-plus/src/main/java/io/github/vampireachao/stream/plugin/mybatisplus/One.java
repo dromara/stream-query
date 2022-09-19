@@ -91,9 +91,5 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
         return Sf.of(Database.getOne(wrapper)).$let(valueFunction::apply).get();
     }
 
-    public static <$ENTITY> $ENTITY query(UnaryOperator<QueryCondition<$ENTITY>> queryOperator) {
-        return Database.getOne(queryOperator.apply(QueryCondition.query(null)));
-    }
-
 
 }
