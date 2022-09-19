@@ -29,6 +29,9 @@ class OneTest {
         Assertions.assertNotNull(userInfo);
         Assertions.assertNotNull(name);
         Assertions.assertNotNull(leAgeName);
+
+        UserInfo info = One.query(w -> w.eq(UserInfo::getId, 1L));
+        Assertions.assertNotNull(info);
     }
 
 }
