@@ -19,9 +19,7 @@ import java.util.function.UnaryOperator;
  * @since 2022/6/18 14:47
  */
 @SuppressWarnings("unchecked")
-public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<$ENTITY, $KEY> {
-
-    protected SFunction<$ENTITY, $VALUE> valueFunction;
+public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<$ENTITY, $KEY, $VALUE> {
 
     public One(SFunction<$ENTITY, $KEY> keyFunction) {
         super(keyFunction);

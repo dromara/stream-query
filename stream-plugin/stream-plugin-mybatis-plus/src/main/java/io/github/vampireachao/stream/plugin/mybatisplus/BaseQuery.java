@@ -10,9 +10,10 @@ import java.util.Objects;
  * @author VampireAchao
  * @since 2022/9/16 16:30
  */
-public abstract class BaseQuery<$ENTITY, $KEY extends Serializable & Comparable<$KEY>> {
+public abstract class BaseQuery<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> {
 
     protected final SFunction<$ENTITY, $KEY> keyFunction;
+    protected SFunction<$ENTITY, $VALUE> valueFunction;
     protected LambdaQueryWrapper<$ENTITY> wrapper;
 
     protected BaseQuery(SFunction<$ENTITY, $KEY> keyFunction) {
