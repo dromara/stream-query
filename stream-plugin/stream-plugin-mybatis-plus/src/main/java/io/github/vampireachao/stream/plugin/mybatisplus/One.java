@@ -1,15 +1,11 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
@@ -20,7 +16,7 @@ import java.util.function.UnaryOperator;
  * @since 2022/6/18 14:47
  */
 @SuppressWarnings("unchecked")
-public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<$ENTITY, $KEY, $VALUE> {
+public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<One<$ENTITY, $KEY, $ENTITY>, $ENTITY, $KEY, $VALUE> {
 
     protected One(SFunction<$ENTITY, $KEY> keyFunction) {
         super(keyFunction);
@@ -42,24 +38,6 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
     @SuppressWarnings("unchecked")
     public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
         return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(Database::getOne).map(Opp.of(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
-    }
-
-    public One<$ENTITY, $KEY, $ENTITY> eq($KEY data) {
-        LambdaQueryWrapper<$ENTITY> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
-        if (Database.isNotActive(queryWrapper)) {
-            return (One<$ENTITY, $KEY, $ENTITY>) this;
-        }
-        wrapper = Sf.of(data).$let(value -> queryWrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(queryWrapper));
-        return (One<$ENTITY, $KEY, $ENTITY>) this;
-    }
-
-    public One<$ENTITY, $KEY, $ENTITY> in(Collection<$KEY> dataList) {
-        LambdaQueryWrapper<$ENTITY> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
-        if (Database.isNotActive(queryWrapper)) {
-            return (One<$ENTITY, $KEY, $ENTITY>) this;
-        }
-        wrapper = Sf.$ofColl(dataList).$let(values -> queryWrapper.in(keyFunction, values)).orGet(() -> Database.notActive(queryWrapper));
-        return (One<$ENTITY, $KEY, $ENTITY>) this;
     }
 
     public <$ACTUAL_VALUE> One<$ENTITY, $KEY, $ACTUAL_VALUE> value(SFunction<$ENTITY, $ACTUAL_VALUE> valueFunction) {

@@ -20,7 +20,7 @@ import java.util.List;
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/6/18 21:21
  */
-public class Many<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<$ENTITY, $KEY, $VALUE> {
+public class Many<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<Many<$ENTITY, $KEY, $ENTITY>, $ENTITY, $KEY, $VALUE> {
 
     protected Many(SFunction<$ENTITY, $KEY> keyFunction) {
         super(keyFunction);
