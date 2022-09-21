@@ -9,6 +9,7 @@ import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
@@ -21,7 +22,7 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("unchecked")
 public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<$ENTITY, $KEY, $VALUE> {
 
-    public One(SFunction<$ENTITY, $KEY> keyFunction) {
+    protected One(SFunction<$ENTITY, $KEY> keyFunction) {
         super(keyFunction);
     }
 
@@ -52,8 +53,14 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
         return (One<$ENTITY, $KEY, $ENTITY>) this;
     }
 
-
-    // data key
+    public One<$ENTITY, $KEY, $ENTITY> in(Collection<$KEY> dataList) {
+        LambdaQueryWrapper<$ENTITY> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
+        if (Database.isNotActive(queryWrapper)) {
+            return (One<$ENTITY, $KEY, $ENTITY>) this;
+        }
+        wrapper = Sf.$ofColl(dataList).$let(values -> queryWrapper.in(keyFunction, values)).orGet(() -> Database.notActive(queryWrapper));
+        return (One<$ENTITY, $KEY, $ENTITY>) this;
+    }
 
     public <$ACTUAL_VALUE> One<$ENTITY, $KEY, $ACTUAL_VALUE> value(SFunction<$ENTITY, $ACTUAL_VALUE> valueFunction) {
         if (Database.isNotActive(wrapper)) {
@@ -64,20 +71,14 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
         return (One<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
     }
 
-    // data key value
-
     public One<$ENTITY, $KEY, $VALUE> condition(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator) {
         this.wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
         return this;
     }
 
-    // wrapper data key
-
     public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> $ENTITY query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
         return query(queryOperator, data, keyFunction, null);
     }
-
-    // wrapper data key value
 
     public $VALUE query() {
         if (Database.isNotActive(wrapper)) {

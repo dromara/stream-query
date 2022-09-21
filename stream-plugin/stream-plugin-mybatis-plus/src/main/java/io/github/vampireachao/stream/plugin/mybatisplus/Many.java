@@ -20,11 +20,17 @@ import java.util.List;
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/6/18 21:21
  */
-public class Many {
+public class Many<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<$ENTITY, $KEY, $VALUE> {
 
-    private Many() {
-        /* Do not new me! */
+    protected Many(SFunction<$ENTITY, $KEY> keyFunction) {
+        super(keyFunction);
     }
+
+    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE>
+    Many<$ENTITY, $KEY, $VALUE> of(SFunction<$ENTITY, $KEY> keyFunction) {
+        return new Many<>(keyFunction);
+    }
+
 
     // data key
 
