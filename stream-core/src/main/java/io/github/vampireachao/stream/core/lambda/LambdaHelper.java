@@ -21,7 +21,6 @@ import java.util.WeakHashMap;
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/29 9:19
-
  */
 public class LambdaHelper {
 
@@ -48,7 +47,7 @@ public class LambdaHelper {
         try {
             final Method writeReplace = ReflectHelper.accessible(clazz.getDeclaredMethod("writeReplace"));
             final Object maybeSerLambda = writeReplace.invoke(lambda);
-            if (Objects.nonNull(maybeSerLambda) && maybeSerLambda instanceof SerializedLambda) {
+            if (maybeSerLambda instanceof SerializedLambda) {
                 return (SerializedLambda) maybeSerLambda;
             }
             throw new IllegalStateException("writeReplace result value is not java.lang.invoke.SerializedLambda");
