@@ -270,7 +270,6 @@ public class LambdaExecutable {
             StackTraceElement stackTraceElement = new RuntimeException().getStackTrace()[7];
             lambdaExecutable.setClazz(ReflectHelper.forClassName(stackTraceElement.getClassName()));
             lambdaExecutable.setName("lambda$" + stackTraceElement.getMethodName() + "$" + Integer.toHexString(methodHandle.hashCode()) + "$1");
-
         }
         return lambdaExecutable;
     }
