@@ -20,7 +20,6 @@ import java.util.stream.Stream;
  *
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/29 8:55
-
  */
 public class Collective {
 
@@ -232,6 +231,26 @@ public class Collective {
         return new Collective.CollectorImpl<>(downstream.supplier(),
                 (r, t) -> Opp.of(t).map(mapper).ifPresent(s -> s.sequential()
                         .forEach(v -> downstreamAccumulator.accept(r, v))),
+                downstream.combiner(), downstream.finisher(),
+                downstream.characteristics());
+    }
+
+    /**
+     * <p>filtering.</p>
+     *
+     * @param predicate  a {@link java.util.function.Predicate} object
+     * @param downstream a {@link java.util.stream.Collector} object
+     * @param <T>        a T class
+     * @param <A>        a A class
+     * @param <R>        a R class
+     * @return a {@link java.util.stream.Collector} object
+     */
+    public static <T, A, R>
+    Collector<T, ?, R> filtering(Predicate<? super T> predicate,
+                                 Collector<? super T, A, R> downstream) {
+        BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
+        return new Collective.CollectorImpl<>(downstream.supplier(),
+                (r, t) -> Opp.of(t).filter(predicate).ifPresent(e -> downstreamAccumulator.accept(r, e)),
                 downstream.combiner(), downstream.finisher(),
                 downstream.characteristics());
     }
