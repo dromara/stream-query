@@ -2,7 +2,6 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
@@ -27,19 +26,6 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
         return new One<>(keyFunction);
     }
 
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> $ENTITY query($KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
-        return query(UnaryOperator.identity(), data, keyFunction);
-    }
-
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
-        return query(UnaryOperator.identity(), data, keyFunction, valueFunction);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
-        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(Database::getOne).map(Opp.of(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
-    }
-
     public <$ACTUAL_VALUE> One<$ENTITY, $KEY, $ACTUAL_VALUE> value(SFunction<$ENTITY, $ACTUAL_VALUE> valueFunction) {
         if (Database.isNotActive(wrapper)) {
             return (One<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
@@ -52,10 +38,6 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
     public One<$ENTITY, $KEY, $VALUE> condition(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator) {
         this.wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
         return this;
-    }
-
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> $ENTITY query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
-        return query(queryOperator, data, keyFunction, null);
     }
 
     public $VALUE query() {

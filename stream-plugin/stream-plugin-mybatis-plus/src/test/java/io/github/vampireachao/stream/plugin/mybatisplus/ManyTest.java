@@ -19,11 +19,6 @@ class ManyTest {
 
     @Test
     void testQuery() {
-        Assertions.assertFalse(Many.query(1L, UserInfo::getId).isEmpty());
-        Assertions.assertFalse(Many.query(1L, UserInfo::getId, UserInfo::getName).isEmpty());
-        Assertions.assertFalse(Many.query(w -> w.le(UserInfo::getAge, 20), 1L, UserInfo::getId, UserInfo::getName).isEmpty());
-
-
         List<UserInfo> userInfoList = Many.of(UserInfo::getId).eq(1L).query();
         List<String> nameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName).query();
         List<String> leAgeNameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName)
