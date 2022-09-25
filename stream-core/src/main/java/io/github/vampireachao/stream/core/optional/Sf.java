@@ -46,7 +46,7 @@ public class Sf<T> {
     }
 
     public static <T extends CharSequence> Sf<T> $ofStr(T value) {
-        return ofStr(value).$takeIf(c -> Steam.split(c.toString().trim(), "").anyMatch(e -> !"".equals(e)));
+        return ofStr(value).$takeIf(c -> Steam.split(c.toString(), "").anyMatch(e -> !"".equals(e)));
     }
 
     public static <R> Sf<R> empty() {
