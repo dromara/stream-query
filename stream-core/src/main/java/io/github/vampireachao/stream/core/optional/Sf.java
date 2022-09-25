@@ -42,11 +42,11 @@ public class Sf<T> {
     }
 
     public static <T extends CharSequence> Sf<T> ofStr(T value) {
-        return of(value).$takeIf(c -> !c.toString().trim().isEmpty());
+        return of(value).$takeIf(c -> !c.toString().isEmpty());
     }
 
     public static <T extends CharSequence> Sf<T> $ofStr(T value) {
-        return ofStr(value).$takeIf(c -> Steam.split(c, "").anyMatch(e -> !"".equals(e)));
+        return ofStr(value).$takeIf(c -> Steam.split(c.toString(), "").anyMatch(e -> !"".equals(e)));
     }
 
     public static <R> Sf<R> empty() {
@@ -106,7 +106,7 @@ public class Sf<T> {
 
 
     public Sf<T> takeUnless(SerFunc<T, Boolean> mapper) {
-        return takeIf(v -> Boolean.TRUE.equals(mapper.apply(v)));
+        return takeIf(v -> Boolean.FALSE.equals(mapper.apply(v)));
     }
 
     public Sf<T> $takeUnless(SerFunc<T, Boolean> mapper) {
