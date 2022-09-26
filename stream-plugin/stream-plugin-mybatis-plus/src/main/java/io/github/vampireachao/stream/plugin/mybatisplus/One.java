@@ -15,7 +15,7 @@ import java.util.function.UnaryOperator;
  * @since 2022/6/18 14:47
  */
 @SuppressWarnings("unchecked")
-public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQuery<One<$ENTITY, $KEY, $ENTITY>, $ENTITY, $KEY, $VALUE> {
+public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQueryHelper<One<$ENTITY, $KEY, $ENTITY>, $ENTITY, $KEY, $VALUE> {
 
     protected One(SFunction<$ENTITY, $KEY> keyFunction) {
         super(keyFunction);
