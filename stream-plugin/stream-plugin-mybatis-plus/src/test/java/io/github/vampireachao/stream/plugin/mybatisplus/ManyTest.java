@@ -20,13 +20,19 @@ class ManyTest {
     @Test
     void testQuery() {
         List<UserInfo> userInfoList = Many.of(UserInfo::getId).eq(1L).parallel().query();
-        List<String> nameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName).query();
+        List<String> nameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName).sequential().query();
         List<String> leAgeNameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName)
                 .condition(w -> w.le(UserInfo::getAge, 20))
                 .query();
         Assertions.assertFalse(userInfoList.isEmpty());
         Assertions.assertFalse(nameList.isEmpty());
         Assertions.assertFalse(leAgeNameList.isEmpty());
+    }
+
+    @Test
+    void noKeyTest() {
+        List<UserInfo> userInfoList = Many.of(UserInfo::getId).query();
+        Assertions.assertFalse(userInfoList.isEmpty());
     }
 
 

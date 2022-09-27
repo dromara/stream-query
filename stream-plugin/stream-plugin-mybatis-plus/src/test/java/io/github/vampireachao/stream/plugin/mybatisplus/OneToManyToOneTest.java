@@ -10,9 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * OneToManyToOneTest
@@ -33,11 +30,11 @@ class OneToManyToOneTest {
             List<RoleInfo> roleInfos = SimpleQuery.selectList(RoleInfo.class, Wrappers.lambdaQuery());
             Assertions.assertEquals(3, roleInfos.size());
 
-            Set<Long> userIds = userInfos.stream().map(UserInfo::getId).collect(Collectors.toSet());
+            /*Set<Long> userIds = Steam.of(userInfos).map(UserInfo::getId).toSet();
 
-            Map<Long, List<RoleInfo>> userIdRoleInfosMap = OneToManyToOne.query(userIds,
-                    UserRole::getUserId, UserRole::getRoleId, RoleInfo::getId);
-            Assertions.assertEquals(5, userIdRoleInfosMap.size());
+            Map<Long, List<RoleInfo>> userIdRoleInfosMap = OneToManyToOne.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId)
+                    .attachKey(RoleInfo::getId).attachValue(Function.identity()).attachPeek(SerCons.nothing()).query();
+            Assertions.assertEquals(5, userIdRoleInfosMap.size());*/
 
         });
     }

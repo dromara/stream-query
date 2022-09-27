@@ -78,7 +78,7 @@ public class Database {
         return Opp.of(dataList).filter(s -> !s.isEmpty()).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
     }
 
-    public static <T, K extends Serializable & Comparable<K>> LambdaQueryWrapper<T> lambdaQuery(SFunction<T, K> keyFunction) {
+    public static <T, K> LambdaQueryWrapper<T> lambdaQuery(SFunction<T, K> keyFunction) {
         return Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction)));
     }
 

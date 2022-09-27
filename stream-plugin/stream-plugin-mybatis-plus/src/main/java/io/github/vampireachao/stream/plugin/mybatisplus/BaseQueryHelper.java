@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Sf;
 
@@ -35,14 +36,12 @@ public abstract class BaseQueryHelper<
     }
 
     protected TR eq(K data) {
-        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Database.lambdaQuery(keyFunction));
-        wrapper = Sf.of(data).$let(value -> queryWrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(queryWrapper));
+        wrapper = Sf.of(data).$let(value -> wrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 
     protected TR in(Collection<K> dataList) {
-        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Database.lambdaQuery(keyFunction));
-        wrapper = Sf.$ofColl(dataList).$let(values -> queryWrapper.in(keyFunction, values)).orGet(() -> Database.notActive(queryWrapper));
+        wrapper = Sf.$ofColl(dataList).$let(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 
@@ -63,6 +62,11 @@ public abstract class BaseQueryHelper<
 
     protected VR sequential() {
         return parallel(false);
+    }
+
+    protected VR peek(SerCons<T> peek) {
+        this.peek = peek;
+        return (VR) this;
     }
 
     protected <R> void attachSingle(SFunction<T, R> valueFunction) {

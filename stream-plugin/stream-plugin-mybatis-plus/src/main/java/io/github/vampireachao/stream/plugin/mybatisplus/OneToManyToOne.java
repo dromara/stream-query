@@ -1,18 +1,5 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import io.github.vampireachao.stream.core.collector.Collective;
-import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.optional.Opp;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.UnaryOperator;
-import java.util.stream.StreamSupport;
-
-
 /**
  * 一对多对一
  *
@@ -21,8 +8,8 @@ import java.util.stream.StreamSupport;
  */
 public class OneToManyToOne {
 
-    private OneToManyToOne() {
-        /* Do not new me! */
+    /*private OneToManyToOne() {
+     *//* Do not new me! *//*
     }
 
     // mainDataList middleKey middleValue attachKey
@@ -464,5 +451,5 @@ public class OneToManyToOne {
 
     private static <$ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Function<Map<$MIDDLE_VALUE, $ATTACH>, Map<$MIDDLE_KEY, List<$ATTACH>>> convertMiddleToAttachFunction(boolean isParallel, Map<$MIDDLE_KEY, List<$MIDDLE_VALUE>> middleKeyValuesMap) {
         return keyAttachMap -> StreamSupport.stream(middleKeyValuesMap.entrySet().spliterator(), isParallel).collect(Collective.toMap(Map.Entry::getKey, middleKeyValuesEntry -> Opp.of(middleKeyValuesEntry.getValue()).filter(middleValues -> !middleValues.isEmpty()).map(middleValues -> StreamSupport.stream(middleValues.spliterator(), isParallel).map(keyAttachMap::get).filter(Objects::nonNull).collect(Collective.toList())).orElseGet(ArrayList::new)));
-    }
+    }*/
 }
