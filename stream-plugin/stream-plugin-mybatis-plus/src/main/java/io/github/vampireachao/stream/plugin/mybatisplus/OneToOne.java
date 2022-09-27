@@ -38,7 +38,7 @@ public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends Base
 
     public <R extends Map<K, V>> R query(IntFunction<R> mapFactory) {
         List<T> list = Database.list(wrapper);
-        return Steam.of(list).parallel(isParallel).peek(peek).toMap(keyFunction, valueOrIdentity(), SerBiOp.justAfter(), () -> mapFactory.apply(list.size()));
+        return Steam.of(list).parallel(isParallel).peek(peekConsumer).toMap(keyFunction, valueOrIdentity(), SerBiOp.justAfter(), () -> mapFactory.apply(list.size()));
     }
 
 }

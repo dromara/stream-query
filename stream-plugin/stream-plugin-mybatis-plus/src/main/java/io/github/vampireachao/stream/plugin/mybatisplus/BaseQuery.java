@@ -12,11 +12,11 @@ import java.util.Objects;
  */
 public abstract class BaseQuery<T, K, V> {
 
-    protected final SFunction<T, K> keyFunction;
-    protected boolean isParallel = false;
-    protected LambdaQueryWrapper<T> wrapper;
-    protected SFunction<T, V> valueFunction;
-    protected SerCons<T> peek = SerCons.nothing();
+    final SFunction<T, K> keyFunction;
+    SFunction<T, V> valueFunction;
+    LambdaQueryWrapper<T> wrapper;
+    boolean isParallel = false;
+    SerCons<T> peekConsumer = SerCons.nothing();
 
     protected BaseQuery(SFunction<T, K> keyFunction) {
         this.keyFunction = Objects.requireNonNull(keyFunction);

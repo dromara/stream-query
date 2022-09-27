@@ -65,7 +65,7 @@ public abstract class BaseQueryHelper<
     }
 
     protected VR peek(SerCons<T> peek) {
-        this.peek = peek;
+        this.peekConsumer = peek;
         return (VR) this;
     }
 

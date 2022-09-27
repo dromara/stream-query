@@ -1,12 +1,37 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+
+import java.io.Serializable;
+
 /**
  * 一对多对一
  *
  * @author VampireAchao ZVerify
  * @since 2022/5/24 14:15
  */
-public class OneToManyToOne {
+@SuppressWarnings("unchecked")
+public class OneToManyToOne<T, U, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToManyToOne<T, U, K, T>, OneToManyToOne<T, U, K, V>, T, K, V> {
+
+    public OneToManyToOne(SFunction<T, K> keyFunction) {
+        super(keyFunction);
+    }
+
+    public static <T, U, K extends Serializable & Comparable<K>> OneToManyToOne<T, U, K, T> of(SFunction<T, K> keyFunction) {
+        return new OneToManyToOne<>(keyFunction);
+    }
+
+    public <R> OneToManyToOne<T, U, K, R> value(SFunction<T, R> valueFunction) {
+        attachDouble(valueFunction);
+        return (OneToManyToOne<T, U, K, R>) this;
+    }
+
+    public OneToManyToOne<T, U, K, V> attachKey(SFunction<U, V> valueFunction) {
+        return this;
+    }
+
+
+
 
     /*private OneToManyToOne() {
      *//* Do not new me! *//*

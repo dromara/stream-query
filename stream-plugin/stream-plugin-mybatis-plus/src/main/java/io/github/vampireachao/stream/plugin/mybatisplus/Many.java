@@ -30,7 +30,7 @@ public class Many<T, K extends Serializable & Comparable<K>, V> extends BaseQuer
     }
 
     public <R> R query(SerFunc<Steam<V>, R> mapper) {
-        return mapper.apply(Steam.of(Database.list(wrapper)).peek(peek).parallel(isParallel).nonNull().map(valueOrIdentity()));
+        return mapper.apply(Steam.of(Database.list(wrapper)).peek(peekConsumer).parallel(isParallel).nonNull().map(valueOrIdentity()));
     }
 
     public List<V> query() {

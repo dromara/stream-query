@@ -40,7 +40,7 @@ public class OneToMany<T, K extends Serializable & Comparable<K>, V> extends Bas
 
     public <A, R, M extends Map<K, R>> M query(IntFunction<M> mapFactory, Collector<? super V, A, R> downstream) {
         List<T> list = Database.list(wrapper);
-        return Steam.of(list).parallel(isParallel).peek(peek).group(keyFunction, () -> mapFactory.apply(list.size()), Collective.mapping(valueOrIdentity(), downstream));
+        return Steam.of(list).parallel(isParallel).peek(peekConsumer).group(keyFunction, () -> mapFactory.apply(list.size()), Collective.mapping(valueOrIdentity(), downstream));
     }
 
 }
