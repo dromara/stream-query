@@ -38,15 +38,14 @@ public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends Base
         return (OneToOne<T, K, R>) this;
     }
 
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), dataList, keyFunction, false, peeks);
-    }
-
     public Map<K, V> query() {
         return query(HashMap::new);
     }
 
+    public <R extends Map<K, V>> R query(IntFunction<R> mapFactory) {
+        List<T> list = Database.list(wrapper);
+        return Steam.of(list).parallel(isParallel).toMap(keyFunction, valueOrIdentity(), SerBiOp.justAfter(), () -> mapFactory.apply(list.size()));
+    }
 
     // dataList key
 
@@ -155,9 +154,9 @@ public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends Base
 
     // wrapper data key value parallel
 
-    public <R extends Map<K, V>> R query(IntFunction<R> mapFactory) {
-        List<T> list = Database.list(wrapper);
-        return Steam.of(list).parallel(isParallel).toMap(keyFunction, valueOrIdentity(), SerBiOp.justAfter(), () -> mapFactory.apply(list.size()));
+    @SafeVarargs
+    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
+        return query(UnaryOperator.identity(), dataList, keyFunction, false, peeks);
     }
 
 }
