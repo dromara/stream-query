@@ -15,42 +15,31 @@ import java.util.Objects;
  * @since 2022/6/18 21:21
  */
 @SuppressWarnings("unchecked")
-public class Many<
-        $ENTITY,
-        $KEY extends Serializable & Comparable<$KEY>,
-        $VALUE
-        > extends BaseQueryHelper<
-        Many<$ENTITY, $KEY, $ENTITY>,
-        Many<$ENTITY, $KEY, $VALUE>,
-        $ENTITY,
-        $KEY,
-        $VALUE
-        > {
+public class Many<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<Many<T, K, T>, Many<T, K, V>, T, K, V> {
 
-    private Many(SFunction<$ENTITY, $KEY> keyFunction) {
+    public Many(SFunction<T, K> keyFunction) {
         super(keyFunction);
     }
 
-    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE>
-    Many<$ENTITY, $KEY, $VALUE> of(SFunction<$ENTITY, $KEY> keyFunction) {
+    public static <T, K extends Serializable & Comparable<K>, V> Many<T, K, V> of(SFunction<T, K> keyFunction) {
         return new Many<>(keyFunction);
     }
 
-    public <$ACTUAL_VALUE> Many<$ENTITY, $KEY, $ACTUAL_VALUE> value(SFunction<$ENTITY, $ACTUAL_VALUE> valueFunction) {
+    public <R> Many<T, K, R> value(SFunction<T, R> valueFunction) {
         if (Database.isNotActive(wrapper)) {
-            return (Many<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
+            return (Many<T, K, R>) this;
         }
-        this.valueFunction = (SFunction<$ENTITY, $VALUE>) valueFunction;
+        this.valueFunction = (SFunction<T, V>) valueFunction;
         Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
-        return (Many<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
+        return (Many<T, K, R>) this;
     }
 
-    public List<$VALUE> query() {
+    public List<V> query() {
         if (Database.isNotActive(wrapper)) {
             return new ArrayList<>();
         }
         if (Objects.isNull(valueFunction)) {
-            return (List<$VALUE>) Database.list(wrapper);
+            return (List<V>) Database.list(wrapper);
         }
         return Steam.of(Database.list(wrapper)).parallel(isParallel).nonNull().map(valueFunction).toList();
     }

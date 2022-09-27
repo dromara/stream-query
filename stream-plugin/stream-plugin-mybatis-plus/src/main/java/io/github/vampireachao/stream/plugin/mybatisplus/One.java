@@ -13,19 +13,9 @@ import java.util.Objects;
  * @since 2022/6/18 14:47
  */
 @SuppressWarnings("unchecked")
-public class One<
-        $ENTITY,
-        $KEY extends Serializable & Comparable<$KEY>,
-        $VALUE
-        > extends BaseQueryHelper<
-        One<$ENTITY, $KEY, $ENTITY>,
-        One<$ENTITY, $KEY, $VALUE>,
-        $ENTITY,
-        $KEY,
-        $VALUE
-        > {
+public class One<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<One<T, K, T>, One<T, K, V>, T, K, V> {
 
-    private One(SFunction<$ENTITY, $KEY> keyFunction) {
+    public One(SFunction<T, K> keyFunction) {
         super(keyFunction);
     }
 
@@ -34,21 +24,21 @@ public class One<
         return new One<>(keyFunction);
     }
 
-    public <$ACTUAL_VALUE> One<$ENTITY, $KEY, $ACTUAL_VALUE> value(SFunction<$ENTITY, $ACTUAL_VALUE> valueFunction) {
+    public <$ACTUAL_VALUE> One<T, K, $ACTUAL_VALUE> value(SFunction<T, $ACTUAL_VALUE> valueFunction) {
         if (Database.isNotActive(wrapper)) {
-            return (One<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
+            return (One<T, K, $ACTUAL_VALUE>) this;
         }
-        this.valueFunction = (SFunction<$ENTITY, $VALUE>) valueFunction;
+        this.valueFunction = (SFunction<T, V>) valueFunction;
         Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
-        return (One<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
+        return (One<T, K, $ACTUAL_VALUE>) this;
     }
 
-    public $VALUE query() {
+    public V query() {
         if (Database.isNotActive(wrapper)) {
             return null;
         }
         if (Objects.isNull(valueFunction)) {
-            return ($VALUE) Database.getOne(wrapper);
+            return (V) Database.getOne(wrapper);
         }
         return Sf.of(Database.getOne(wrapper)).$let(valueFunction::apply).get();
     }

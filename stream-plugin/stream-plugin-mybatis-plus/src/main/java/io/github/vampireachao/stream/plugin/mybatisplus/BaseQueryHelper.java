@@ -11,44 +11,51 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.UnaryOperator;
 
+
 /**
+ * 公共方法抽象
+ *
+ * @param <TR> 原返回值
+ * @param <VR> value改变后的返回值
+ * @param <T>
+ * @param <K>
+ * @param <V>
  * @author VampireAchao
  * @since 2022/9/16 16:30
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseQueryHelper<
-        $ENTITY_RESULT extends BaseQueryHelper<$ENTITY_RESULT, ?, $ENTITY, $KEY, $ENTITY>,
-        $VALUE_RESULT extends BaseQueryHelper<$ENTITY_RESULT, $VALUE_RESULT, $ENTITY, $KEY, $VALUE>,
-        $ENTITY,
-        $KEY extends Serializable & Comparable<$KEY>,
-        $VALUE
-        > extends BaseQuery<$ENTITY, $KEY, $VALUE> {
+        TR extends BaseQueryHelper<TR, ?, T, K, T>,
+        VR extends BaseQueryHelper<TR, VR, T, K, V>,
+        T,
+        K extends Serializable & Comparable<K>, V
+        > extends BaseQuery<T, K, V> {
 
-    protected BaseQueryHelper(SFunction<$ENTITY, $KEY> keyFunction) {
+    protected BaseQueryHelper(SFunction<T, K> keyFunction) {
         super(keyFunction);
     }
 
-    protected $ENTITY_RESULT eq($KEY data) {
-        LambdaQueryWrapper<$ENTITY> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
+    protected TR eq(K data) {
+        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
         if (Database.isNotActive(queryWrapper)) {
-            return ($ENTITY_RESULT) this;
+            return (TR) this;
         }
         wrapper = Sf.of(data).$let(value -> queryWrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(queryWrapper));
-        return ($ENTITY_RESULT) this;
+        return (TR) this;
     }
 
-    protected $ENTITY_RESULT in(Collection<$KEY> dataList) {
-        LambdaQueryWrapper<$ENTITY> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
+    protected TR in(Collection<K> dataList) {
+        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
         if (Database.isNotActive(queryWrapper)) {
-            return ($ENTITY_RESULT) this;
+            return (TR) this;
         }
         wrapper = Sf.$ofColl(dataList).$let(values -> queryWrapper.in(keyFunction, values)).orGet(() -> Database.notActive(queryWrapper));
-        return ($ENTITY_RESULT) this;
+        return (TR) this;
     }
 
-    protected $VALUE_RESULT condition(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator) {
+    protected VR condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
         this.wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
-        return ($VALUE_RESULT) this;
+        return (VR) this;
     }
 
 
