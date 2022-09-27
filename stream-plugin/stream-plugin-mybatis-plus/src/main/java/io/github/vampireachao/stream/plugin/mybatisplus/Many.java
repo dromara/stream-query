@@ -16,12 +16,12 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class Many<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<Many<T, K, T>, Many<T, K, V>, T, K, V> {
 
-    public Many(SFunction<T, K> keyFunction) {
-        super(keyFunction);
-    }
-
     public static <T, K extends Serializable & Comparable<K>, V> Many<T, K, V> of(SFunction<T, K> keyFunction) {
         return new Many<>(keyFunction);
+    }
+
+    public Many(SFunction<T, K> keyFunction) {
+        super(keyFunction);
     }
 
     public <R> Many<T, K, R> value(SFunction<T, R> valueFunction) {

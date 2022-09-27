@@ -22,30 +22,29 @@ class OneToManyTest {
     void testQuery() {
         Assertions.assertAll(() -> {
             List<Integer> userAges = Arrays.asList(18, 18, 28, 21, 24);
-            Map<Integer, List<UserInfo>> ageUsersMap = OneToMany.query(userAges, UserInfo::getAge);
+            Map<Integer, List<UserInfo>> ageUsersMap = OneToMany.of(UserInfo::getAge).in(userAges).query();
             Assertions.assertEquals(4, ageUsersMap.size());
 
             List<String> userNames = Arrays.asList("Jone", "Jack", "Tom", "Billie");
-            Map<String, List<UserInfo>> nameUsersMap = OneToMany.query(w -> w.le(UserInfo::getAge, 21), userNames, UserInfo::getName);
+            Map<String, List<UserInfo>> nameUsersMap = OneToMany.of(UserInfo::getName).in(userNames).condition(w -> w.le(UserInfo::getAge, 21)).query();
             Assertions.assertEquals(2, nameUsersMap.size());
 
-            Map<Integer, List<String>> userAgeNameMap = OneToMany.query(userAges, UserInfo::getAge, UserInfo::getName);
+            Map<Integer, List<String>> userAgeNameMap = OneToMany.of(UserInfo::getAge).in(userAges).value(UserInfo::getName).query();
             Assertions.assertEquals(4, userAgeNameMap.size());
 
-            userAgeNameMap = OneToMany.query(w -> w.le(UserInfo::getAge, 22), userAges, UserInfo::getAge, UserInfo::getName);
+            userAgeNameMap = OneToMany.of(UserInfo::getAge).in(userAges).value(UserInfo::getName).condition(w -> w.le(UserInfo::getAge, 22)).query();
             Assertions.assertEquals(2, userAgeNameMap.size());
 
-
-            ageUsersMap = OneToMany.query(18, UserInfo::getAge);
+            ageUsersMap = OneToMany.of(UserInfo::getAge).eq(18).query();
             Assertions.assertEquals(1, ageUsersMap.size());
 
-            userAgeNameMap = OneToMany.query(18, UserInfo::getAge, UserInfo::getName);
+            userAgeNameMap = OneToMany.of(UserInfo::getAge).eq(18).value(UserInfo::getName).query();
             Assertions.assertEquals(1, userAgeNameMap.size());
 
-            userAgeNameMap = OneToMany.query(w -> w.le(UserInfo::getAge, 22), 18, UserInfo::getAge, UserInfo::getName);
+            userAgeNameMap = OneToMany.of(UserInfo::getAge).eq(18).value(UserInfo::getName).condition(w -> w.le(UserInfo::getAge, 22)).query();
             Assertions.assertEquals(1, userAgeNameMap.size());
 
-            Map<Integer, List<Boolean>> query = OneToMany.query(w -> w.select(UserInfo::getAge, UserInfo::getName), userAges, UserInfo::getAge, userInfo -> userInfo.getName() != null && userInfo.getName().contains("a"));
+            Map<Integer, List<Boolean>> query = OneToMany.of(UserInfo::getAge).in(userAges).value(userInfo -> userInfo.getName() != null && userInfo.getName().contains("a")).condition(w -> w.select(UserInfo::getAge, UserInfo::getName)).query();
             Assertions.assertEquals(2, query.values().stream().flatMap(Collection::stream).filter(Boolean::booleanValue).count());
         });
     }

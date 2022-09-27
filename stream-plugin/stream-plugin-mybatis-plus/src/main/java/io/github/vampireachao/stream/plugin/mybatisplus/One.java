@@ -14,13 +14,13 @@ import java.io.Serializable;
 @SuppressWarnings("unchecked")
 public class One<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<One<T, K, T>, One<T, K, V>, T, K, V> {
 
-    public One(SFunction<T, K> keyFunction) {
-        super(keyFunction);
-    }
-
     public static <T, K extends Serializable & Comparable<K>, V>
     One<T, K, V> of(SFunction<T, K> keyFunction) {
         return new One<>(keyFunction);
+    }
+
+    public One(SFunction<T, K> keyFunction) {
+        super(keyFunction);
     }
 
     public <R> One<T, K, R> value(SFunction<T, R> valueFunction) {

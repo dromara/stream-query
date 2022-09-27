@@ -78,6 +78,10 @@ public class Database {
         return Opp.of(dataList).filter(s -> !s.isEmpty()).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
     }
 
+    public static <T, K extends Serializable & Comparable<K>> LambdaQueryWrapper<T> lambdaQuery(SFunction<T, K> keyFunction) {
+        return Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction)));
+    }
+
     @SafeVarargs
     public static <T> LambdaQueryWrapper<T> select(LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
         return select(wrapper, LambdaQueryWrapper::select, columns);
@@ -720,6 +724,5 @@ public class Database {
     private static <T> TableInfo getTableInfo(Class<T> entityClass) {
         return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
     }
-
 
 }

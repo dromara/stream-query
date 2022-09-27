@@ -1,10 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Sf;
 
@@ -38,19 +35,20 @@ public abstract class BaseQueryHelper<
     }
 
     protected TR eq(K data) {
-        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
+        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Database.lambdaQuery(keyFunction));
         wrapper = Sf.of(data).$let(value -> queryWrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(queryWrapper));
         return (TR) this;
     }
 
     protected TR in(Collection<K> dataList) {
-        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
+        LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Database.lambdaQuery(keyFunction));
         wrapper = Sf.$ofColl(dataList).$let(values -> queryWrapper.in(keyFunction, values)).orGet(() -> Database.notActive(queryWrapper));
         return (TR) this;
     }
 
     protected VR condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
-        this.wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
+        wrapper = Sf.of(wrapper).orGet(() -> Database.lambdaQuery(keyFunction));
+        wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
         return (VR) this;
     }
 
@@ -65,7 +63,7 @@ public abstract class BaseQueryHelper<
     }
 
     protected SerFunc<T, V> valueOrIdentity() {
-        return t -> Sf.of(this.valueFunction).orGet(() -> i -> (V) i).apply(t);
+        return t -> Sf.of(valueFunction).orGet(() -> SerFunc.<T, V>castingIdentity()::apply).apply(t);
     }
 
 }

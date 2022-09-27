@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 
@@ -23,11 +24,31 @@ import java.util.stream.Collector;
  * @author VampireAchao ZVerify
  * @since 2022/5/23 17:40
  */
-public class OneToMany {
+@SuppressWarnings("unchecked")
+public class OneToMany<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToMany<T, K, T>, OneToMany<T, K, V>, T, K, V> {
 
-    private OneToMany() {
-        /* Do not new me! */
+    public OneToMany(SFunction<T, K> keyFunction) {
+        super(keyFunction);
     }
+
+    public static <T, K extends Serializable & Comparable<K>, V> OneToMany<T, K, V> of(SFunction<T, K> keyFunction) {
+        return new OneToMany<>(keyFunction);
+    }
+
+    public <R> OneToMany<T, K, R> value(SFunction<T, R> valueFunction) {
+        attachDouble(valueFunction);
+        return (OneToMany<T, K, R>) this;
+    }
+
+    public Map<K, List<V>> query() {
+        return query(HashMap::new, Collective.toList());
+    }
+
+    public <A, R, M extends Map<K, R>> M query(IntFunction<M> mapFactory, Collector<? super V, A, R> downstream) {
+        List<T> list = Database.list(wrapper);
+        return Steam.of(list).parallel(isParallel).group(keyFunction, () -> mapFactory.apply(list.size()), Collective.mapping(valueOrIdentity(), downstream));
+    }
+
 
     // dataList key
 

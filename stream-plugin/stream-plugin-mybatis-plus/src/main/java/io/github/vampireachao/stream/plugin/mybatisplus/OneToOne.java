@@ -25,12 +25,12 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("unchecked")
 public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToOne<T, K, T>, OneToOne<T, K, V>, T, K, V> {
 
-    protected OneToOne(SFunction<T, K> keyFunction) {
-        super(keyFunction);
-    }
-
     public static <T, K extends Serializable & Comparable<K>, V> OneToOne<T, K, V> of(SFunction<T, K> keyFunction) {
         return new OneToOne<>(keyFunction);
+    }
+
+    protected OneToOne(SFunction<T, K> keyFunction) {
+        super(keyFunction);
     }
 
     public <R> OneToOne<T, K, R> value(SFunction<T, R> valueFunction) {
