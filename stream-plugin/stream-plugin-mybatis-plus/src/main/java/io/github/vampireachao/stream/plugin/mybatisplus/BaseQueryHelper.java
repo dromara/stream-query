@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
@@ -38,18 +39,12 @@ public abstract class BaseQueryHelper<
 
     protected TR eq(K data) {
         LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
-        if (Database.isNotActive(queryWrapper)) {
-            return (TR) this;
-        }
         wrapper = Sf.of(data).$let(value -> queryWrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(queryWrapper));
         return (TR) this;
     }
 
     protected TR in(Collection<K> dataList) {
         LambdaQueryWrapper<T> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
-        if (Database.isNotActive(queryWrapper)) {
-            return (TR) this;
-        }
         wrapper = Sf.$ofColl(dataList).$let(values -> queryWrapper.in(keyFunction, values)).orGet(() -> Database.notActive(queryWrapper));
         return (TR) this;
     }
@@ -59,5 +54,18 @@ public abstract class BaseQueryHelper<
         return (VR) this;
     }
 
+    protected <R> void attachSingle(SFunction<T, R> valueFunction) {
+        this.valueFunction = (SFunction<T, V>) valueFunction;
+        Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
+    }
+
+    protected <R> void attachDouble(SFunction<T, R> valueFunction) {
+        this.valueFunction = (SFunction<T, V>) valueFunction;
+        Database.select(wrapper, keyFunction, valueFunction);
+    }
+
+    protected SerFunc<T, V> valueOrIdentity() {
+        return t -> Sf.of(this.valueFunction).orGet(() -> i -> (V) i).apply(t);
+    }
 
 }

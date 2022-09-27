@@ -9,14 +9,14 @@ import java.util.Objects;
  * @author VampireAchao
  * @since 2022/9/26 17:50
  */
-public abstract class BaseQuery<$ENTITY, $KEY, $VALUE> {
+public abstract class BaseQuery<T, K, V> {
 
-    protected LambdaQueryWrapper<$ENTITY> wrapper;
+    protected final SFunction<T, K> keyFunction;
     protected boolean isParallel = false;
-    protected final SFunction<$ENTITY, $KEY> keyFunction;
-    protected SFunction<$ENTITY, $VALUE> valueFunction;
+    protected LambdaQueryWrapper<T> wrapper;
+    protected SFunction<T, V> valueFunction;
 
-    protected BaseQuery(SFunction<$ENTITY, $KEY> keyFunction) {
+    protected BaseQuery(SFunction<T, K> keyFunction) {
         this.keyFunction = Objects.requireNonNull(keyFunction);
     }
 }
