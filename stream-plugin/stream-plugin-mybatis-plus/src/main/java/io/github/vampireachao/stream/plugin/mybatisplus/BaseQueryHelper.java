@@ -17,8 +17,8 @@ import java.util.function.UnaryOperator;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseQueryHelper<
-        $KEY_ENGINE extends BaseQueryHelper<$KEY_ENGINE, ?, $ENTITY, $KEY, $ENTITY>,
-        $VALUE_ENGINE extends BaseQueryHelper<$KEY_ENGINE, $VALUE_ENGINE, $ENTITY, $KEY, $VALUE>,
+        $ENTITY_RESULT extends BaseQueryHelper<$ENTITY_RESULT, ?, $ENTITY, $KEY, $ENTITY>,
+        $VALUE_RESULT extends BaseQueryHelper<$ENTITY_RESULT, $VALUE_RESULT, $ENTITY, $KEY, $VALUE>,
         $ENTITY,
         $KEY extends Serializable & Comparable<$KEY>,
         $VALUE
@@ -28,27 +28,27 @@ public abstract class BaseQueryHelper<
         super(keyFunction);
     }
 
-    protected $KEY_ENGINE eq($KEY data) {
+    protected $ENTITY_RESULT eq($KEY data) {
         LambdaQueryWrapper<$ENTITY> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
         if (Database.isNotActive(queryWrapper)) {
-            return ($KEY_ENGINE) this;
+            return ($ENTITY_RESULT) this;
         }
         wrapper = Sf.of(data).$let(value -> queryWrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(queryWrapper));
-        return ($KEY_ENGINE) this;
+        return ($ENTITY_RESULT) this;
     }
 
-    protected $KEY_ENGINE in(Collection<$KEY> dataList) {
+    protected $ENTITY_RESULT in(Collection<$KEY> dataList) {
         LambdaQueryWrapper<$ENTITY> queryWrapper = Sf.of(wrapper).orGet(() -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction))));
         if (Database.isNotActive(queryWrapper)) {
-            return ($KEY_ENGINE) this;
+            return ($ENTITY_RESULT) this;
         }
         wrapper = Sf.$ofColl(dataList).$let(values -> queryWrapper.in(keyFunction, values)).orGet(() -> Database.notActive(queryWrapper));
-        return ($KEY_ENGINE) this;
+        return ($ENTITY_RESULT) this;
     }
 
-    protected $VALUE_ENGINE condition(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator) {
+    protected $VALUE_RESULT condition(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator) {
         this.wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
-        return ($VALUE_ENGINE) this;
+        return ($VALUE_RESULT) this;
     }
 
 
