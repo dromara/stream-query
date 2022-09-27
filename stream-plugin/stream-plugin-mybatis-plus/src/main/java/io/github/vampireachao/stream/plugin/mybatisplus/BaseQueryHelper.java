@@ -17,9 +17,9 @@ import java.util.function.UnaryOperator;
  *
  * @param <TR> 原返回值
  * @param <VR> value改变后的返回值
- * @param <T>
- * @param <K>
- * @param <V>
+ * @param <T>  实体类型
+ * @param <K>  key值类型
+ * @param <V>  value或后续操作返回值类型
  * @author VampireAchao
  * @since 2022/9/16 16:30
  */
