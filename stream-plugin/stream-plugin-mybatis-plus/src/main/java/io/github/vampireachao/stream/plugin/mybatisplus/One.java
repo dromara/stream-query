@@ -1,12 +1,10 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.UnaryOperator;
 
 /**
  * 单条
@@ -15,7 +13,17 @@ import java.util.function.UnaryOperator;
  * @since 2022/6/18 14:47
  */
 @SuppressWarnings("unchecked")
-public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQueryHelper<One<$ENTITY, $KEY, $ENTITY>, $ENTITY, $KEY, $VALUE> {
+public class One<
+        $ENTITY,
+        $KEY extends Serializable & Comparable<$KEY>,
+        $VALUE
+        > extends BaseQueryHelper<
+        One<$ENTITY, $KEY, $ENTITY>,
+        One<$ENTITY, $KEY, $VALUE>,
+        $ENTITY,
+        $KEY,
+        $VALUE
+        > {
 
     private One(SFunction<$ENTITY, $KEY> keyFunction) {
         super(keyFunction);
@@ -33,11 +41,6 @@ public class One<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> 
         this.valueFunction = (SFunction<$ENTITY, $VALUE>) valueFunction;
         Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
         return (One<$ENTITY, $KEY, $ACTUAL_VALUE>) this;
-    }
-
-    public One<$ENTITY, $KEY, $VALUE> condition(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator) {
-        this.wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
-        return this;
     }
 
     public $VALUE query() {
