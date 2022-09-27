@@ -20,7 +20,7 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("unchecked")
 public class Many<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQueryHelper<Many<$ENTITY, $KEY, $ENTITY>, $ENTITY, $KEY, $VALUE> {
 
-    protected Many(SFunction<$ENTITY, $KEY> keyFunction) {
+    private Many(SFunction<$ENTITY, $KEY> keyFunction) {
         super(keyFunction);
     }
 

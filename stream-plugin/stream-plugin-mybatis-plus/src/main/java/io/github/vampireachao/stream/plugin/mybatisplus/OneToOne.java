@@ -19,10 +19,10 @@ import java.util.function.UnaryOperator;
  * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
  * @since 2022/5/20
  */
-public class OneToOne {
+public class OneToOne<$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE> extends BaseQueryHelper<OneToOne<$ENTITY, $KEY, $ENTITY>, $ENTITY, $KEY, $VALUE> {
 
-    private OneToOne() {
-        /* Do not new me! */
+    protected OneToOne(SFunction<$ENTITY, $KEY> keyFunction) {
+        super(keyFunction);
     }
 
 
