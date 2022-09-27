@@ -28,7 +28,8 @@ public abstract class BaseQueryHelper<
         TR extends BaseQueryHelper<TR, ?, T, K, T>,
         VR extends BaseQueryHelper<TR, VR, T, K, V>,
         T,
-        K extends Serializable & Comparable<K>, V
+        K extends Serializable & Comparable<K>,
+        V
         > extends BaseQuery<T, K, V> {
 
     protected BaseQueryHelper(SFunction<T, K> keyFunction) {
