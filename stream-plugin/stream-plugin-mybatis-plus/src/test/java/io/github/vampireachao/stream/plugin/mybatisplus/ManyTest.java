@@ -19,7 +19,7 @@ class ManyTest {
 
     @Test
     void testQuery() {
-        List<UserInfo> userInfoList = Many.of(UserInfo::getId).eq(1L).query();
+        List<UserInfo> userInfoList = Many.of(UserInfo::getId).eq(1L).parallel().query();
         List<String> nameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName).query();
         List<String> leAgeNameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName)
                 .condition(w -> w.le(UserInfo::getAge, 20))

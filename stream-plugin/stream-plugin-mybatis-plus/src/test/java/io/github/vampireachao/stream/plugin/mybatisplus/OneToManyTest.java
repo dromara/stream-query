@@ -22,7 +22,7 @@ class OneToManyTest {
     void testQuery() {
         Assertions.assertAll(() -> {
             List<Integer> userAges = Arrays.asList(18, 18, 28, 21, 24);
-            Map<Integer, List<UserInfo>> ageUsersMap = OneToMany.of(UserInfo::getAge).in(userAges).query();
+            Map<Integer, List<UserInfo>> ageUsersMap = OneToMany.of(UserInfo::getAge).in(userAges).parallel().query();
             Assertions.assertEquals(4, ageUsersMap.size());
 
             List<String> userNames = Arrays.asList("Jone", "Jack", "Tom", "Billie");

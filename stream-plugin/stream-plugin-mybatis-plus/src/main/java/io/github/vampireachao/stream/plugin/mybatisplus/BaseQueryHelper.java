@@ -52,6 +52,19 @@ public abstract class BaseQueryHelper<
         return (VR) this;
     }
 
+    protected VR parallel(boolean isParallel) {
+        this.isParallel = isParallel;
+        return (VR) this;
+    }
+
+    protected VR parallel() {
+        return parallel(true);
+    }
+
+    protected VR sequential() {
+        return parallel(false);
+    }
+
     protected <R> void attachSingle(SFunction<T, R> valueFunction) {
         this.valueFunction = (SFunction<T, V>) valueFunction;
         Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
