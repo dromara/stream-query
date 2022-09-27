@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 /**
  * 辅助类
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  * @since 1.0
  */
 public class Database {

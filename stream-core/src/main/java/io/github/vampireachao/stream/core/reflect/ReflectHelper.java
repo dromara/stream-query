@@ -34,7 +34,7 @@ import java.util.WeakHashMap;
 /**
  * 反射工具类
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  * @since 2022/6/2 17:02
  */
 public class ReflectHelper {

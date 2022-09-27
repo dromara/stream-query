@@ -21,9 +21,8 @@ import java.util.stream.Stream;
  * 拓展hutool中的Opt
  *
  * @param <T> 包裹里元素的类型
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  * @see java.util.Optional
-
  */
 public class Opp<T> {
 

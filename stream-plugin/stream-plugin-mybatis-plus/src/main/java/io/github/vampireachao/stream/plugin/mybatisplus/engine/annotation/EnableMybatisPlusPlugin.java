@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * 开启sql注入
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

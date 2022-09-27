@@ -20,7 +20,7 @@ import java.util.stream.Collector;
 /**
  * 一对多
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  * @since 2022/5/23 17:40
  */
 public class OneToMany {

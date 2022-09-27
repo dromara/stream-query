@@ -9,7 +9,7 @@ import java.util.function.UnaryOperator;
 /**
  * 可序列化的UnaryOperator
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  * @see java.util.function.UnaryOperator
  */
 @FunctionalInterface

@@ -16,7 +16,7 @@ import static io.github.vampireachao.stream.core.collector.Collective.*;
 /**
  * Collectors测试
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  * @since 2022/6/22 11:10
  */
 class CollectiveTest {

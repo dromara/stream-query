@@ -5,9 +5,8 @@ import java.lang.reflect.Type;
 /**
  * 单个泛型类型
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  * @since 2022/6/2 18:53
-
  */
 public abstract class AbstractTypeReference<T> implements Type {
 

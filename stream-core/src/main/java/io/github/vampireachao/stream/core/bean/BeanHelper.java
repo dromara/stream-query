@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * <p>BeanHelper class.</p>
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt; <br/> ZVerify &lt; 2556450572@qq.com &gt;
+ * @author VampireAchao ZVerify
  */
 public class BeanHelper {
 
