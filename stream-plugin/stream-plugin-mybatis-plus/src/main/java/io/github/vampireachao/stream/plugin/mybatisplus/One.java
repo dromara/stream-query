@@ -19,18 +19,18 @@ public class One<T, K extends Serializable & Comparable<K>, V> extends BaseQuery
         super(keyFunction);
     }
 
-    public static <$ENTITY, $KEY extends Serializable & Comparable<$KEY>, $VALUE>
-    One<$ENTITY, $KEY, $VALUE> of(SFunction<$ENTITY, $KEY> keyFunction) {
+    public static <T, K extends Serializable & Comparable<K>, V>
+    One<T, K, V> of(SFunction<T, K> keyFunction) {
         return new One<>(keyFunction);
     }
 
-    public <$ACTUAL_VALUE> One<T, K, $ACTUAL_VALUE> value(SFunction<T, $ACTUAL_VALUE> valueFunction) {
+    public <R> One<T, K, R> value(SFunction<T, R> valueFunction) {
         if (Database.isNotActive(wrapper)) {
-            return (One<T, K, $ACTUAL_VALUE>) this;
+            return (One<T, K, R>) this;
         }
         this.valueFunction = (SFunction<T, V>) valueFunction;
         Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
-        return (One<T, K, $ACTUAL_VALUE>) this;
+        return (One<T, K, R>) this;
     }
 
     public V query() {
