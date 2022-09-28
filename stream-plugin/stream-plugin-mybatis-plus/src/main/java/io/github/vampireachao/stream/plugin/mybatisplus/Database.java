@@ -50,7 +50,7 @@ public class Database {
     }
 
     public static boolean isActive(AbstractWrapper<?, ?, ?> wrapper) {
-        return (Objects.nonNull(wrapper)) && (!PluginConst.WRAPPER_NOT_ACTIVE.equals(wrapper.getSqlComment()));
+        return (Objects.nonNull(wrapper)) && (!wrapper.getSqlComment().contains(PluginConst.WRAPPER_NOT_ACTIVE));
     }
 
     public static boolean isNotActive(AbstractWrapper<?, ?, ?> wrapper) {

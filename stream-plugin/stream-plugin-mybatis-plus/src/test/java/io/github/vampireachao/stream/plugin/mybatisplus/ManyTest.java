@@ -5,6 +5,7 @@ import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,6 +34,18 @@ class ManyTest {
     void noKeyTest() {
         List<UserInfo> userInfoList = Many.of(UserInfo::getId).query();
         Assertions.assertFalse(userInfoList.isEmpty());
+    }
+
+    @Test
+    void willNotQueryTest() {
+        UserInfo[] eqNullUserArray = Many.of(UserInfo::getId).eq(null).query(s -> s.toArray(UserInfo[]::new));
+        Assertions.assertArrayEquals(new UserInfo[0], eqNullUserArray);
+
+        List<String> inEmptyNameList = Many.of(UserInfo::getId).in(Collections.emptyList()).value(UserInfo::getName).query();
+        Assertions.assertTrue(inEmptyNameList.isEmpty());
+
+        List<UserInfo> conditionNullUserList = Many.of(UserInfo::getId).condition(w -> null).query();
+        Assertions.assertTrue(conditionNullUserList.isEmpty());
     }
 
 
