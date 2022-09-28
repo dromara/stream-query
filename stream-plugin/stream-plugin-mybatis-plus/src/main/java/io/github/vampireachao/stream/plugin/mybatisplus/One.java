@@ -29,7 +29,11 @@ public class One<T, K extends Serializable & Comparable<K>, V> extends BaseQuery
     }
 
     public V query() {
-        return Sf.of(Database.getOne(wrapper)).$also(peekConsumer).$let(valueOrIdentity()).get();
+        return query(false);
+    }
+
+    public V query(boolean throwEx) {
+        return Sf.of(Database.getOne(wrapper, throwEx)).$also(peekConsumer).$let(valueOrIdentity()).get();
     }
 
 

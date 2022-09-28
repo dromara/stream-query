@@ -45,6 +45,16 @@ class OneToManyToOneTest {
             Map<String, List<String>> roleIdNamesMap = OneToManyToOne.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId)
                     .attachKey(RoleInfo::getId).attachValue(RoleInfo::getRoleName).groupBy(UserRole::getRoleId).query(Collective.toList());
             Assertions.assertFalse(roleIdNamesMap.isEmpty());*/
+
+            /*OneToMany.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId)
+                    .join((Map<Long, List<String>> userIdRoleIdsMap) -> OneToOne.of(RoleInfo::getId).in(Steam.of(userIdRoleIdsMap.values()).flat(SerFunc.identity()).toList()),
+                            (Map<Long, List<String>> userIdRoleIdsMap, Map<String, RoleInfo> idRoleMap) ->
+                                    Steam.of(userIdRoleIdsMap.entrySet()).map(e -> MapUtil.entry(e.getKey(), Steam.of(e.getValue()).map(idRoleMap::get).nonNull().toList())).collect(Collective.entryToMap())).query();*/
+
+            Map<Long, List<RoleInfo>> userIdRolesJoinOnMap = OneToManyToOne.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId).attachKey(RoleInfo::getId).query();
+
+            Map<String, List<RoleInfo>> roleIdRolesJoinOnMap = OneToManyToOne.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId).attachKey(RoleInfo::getId).groupBy(UserRole::getRoleId).query();
+
         });
     }
 
