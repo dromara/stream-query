@@ -30,8 +30,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -145,7 +143,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
-        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.insertOneSql(entityList));
+        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.insertOneSql(entityList));
     }
 
     /**
@@ -159,7 +157,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
-        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList));
+        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.insertFewSql(entityList));
     }
 
     /**
@@ -174,7 +172,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
-        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.insertFewSql(entityList, batchSize));
+        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.insertFewSql(entityList, batchSize));
     }
 
 
@@ -189,7 +187,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
-        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.updateOneSql(entityList));
+        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateOneSql(entityList));
     }
 
     /**
@@ -203,7 +201,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
-        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.updateFewSql(entityList));
+        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateFewSql(entityList));
     }
 
     /**
@@ -218,7 +216,7 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
-        return execute(getEntityClass(entityList), baseMapper -> entityList.size() == baseMapper.updateFewSql(entityList, batchSize));
+        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateFewSql(entityList, batchSize));
     }
 
     /**
@@ -648,14 +646,12 @@ public class Database {
      * @return 返回lambda执行结果
      */
     @SuppressWarnings("unchecked")
-    public static <T, R> R execute(Class<T> entityClass, SFunction<IMapper<T>, R> sFunction) {
+    public static <T, R, M extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<M, R> sFunction) {
         SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
         try {
-            BaseMapper<T> baseMapper = SqlHelper.getMapper(entityClass, sqlSession);
-            if (baseMapper instanceof IMapper) {
-                return sFunction.apply((IMapper<T>) baseMapper);
-            }
-            IMapper<T> proxyInstance = (IMapper<T>) Proxy.newProxyInstance(Thread.currentThread()
+            M baseMapper = (M) SqlHelper.getMapper(entityClass, sqlSession);
+            return sFunction.apply(baseMapper);
+          /*  IMapper<T> proxyInstance = (IMapper<T>) Proxy.newProxyInstance(Thread.currentThread()
                             .getContextClassLoader(),
                     new Class[]{IMapper.class},
                     ((proxy, method, args) -> {
@@ -669,8 +665,8 @@ public class Database {
                         }
                         ReflectHelper.accessible(baseMapperMethod);
                         return baseMapperMethod.invoke(method, args);
-                    }));
-            return sFunction.apply(proxyInstance);
+                    }));*/
+//            return sFunction.apply(proxyInstance);
         } finally {
             SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }

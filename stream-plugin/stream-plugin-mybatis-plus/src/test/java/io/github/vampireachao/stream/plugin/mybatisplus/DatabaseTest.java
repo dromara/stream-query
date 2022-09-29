@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
@@ -32,12 +33,12 @@ class DatabaseTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        long effectRows = Database.execute(UserInfo.class, m -> m.insertOneSql(list));
+        long effectRows = Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.insertOneSql(list));
         Assertions.assertEquals(2, effectRows);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> Database.execute(UserRole.class, m -> m.insertOneSql(Collections.emptyList())));
+                () -> Database.execute(UserRole.class, (IMapper<UserRole> m) -> m.insertOneSql(Collections.emptyList())));
     }
 
     @Test
