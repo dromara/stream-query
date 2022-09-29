@@ -47,13 +47,13 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
 
     public OneToManyToOne(SFunction<T, K> middleKey) {
         this.middleKey = middleKey;
+        this.groupBy = (SFunction<T, R>) middleKey;
+        this.middleWrapper = Database.lambdaQuery(middleKey);
     }
 
     public static <T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U>
     OneToManyToOne<T, K, V, U, U, K> of(SFunction<T, K> keyFunction) {
-        OneToManyToOne<T, K, V, U, U, K> query = new OneToManyToOne<>(keyFunction);
-        query.middleWrapper = Database.lambdaQuery(keyFunction);
-        return query;
+        return new OneToManyToOne<>(keyFunction);
     }
 
     public OneToManyToOne<T, K, V, U, A, R> in(Collection<K> dataList) {
