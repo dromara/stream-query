@@ -46,7 +46,6 @@ public abstract class BaseQueryHelper<
     }
 
     protected VR condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
-        wrapper = Sf.of(wrapper).orGet(() -> Database.lambdaQuery(keyFunction));
         wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
         return (VR) this;
     }

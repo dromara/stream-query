@@ -1,75 +1,126 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import io.github.vampireachao.stream.core.collector.Collective;
-import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
+import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.stream.Collector;
+import java.util.function.UnaryOperator;
+
 
 /**
  * 一对多对一
  *
+ * @param <T> 主表类型(关联表)
+ * @param <K> 主表查询key
+ * @param <V> 主表查询value/附表查询key
+ * @param <U> 附表类型(关联主数据)
+ * @param <A> 附表value
+ * @param <R> 分组类型，默认为主表查询key
  * @author VampireAchao ZVerify
  * @since 2022/5/24 14:15
  */
 @SuppressWarnings("unchecked")
-public class OneToManyToOne<T, TK extends Serializable & Comparable<TK>, TV, A, AK extends Comparable<AK>, AV> extends BaseQueryHelper<OneToManyToOne<T, TK, T, A, ?, AV>, OneToManyToOne<T, TK, TV, A, AK, AV>, T, TK, TV> {
+public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U, A, R extends Serializable & Comparable<R>> {
 
-    protected SFunction<A, AK> attachKey;
-    protected SFunction<A, AV> attachValue;
-    protected SerFunc<T, TK> groupBy;
-    protected Consumer<A> attachPeek;
+    protected final SFunction<T, K> middleKey;
+    protected SFunction<T, V> middleValue;
+    protected SFunction<U, V> attachKey;
+    protected SFunction<U, A> attachValue;
+    protected SFunction<T, R> groupBy;
 
-    public OneToManyToOne(SFunction<T, TK> keyFunction) {
-        super(keyFunction);
+    protected LambdaQueryWrapper<T> middleWrapper;
+    protected LambdaQueryWrapper<U> attachWrapper;
+
+    protected boolean isParallel = false;
+    protected SerCons<T> middlePeek = SerCons.nothing();
+    protected SerCons<U> attachPeek = SerCons.nothing();
+
+    public OneToManyToOne(SFunction<T, K> middleKey) {
+        this.middleKey = middleKey;
     }
 
-    public static <T, TK extends Serializable & Comparable<TK>>
-    OneToManyToOne<T, TK, ?, ?, ?, ?> of(SFunction<T, TK> keyFunction) {
-        return new OneToManyToOne<>(keyFunction);
+    public static <T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U>
+    OneToManyToOne<T, K, V, U, U, K> of(SFunction<T, K> keyFunction) {
+        OneToManyToOne<T, K, V, U, U, K> query = new OneToManyToOne<>(keyFunction);
+        query.middleWrapper = Database.lambdaQuery(keyFunction);
+        return query;
     }
 
-    public <RS extends Serializable & Comparable<RS>> OneToManyToOne<T, TK, RS, A, RS, AV> value(SFunction<T, RS> valueFunction) {
-        attachDouble(valueFunction);
-        return (OneToManyToOne<T, TK, RS, A, RS, AV>) this;
+    public OneToManyToOne<T, K, V, U, A, R> in(Collection<K> dataList) {
+        middleWrapper = Sf.$ofColl(dataList).$let(values -> middleWrapper.in(middleKey, values)).orGet(() -> Database.notActive(middleWrapper));
+        return this;
     }
 
-    public <U> OneToManyToOne<T, TK, TV, U, AK, AV> attachKey(SFunction<U, TV> attachKey) {
-        this.attachKey = (SFunction<A, AK>) attachKey;
-        this.groupBy = (SerFunc<T, TK>) attachKey;
-        return (OneToManyToOne<T, TK, TV, U, AK, AV>) this;
+    public OneToManyToOne<T, K, V, U, A, R> eq(K data) {
+        middleWrapper = Sf.of(data).$let(value -> middleWrapper.eq(middleKey, value)).orGet(() -> Database.notActive(middleWrapper));
+        return this;
     }
 
-    public <R> OneToManyToOne<T, TK, TV, A, AK, R> attachValue(SFunction<A, R> attachValue) {
-        this.attachValue = (SFunction<A, AV>) attachValue;
-        return (OneToManyToOne<T, TK, TV, A, AK, R>) this;
+    public <VV extends Serializable & Comparable<VV>> OneToManyToOne<T, K, VV, U, T, K> value(SFunction<T, VV> middleValue) {
+        this.middleValue = (SFunction<T, V>) middleValue;
+        return (OneToManyToOne<T, K, VV, U, T, K>) this;
     }
 
-    public OneToManyToOne<T, TK, TV, A, AK, AV> attachPeek(Consumer<A> attachPeek) {
+    public <UU> OneToManyToOne<T, K, V, UU, UU, R> attachKey(SFunction<UU, V> attachKey) {
+        this.attachKey = (SFunction<U, V>) attachKey;
+        attachWrapper = (LambdaQueryWrapper<U>) Database.lambdaQuery(attachKey);
+        return (OneToManyToOne<T, K, V, UU, UU, R>) this;
+    }
+
+    public <AA> OneToManyToOne<T, K, V, T, AA, K> attachValue(SFunction<U, AA> attachValue) {
+        this.attachValue = (SFunction<U, A>) attachValue;
+        return (OneToManyToOne<T, K, V, T, AA, K>) this;
+    }
+
+    public OneToManyToOne<T, K, V, U, A, R> condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
+        middleWrapper = Sf.of(queryOperator.apply(middleWrapper)).orGet(() -> Database.notActive(middleWrapper));
+        return this;
+    }
+
+    public OneToManyToOne<T, K, V, U, A, R> attachCondition(UnaryOperator<LambdaQueryWrapper<U>> queryOperator) {
+        attachWrapper = Sf.of(queryOperator.apply(attachWrapper)).orGet(() -> Database.notActive(attachWrapper));
+        return this;
+    }
+
+    public OneToManyToOne<T, K, V, U, A, R> parallel(boolean isParallel) {
+        this.isParallel = isParallel;
+        return this;
+    }
+
+    public OneToManyToOne<T, K, V, U, A, R> parallel() {
+        return parallel(true);
+    }
+
+    public OneToManyToOne<T, K, V, U, A, R> sequential() {
+        return parallel(false);
+    }
+
+    public OneToManyToOne<T, K, V, U, A, R> peek(SerCons<T> middlePeek) {
+        this.middlePeek = middlePeek;
+        return this;
+    }
+
+    public OneToManyToOne<T, K, V, U, A, R> attachPeek(SerCons<U> attachPeek) {
         this.attachPeek = attachPeek;
         return this;
     }
 
-    public <D extends Serializable & Comparable<D>> OneToManyToOne<T, D, TV, A, AK, AV> groupBy(SerFunc<T, D> groupBy) {
-        this.groupBy = (SerFunc<T, TK>) groupBy;
-        return (OneToManyToOne<T, D, TV, A, AK, AV>) this;
+    public <RR extends Serializable & Comparable<RR>> OneToManyToOne<T, K, V, U, A, RR> groupBy(SFunction<T, RR> groupBy) {
+        this.groupBy = (SFunction<T, R>) groupBy;
+        return (OneToManyToOne<T, K, V, U, A, RR>) this;
     }
 
-    public <R> Map<TK, R> query(Collector<? super AV, ?, R> downstream) {
-        /*Map<TK, List<TV>> tkTvsMap = Steam.of(Database.list(wrapper)).group(groupBy, Collective.mapping(valueFunction, Collective.toList()));
-        OneToOne.of(attachKey)
-        tkTvsMap.in(Steam.of(mkVsMap.values()).flat(Function.identity()).toList());
-        return Steam.of(list).parallel(isParallel).peek(peekConsumer).group(keyFunction, () -> mapFactory.apply(list.size()), Collective.mapping(valueOrIdentity(), downstream));*/
-        return null;
+
+    public Map<R, List<A>> query() {
+
     }
 
-    public Map<TK, List<AV>> query() {
-        return query(Collective.toList());
-    }
+
 
 
     /*private OneToManyToOne() {

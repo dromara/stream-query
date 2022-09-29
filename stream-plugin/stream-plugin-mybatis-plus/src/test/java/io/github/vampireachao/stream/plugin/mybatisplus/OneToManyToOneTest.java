@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.core.collector.Collective;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.stream.Steam;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
@@ -36,6 +37,10 @@ class OneToManyToOneTest {
         Map<String, RoleInfo> idRoleMap = OneToOne.of(RoleInfo::getId).in(roleIds).query();
         Map<Long, List<RoleInfo>> userIdRolesMap = Steam.of(userIdRoleIds.entrySet()).map(e -> MapUtil.entry(e.getKey(), Steam.of(e.getValue()).map(idRoleMap::get).nonNull().toList())).collect(Collective.entryToMap());
         Assertions.assertEquals(5, userIdRolesMap.size());
+
+        Map<Long, List<RoleInfo>> userIdRoleInfosMap = OneToManyToOne.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId)
+                .attachKey(RoleInfo::getId).attachPeek(SerCons.nothing()).query();
+        Assertions.assertEquals(5, userIdRoleInfosMap.size());
 
         /*Map<Long, List<RoleInfo>> userIdRoleInfosMap = OneToManyToOne.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId)
                 .attachKey(RoleInfo::getId).attachPeek(SerCons.nothing()).query();
