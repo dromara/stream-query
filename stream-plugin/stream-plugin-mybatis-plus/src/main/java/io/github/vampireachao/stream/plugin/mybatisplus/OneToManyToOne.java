@@ -2,13 +2,18 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.optional.Sf;
+import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 
@@ -34,7 +39,7 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
     protected SFunction<T, R> groupBy;
 
     protected LambdaQueryWrapper<T> middleWrapper;
-    protected LambdaQueryWrapper<U> attachWrapper;
+    protected UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator = SerUnOp.identity();
 
     protected boolean isParallel = false;
     protected SerCons<T> middlePeek = SerCons.nothing();
@@ -68,7 +73,6 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
 
     public <UU> OneToManyToOne<T, K, V, UU, UU, R> attachKey(SFunction<UU, V> attachKey) {
         this.attachKey = (SFunction<U, V>) attachKey;
-        attachWrapper = (LambdaQueryWrapper<U>) Database.lambdaQuery(attachKey);
         return (OneToManyToOne<T, K, V, UU, UU, R>) this;
     }
 
@@ -82,8 +86,8 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
         return this;
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> attachCondition(UnaryOperator<LambdaQueryWrapper<U>> queryOperator) {
-        attachWrapper = Sf.of(queryOperator.apply(attachWrapper)).orGet(() -> Database.notActive(attachWrapper));
+    public OneToManyToOne<T, K, V, U, A, R> attachCondition(UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator) {
+        this.attachQueryOperator = attachQueryOperator;
         return this;
     }
 
@@ -117,8 +121,14 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
 
 
     public Map<R, List<A>> query() {
-
+        Map<R, List<V>> middleKeyValuesMap = Steam.of(Database.list(middleWrapper)).parallel(isParallel).peek(middlePeek)
+                .group(groupBy, Collective.mapping(Sf.of(middleValue).orGet(() -> SerFunc.<T, V>castingIdentity()::apply), Collective.toList()));
+        List<V> relationDataList = Steam.of(middleKeyValuesMap.values()).flat(Function.identity()).toList();
+        Map<V, A> attachKeyValue = OneToOne.of(attachKey).in(relationDataList).value(attachValue).parallel(isParallel).peek(attachPeek).condition(attachQueryOperator).query();
+        return BaseQueryHelper.mixin(middleKeyValuesMap, attachKeyValue).parallel(isParallel).collect(Collective.entryToMap());
     }
+
+
 
 
 

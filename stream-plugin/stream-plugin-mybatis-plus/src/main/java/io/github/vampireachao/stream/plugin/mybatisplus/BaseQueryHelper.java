@@ -5,9 +5,13 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Sf;
+import io.github.vampireachao.stream.core.stream.Steam;
+import org.apache.ibatis.util.MapUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.UnaryOperator;
 
 
@@ -80,6 +84,10 @@ public abstract class BaseQueryHelper<
 
     protected SerFunc<T, V> valueOrIdentity() {
         return t -> Sf.of(valueFunction).orGet(() -> SerFunc.<T, V>castingIdentity()::apply).apply(t);
+    }
+
+    public static <K, A, V> Steam<Map.Entry<K, List<V>>> mixin(Map<K, List<A>> middleMap, Map<A, V> attachMap) {
+        return Steam.of(middleMap.entrySet()).map(e -> MapUtil.entry(e.getKey(), Steam.of(e.getValue()).map(attachMap::get).toList()));
     }
 
 }
