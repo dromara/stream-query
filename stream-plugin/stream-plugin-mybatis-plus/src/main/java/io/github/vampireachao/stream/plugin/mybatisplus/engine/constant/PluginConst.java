@@ -8,7 +8,7 @@ public interface PluginConst {
     /**
      * default batch commit count
      */
-    int DEFAULT_BATCH_SIZE = 1000;
+    int DEFAULT_BATCH_SIZE = 500;
     /**
      * db keyword default
      */

@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
-import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
 import org.junit.jupiter.api.Assertions;
@@ -39,28 +38,6 @@ class DatabaseTest {
 
         Assertions.assertThrows(ClassCastException.class,
                 () -> Database.execute(UserRole.class, (IMapper<UserRole> m) -> m.insertOneSql(Collections.emptyList())));
-    }
-
-    @Test
-    void testSaveOneSql() {
-        UserInfo entity = new UserInfo();
-        entity.setName("cat");
-        entity.setAge(20);
-        entity.setEmail("achao1441470436@gmail.com");
-        UserInfo userInfo = new UserInfo();
-        userInfo.setName("ruben");
-        List<UserInfo> list = Arrays.asList(userInfo, entity);
-        boolean isSuccess = Database.insertOneSql(list);
-        Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(7, Database.count(UserInfo.class));
-
-        RoleInfo role = new RoleInfo();
-        role.setRoleName("manager");
-        RoleInfo roleInfo = new RoleInfo();
-        roleInfo.setRoleName("employee");
-        List<RoleInfo> roles = Arrays.asList(role, roleInfo);
-        Assertions.assertTrue(Database.insertOneSql(roles));
-        Assertions.assertEquals(5, Database.count(RoleInfo.class));
     }
 
     @Test

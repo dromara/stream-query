@@ -133,20 +133,6 @@ public class Database {
     }
 
     /**
-     * 以单条sql方式插入（批量）需要实现IMapper
-     *
-     * @param entityList 数据
-     * @param <T>        类型
-     * @return 成功与否
-     */
-    public static <T> boolean insertOneSql(Collection<T> entityList) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            return false;
-        }
-        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.insertOneSql(entityList));
-    }
-
-    /**
      * 以几条sql方式插入（批量）需要实现IMapper
      *
      * @param entityList 数据
