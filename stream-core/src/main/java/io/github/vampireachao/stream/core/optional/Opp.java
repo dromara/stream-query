@@ -245,7 +245,7 @@ public class Opp<T> {
     }
 
     /**
-     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link java.util.function.Predicate#test}执行结果是否为true)
+     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link SerFunc#apply}执行结果是否为true)
      * 如果满足条件则返回本身
      * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      *
@@ -258,7 +258,7 @@ public class Opp<T> {
         if (isEmpty()) {
             return empty();
         } else {
-            return Opp.ofTry(() -> predicate.test(value), NullPointerException.class).orElse(false) ? this : empty();
+            return Predicate.isEqual(true).test(value) ? this : empty();
         }
     }
 
@@ -440,9 +440,9 @@ public class Opp<T> {
      *
      * @param type      类型
      * @param predicate 给定的条件
+     * @param <U>       a U class
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      * @throws java.lang.NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
-     * @param <U> a U class
      */
     @SuppressWarnings("unchecked")
     public <U> Opp<T> typeOfFilter(Type type, SerPred<U> predicate) {
@@ -500,9 +500,9 @@ public class Opp<T> {
      * 如果包裹里元素的值存在，则返回该值，否则执行传入的操作
      *
      * @param action 值不存在时执行的操作
+     * @param <R>    a R class
      * @return 如果包裹里元素的值存在，则返回该值，否则执行传入的操作
      * @throws java.lang.NullPointerException 如果值不存在，并且传入的操作为 {@code null}
-     * @param <R> a R class
      */
     public <R extends Runnable> T orElseRun(R action) {
         if (isPresent()) {
@@ -550,7 +550,7 @@ public class Opp<T> {
      * @param <X>               异常类型
      * @param exceptionSupplier 值不存在时执行的操作，返回值继承 {@link java.lang.Throwable}
      * @return 包裹里不能为空的值
-     * @throws X                    如果值不存在
+     * @throws X                              如果值不存在
      * @throws java.lang.NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
@@ -573,7 +573,7 @@ public class Opp<T> {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 判断传入参数是否与 {@code Opp}相等
      * 在以下情况下返回true
      * <ul>
@@ -598,7 +598,7 @@ public class Opp<T> {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 如果包裹内元素为空，则返回0，否则返回元素的 {@code hashcode}
      */
     @Override

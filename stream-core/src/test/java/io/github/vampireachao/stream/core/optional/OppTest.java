@@ -301,6 +301,12 @@ class OppTest {
         }).forEach(SerRunn::run);
     }
 
+    @Test
+    void testIs() {
+        Boolean flag = null;
+        Assertions.assertFalse(Opp.of(1).is(i -> flag));
+    }
+
     @Data
     @Builder
     @NoArgsConstructor
