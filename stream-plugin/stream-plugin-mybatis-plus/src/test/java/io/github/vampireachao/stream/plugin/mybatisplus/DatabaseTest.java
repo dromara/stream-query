@@ -37,7 +37,7 @@ class DatabaseTest {
         Assertions.assertEquals(2, effectRows);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
 
-        Assertions.assertThrows(IllegalStateException.class,
+        Assertions.assertThrows(ClassCastException.class,
                 () -> Database.execute(UserRole.class, (IMapper<UserRole> m) -> m.insertOneSql(Collections.emptyList())));
     }
 
