@@ -14,17 +14,16 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 class SfTest {
 
-    private final String ZVERIFY_NAME = "风向标";
+    private final String Z_VERIFY_NAME = "风向标";
 
     @Test
     void testOf() {
-        Sf<String> stringSf = Sf.of(ZVERIFY_NAME);
-        Assertions.assertEquals("风向标", stringSf.value);
+        Sf<String> stringSf = Sf.of(Z_VERIFY_NAME);
+        Assertions.assertEquals("风向标", stringSf.get());
     }
 
     @Test
     void testOfColl() {
-
         Assertions.assertFalse(Sf.ofColl(Arrays.asList(null, null, null)).isEmpty());
     }
 
@@ -46,7 +45,7 @@ class SfTest {
     @Test
     void testEmpty() {
         Sf<Object> empty = Sf.empty();
-        Assertions.assertNull(empty.value);
+        Assertions.assertNull(empty.get());
     }
 
     @Test
@@ -62,60 +61,60 @@ class SfTest {
     @Test
     void testLet() {
         Sf<Integer> let = Sf.ofStr("  ").let(String::length);
-        Assertions.assertEquals(2, let.value);
+        Assertions.assertEquals(2, let.get());
     }
 
     @Test
     void test$Let() {
-        Sf<String> stringSf = Sf.mayStr(null).mayLet(a -> a.toString().length()).let(a -> ZVERIFY_NAME);
-        Assertions.assertEquals(ZVERIFY_NAME, stringSf.value);
+        Sf<String> stringSf = Sf.mayStr(null).mayLet(a -> a.toString().length()).let(a -> Z_VERIFY_NAME);
+        Assertions.assertEquals(Z_VERIFY_NAME, stringSf.get());
     }
 
     @Test
     void testAlso() {
-        AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
+        AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Sf.of(null).also(a -> name.set("ZVerify"));
         Assertions.assertEquals("ZVerify", name.get());
     }
 
     @Test
     void test$Also() {
-        AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
+        AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Sf.of(null).mayAlso(a -> name.set("ZVerify"));
-        Assertions.assertEquals(ZVERIFY_NAME, name.get());
+        Assertions.assertEquals(Z_VERIFY_NAME, name.get());
     }
 
     @Test
     void testTakeIf() {
-        AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(name).takeIf((a) -> Opp.ofStr(a.get()).isEmpty()).mayAlso(a -> a.set("ZVerify"));
-        Assertions.assertEquals(ZVERIFY_NAME, name.get());
+        AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
+        Sf.of(name).takeIf((a) -> false).mayAlso(a -> a.set("ZVerify"));
+        Assertions.assertEquals(Z_VERIFY_NAME, name.get());
     }
 
     @Test
     void test$TakeIf() {
-        AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(name).mayTakeIf((a) -> Opp.ofStr(a.get()).isPresent()).also(a -> a.set("ZVerify"));
+        AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
+        Sf.of(name).mayTakeIf((a) -> true).also(a -> a.set("ZVerify"));
         Assertions.assertEquals("ZVerify", name.get());
     }
 
     @Test
     void testTakeUnless() {
-        AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(name).takeUnless((a) -> Opp.ofStr(a.get()).isEmpty()).mayAlso(a -> a.set("ZVerify"));
+        AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
+        Sf.of(name).takeUnless((a) -> false).mayAlso(a -> a.set("ZVerify"));
         Assertions.assertEquals("ZVerify", name.get());
     }
 
     @Test
     void test$TakeUnless() {
-        AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
+        AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Sf.of(name.get()).mayTakeUnless(Objects::nonNull).mayAlso(a -> name.set("ZVerify"));
-        Assertions.assertEquals(ZVERIFY_NAME, name.get());
+        Assertions.assertEquals(Z_VERIFY_NAME, name.get());
     }
 
     @Test
     void testIs() {
-        AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
+        AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Assertions.assertTrue(Sf.of(name.get()).is(Objects::nonNull));
     }
 
@@ -136,28 +135,26 @@ class SfTest {
     }
 
 
-
     @Test
     void testOr() {
         AtomicReference<String> name = new AtomicReference<>(null);
-        Sf<String> or = Sf.ofStr(name.get()).or(() -> Sf.ofStr(ZVERIFY_NAME));
-        Assertions.assertEquals(ZVERIFY_NAME, or.get());
+        Sf<String> or = Sf.ofStr(name.get()).or(() -> Sf.ofStr(Z_VERIFY_NAME));
+        Assertions.assertEquals(Z_VERIFY_NAME, or.get());
     }
 
     @Test
     void testOrGet() {
         AtomicReference<String> name = new AtomicReference<>(null);
-        String orGet = Sf.ofStr(name.get()).orGet(() -> ZVERIFY_NAME);
-        Assertions.assertEquals(ZVERIFY_NAME, orGet);
+        String orGet = Sf.ofStr(name.get()).orGet(() -> Z_VERIFY_NAME);
+        Assertions.assertEquals(Z_VERIFY_NAME, orGet);
     }
 
     @Test
     void testOrElse() {
         AtomicReference<String> name = new AtomicReference<>(null);
-        String orElse = Sf.ofStr(name.get()).orElse(ZVERIFY_NAME);
-        Assertions.assertEquals(ZVERIFY_NAME, orElse);
+        String orElse = Sf.ofStr(name.get()).orElse(Z_VERIFY_NAME);
+        Assertions.assertEquals(Z_VERIFY_NAME, orElse);
     }
-
 
 
 }

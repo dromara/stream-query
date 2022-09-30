@@ -18,9 +18,9 @@ import java.util.Objects;
  */
 public class Sf<T> {
 
-    protected static final Sf<?> EMPTY = new Sf<>(null);
+    private static final Sf<?> EMPTY = new Sf<>(null);
 
-    protected final T value;
+    private final T value;
 
     public Sf(T value) {
         this.value = value;
