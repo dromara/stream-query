@@ -40,12 +40,12 @@ public abstract class BaseQueryHelper<
     }
 
     protected TR eq(K data) {
-        wrapper = Sf.of(data).$let(value -> wrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
+        wrapper = Sf.of(data).mayLet(value -> wrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 
     protected TR in(Collection<K> dataList) {
-        wrapper = Sf.$ofColl(dataList).$let(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
+        wrapper = Sf.mayColl(dataList).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 

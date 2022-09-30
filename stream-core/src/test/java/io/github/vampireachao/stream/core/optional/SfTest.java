@@ -1,11 +1,9 @@
 package io.github.vampireachao.stream.core.optional;
 
-import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,7 +30,7 @@ class SfTest {
 
     @Test
     void test$OfColl() {
-        Assertions.assertTrue(Sf.$ofColl(Arrays.asList(null, null, null)).isEmpty());
+        Assertions.assertTrue(Sf.mayColl(Arrays.asList(null, null, null)).isEmpty());
     }
 
     @Test
@@ -42,7 +40,7 @@ class SfTest {
 
     @Test
     void test$OfStr() {
-        Assertions.assertTrue(Sf.$ofStr("  ").isEmpty());
+        Assertions.assertTrue(Sf.mayStr("  ").isEmpty());
     }
 
     @Test
@@ -69,7 +67,7 @@ class SfTest {
 
     @Test
     void test$Let() {
-        Sf<String> stringSf = Sf.$ofStr(null).$let(a -> a.toString().length()).let(a -> ZVERIFY_NAME);
+        Sf<String> stringSf = Sf.mayStr(null).mayLet(a -> a.toString().length()).let(a -> ZVERIFY_NAME);
         Assertions.assertEquals(ZVERIFY_NAME, stringSf.value);
     }
 
@@ -83,35 +81,35 @@ class SfTest {
     @Test
     void test$Also() {
         AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(null).$also(a -> name.set("ZVerify"));
+        Sf.of(null).mayAlso(a -> name.set("ZVerify"));
         Assertions.assertEquals(ZVERIFY_NAME, name.get());
     }
 
     @Test
     void testTakeIf() {
         AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(name).takeIf((a) -> Opp.ofStr(a.get()).isEmpty()).$also(a -> a.set("ZVerify"));
+        Sf.of(name).takeIf((a) -> Opp.ofStr(a.get()).isEmpty()).mayAlso(a -> a.set("ZVerify"));
         Assertions.assertEquals(ZVERIFY_NAME, name.get());
     }
 
     @Test
     void test$TakeIf() {
         AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(name).$takeIf((a) -> Opp.ofStr(a.get()).isPresent()).also(a -> a.set("ZVerify"));
+        Sf.of(name).mayTakeIf((a) -> Opp.ofStr(a.get()).isPresent()).also(a -> a.set("ZVerify"));
         Assertions.assertEquals("ZVerify", name.get());
     }
 
     @Test
     void testTakeUnless() {
         AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(name).takeUnless((a) -> Opp.ofStr(a.get()).isEmpty()).$also(a -> a.set("ZVerify"));
+        Sf.of(name).takeUnless((a) -> Opp.ofStr(a.get()).isEmpty()).mayAlso(a -> a.set("ZVerify"));
         Assertions.assertEquals("ZVerify", name.get());
     }
 
     @Test
     void test$TakeUnless() {
         AtomicReference<String> name = new AtomicReference<>(ZVERIFY_NAME);
-        Sf.of(name.get()).$takeUnless(Objects::nonNull).$also(a -> name.set("ZVerify"));
+        Sf.of(name.get()).mayTakeUnless(Objects::nonNull).mayAlso(a -> name.set("ZVerify"));
         Assertions.assertEquals(ZVERIFY_NAME, name.get());
     }
 

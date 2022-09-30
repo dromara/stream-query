@@ -57,12 +57,12 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
     }
 
     public OneToManyToOne<T, K, V, U, A, R> in(Collection<K> dataList) {
-        middleWrapper = Sf.$ofColl(dataList).$let(values -> middleWrapper.in(middleKey, values)).orGet(() -> Database.notActive(middleWrapper));
+        middleWrapper = Sf.mayColl(dataList).mayLet(values -> middleWrapper.in(middleKey, values)).orGet(() -> Database.notActive(middleWrapper));
         return this;
     }
 
     public OneToManyToOne<T, K, V, U, A, R> eq(K data) {
-        middleWrapper = Sf.of(data).$let(value -> middleWrapper.eq(middleKey, value)).orGet(() -> Database.notActive(middleWrapper));
+        middleWrapper = Sf.of(data).mayLet(value -> middleWrapper.eq(middleKey, value)).orGet(() -> Database.notActive(middleWrapper));
         return this;
     }
 

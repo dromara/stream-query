@@ -34,19 +34,19 @@ public class Sf<T> {
     }
 
     public static <E, T extends Collection<E>> Sf<T> ofColl(T value) {
-        return of(value).$takeIf(c -> !c.isEmpty());
+        return of(value).mayTakeIf(c -> !c.isEmpty());
     }
 
-    public static <E, T extends Collection<E>> Sf<T> $ofColl(T value) {
-        return ofColl(value).$takeIf(c -> Steam.of(c).anyMatch(Objects::nonNull));
+    public static <E, T extends Collection<E>> Sf<T> mayColl(T value) {
+        return ofColl(value).mayTakeIf(c -> Steam.of(c).anyMatch(Objects::nonNull));
     }
 
     public static <T extends CharSequence> Sf<T> ofStr(T value) {
-        return of(value).$takeIf(c -> !c.toString().isEmpty());
+        return of(value).mayTakeIf(c -> !c.toString().isEmpty());
     }
 
-    public static <T extends CharSequence> Sf<T> $ofStr(T value) {
-        return ofStr(value).$takeIf(c -> Steam.split(c.toString(), "").anyMatch(e -> !" ".equals(e)));
+    public static <T extends CharSequence> Sf<T> mayStr(T value) {
+        return ofStr(value).mayTakeIf(c -> Steam.split(c.toString(), "").anyMatch(e -> !" ".equals(e)));
     }
 
     public static <R> Sf<R> empty() {
@@ -71,7 +71,7 @@ public class Sf<T> {
         return of(mapper.apply(value));
     }
 
-    public <R> Sf<R> $let(SerFunc<T, R> mapper) {
+    public <R> Sf<R> mayLet(SerFunc<T, R> mapper) {
         if (isEmpty()) {
             return empty();
         }
@@ -83,7 +83,7 @@ public class Sf<T> {
         return this;
     }
 
-    public Sf<T> $also(SerCons<T> mapper) {
+    public Sf<T> mayAlso(SerCons<T> mapper) {
         if (isEmpty()) {
             return this;
         }
@@ -97,7 +97,7 @@ public class Sf<T> {
         return this;
     }
 
-    public Sf<T> $takeIf(SerFunc<T, Boolean> mapper) {
+    public Sf<T> mayTakeIf(SerFunc<T, Boolean> mapper) {
         if (isEmpty()) {
             return this;
         }
@@ -109,7 +109,7 @@ public class Sf<T> {
         return takeIf(v -> Boolean.FALSE.equals(mapper.apply(v)));
     }
 
-    public Sf<T> $takeUnless(SerFunc<T, Boolean> mapper) {
+    public Sf<T> mayTakeUnless(SerFunc<T, Boolean> mapper) {
         if (isEmpty()) {
             return this;
         }
