@@ -40,7 +40,37 @@ class OneToManyToOneTest {
 
         Map<Long, List<RoleInfo>> userIdRoleInfosMap = OneToManyToOne.of(UserRole::getUserId).in(userIds).value(UserRole::getRoleId)
                 .attachKey(RoleInfo::getId).attachPeek(SerCons.nothing()).query();
-        Assertions.assertEquals(5, userIdRoleInfosMap.size());
+        Assertions.assertEquals(userIdRolesMap, userIdRoleInfosMap);
+    }
+
+    @Test
+    void testPart() {
+        Map<Long, List<UserRole>> userIdUserRolesMap = OneToManyToOne.of(UserRole::getUserId).query();
+        Assertions.assertFalse(userIdUserRolesMap.isEmpty());
+
+        Map<Long, List<String>> userIdRoleIdsMap = OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).query();
+        Assertions.assertFalse(userIdRoleIdsMap.isEmpty());
+
+        Map<Long, List<String>> userIdEq1RoleIdsMap = OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).condition(w -> w.eq(UserRole::getId, 1L)).query();
+        Assertions.assertFalse(userIdEq1RoleIdsMap.isEmpty());
+
+        Map<Long, List<RoleInfo>> userIdRolesMap = OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).attachKey(RoleInfo::getId).query();
+        Assertions.assertFalse(userIdRolesMap.isEmpty());
+
+        Map<Long, List<String>> userIdRoleNamesMap = OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).attachKey(RoleInfo::getId).attachValue(RoleInfo::getRoleName).query();
+        Assertions.assertFalse(userIdRoleNamesMap.isEmpty());
+
+        Map<Long, List<String>> onlyMiddle = OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).attachKey(RoleInfo::getId).attachValue(RoleInfo::getRoleName).attachCondition(w -> null).query();
+        Assertions.assertFalse(onlyMiddle.isEmpty());
+    }
+
+    @Test
+    void testNoQuery() {
+        Assertions.assertTrue(OneToManyToOne.of(UserRole::getUserId).eq(null).query().isEmpty());
+        Assertions.assertTrue(OneToManyToOne.of(UserRole::getUserId).condition(w -> null).query().isEmpty());
+        Assertions.assertTrue(OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).in(null).query().isEmpty());
+        Assertions.assertTrue(OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).in(null).attachKey(RoleInfo::getId).query().isEmpty());
+        Assertions.assertTrue(OneToManyToOne.of(UserRole::getUserId).value(UserRole::getRoleId).in(null).attachKey(RoleInfo::getId).attachValue(RoleInfo::getRoleName).query().isEmpty());
     }
 
 }

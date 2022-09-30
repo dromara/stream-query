@@ -86,8 +86,8 @@ public abstract class BaseQueryHelper<
         return t -> Sf.of(valueFunction).orGet(() -> SerFunc.<T, V>castingIdentity()::apply).apply(t);
     }
 
-    public static <K, A, V> Steam<Map.Entry<K, List<V>>> mixin(Map<K, List<A>> middleMap, Map<A, V> attachMap) {
-        return Steam.of(middleMap.entrySet()).map(e -> MapUtil.entry(e.getKey(), Steam.of(e.getValue()).map(attachMap::get).toList()));
+    public static <K, A, V> Steam<Map.Entry<K, List<V>>> mixin(Map<K, List<A>> middleMap, Map<A, V> attachMap, UnaryOperator<Steam<V>>... unaryOperator) {
+        return Steam.of(middleMap.entrySet()).map(e -> MapUtil.entry(e.getKey(), Steam.of(unaryOperator).findFirst().orElseGet(UnaryOperator::identity).apply(Steam.of(e.getValue()).map(attachMap::get)).toList()));
     }
 
 }

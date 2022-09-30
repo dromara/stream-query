@@ -10,9 +10,8 @@ import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -30,101 +29,102 @@ import java.util.function.UnaryOperator;
  * @since 2022/5/24 14:15
  */
 @SuppressWarnings("unchecked")
-public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U, A, R extends Serializable & Comparable<R>> {
+public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U, A> {
 
-    protected final SFunction<T, K> middleKey;
-    protected SFunction<T, V> middleValue;
-    protected SFunction<U, V> attachKey;
-    protected SFunction<U, A> attachValue;
-    protected SFunction<T, R> groupBy;
+    private final SFunction<T, K> middleKey;
+    private SFunction<T, V> middleValue;
+    private SFunction<U, V> attachKey;
+    private SFunction<U, A> attachValue;
+    private LambdaQueryWrapper<T> middleWrapper;
+    private UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator = SerUnOp.identity();
 
-    protected LambdaQueryWrapper<T> middleWrapper;
-    protected UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator = SerUnOp.identity();
-
-    protected boolean isParallel = false;
-    protected SerCons<T> middlePeek = SerCons.nothing();
-    protected SerCons<U> attachPeek = SerCons.nothing();
+    private boolean isParallel = false;
+    private SerCons<T> middlePeek = SerCons.nothing();
+    private SerCons<U> attachPeek = SerCons.nothing();
 
     public OneToManyToOne(SFunction<T, K> middleKey) {
         this.middleKey = middleKey;
-        this.groupBy = (SFunction<T, R>) middleKey;
         this.middleWrapper = Database.lambdaQuery(middleKey);
     }
 
     public static <T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U>
-    OneToManyToOne<T, K, V, U, U, K> of(SFunction<T, K> keyFunction) {
+    OneToManyToOne<T, K, V, U, T> of(SFunction<T, K> keyFunction) {
         return new OneToManyToOne<>(keyFunction);
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> in(Collection<K> dataList) {
+    public OneToManyToOne<T, K, V, U, A> in(Collection<K> dataList) {
         middleWrapper = Sf.mayColl(dataList).mayLet(values -> middleWrapper.in(middleKey, values)).orGet(() -> Database.notActive(middleWrapper));
         return this;
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> eq(K data) {
+    public OneToManyToOne<T, K, V, U, A> eq(K data) {
         middleWrapper = Sf.of(data).mayLet(value -> middleWrapper.eq(middleKey, value)).orGet(() -> Database.notActive(middleWrapper));
         return this;
     }
 
-    public <VV extends Serializable & Comparable<VV>> OneToManyToOne<T, K, VV, U, T, K> value(SFunction<T, VV> middleValue) {
+    public <VV extends Serializable & Comparable<VV>> OneToManyToOne<T, K, VV, U, VV> value(SFunction<T, VV> middleValue) {
         this.middleValue = (SFunction<T, V>) middleValue;
-        return (OneToManyToOne<T, K, VV, U, T, K>) this;
+        if (Objects.nonNull(middleWrapper)) {
+            Database.select(middleWrapper, middleKey, middleValue);
+        }
+        return (OneToManyToOne<T, K, VV, U, VV>) this;
     }
 
-    public <UU> OneToManyToOne<T, K, V, UU, UU, R> attachKey(SFunction<UU, V> attachKey) {
+    public <UU> OneToManyToOne<T, K, V, UU, UU> attachKey(SFunction<UU, V> attachKey) {
         this.attachKey = (SFunction<U, V>) attachKey;
-        return (OneToManyToOne<T, K, V, UU, UU, R>) this;
+        return (OneToManyToOne<T, K, V, UU, UU>) this;
     }
 
-    public <AA> OneToManyToOne<T, K, V, T, AA, K> attachValue(SFunction<U, AA> attachValue) {
+    public <AA> OneToManyToOne<T, K, V, T, AA> attachValue(SFunction<U, AA> attachValue) {
         this.attachValue = (SFunction<U, A>) attachValue;
-        return (OneToManyToOne<T, K, V, T, AA, K>) this;
+        return (OneToManyToOne<T, K, V, T, AA>) this;
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
+    public OneToManyToOne<T, K, V, U, A> condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
         middleWrapper = Sf.of(queryOperator.apply(middleWrapper)).orGet(() -> Database.notActive(middleWrapper));
         return this;
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> attachCondition(UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator) {
+    public OneToManyToOne<T, K, V, U, A> attachCondition(UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator) {
         this.attachQueryOperator = attachQueryOperator;
         return this;
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> parallel(boolean isParallel) {
+    public OneToManyToOne<T, K, V, U, A> parallel(boolean isParallel) {
         this.isParallel = isParallel;
         return this;
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> parallel() {
+    public OneToManyToOne<T, K, V, U, A> parallel() {
         return parallel(true);
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> sequential() {
+    public OneToManyToOne<T, K, V, U, A> sequential() {
         return parallel(false);
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> peek(SerCons<T> middlePeek) {
+    public OneToManyToOne<T, K, V, U, A> peek(SerCons<T> middlePeek) {
         this.middlePeek = middlePeek;
         return this;
     }
 
-    public OneToManyToOne<T, K, V, U, A, R> attachPeek(SerCons<U> attachPeek) {
+    public OneToManyToOne<T, K, V, U, A> attachPeek(SerCons<U> attachPeek) {
         this.attachPeek = attachPeek;
         return this;
     }
 
-    public <RR extends Serializable & Comparable<RR>> OneToManyToOne<T, K, V, U, A, RR> groupBy(SFunction<T, RR> groupBy) {
-        this.groupBy = (SFunction<T, R>) groupBy;
-        return (OneToManyToOne<T, K, V, U, A, RR>) this;
-    }
-
-
-    public Map<R, List<A>> query() {
-        Map<R, List<V>> middleKeyValuesMap = Steam.of(Database.list(middleWrapper)).parallel(isParallel).peek(middlePeek)
-                .group(groupBy, Collective.mapping(Sf.of(middleValue).orGet(() -> SerFunc.<T, V>castingIdentity()::apply), Collective.toList()));
+    public <R> R query(BiFunction<Map<K, List<V>>, Map<V, A>, R> mapper) {
+        Map<K, List<V>> middleKeyValuesMap = Steam.of(Database.list(middleWrapper)).parallel(isParallel).peek(middlePeek)
+                .group(middleKey, Collective.mapping(Sf.of(middleValue).orGet(() -> SerFunc.<T, V>castingIdentity()::apply), Collective.toList()));
+        if (Objects.isNull(attachKey)) {
+            return mapper.apply(middleKeyValuesMap, new HashMap<>(middleKeyValuesMap.size()));
+        }
         List<V> relationDataList = Steam.of(middleKeyValuesMap.values()).flat(Function.identity()).toList();
         Map<V, A> attachKeyValue = OneToOne.of(attachKey).in(relationDataList).value(attachValue).parallel(isParallel).peek(attachPeek).condition(attachQueryOperator).query();
-        return BaseQueryHelper.mixin(middleKeyValuesMap, attachKeyValue).parallel(isParallel).collect(Collective.entryToMap());
+        return mapper.apply(middleKeyValuesMap, attachKeyValue);
+    }
+
+    public Map<K, List<A>> query() {
+        return query((middleKeyValuesMap, attachKeyValue) -> BaseQueryHelper.mixin(middleKeyValuesMap, attachKeyValue, Steam::nonNull).parallel(isParallel).collect(Collective.entryToMap()));
     }
 }

@@ -31,13 +31,13 @@ class ManyTest {
     }
 
     @Test
-    void noKeyTest() {
+    void testPart() {
         List<UserInfo> userInfoList = Many.of(UserInfo::getId).query();
         Assertions.assertFalse(userInfoList.isEmpty());
     }
 
     @Test
-    void willNotQueryTest() {
+    void testNoQuery() {
         UserInfo[] eqNullUserArray = Many.of(UserInfo::getId).eq(null).query(s -> s.toArray(UserInfo[]::new));
         Assertions.assertArrayEquals(new UserInfo[0], eqNullUserArray);
 
