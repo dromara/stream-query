@@ -24,7 +24,6 @@ import java.util.function.UnaryOperator;
  * @param <V> 主表查询value/附表查询key
  * @param <U> 附表类型(关联主数据)
  * @param <A> 附表value
- * @param <R> 分组类型，默认为主表查询key
  * @author VampireAchao ZVerify
  * @since 2022/5/24 14:15
  */
