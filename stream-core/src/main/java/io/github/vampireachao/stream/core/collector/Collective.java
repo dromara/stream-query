@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.core.collector;
 
 import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.EntrySteam;
@@ -246,7 +247,7 @@ public class Collective {
      * @return a {@link java.util.stream.Collector} object
      */
     public static <T, A, R>
-    Collector<T, ?, R> filtering(Predicate<? super T> predicate,
+    Collector<T, ?, R> filtering(SerPred<? super T> predicate,
                                  Collector<? super T, A, R> downstream) {
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
         return new Collective.CollectorImpl<>(downstream.supplier(),

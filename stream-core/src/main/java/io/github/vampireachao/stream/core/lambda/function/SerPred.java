@@ -24,7 +24,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * otherwise {@code false}
      * @throws Exception exception
      */
-    boolean testing(T t) throws Exception;
+    Boolean testing(T t) throws Exception;
 
     /**
      * Evaluates this predicate on the given argument.
@@ -36,7 +36,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
     @Override
     default boolean test(T t) {
         try {
-            return testing(t);
+            return Boolean.TRUE.equals(testing(t));
         } catch (Exception e) {
             throw new LambdaInvokeException(e);
         }

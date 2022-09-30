@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
@@ -852,7 +853,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
                                                     Function<T, R> pIdGetter,
                                                     BiConsumer<T, List<T>> childrenSetter,
-                                                    Predicate<T> parentPredicate) {
+                                                    SerPred<T> parentPredicate) {
         List<T> list = toList();
         List<T> parents = Steam.of(list).filter(e -> Opp.of(e).is(parentPredicate)).toList();
         return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, Steam.of(list).group(pIdGetter), parents);

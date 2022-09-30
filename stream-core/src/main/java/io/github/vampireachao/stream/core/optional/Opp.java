@@ -253,12 +253,12 @@ public class Opp<T> {
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      * @throws java.lang.NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
-    public Opp<T> filter(Predicate<? super T> predicate) {
+    public Opp<T> filter(SerPred<? super T> predicate) {
         Objects.requireNonNull(predicate);
         if (isEmpty()) {
             return empty();
         } else {
-            return Predicate.isEqual(true).test(value) ? this : empty();
+            return predicate.test(value) ? this : empty();
         }
     }
 
@@ -624,7 +624,7 @@ public class Opp<T> {
      * @return a {@link io.github.vampireachao.stream.core.optional.Opp} object
      */
     public <R> Opp<T> filterEqual(R value) {
-        return filter(Predicate.isEqual(value));
+        return filter(SerPred.isEqual(value));
     }
 
     /**
@@ -644,7 +644,7 @@ public class Opp<T> {
      * @param predicate a {@link java.util.function.Predicate} object
      * @return a boolean
      */
-    public boolean is(Predicate<T> predicate) {
+    public boolean is(SerPred<T> predicate) {
         return filter(predicate).isPresent();
     }
 
