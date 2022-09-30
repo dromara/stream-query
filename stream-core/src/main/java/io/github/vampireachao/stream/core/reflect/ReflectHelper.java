@@ -68,8 +68,8 @@ public class ReflectHelper {
      * return accessible accessibleObject
      *
      * @param accessibleObject     accessibleObject method
-     * @return accessibleObject
      * @param <$ACCESSIBLE_OBJECT> a $ACCESSIBLE_OBJECT class
+     * @return accessibleObject
      */
     public static <$ACCESSIBLE_OBJECT extends AccessibleObject> $ACCESSIBLE_OBJECT accessible($ACCESSIBLE_OBJECT accessibleObject) {
         return AccessController.doPrivileged((PrivilegedAction<$ACCESSIBLE_OBJECT>) () -> {
@@ -361,10 +361,11 @@ public class ReflectHelper {
      * @param methodDescriptor a {@link java.lang.String} object
      * @return a {@link java.lang.reflect.Constructor} object
      */
-    public static Constructor<?> getConstructorByDescriptor(final Class<?> clazz, final String methodDescriptor) {
+    @SuppressWarnings("unchecked")
+    public static <T> Constructor<T> getConstructorByDescriptor(final Class<?> clazz, final String methodDescriptor) {
         for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
             if (ReflectHelper.getDescriptor(constructor).equals(methodDescriptor)) {
-                return constructor;
+                return (Constructor<T>) constructor;
             }
         }
         throw new IllegalStateException(String.format("No constructor found with class %s and descriptor %s", clazz, methodDescriptor));

@@ -6,10 +6,15 @@ import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.reflect.AbstractTypeReference;
 import io.github.vampireachao.stream.core.stream.Steam;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandleProxies;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -56,10 +61,20 @@ class LambdaHelperTest {
     }
 
     @Test
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
     void testProxy() {
         Assertions.assertEquals(int.class, LambdaHelper.<SerFunc<Integer, String[]>>resolve(String[]::new).getParameterTypes()[0]);
         Assertions.assertEquals(int.class, LambdaHelper.<SerFunc<Integer, Integer[][]>>resolve(Integer[][]::new).getParameterTypes()[0]);
         Assertions.assertEquals(Object.class, LambdaHelper.<SerCons<Object>>resolve(System.out::println).getParameterTypes()[0]);
+
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandle getName = lookup.findVirtual(LambdaExecutable.class, "getName", MethodType.methodType(String.class));
+        SerFunc<LambdaExecutable, String> lambda = MethodHandleProxies.asInterfaceInstance(SerFunc.class, getName);
+        Assertions.assertDoesNotThrow(() -> lambda.apply(new LambdaExecutable()));
+        LambdaExecutable lambdaExecutable = LambdaHelper.resolve(lambda);
+        Assertions.assertEquals(LambdaExecutable.class, lambdaExecutable.getClazz());
     }
+
 
 }
