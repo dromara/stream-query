@@ -4,11 +4,9 @@ import io.github.vampireachao.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.github.vampireachao.stream.core.collector.Collective.*;
@@ -28,7 +26,13 @@ class CollectiveTest {
 
     @Test
     void testGroupingBy() {
-        Assertions.assertArrayEquals(new Object[]{}, Stream.of(null, null, null).collect(groupingBy(Object::hashCode)).get(null).toArray());
+        Assertions.assertArrayEquals(new Object[]{}, Stream.of(null, null, null).parallel()
+                .collect(groupingBy(Object::hashCode)).get(null).toArray());
+
+        Map<? extends Class<?>, Integer> group = Steam.of(null, null, null).group(Object::getClass, summingInt(Object::hashCode));
+        Assertions.assertFalse(group.isEmpty());
+
+        Assertions.assertFalse(Steam.of(null, 1).parallel().group(Object::hashCode, mapping(Function.identity(), toList())).isEmpty());
     }
 
     @Test
@@ -39,35 +43,86 @@ class CollectiveTest {
     }
 
     @Test
+    void testFlatMappingIter() {
+        List<Integer> actual = Stream.iterate(0, i -> ++i).limit(3)
+                .collect(flatMappingIter(i -> Steam.of(i, i), toList()));
+        Assertions.assertEquals(Arrays.asList(0, 0, 1, 1, 2, 2), actual);
+    }
+
+    @Test
     void testTransform() {
         Stream<Integer> stream = Stream.of(1, 2, 3, 4)
-            .collect(Collective.transform(Steam::of));
+                .collect(Collective.transform(Steam::of));
         Assertions.assertEquals(Steam.class, stream.getClass());
 
         stream = Stream.of(1, 2, 3, 4)
-            .collect(Collective.transform(HashSet::new, Steam::of));
+                .collect(Collective.transform(HashSet::new, Steam::of));
         Assertions.assertEquals(Steam.class, stream.getClass());
     }
 
     @Test
     void testToEasyStream() {
         Stream<Integer> stream = Stream.of(1, 2, 3, 4)
-            .collect(Collective.toSteam());
+                .collect(Collective.toSteam());
         Assertions.assertEquals(Steam.class, stream.getClass());
     }
 
     @Test
     void testToEntryStream() {
         Map<String, Integer> map = Stream.of(1, 2, 3, 4, 5)
-            // 转为EntryStream
-            .collect(Collective.toEntrySteam(Function.identity(), String::valueOf))
-            // 过滤偶数
-            .filterByKey(k -> (k & 1) == 1)
-            .inverse()
-            .toMap();
-        Assertions.assertEquals((Integer)1, map.get("1"));
-        Assertions.assertEquals((Integer)3, map.get("3"));
-        Assertions.assertEquals((Integer)5, map.get("5"));
+                // 转为EntryStream
+                .collect(Collective.toEntrySteam(Function.identity(), String::valueOf))
+                // 过滤偶数
+                .filterByKey(k -> (k & 1) == 1)
+                .inverse()
+                .toMap();
+        Assertions.assertEquals((Integer) 1, map.get("1"));
+        Assertions.assertEquals((Integer) 3, map.get("3"));
+        Assertions.assertEquals((Integer) 5, map.get("5"));
     }
+
+    @Test
+    void testToCollection() {
+        HashSet<Integer> list = Steam.of(1, 2, 3, 4, 5).parallel()
+                .collect(Collective.toCollection(HashSet::new));
+        Assertions.assertEquals(5, list.size());
+    }
+
+    @Test
+    void testToList() {
+        List<Integer> list = Steam.of(1, 2, 3, 4, 5).parallel().collect(Collective.toList());
+        Assertions.assertEquals(5, list.size());
+    }
+
+    @Test
+    void testToSet() {
+        Set<Integer> list = Steam.of(1, 2, 3, 4, 5).parallel().collect(Collective.toSet());
+        Assertions.assertEquals(5, list.size());
+    }
+
+    @Test
+    void testJoining() {
+        String list = Steam.of(1, 2, 3, 4, 5).map(String::valueOf).parallel().collect(Collective.joining());
+        Assertions.assertEquals("12345", list);
+
+        Assertions.assertEquals("1,2,3,4,5", Steam.of(1, 2, 3, 4, 5).map(String::valueOf).parallel()
+                .collect(Collective.joining(",")));
+    }
+
+    @Test
+    void testFiltering() {
+        final Map<Integer, Long> map = Stream.of(1, 2, 3)
+                .collect(Collectors.groupingBy(Function.identity(),
+                        Collective.filtering(i -> i > 1, Collectors.counting())
+                ));
+        Assertions.assertEquals(new HashMap<Integer, Long>() {
+            {
+                put(1, 0L);
+                put(2, 1L);
+                put(3, 1L);
+            }
+        }, map);
+    }
+
 
 }

@@ -74,7 +74,7 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return 集合
      */
     default List<T> toList() {
-        return toCollection(ArrayList::new);
+        return collect(Collective.toList());
     }
 
     /**
@@ -93,7 +93,7 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return 集合
      */
     default Set<T> toSet() {
-        return toCollection(HashSet::new);
+        return collect(Collective.toSet());
     }
 
     /**
@@ -102,8 +102,7 @@ public interface CollectableStream<T> extends Stream<T> {
      * @return 集合
      */
     default Set<T> toUnmodifiableSet() {
-        Set<T> set = toSet();
-        return Collections.unmodifiableSet(set);
+        return Collections.unmodifiableSet(toSet());
     }
 
     // endregion
