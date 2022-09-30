@@ -31,6 +31,7 @@ public interface SerArgsCons<T> extends Serializable {
      * Performs this operation on the given argument.
      *
      * @param t the input arguments
+     * @throws Exception maybe throw exception
      */
     @SuppressWarnings("unchecked")
     void accepting(T... t) throws Exception;
