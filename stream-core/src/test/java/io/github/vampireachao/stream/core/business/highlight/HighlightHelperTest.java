@@ -1,9 +1,11 @@
 package io.github.vampireachao.stream.core.business.highlight;
 
+import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +27,8 @@ class HighlightHelperTest {
         ).toList();
         String highlight = HighlightHelper.highlight(text, foundWords, s -> "<span style='color:red'>" + s + "</span>");
         Assertions.assertEquals("我有一颗<span style='color:red'>大土豆</span>，<span style='color:red'>刚出锅</span>的", highlight);
+
+        Assertions.assertEquals("", HighlightHelper.highlight("", new ArrayList<>(), SerUnOp.identity()));
     }
 
 }
