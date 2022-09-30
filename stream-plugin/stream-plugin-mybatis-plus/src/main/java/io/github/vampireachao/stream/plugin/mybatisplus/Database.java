@@ -649,24 +649,7 @@ public class Database {
     public static <T, R, M extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<M, R> sFunction) {
         SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
         try {
-            M baseMapper = (M) SqlHelper.getMapper(entityClass, sqlSession);
-            return sFunction.apply(baseMapper);
-          /*  IMapper<T> proxyInstance = (IMapper<T>) Proxy.newProxyInstance(Thread.currentThread()
-                            .getContextClassLoader(),
-                    new Class[]{IMapper.class},
-                    ((proxy, method, args) -> {
-                        Method baseMapperMethod;
-                        try {
-                            baseMapperMethod = org.springframework.util.ClassUtils.getMethod(baseMapper.getClass(),
-                                    method.getName());
-                        } catch (IllegalStateException e) {
-                            throw new IllegalStateException(TableInfoHelper.getTableInfo(entityClass)
-                                    .getCurrentNamespace() + " is not implement " + IMapper.class.getName(), e);
-                        }
-                        ReflectHelper.accessible(baseMapperMethod);
-                        return baseMapperMethod.invoke(method, args);
-                    }));*/
-//            return sFunction.apply(proxyInstance);
+            return sFunction.apply((M) SqlHelper.getMapper(entityClass, sqlSession));
         } finally {
             SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }
