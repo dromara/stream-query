@@ -39,13 +39,13 @@
 <dependency>
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-plugin-mybatis-plus</artifactId>
-    <version>1.1.10</version>
+    <version>1.1.11</version>
 </dependency>
 <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-core -->
 <dependency>
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-core</artifactId>
-    <version>1.1.10</version>
+    <version>1.1.11</version>
 </dependency>
 ```
 ### 🍊Gradle
