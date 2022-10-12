@@ -21,7 +21,7 @@ public interface IMapper<T> extends BaseMapper<T> {
      * @param list 数据
      * @return 条数
      */
-    long insertOneSql(@Param(PluginConst.COLLECTION_PARAM_NAME) Collection<T> list);
+    long saveOneSql(@Param(PluginConst.COLLECTION_PARAM_NAME) Collection<T> list);
 
     /**
      * 更新多条数据（mysql语法批量）
@@ -31,16 +31,6 @@ public interface IMapper<T> extends BaseMapper<T> {
      */
     long updateOneSql(@Param(PluginConst.COLLECTION_PARAM_NAME) Collection<T> list);
 
-
-    /**
-     * 批量插入, 默认一千分批
-     *
-     * @param list 集合
-     * @return 是否成功
-     */
-    default long updateFewSql(Collection<T> list) {
-        return this.updateFewSql(list, PluginConst.DEFAULT_BATCH_SIZE);
-    }
 
     /**
      * 批量插入
@@ -54,23 +44,13 @@ public interface IMapper<T> extends BaseMapper<T> {
     }
 
     /**
-     * 批量插入, 默认一千分批
-     *
-     * @param list 集合
-     * @return 是否成功
-     */
-    default long insertFewSql(Collection<T> list) {
-        return this.insertFewSql(list, PluginConst.DEFAULT_BATCH_SIZE);
-    }
-
-    /**
      * 批量插入
      *
      * @param list      集合
      * @param batchSize 分割量
      * @return 是否成功
      */
-    default long insertFewSql(Collection<T> list, int batchSize) {
-        return Steam.of(list).splitList(batchSize).mapToLong(this::insertOneSql).sum();
+    default long saveFewSql(Collection<T> list, int batchSize) {
+        return Steam.of(list).splitList(batchSize).mapToLong(this::saveOneSql).sum();
     }
 }

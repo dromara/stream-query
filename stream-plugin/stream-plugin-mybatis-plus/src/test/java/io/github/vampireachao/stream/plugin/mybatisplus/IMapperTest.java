@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import io.github.vampireachao.stream.plugin.mybatisplus.mapper.UserInfoMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +22,7 @@ class IMapperTest {
     private UserInfoMapper userInfoMapper;
 
     @Test
-    void testInsertOneSql() {
+    void testSaveOneSql() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -29,13 +30,13 @@ class IMapperTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        long affectRows = userInfoMapper.insertOneSql(list);
+        long affectRows = userInfoMapper.saveOneSql(list);
         Assertions.assertEquals(2L, affectRows);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
     }
 
     @Test
-    void testInsertFewSql() {
+    void testSaveFewSql() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -43,7 +44,7 @@ class IMapperTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        long affectRows = userInfoMapper.insertFewSql(list);
+        long affectRows = userInfoMapper.saveFewSql(list, PluginConst.DEFAULT_BATCH_SIZE);
         Assertions.assertEquals(2L, affectRows);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
     }

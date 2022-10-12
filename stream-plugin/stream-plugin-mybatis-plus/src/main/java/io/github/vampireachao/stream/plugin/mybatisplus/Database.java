@@ -139,11 +139,38 @@ public class Database {
      * @param <T>        类型
      * @return 成功与否
      */
-    public static <T> boolean insertFewSql(Collection<T> entityList) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            return false;
+    public static <T> boolean saveFewSql(Collection<T> entityList) {
+        return saveFewSql(entityList, PluginConst.DEFAULT_BATCH_SIZE);
+    }
+
+    /**
+     * 以几条sql方式修改插入（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param batchSize  分批条数
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean saveOrUpdateFewSql(Collection<T> entityList, int batchSize) {
+        if (CollectionUtils.isEmpty(entityList) || batchSize < 0) {
+            return true;
         }
-        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.insertFewSql(entityList));
+        Class<T> entityClass = getEntityClass(entityList);
+        TableInfo tableInfo = getTableInfo(entityClass);
+        Map<Boolean, List<T>> isInsertDataListMap = Steam.of(entityList)
+                .partition(entity -> Objects.isNull(tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty())));
+        return saveFewSql(isInsertDataListMap.get(true)) && updateFewSql(isInsertDataListMap.get(false));
+    }
+
+    /**
+     * 以几条sql方式修改插入（批量）需要实现IMapper
+     *
+     * @param entityList 数据
+     * @param <T>        类型
+     * @return 成功与否
+     */
+    public static <T> boolean saveOrUpdateFewSql(Collection<T> entityList) {
+        return saveOrUpdateFewSql(entityList, PluginConst.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -154,11 +181,11 @@ public class Database {
      * @param <T>        类型
      * @return 成功与否
      */
-    public static <T> boolean insertFewSql(Collection<T> entityList, int batchSize) {
+    public static <T> boolean saveFewSql(Collection<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
-        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.insertFewSql(entityList, batchSize));
+        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.saveFewSql(entityList, batchSize));
     }
 
 
@@ -184,10 +211,7 @@ public class Database {
      * @return 成功与否
      */
     public static <T> boolean updateFewSql(Collection<T> entityList) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            return false;
-        }
-        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateFewSql(entityList));
+        return updateFewSql(entityList, PluginConst.DEFAULT_BATCH_SIZE);
     }
 
     /**

@@ -32,16 +32,16 @@ class DatabaseTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        long effectRows = Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.insertOneSql(list));
+        long effectRows = Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(list));
         Assertions.assertEquals(2, effectRows);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
 
         Assertions.assertThrows(ClassCastException.class,
-                () -> Database.execute(UserRole.class, (IMapper<UserRole> m) -> m.insertOneSql(Collections.emptyList())));
+                () -> Database.execute(UserRole.class, (IMapper<UserRole> m) -> m.saveOneSql(Collections.emptyList())));
     }
 
     @Test
-    void testInsertFewSql() {
+    void testSaveFewSql() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -49,13 +49,9 @@ class DatabaseTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        boolean isSuccess = Database.insertFewSql(list);
+        boolean isSuccess = Database.saveFewSql(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
-        list.forEach(u -> u.setId(null));
-        isSuccess = Database.insertFewSql(list, 1);
-        Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(9, Database.count(UserInfo.class));
     }
 
     @Test
@@ -70,6 +66,21 @@ class DatabaseTest {
         Assertions.assertTrue(Database.updateFewSql(Arrays.asList(sheep, ruben)));
         Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
         Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
+    }
+
+    @Test
+    void testSaveOrUpdateFewSql() {
+        UserInfo entity = new UserInfo();
+        entity.setId(1L);
+        entity.setName("cat");
+        entity.setAge(20);
+        entity.setEmail("achao1441470436@gmail.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setName("ruben");
+        List<UserInfo> list = Arrays.asList(userInfo, entity);
+        boolean isSuccess = Database.saveOrUpdateFewSql(list);
+        Assertions.assertTrue(isSuccess);
+        Assertions.assertEquals(6, Database.count(UserInfo.class));
     }
 
     @Test

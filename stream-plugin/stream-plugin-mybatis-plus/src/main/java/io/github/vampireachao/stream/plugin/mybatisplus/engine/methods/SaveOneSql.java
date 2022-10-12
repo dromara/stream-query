@@ -21,9 +21,9 @@ import org.apache.ibatis.mapping.SqlSource;
  *
  * @author VampireAchao ZVerify
  */
-public class InsertOneSql extends AbstractMethod implements PluginConst {
+public class SaveOneSql extends AbstractMethod implements PluginConst {
 
-    public InsertOneSql(String methodName) {
+    public SaveOneSql(String methodName) {
         super(methodName);
     }
 
@@ -38,7 +38,7 @@ public class InsertOneSql extends AbstractMethod implements PluginConst {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
-        SqlMethodEnum sqlMethod = SqlMethodEnum.INSERT_ONE_SQL;
+        SqlMethodEnum sqlMethod = SqlMethodEnum.SAVE_ONE_SQL;
         // column script
         String columnScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList()).map(TableFieldInfo::getColumn)
                         .unshift(tableInfo.getKeyColumn())
