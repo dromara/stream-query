@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -31,6 +33,7 @@ import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -42,6 +45,9 @@ import java.util.stream.Stream;
  */
 public class Database {
     private static final Log log = LogFactory.getLog(Database.class);
+
+    private static final Map<Class<?>, Map<String, String>> TABLE_PROPERTY_COLUMN_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Map<String, String>> TABLE_COLUMN_PROPERTY_CACHE = new ConcurrentHashMap<>();
 
     private Database() {
         /* Do not new me! */
@@ -663,6 +669,41 @@ public class Database {
         } finally {
             SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }
+    }
+
+    public static Map<String, String> getPropertyColumnMap(Class<?> entityClass) {
+        return TABLE_PROPERTY_COLUMN_CACHE.computeIfAbsent(entityClass,
+                clazz -> {
+                    TableInfo tableInfo = getTableInfo(clazz);
+                    Map<String, String> propertyColumnMap = Steam.of(tableInfo.getFieldList())
+                            .toMap(TableFieldInfo::getProperty, TableFieldInfo::getColumn);
+                    propertyColumnMap.put(tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
+                    return Collections.unmodifiableMap(propertyColumnMap);
+                });
+    }
+
+    public static Map<String, String> getColumnPropertyMap(Class<?> entityClass) {
+        return TABLE_COLUMN_PROPERTY_CACHE.computeIfAbsent(entityClass,
+                clazz -> {
+                    TableInfo tableInfo = getTableInfo(clazz);
+                    Map<String, String> columnPropertyMap = Steam.of(tableInfo.getFieldList())
+                            .toMap(TableFieldInfo::getColumn, TableFieldInfo::getProperty);
+                    columnPropertyMap.put(tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
+                    return Collections.unmodifiableMap(columnPropertyMap);
+                });
+    }
+
+    public static String getColumnByProperty(SFunction<?, ?> property) {
+        LambdaMeta lambdaMeta = LambdaUtils.extract(property);
+        return getColumnByProperty(lambdaMeta.getInstantiatedClass(), lambdaMeta.getImplMethodName());
+    }
+
+    public static String getColumnByProperty(Class<?> clazz, String property) {
+        return getPropertyColumnMap(clazz).get(property);
+    }
+
+    public static String getPropertyByColumn(Class<?> clazz, String column) {
+        return getColumnPropertyMap(clazz).get(column);
     }
 
     /**
