@@ -39,35 +39,35 @@ public abstract class BaseQueryHelper<
         super(keyFunction);
     }
 
-    protected TR eq(K data) {
+    public TR eq(K data) {
         wrapper = Sf.of(data).mayLet(value -> wrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 
-    protected TR in(Collection<K> dataList) {
+    public TR in(Collection<K> dataList) {
         wrapper = Sf.mayColl(dataList).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 
-    protected VR condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
+    public VR condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
         wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
         return (VR) this;
     }
 
-    protected VR parallel(boolean isParallel) {
+    public VR parallel(boolean isParallel) {
         this.isParallel = isParallel;
         return (VR) this;
     }
 
-    protected VR parallel() {
+    public VR parallel() {
         return parallel(true);
     }
 
-    protected VR sequential() {
+    public VR sequential() {
         return parallel(false);
     }
 
-    protected VR peek(SerCons<T> peek) {
+    public VR peek(SerCons<T> peek) {
         this.peekConsumer = peek;
         return (VR) this;
     }
