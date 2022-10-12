@@ -144,8 +144,7 @@ public interface CollectableStream<T> extends Stream<T> {
      */
     default <U> Map<Integer, U> toIdxMap(Function<? super T, ? extends U> valueMapper) {
         AtomicInteger index = new AtomicInteger(Steam.NOT_FOUND_INDEX);
-        sequential();
-        return toMap(e -> index.incrementAndGet(), valueMapper, (l, r) -> r);
+        return Steam.of(toList()).toMap(e -> index.incrementAndGet(), valueMapper, (l, r) -> r);
     }
 
     /**

@@ -1,6 +1,5 @@
 package io.github.vampireachao.stream.core.stream;
 
-import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
@@ -725,8 +724,8 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     public <U, R> Steam<R> zip(Iterable<U> other,
                                BiFunction<? super T, ? super U, ? extends R> zipper) {
         Objects.requireNonNull(zipper);
-        Map<Integer, T> idxIdentityMap = mapIdx((e, idx) -> new AbstractMap.SimpleImmutableEntry<>(idx, e)).collect(Collective.entryToMap());
-        Map<Integer, U> idxOtherMap = Steam.of(other).mapIdx((e, idx) -> new AbstractMap.SimpleImmutableEntry<>(idx, e)).collect(Collective.entryToMap());
+        Map<Integer, T> idxIdentityMap = toIdxMap();
+        Map<Integer, U> idxOtherMap = Steam.of(other).toIdxMap();
         if (idxIdentityMap.size() <= idxOtherMap.size()) {
             return Steam.of(idxIdentityMap.keySet(), isParallel()).map(k -> zipper.apply(idxIdentityMap.get(k), idxOtherMap.get(k)));
         }
