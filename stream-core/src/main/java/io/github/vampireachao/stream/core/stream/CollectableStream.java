@@ -4,6 +4,7 @@ import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -132,6 +133,28 @@ public interface CollectableStream<T> extends Stream<T> {
     default <K, U> Map<K, U> toMap(
             Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends U> valueMapper) {
         return toMap(keyMapper, valueMapper, (l, r) -> r);
+    }
+
+    /**
+     * 转换为map，key为下标,value为给定操作执行后的返回值
+     *
+     * @param valueMapper 指定value操作
+     * @param <U>         value类型
+     * @return map
+     */
+    default <U> Map<Integer, U> toIdxMap(Function<? super T, ? extends U> valueMapper) {
+        AtomicInteger index = new AtomicInteger(Steam.NOT_FOUND_INDEX);
+        sequential();
+        return toMap(e -> index.incrementAndGet(), valueMapper, (l, r) -> r);
+    }
+
+    /**
+     * 转换为map，key为下标,value为元素
+     *
+     * @return map
+     */
+    default Map<Integer, T> toIdxMap() {
+        return toIdxMap(Function.identity());
     }
 
     /**

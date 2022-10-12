@@ -51,7 +51,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     /**
      * 代表不存在的下标, 一般用于并行流的下标, 或者未找到元素时的下标
      */
-    private static final int NOT_FOUND_INDEX = -1;
+    protected static final int NOT_FOUND_INDEX = -1;
 
     Steam(Stream<T> stream) {
         super(stream);
@@ -283,8 +283,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
 
     /**
-     * 过滤元素，返回与指定断言匹配的元素组成的流，断言带下标，并行流时下标永远为-1
-     * 这是一个无状态中间操作
+     * 过滤元素，返回与指定断言匹配的元素组成的流，断言带下标
      *
      * @param predicate 断言
      * @return 返回叠加过滤操作后的流
@@ -292,7 +291,10 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     public Steam<T> filterIdx(BiPredicate<? super T, Integer> predicate) {
         Objects.requireNonNull(predicate);
         if (isParallel()) {
-            return filter(e -> predicate.test(e, NOT_FOUND_INDEX));
+            return Steam.of(toIdxMap().entrySet())
+                    .parallel(isParallel())
+                    .filter(e -> predicate.test(e.getValue(), e.getKey()))
+                    .map(Map.Entry::getValue);
         } else {
             AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
             return filter(e -> predicate.test(e, index.incrementAndGet()));
@@ -320,8 +322,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * 返回与指定函数将元素作为参数执行的结果组成的流，操作带下标，并行流时下标永远为-1
-     * 这是一个无状态中间操作
+     * 返回与指定函数将元素作为参数执行的结果组成的流，操作带下标
      *
      * @param mapper 指定的函数
      * @param <R>    函数执行后返回的类型
@@ -330,7 +331,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     public <R> Steam<R> mapIdx(BiFunction<? super T, Integer, ? extends R> mapper) {
         Objects.requireNonNull(mapper);
         if (isParallel()) {
-            return map(e -> mapper.apply(e, NOT_FOUND_INDEX));
+            return Steam.of(toIdxMap().entrySet())
+                    .parallel(isParallel())
+                    .map(e -> mapper.apply(e.getValue(), e.getKey()));
         } else {
             AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
             return map(e -> mapper.apply(e, index.incrementAndGet()));
@@ -346,7 +349,10 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     public Steam<T> peekIdx(SerBiCons<? super T, Integer> action) {
         Objects.requireNonNull(action);
         if (isParallel()) {
-            return peek(e -> action.accept(e, NOT_FOUND_INDEX));
+            return Steam.of(toIdxMap().entrySet())
+                    .parallel(isParallel())
+                    .peek(e -> action.accept(e.getValue(), e.getKey()))
+                    .map(Map.Entry::getValue);
         } else {
             AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
             return peek(e -> action.accept(e, index.incrementAndGet()));
@@ -376,13 +382,15 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @param <R>    拆分后流的元素类型
      * @return 返回叠加拆分操作后的流
      */
-    public <R> Steam<R> flatIdx(BiFunction<? super T, Integer, ? extends Stream<? extends R>> mapper) {
+    public <R> Steam<R> flatIdx(BiFunction<? super T, Integer, ? extends Iterable<? extends R>> mapper) {
         Objects.requireNonNull(mapper);
         if (isParallel()) {
-            return flatMap(e -> mapper.apply(e, NOT_FOUND_INDEX));
+            return Steam.of(toIdxMap().entrySet())
+                    .parallel(isParallel())
+                    .flat(e -> mapper.apply(e.getValue(), e.getKey()));
         } else {
             AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
-            return flatMap(e -> mapper.apply(e, index.incrementAndGet()));
+            return flat(e -> mapper.apply(e, index.incrementAndGet()));
         }
     }
 
@@ -473,7 +481,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     public void forEachIdx(BiConsumer<? super T, Integer> action) {
         Objects.requireNonNull(action);
         if (isParallel()) {
-            stream.forEach(e -> action.accept(e, NOT_FOUND_INDEX));
+            Steam.of(toIdxMap().entrySet())
+                    .parallel(isParallel())
+                    .forEach(e -> action.accept(e.getValue(), e.getKey()));
         } else {
             AtomicInteger index = new AtomicInteger(NOT_FOUND_INDEX);
             stream.forEach(e -> action.accept(e, index.incrementAndGet()));
