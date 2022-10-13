@@ -35,11 +35,11 @@ import java.util.List;
 public class LambdaExecutable {
 
     /**
-     * Constant <code>CONSTRUCTOR_METHOD_NAME="&lt;init&gt;"</code>
+     * Constant <code>{@code CONSTRUCTOR_METHOD_NAME="<init>"}</code>
      */
     public static final String CONSTRUCTOR_METHOD_NAME = "<init>";
     /**
-     * Constant <code>NEW_INSTANCE_METHOD_NAME="newInstance"</code>
+     * Constant <code>{@code NEW_INSTANCE_METHOD_NAME="newInstance"}</code>
      */
     public static final String NEW_INSTANCE_METHOD_NAME = "newInstance";
 
