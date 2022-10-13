@@ -337,7 +337,8 @@ class DatabaseTest {
                 Database.ordersPropertyToColumn(badPage, UserInfo.class);
             } catch (LambdaInvokeException e) {
                 Throwable throwable = e.getRealException();
-                Assertions.assertEquals("order column { id;drop table user_info; } must not null or be sql injection", throwable.getMessage());
+                Assertions.assertEquals("order column { id;drop table user_info; } must not null or be sql injection",
+                        throwable.getMessage());
                 throw throwable;
             }
         });
