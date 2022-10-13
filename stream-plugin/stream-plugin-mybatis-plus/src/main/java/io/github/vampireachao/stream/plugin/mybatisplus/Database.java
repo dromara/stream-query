@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.github.vampireachao.stream.core.collector.Collective;
@@ -676,7 +677,7 @@ public class Database {
     /**
      * 获取po对应的 {@code Map<属性,字段>}
      *
-     * @param entityClass po类型
+     * @param entityClass 实体类型
      * @return {@code Map<属性,字段>}
      */
     public static Map<String, String> getPropertyColumnMap(Class<?> entityClass) {
@@ -693,7 +694,7 @@ public class Database {
     /**
      * 获取po对应的 {@code Map<字段,属性>}
      *
-     * @param entityClass po类型
+     * @param entityClass 实体类型
      * @return {@code Map<字段,属性>}
      */
     public static Map<String, String> getColumnPropertyMap(Class<?> entityClass) {
@@ -711,7 +712,7 @@ public class Database {
      * 通过属性lambda获取字段名
      *
      * @param property 属性lambda
-     * @param <T>      po类型
+     * @param <T>      实体类型
      * @param <R>      属性类型
      * @return 字段名
      */
@@ -724,7 +725,7 @@ public class Database {
     /**
      * 通过属性名获取字段名
      *
-     * @param clazz    po类型
+     * @param clazz    实体类型
      * @param property 属性名
      * @return 字段名
      */
@@ -735,12 +736,24 @@ public class Database {
     /**
      * 通过字段名获取属性名
      *
-     * @param clazz  po类型
+     * @param clazz  实体类型
      * @param column 字段名
      * @return 属性名
      */
     public static String columnToProperty(Class<?> clazz, String column) {
         return getColumnPropertyMap(clazz).get(column);
+    }
+
+    /**
+     * 将orders里的column从property转column
+     *
+     * @param page  page对象
+     * @param clazz 实体类型
+     * @param <T>   实体类型
+     */
+    @SuppressWarnings("deprecation")
+    public static <T> void ordersPropertyToColumn(Page<T> page, Class<T> clazz) {
+        page.getOrders().forEach(order -> order.setColumn(propertyToColumn(clazz, order.getColumn())));
     }
 
     /**

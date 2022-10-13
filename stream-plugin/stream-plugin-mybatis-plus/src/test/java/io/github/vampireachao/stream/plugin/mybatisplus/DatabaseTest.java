@@ -3,6 +3,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
@@ -313,5 +314,15 @@ class DatabaseTest {
     void testColumnToProperty() {
         String columnByProperty = Database.columnToProperty(UserInfo.class, "gmt_deleted");
         Assertions.assertEquals("gmtDeleted", columnByProperty);
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void testOrdersPropertyToColumn() {
+        Page<UserInfo> page = new Page<>();
+        page.addOrder(OrderItem.desc("gmtDeleted"));
+        Database.ordersPropertyToColumn(page, UserInfo.class);
+        List<OrderItem> orders = page.getOrders();
+        Assertions.assertEquals("gmt_deleted", orders.get(0).getColumn());
     }
 }
