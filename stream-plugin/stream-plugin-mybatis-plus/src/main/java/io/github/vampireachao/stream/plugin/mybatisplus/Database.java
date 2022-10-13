@@ -811,7 +811,9 @@ public class Database {
      * @return 对应表信息
      */
     private static <T> TableInfo getTableInfo(Class<T> entityClass) {
-        return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
+        return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass))
+                .orElseThrow(() -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".",
+                        entityClass.getName()));
     }
 
 }
