@@ -324,5 +324,8 @@ class DatabaseTest {
         Database.ordersPropertyToColumn(page, UserInfo.class);
         List<OrderItem> orders = page.getOrders();
         Assertions.assertEquals("gmt_deleted", orders.get(0).getColumn());
+
+        // order by gmt_deleted desc
+        Assertions.assertDoesNotThrow(() -> Database.page(page, UserInfo.class));
     }
 }
