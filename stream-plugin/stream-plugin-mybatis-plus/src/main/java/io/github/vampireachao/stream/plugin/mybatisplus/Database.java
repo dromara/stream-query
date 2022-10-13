@@ -159,7 +159,7 @@ public class Database {
      */
     public static <T> boolean saveOrUpdateFewSql(Collection<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList) || batchSize < 0) {
-            return true;
+            return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
         TableInfo tableInfo = getTableInfo(entityClass);
