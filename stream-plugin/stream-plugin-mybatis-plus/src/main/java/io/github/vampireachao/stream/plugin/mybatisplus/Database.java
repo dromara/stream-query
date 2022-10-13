@@ -673,6 +673,12 @@ public class Database {
         }
     }
 
+    /**
+     * 获取po对应的 {@code Map<属性,字段>}
+     *
+     * @param entityClass po类型
+     * @return {@code Map<属性,字段>}
+     */
     public static Map<String, String> getPropertyColumnMap(Class<?> entityClass) {
         return TABLE_PROPERTY_COLUMN_CACHE.computeIfAbsent(entityClass,
                 clazz -> {
@@ -684,6 +690,12 @@ public class Database {
                 });
     }
 
+    /**
+     * 获取po对应的 {@code Map<字段,属性>}
+     *
+     * @param entityClass po类型
+     * @return {@code Map<字段,属性>}
+     */
     public static Map<String, String> getColumnPropertyMap(Class<?> entityClass) {
         return TABLE_COLUMN_PROPERTY_CACHE.computeIfAbsent(entityClass,
                 clazz -> {
@@ -695,16 +707,39 @@ public class Database {
                 });
     }
 
-    public static String getColumnByProperty(SFunction<?, ?> property) {
+    /**
+     * 通过属性lambda获取字段名
+     *
+     * @param property 属性lambda
+     * @param <T>      po类型
+     * @param <R>      属性类型
+     * @return 字段名
+     */
+    public static <T, R extends Comparable<R>> String propertyToColumn(SFunction<T, R> property) {
         LambdaMeta lambdaMeta = LambdaUtils.extract(property);
-        return getColumnByProperty(lambdaMeta.getInstantiatedClass(), lambdaMeta.getImplMethodName());
+        return propertyToColumn(lambdaMeta.getInstantiatedClass(),
+                PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName()));
     }
 
-    public static String getColumnByProperty(Class<?> clazz, String property) {
+    /**
+     * 通过属性名获取字段名
+     *
+     * @param clazz    po类型
+     * @param property 属性名
+     * @return 字段名
+     */
+    public static String propertyToColumn(Class<?> clazz, String property) {
         return getPropertyColumnMap(clazz).get(property);
     }
 
-    public static String getPropertyByColumn(Class<?> clazz, String column) {
+    /**
+     * 通过字段名获取属性名
+     *
+     * @param clazz  po类型
+     * @param column 字段名
+     * @return 属性名
+     */
+    public static String columnToProperty(Class<?> clazz, String column) {
         return getColumnPropertyMap(clazz).get(column);
     }
 

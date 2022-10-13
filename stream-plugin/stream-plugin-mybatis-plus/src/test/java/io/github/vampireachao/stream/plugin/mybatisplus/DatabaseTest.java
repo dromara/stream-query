@@ -302,4 +302,16 @@ class DatabaseTest {
         String name = Database.getObj(Wrappers.lambdaQuery(UserInfo.class).eq(UserInfo::getId, 1L), UserInfo::getName);
         Assertions.assertEquals("Jone", name);
     }
+
+    @Test
+    void testPropertyToColumn() {
+        String columnByProperty = Database.propertyToColumn(UserInfo::getGmtDeleted);
+        Assertions.assertEquals("gmt_deleted", columnByProperty);
+    }
+
+    @Test
+    void testColumnToProperty() {
+        String columnByProperty = Database.columnToProperty(UserInfo.class, "gmt_deleted");
+        Assertions.assertEquals("gmtDeleted", columnByProperty);
+    }
 }
