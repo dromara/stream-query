@@ -17,7 +17,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
@@ -58,14 +57,16 @@ public class Database {
     }
 
     public static boolean isActive(AbstractWrapper<?, ?, ?> wrapper) {
-        return (Objects.nonNull(wrapper)) && (wrapper.getSqlComment() == null || !wrapper.getSqlComment().contains(PluginConst.WRAPPER_NOT_ACTIVE));
+        return (Objects.nonNull(wrapper)) &&
+                (wrapper.getSqlComment() == null || !wrapper.getSqlComment().contains(PluginConst.WRAPPER_NOT_ACTIVE));
     }
 
     public static boolean isNotActive(AbstractWrapper<?, ?, ?> wrapper) {
         return !isActive(wrapper);
     }
 
-    public static <W extends AbstractWrapper<T, ?, ?>, T, U extends R, R> R activeOrElse(W wrapper, Function<? super W, U> mapper, U other) {
+    public static <W extends AbstractWrapper<T, ?, ?>, T, U extends R, R>
+    R activeOrElse(W wrapper, Function<? super W, U> mapper, U other) {
         return isActive(wrapper) ? mapper.apply(wrapper) : other;
     }
 
@@ -79,11 +80,15 @@ public class Database {
     }
 
     public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(E data, SFunction<T, E> condition) {
-        return Opp.of(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).eq(condition, value)).filter(Database::isActive);
+        return Opp.of(data).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition)))
+                .eq(condition, value)).filter(Database::isActive);
     }
 
-    public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
-        return Opp.of(dataList).filter(s -> !s.isEmpty()).map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition))).in(condition, new HashSet<>(value))).filter(Database::isActive);
+    public static <T, E extends Serializable>
+    Opp<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
+        return Opp.of(dataList).filter(s -> !s.isEmpty())
+                .map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition)))
+                        .in(condition, new HashSet<>(value))).filter(Database::isActive);
     }
 
     public static <T, K> LambdaQueryWrapper<T> lambdaQuery(SFunction<T, K> keyFunction) {
@@ -96,8 +101,12 @@ public class Database {
     }
 
     @SafeVarargs
-    public static <T> LambdaQueryWrapper<T> select(LambdaQueryWrapper<T> wrapper, SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn, SFunction<T, ?>... columns) {
-        if (Stream.of(columns).allMatch(func -> Objects.nonNull(func) && PropertyNamer.isGetter(LambdaHelper.resolve(func).getLambda().getImplMethodName()))) {
+    public static <T>
+    LambdaQueryWrapper<T> select(LambdaQueryWrapper<T> wrapper,
+                                 SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn,
+                                 SFunction<T, ?>... columns) {
+        if (Stream.of(columns).allMatch(func -> Objects.nonNull(func) &&
+                PropertyNamer.isGetter(LambdaHelper.resolve(func).getLambda().getImplMethodName()))) {
             whenAllMatchColumn.accept(wrapper, columns);
         }
         return wrapper;
@@ -139,7 +148,8 @@ public class Database {
         Class<T> entityClass = getEntityClass(entityList);
         Class<?> mapperClass = ClassUtils.toClassConfident(getTableInfo(entityClass).getCurrentNamespace());
         String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.INSERT_ONE);
-        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize,
+                (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
     }
 
     /**
@@ -238,7 +248,8 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
-        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateFewSql(entityList, batchSize));
+        return execute(getEntityClass(entityList),
+                (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateFewSql(entityList, batchSize));
     }
 
     /**
@@ -265,15 +276,17 @@ public class Database {
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for primary key from entity!");
-        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, log, entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
-            return StringUtils.checkValNull(idVal)
-                    || CollectionUtils.isEmpty(sqlSession.selectList(SqlHelper.getSqlStatement(mapperClass, SqlMethod.SELECT_BY_ID), entity));
-        }, (sqlSession, entity) -> {
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            sqlSession.update(SqlHelper.getSqlStatement(mapperClass, SqlMethod.UPDATE_BY_ID), param);
-        });
+        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, log, entityList, batchSize,
+                (sqlSession, entity) -> {
+                    Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
+                    return StringUtils.checkValNull(idVal)
+                            || CollectionUtils.isEmpty(sqlSession.selectList(SqlHelper.getSqlStatement(mapperClass,
+                            SqlMethod.SELECT_BY_ID), entity));
+                }, (sqlSession, entity) -> {
+                    MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                    param.put(Constants.ENTITY, entity);
+                    sqlSession.update(SqlHelper.getSqlStatement(mapperClass, SqlMethod.UPDATE_BY_ID), param);
+                });
     }
 
     /**
@@ -305,7 +318,8 @@ public class Database {
      * @param queryWrapper 实体包装类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> boolean remove(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> SqlHelper.retBool(baseMapper.delete(w)), false));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, w -> SqlHelper.retBool(baseMapper.delete(w)), false));
     }
 
     /**
@@ -338,7 +352,8 @@ public class Database {
         Class<T> entityClass = (Class<T>) entity.getClass();
         TableInfo tableInfo = getTableInfo(entityClass);
         T bean = ClassUtils.newInstance(entityClass);
-        ReflectHelper.setFieldValue(bean, tableInfo.getKeyProperty(), ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty()));
+        String keyProperty = tableInfo.getKeyProperty();
+        ReflectHelper.setFieldValue(bean, keyProperty, ReflectionKit.getFieldValue(entity, keyProperty));
         LambdaUpdateWrapper<T> updateWrapper = Stream.of(updateKeys).reduce(Wrappers.lambdaUpdate(bean),
                 (wrapper, field) -> wrapper.set(field, field.apply(entity)), (l, r) -> r);
         return update(bean, updateWrapper);
@@ -360,7 +375,9 @@ public class Database {
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     public static <T> boolean update(T entity, AbstractWrapper<T, ?, ?> updateWrapper) {
-        return execute(getEntityClass(updateWrapper), baseMapper -> activeOrElse(updateWrapper, w -> SqlHelper.retBool(baseMapper.update(entity, w)), false));
+        return execute(getEntityClass(updateWrapper),
+                baseMapper -> activeOrElse(updateWrapper, w -> SqlHelper.retBool(baseMapper.update(entity, w)),
+                        false));
     }
 
     /**
@@ -384,7 +401,8 @@ public class Database {
         }
         Class<T> entityClass = getEntityClass(entityList);
         TableInfo tableInfo = getTableInfo(entityClass);
-        String sqlStatement = SqlHelper.getSqlStatement(ClassUtils.toClassConfident(tableInfo.getCurrentNamespace()), SqlMethod.UPDATE_BY_ID);
+        String sqlStatement = SqlHelper.getSqlStatement(ClassUtils.toClassConfident(tableInfo.getCurrentNamespace()),
+                SqlMethod.UPDATE_BY_ID);
         return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
@@ -427,7 +445,8 @@ public class Database {
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
         Object idVal = tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty());
-        return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal, entityClass)) ? save(entity) : updateById(entity);
+        return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal, entityClass)) ?
+                save(entity) : updateById(entity);
     }
 
     /**
@@ -493,7 +512,8 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> Map<String, Object> getMap(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> SqlHelper.getObject(log, baseMapper.selectMaps(w)), null));
+        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper,
+                w -> SqlHelper.getObject(log, baseMapper.selectMaps(w)), null));
     }
 
     /**
@@ -512,7 +532,8 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> long count(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectCount, 0L));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, baseMapper::selectCount, 0L));
     }
 
     /**
@@ -521,7 +542,8 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<T> list(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectList, new ArrayList<>()));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, baseMapper::selectList, new ArrayList<>()));
     }
 
     /**
@@ -540,7 +562,8 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<Map<String, Object>> listMaps(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectMaps, new ArrayList<>()));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, baseMapper::selectMaps, new ArrayList<>()));
     }
 
     /**
@@ -568,7 +591,8 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<Object> listObjs(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, baseMapper::selectObjs, new ArrayList<>()));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, baseMapper::selectObjs, new ArrayList<>()));
     }
 
     /**
@@ -578,7 +602,9 @@ public class Database {
      * @param mapper       转换函数
      */
     public static <T, V> List<V> listObjs(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> Steam.of(baseMapper.selectList(w)).map(mapper).toList(), new ArrayList<>()));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, w -> Steam.of(baseMapper.selectList(w)).map(mapper).toList(),
+                        new ArrayList<>()));
     }
 
     /**
@@ -588,7 +614,7 @@ public class Database {
      * @param mapper      转换函数
      */
     public static <T, V> List<V> listObjs(Class<T> entityClass, SFunction<? super T, V> mapper) {
-        return execute(entityClass, baseMapper -> baseMapper.selectList(null).stream().map(mapper).collect(Collective.toList()));
+        return execute(entityClass, baseMapper -> Steam.of(baseMapper.selectList(null)).map(mapper).toList());
     }
 
     /**
@@ -609,7 +635,8 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T, E extends IPage<Map<String, Object>>> E pageMaps(E page, AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> baseMapper.selectMapsPage(page, w), page));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, w -> baseMapper.selectMapsPage(page, w), page));
     }
 
     /**
@@ -630,7 +657,8 @@ public class Database {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> IPage<T> page(IPage<T> page, AbstractWrapper<T, ?, ?> queryWrapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> baseMapper.selectPage(page, w), page));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, w -> baseMapper.selectPage(page, w), page));
     }
 
     /**
@@ -655,7 +683,8 @@ public class Database {
      * @param mapper       转换函数
      */
     public static <T, V> V getObj(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper, w -> mapper.apply(baseMapper.selectOne(w)), null));
+        return execute(getEntityClass(queryWrapper),
+                baseMapper -> activeOrElse(queryWrapper, w -> mapper.apply(baseMapper.selectOne(w)), null));
     }
 
     /**
