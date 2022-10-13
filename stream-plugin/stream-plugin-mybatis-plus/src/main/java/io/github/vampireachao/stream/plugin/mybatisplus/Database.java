@@ -191,7 +191,8 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList) || batchSize <= 0) {
             return false;
         }
-        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.saveFewSql(entityList, batchSize));
+        return execute(getEntityClass(entityList),
+                (IMapper<T> baseMapper) -> entityList.size() == baseMapper.saveFewSql(entityList, batchSize));
     }
 
 
@@ -206,7 +207,8 @@ public class Database {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
-        return execute(getEntityClass(entityList), (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateOneSql(entityList));
+        return execute(getEntityClass(entityList),
+                (IMapper<T> baseMapper) -> entityList.size() == baseMapper.updateOneSql(entityList));
     }
 
     /**
