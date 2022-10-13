@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,8 +20,10 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
@@ -753,7 +756,13 @@ public class Database {
      */
     @SuppressWarnings("deprecation")
     public static <T> void ordersPropertyToColumn(Page<T> page, Class<T> clazz) {
-        page.getOrders().forEach(order -> order.setColumn(propertyToColumn(clazz, order.getColumn())));
+        page.getOrders().forEach(SerCons.multi(
+                order -> Sf.of(order.getColumn()).takeUnless(SqlInjectionUtils::check)
+                        .require(() -> new IllegalArgumentException(
+                                String.format("order column { %s } must not null or be sql injection",
+                                        order.getColumn()))),
+                order -> order.setColumn(propertyToColumn(clazz, order.getColumn()))
+        ));
     }
 
     /**

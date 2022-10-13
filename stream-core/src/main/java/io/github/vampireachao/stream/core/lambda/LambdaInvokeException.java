@@ -16,4 +16,13 @@ public class LambdaInvokeException extends RuntimeException {
     public LambdaInvokeException(Throwable cause) {
         super(cause);
     }
+
+    /**
+     * getRealException
+     *
+     * @return realException
+     */
+    public Throwable getRealException() {
+        return getCause().getCause();
+    }
 }

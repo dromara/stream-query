@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
@@ -327,5 +328,18 @@ class DatabaseTest {
 
         // order by gmt_deleted desc
         Assertions.assertDoesNotThrow(() -> Database.page(page, UserInfo.class));
+
+        // sql injection
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            try {
+                Page<UserInfo> badPage = new Page<>();
+                badPage.addOrder(OrderItem.asc("id;drop table user_info;"));
+                Database.ordersPropertyToColumn(badPage, UserInfo.class);
+            } catch (LambdaInvokeException e) {
+                Throwable throwable = e.getRealException();
+                Assertions.assertEquals("order column { id;drop table user_info; } must not null or be sql injection", throwable.getMessage());
+                throw throwable;
+            }
+        });
     }
 }
