@@ -590,12 +590,10 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     /**
      * 反转顺序
      *
-     * @return 反转元素顺序
+     * @return 反转排序顺序
      */
-    public Steam<T> reverse() {
-        List<T> list = toList();
-        Collections.reverse(list);
-        return of(list, isParallel());
+    public Steam<T> reverseSorted(Comparator<T> comparator) {
+        return sorted(comparator.reversed());
     }
 
     /**

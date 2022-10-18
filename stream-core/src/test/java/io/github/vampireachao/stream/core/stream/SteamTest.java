@@ -337,7 +337,7 @@ class SteamTest {
     @Test
     void testReverse() {
         List<Integer> list = asList(1, 3, 2);
-        List<Integer> reverse = Steam.of(list).reverse().toList();
+        List<Integer> reverse = Steam.of(list).reverseSorted(Comparator.naturalOrder()).toList();
         Assertions.assertEquals(asList(2, 3, 1), reverse);
     }
 
