@@ -27,9 +27,6 @@ public class Sf<T> {
     }
 
     public static <T> Sf<T> of(T value) {
-        if (value == null) {
-            return empty();
-        }
         return new Sf<>(value);
     }
 
