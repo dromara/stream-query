@@ -523,7 +523,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public Integer findFirstIdx(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        return isParallel() ? NOT_FOUND_INDEX : this.mapIdx((e, i) -> new EntrySteam.Entry<>(i, e))
+        return this.mapIdx((e, i) -> new EntrySteam.Entry<>(i, e))
                 .filter(e -> predicate.test(e.getValue()))
                 .findFirst()
                 .map(Map.Entry::getKey)
@@ -574,17 +574,11 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public Integer findLastIdx(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        if (isParallel()) {
-            return NOT_FOUND_INDEX;
-        } else {
-            AtomicInteger idxRef = new AtomicInteger(NOT_FOUND_INDEX);
-            forEachIdx((e, i) -> {
-                if (predicate.test(e)) {
-                    idxRef.set(i);
-                }
-            });
-            return idxRef.get();
-        }
+        return this.mapIdx((e, i) -> new EntrySteam.Entry<>(i, e))
+                .filter(e -> predicate.test(e.getValue()))
+                .findLast()
+                .map(Map.Entry::getKey)
+                .orElse(NOT_FOUND_INDEX);
     }
 
     /**
