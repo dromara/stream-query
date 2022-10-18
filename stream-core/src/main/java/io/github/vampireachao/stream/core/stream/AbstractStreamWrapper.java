@@ -34,7 +34,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I filter(Predicate<? super T> predicate) {
-        return convertToStreamImpl(stream.filter(predicate));
+        return wrap(stream.filter(predicate));
     }
 
     /**
@@ -111,7 +111,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I distinct() {
-        return convertToStreamImpl(stream.distinct());
+        return wrap(stream.distinct());
     }
 
     /**
@@ -124,7 +124,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I sorted() {
-        return convertToStreamImpl(stream.sorted());
+        return wrap(stream.sorted());
     }
 
     /**
@@ -137,7 +137,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I sorted(Comparator<? super T> comparator) {
-        return convertToStreamImpl(stream.sorted(comparator));
+        return wrap(stream.sorted(comparator));
     }
 
     /**
@@ -159,7 +159,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I peek(Consumer<? super T> action) {
-        return convertToStreamImpl(stream.peek(action));
+        return wrap(stream.peek(action));
     }
 
     /**
@@ -170,7 +170,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I limit(long maxSize) {
-        return convertToStreamImpl(stream.limit(maxSize));
+        return wrap(stream.limit(maxSize));
     }
 
     /**
@@ -181,7 +181,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I skip(long n) {
-        return convertToStreamImpl(stream.skip(n));
+        return wrap(stream.skip(n));
     }
 
     /**
@@ -438,7 +438,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I sequential() {
-        return convertToStreamImpl(stream.sequential());
+        return wrap(stream.sequential());
     }
 
     /**
@@ -448,7 +448,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I parallel() {
-        return convertToStreamImpl(stream.parallel());
+        return wrap(stream.parallel());
     }
 
     /**
@@ -459,7 +459,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I unordered() {
-        return convertToStreamImpl(stream.unordered());
+        return wrap(stream.unordered());
     }
 
     /**
@@ -469,7 +469,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      */
     @Override
     public I onClose(Runnable closeHandler) {
-        return convertToStreamImpl(stream.onClose(closeHandler));
+        return wrap(stream.onClose(closeHandler));
     }
 
     /**
@@ -490,6 +490,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      * @param stream 流
      * @return 实现类
      */
-    protected abstract I convertToStreamImpl(Stream<T> stream);
+    protected abstract I wrap(Stream<T> stream);
 
 }

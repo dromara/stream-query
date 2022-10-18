@@ -665,7 +665,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * 构建一个{@link Steam}实例
      */
     @Override
-    protected Steam<T> convertToStreamImpl(Stream<T> stream) {
+    protected Steam<T> wrap(Stream<T> stream) {
         return new Steam<>(stream);
     }
 
