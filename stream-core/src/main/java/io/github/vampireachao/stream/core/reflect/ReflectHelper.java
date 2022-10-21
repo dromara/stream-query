@@ -18,6 +18,8 @@
 package io.github.vampireachao.stream.core.reflect;
 
 
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
@@ -38,6 +40,8 @@ import java.util.WeakHashMap;
  * @since 2022/6/2 17:02
  */
 public class ReflectHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReflectHelper.class);
 
     /**
      * Constant <code>LEFT_MIDDLE_BRACKET="["</code>
@@ -487,11 +491,13 @@ public class ReflectHelper {
      * @param obj a {@link java.lang.Object} object
      */
     public static void explain(Object obj) {
-        System.out.printf("obj: %s class: %s\n", obj, obj.getClass());
-        System.out.println("fields: ");
-        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> System.out.println("field " +
+        logger.error("obj: {} class: {}", obj, obj.getClass());
+        logger.error("fields: ");
+        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> logger.error("field " +
                 "" + fieldName + ": " + getFieldValue(obj, fieldName)));
-        System.out.println("no arg methods: ");
-        Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName -> System.out.println("method " + methodName + ": " + Opp.ofTry(() -> getMethod(obj.getClass(), methodName).invoke(obj))));
+        logger.error("no arg methods: ");
+        Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName ->
+                logger.error("method " + methodName + ": " + Opp.ofTry(() ->
+                        getMethod(obj.getClass(), methodName).invoke(obj))));
     }
 }
