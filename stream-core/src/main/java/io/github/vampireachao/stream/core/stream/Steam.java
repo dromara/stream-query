@@ -214,9 +214,32 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * 当结果流关闭时，两个输入流的关闭处理程序都会被调用。
      *
      * <p>从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}</p>
+     *
+     * @param a   第一个流
+     * @param b   第二个流
+     * @param <T> 元素类型
+     * @return 拼接后的流
      */
     public static <T> Steam<T> concat(Stream<? extends T> a, Stream<? extends T> b) {
         return new Steam<>(Stream.concat(a, b));
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。
+     * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
+     * 当结果流关闭时，两个输入流的关闭处理程序都会被调用。
+     *
+     * <p>从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}</p>
+     *
+     * @param a   第一个流
+     * @param b   第二个流
+     * @param <T> 元素类型
+     * @return 拼接后的流
+     */
+    public static <T> Steam<T> concat(Iterable<? extends T> a, Iterable<? extends T> b) {
+        return new Steam<>(Stream.concat(Steam.of(a), Steam.of(b)));
     }
 
     /**
