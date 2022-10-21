@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import io.github.vampireachao.stream.core.collection.MapHelper;
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
@@ -124,6 +125,8 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
     }
 
     public Map<K, List<A>> query() {
-        return query((middleKeyValuesMap, attachKeyValue) -> BaseQueryHelper.mixin(middleKeyValuesMap, attachKeyValue, Steam::nonNull).parallel(isParallel).collect(Collective.entryToMap()));
+        return query((middleKeyValuesMap, attachKeyValue) ->
+                MapHelper.oneToManyToOne(middleKeyValuesMap, attachKeyValue, Steam::nonNull).parallel(isParallel)
+                        .collect(Collective.entryToMap()));
     }
 }
