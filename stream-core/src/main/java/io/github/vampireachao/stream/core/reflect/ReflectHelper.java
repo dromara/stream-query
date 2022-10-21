@@ -18,8 +18,6 @@
 package io.github.vampireachao.stream.core.reflect;
 
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
@@ -31,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import java.util.logging.Logger;
 
 
 /**
@@ -41,7 +40,7 @@ import java.util.WeakHashMap;
  */
 public class ReflectHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReflectHelper.class);
+    private static final Logger logger = Logger.getAnonymousLogger();
 
     /**
      * Constant <code>LEFT_MIDDLE_BRACKET="["</code>
@@ -491,13 +490,13 @@ public class ReflectHelper {
      * @param obj a {@link java.lang.Object} object
      */
     public static void explain(Object obj) {
-        logger.error("obj: {} class: {}", obj, obj.getClass());
-        logger.error("fields: ");
-        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> logger.error("field " +
+        logger.info(() -> "obj: " + obj + " class: " + obj.getClass());
+        logger.info(() -> "fields: ");
+        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> logger.info(() -> "field " +
                 "" + fieldName + ": " + getFieldValue(obj, fieldName)));
-        logger.error("no arg methods: ");
+        logger.info(() -> "no arg methods: ");
         Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName ->
-                logger.error("method " + methodName + ": " + Opp.ofTry(() ->
+                logger.info(() -> "method " + methodName + ": " + Opp.ofTry(() ->
                         getMethod(obj.getClass(), methodName).invoke(obj))));
     }
 }
