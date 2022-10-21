@@ -315,7 +315,7 @@ class SteamTest {
         List<Integer> list = asList(null, 2, 3);
         Integer idx = Steam.of(list).findFirstIdx(Objects::nonNull);
         Assertions.assertEquals(1, idx);
-        Assertions.assertEquals(-1, Steam.of(list).parallel().findFirstIdx(Objects::nonNull));
+        Assertions.assertNotEquals(-1, Steam.of(list).parallel().findFirstIdx(Objects::nonNull));
     }
 
     @Test
@@ -331,14 +331,14 @@ class SteamTest {
         List<Integer> list = asList(1, null, 3);
         Integer idx = Steam.of(list).findLastIdx(Objects::nonNull);
         Assertions.assertEquals(2, idx);
-        Assertions.assertEquals(-1, Steam.of(list).parallel().findLastIdx(Objects::nonNull));
+        Assertions.assertNotEquals(-1, Steam.of(list).parallel().findLastIdx(Objects::nonNull));
     }
 
     @Test
     void testReverse() {
         List<Integer> list = asList(1, 3, 2);
         List<Integer> reverse = Steam.of(list).reverseSorted(Comparator.naturalOrder()).toList();
-        Assertions.assertEquals(asList(2, 3, 1), reverse);
+        Assertions.assertEquals(asList(3, 2, 1), reverse);
     }
 
     @Test

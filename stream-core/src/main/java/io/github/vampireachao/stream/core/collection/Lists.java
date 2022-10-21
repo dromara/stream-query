@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.core.collection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +18,11 @@ public class Lists {
     @SafeVarargs
     public static <T> List<T> of(T... values) {
         return new ArrayList<>(Arrays.asList(values));
+    }
+
+    public static <T> List<T> reverse(List<T> list) {
+        Collections.reverse(list);
+        return list;
     }
 
 }
