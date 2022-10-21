@@ -119,7 +119,7 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 根据一个原始的流，返回一个新包装类实例
      */
     @Override
-    protected EntrySteam<K, V> convertToStreamImpl(Stream<Map.Entry<K, V>> stream) {
+    protected EntrySteam<K, V> wrap(Stream<Map.Entry<K, V>> stream) {
         return new EntrySteam<>(stream);
     }
 
