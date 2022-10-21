@@ -1128,6 +1128,19 @@ public class Collective {
     }
 
     /**
+     * Returns a {@code Collector} that accumulates elements into a {@code Map}
+     *
+     * @param keyMapper a mapping function to produce keys
+     * @param <T>       the type of the input elements
+     * @param <K>       the output type of the key mapping function
+     * @return a {@code Collector} which collects elements into a {@code Map}
+     */
+    public static <T, K>
+    Collector<T, ?, Map<K, T>> toMap(Function<? super T, ? extends K> keyMapper) {
+        return toMap(keyMapper, Function.identity(), SerBiOp.justAfter(), HashMap::new);
+    }
+
+    /**
      * Returns a {@code Collector} that accumulates elements into a
      * {@code Map} whose keys and values are the result of applying the provided
      * mapping functions to the input elements.
