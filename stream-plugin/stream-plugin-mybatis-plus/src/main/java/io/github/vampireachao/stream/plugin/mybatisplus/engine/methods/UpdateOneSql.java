@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus.engine.methods;
 
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import io.github.vampireachao.stream.core.stream.Steam;
@@ -56,7 +57,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
                 .filter(i -> !i.isLogicDelete())
                 .map(i -> i.getColumn() + EQUALS + CASE + SPACE + tableInfo.getKeyColumn() + NEWLINE +
                         SqlScriptUtils.convertForeach(SqlScriptUtils.convertChoose(
-                                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + i.getProperty())
+                                MpInjectHelper.updateCondition(i, TableFieldInfo::getUpdateStrategy)
                                 , String.format(WHEN_THEN, safeKeyProperty, SqlScriptUtils.safeParam(ENTITY_DOT + i.getProperty())),
                                 String.format(WHEN_THEN, safeKeyProperty, i.getColumn())), COLLECTION_PARAM_NAME, null, ENTITY, null)
                         + END
@@ -83,4 +84,6 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
                 .append(RIGHT_BRACKET).append(NEWLINE)
                 .append(tableInfo.getLogicDeleteSql(true, true));
     }
+
+
 }

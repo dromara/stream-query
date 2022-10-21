@@ -26,6 +26,10 @@ public interface PluginConst {
      */
     String NON_NULL_CONDITION = "%s != null and %s != null";
     /**
+     * mapper not blank condition
+     */
+    String NON_BLANK_CONDITION = "%s != null and %s != null and %s != ''";
+    /**
      * db keyword when then template
      */
     String WHEN_THEN = "when %s then %s";

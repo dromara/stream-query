@@ -52,7 +52,7 @@ public class SaveOneSql extends AbstractMethod implements PluginConst {
                 DEFAULT + COMMA);
         String valuesScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList())
                         .map(i -> SqlScriptUtils.convertChoose(
-                                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + i.getProperty()),
+                                MpInjectHelper.updateCondition(i, TableFieldInfo::getInsertStrategy),
                                 i.getInsertSqlProperty(ENTITY_DOT),
                                 DEFAULT + COMMA))
                         .unshift(tableInfo.getIdType() == IdType.AUTO ? propertyOrDefault : safeProperty)
