@@ -10,6 +10,10 @@ import java.util.function.Supplier;
  */
 public class VariableHelper {
 
+    private VariableHelper() {
+        /* Do not new me! */
+    }
+
     public static <T> T first(T[] variables, Supplier<T> orGet) {
         return Steam.of(variables).findFirst().orElseGet(orGet);
     }

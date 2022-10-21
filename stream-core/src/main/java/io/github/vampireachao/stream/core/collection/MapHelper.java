@@ -15,6 +15,10 @@ import java.util.function.UnaryOperator;
  */
 public class MapHelper {
 
+    private MapHelper() {
+        /* Do not new me! */
+    }
+
     public static <K, V> Entry<K, V> entry(K key, V value) {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
