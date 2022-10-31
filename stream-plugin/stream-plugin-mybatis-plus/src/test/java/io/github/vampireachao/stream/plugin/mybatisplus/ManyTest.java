@@ -21,13 +21,8 @@ class ManyTest {
 
     @Test
     void testQuery() {
-        List<Long> list = new ArrayList<>();
-        list.add(1L);
-        list.add(2L);
-        list.add(2L);
-        list.add(2L);
-        list.add(2L);
-        List<UserInfo> userInfoList = Many.of(UserInfo::getId).in(list).parallel().query();
+
+        List<UserInfo> userInfoList = Many.of(UserInfo::getId).eq(1L).parallel().query();
         List<String> nameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName).sequential().query();
         List<String> leAgeNameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName)
                 .condition(w -> w.le(UserInfo::getAge, 20))
