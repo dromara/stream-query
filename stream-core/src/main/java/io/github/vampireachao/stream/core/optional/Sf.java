@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.core.optional;
 
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
@@ -147,6 +148,13 @@ public class Sf<T> {
             return value;
         }
         return mapper.get();
+    }
+
+    public T orRun(SerRunn mapper) {
+        if (isEmpty()) {
+            mapper.run();
+        }
+        return value;
     }
 
     public <X extends Throwable> T orThrow(SerSupp<X> mapper) throws X {
