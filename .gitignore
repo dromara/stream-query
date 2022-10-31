@@ -7,3 +7,5 @@
 *.iws
 *.iml
 *.ipr
+/stream-core/.flattened-pom.xml
+/.fleet/
