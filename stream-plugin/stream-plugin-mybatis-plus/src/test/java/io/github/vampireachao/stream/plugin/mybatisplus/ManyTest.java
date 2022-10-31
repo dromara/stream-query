@@ -5,6 +5,7 @@ import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +21,7 @@ class ManyTest {
 
     @Test
     void testQuery() {
+
         List<UserInfo> userInfoList = Many.of(UserInfo::getId).eq(1L).parallel().query();
         List<String> nameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName).sequential().query();
         List<String> leAgeNameList = Many.of(UserInfo::getId).eq(1L).value(UserInfo::getName)

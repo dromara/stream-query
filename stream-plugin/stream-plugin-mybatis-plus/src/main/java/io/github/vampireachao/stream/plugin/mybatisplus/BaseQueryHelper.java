@@ -8,6 +8,7 @@ import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.function.UnaryOperator;
 
 
@@ -41,7 +42,7 @@ public abstract class BaseQueryHelper<
     }
 
     public TR in(Collection<K> dataList) {
-        wrapper = Sf.mayColl(dataList).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
+        wrapper = Sf.mayColl(new HashSet<>(dataList)).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 
