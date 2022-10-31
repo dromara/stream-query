@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.optional.Sf;
-import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.function.UnaryOperator;
 
 
@@ -42,7 +42,7 @@ public abstract class BaseQueryHelper<
     }
 
     public TR in(Collection<K> dataList) {
-        wrapper = Sf.mayColl(Steam.of(dataList).distinct().toList()).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
+        wrapper = Sf.mayColl(new HashSet<>(dataList)).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 
