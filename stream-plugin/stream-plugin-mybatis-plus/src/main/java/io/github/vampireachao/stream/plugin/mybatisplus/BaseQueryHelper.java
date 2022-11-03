@@ -42,7 +42,7 @@ public abstract class BaseQueryHelper<
     }
 
     public TR in(Collection<K> dataList) {
-        wrapper = Sf.mayColl(new HashSet<>(dataList)).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
+        wrapper = Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
         return (TR) this;
     }
 

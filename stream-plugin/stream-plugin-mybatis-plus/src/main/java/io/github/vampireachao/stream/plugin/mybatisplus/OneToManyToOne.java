@@ -53,7 +53,7 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
     }
 
     public OneToManyToOne<T, K, V, U, A> in(Collection<K> dataList) {
-        middleWrapper = Sf.mayColl(new HashSet<>(dataList)).mayLet(values -> middleWrapper.in(middleKey, values)).orGet(() -> Database.notActive(middleWrapper));
+        middleWrapper = Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> middleWrapper.in(middleKey, values)).orGet(() -> Database.notActive(middleWrapper));
         return this;
     }
 
