@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.core.stream;
 
+import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
@@ -843,26 +843,55 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
 
     /**
-     * 将集合转换为树，默认用 {@code parentId == null} 作为顶部，内置一个小递归
-     * 因为需要在当前传入数据里查找，所以这是一个结束操作
+     * <p>将集合转换为树，默认用 {@code parentId == null} 来判断树的根节点
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作 <br>
      *
      * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
      * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
-     * @param childrenSetter children的setter对应的lambda，可以写作 {@code Student::setChildren}
+     * @param childrenSetter children的setter对应的lambda，可以写作{ @code Student::setChildren}
      * @param <R>            此处是id、parentId的泛型限制
-     * @return list 组装好的树
+     * @return list 组装好的树 <br>
      * eg:
-     * {@code List studentTree = EasyStream.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren) }
+     * <pre>{@code
+     * List<Student> studentTree = EasyStream.of(students).
+     * 	toTree(Student::getId, Student::getParentId, Student::setChildren);
+     * }</pre>
+     * @author VampireAchao
      */
-    public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
-                                                    Function<T, R> pIdGetter,
-                                                    BiConsumer<T, List<T>> childrenSetter) {
-        Map<R, List<T>> pIdValuesMap = group(pIdGetter);
-        return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, pIdValuesMap, pIdValuesMap.get(null));
+    public <R extends Comparable<R>> List<T> toTree(
+            final Function<T, R> idGetter,
+            final Function<T, R> pIdGetter,
+            final BiConsumer<T, List<T>> childrenSetter) {
+        return collect(Collective.toTree(idGetter, pIdGetter, childrenSetter, isParallel()));
     }
 
     /**
-     * 将集合转换为树，自定义树顶部的判断条件，内置一个小递归(没错，lambda可以写递归)
+     * <p>将集合转换为树，传入 {@code parentId == pidValue} 来判断树的根节点
+     * 因为需要在当前传入数据里查找，所以这是一个结束操作 <br>
+     *
+     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
+     * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
+     * @param pIdValue       parentId的值，支持 {@code null}
+     * @param childrenSetter children的setter对应的lambda，可以写作{ @code Student::setChildren}
+     * @param <R>            此处是id、parentId的泛型限制
+     * @return list 组装好的树 <br>
+     * eg:
+     * <pre>{@code
+     * List<Student> studentTree = EasyStream.of(students).
+     * 	toTree(Student::getId, Student::getParentId, 0L, Student::setChildren);
+     * }</pre>
+     * @author VampireAchao
+     */
+    public <R extends Comparable<R>> List<T> toTree(
+            final Function<T, R> idGetter,
+            final Function<T, R> pIdGetter,
+            final R pIdValue,
+            final BiConsumer<T, List<T>> childrenSetter) {
+        return collect(Collective.toTree(idGetter, pIdGetter, pIdValue, childrenSetter, isParallel()));
+    }
+
+    /**
+     * 将集合转换为树，自定义根节点的判断条件
      * 因为需要在当前传入数据里查找，所以这是一个结束操作
      *
      * @param idGetter        id的getter对应的lambda，可以写作 {@code Student::getId}
@@ -870,43 +899,20 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @param childrenSetter  children的setter对应的lambda，可以写作 {@code Student::setChildren}
      * @param parentPredicate 树顶部的判断条件，可以写作 {@code s -> Objects.equals(s.getParentId(),0L) }
      * @param <R>             此处是id、parentId的泛型限制
-     * @return list 组装好的树
+     * @return list 组装好的树 <br>
      * eg:
-     * {@code List studentTree = Steam.of(students).toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent) }
+     * <pre>{@code
+     * List<Student> studentTree = EasyStream.of(students).
+     * 	.toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent);
+     * }</pre>
+     * @author VampireAchao
      */
-    public <R extends Comparable<R>> List<T> toTree(Function<T, R> idGetter,
-                                                    Function<T, R> pIdGetter,
-                                                    BiConsumer<T, List<T>> childrenSetter,
-                                                    SerPred<T> parentPredicate) {
-        List<T> list = toList();
-        List<T> parents = Steam.of(list).filter(e -> Opp.of(e).is(parentPredicate)).toList();
-        return getChildrenFromMapByPidAndSet(idGetter, childrenSetter, Steam.of(list).group(pIdGetter), parents);
-    }
-
-    /**
-     * toTree的内联函数，内置一个小递归(没错，lambda可以写递归)
-     * 因为需要在当前传入数据里查找，所以这是一个结束操作
-     *
-     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
-     * @param childrenSetter children的setter对应的lambda，可以写作 {@code Student::setChildren}
-     * @param pIdValuesMap   parentId和值组成的map，用来降低复杂度
-     * @param parents        顶部数据
-     * @param <R>            此处是id的泛型限制
-     * @return list 组装好的树
-     */
-    private <R extends Comparable<R>> List<T> getChildrenFromMapByPidAndSet(Function<T, R> idGetter,
-                                                                            BiConsumer<T, List<T>> childrenSetter,
-                                                                            Map<R, List<T>> pIdValuesMap,
-                                                                            List<T> parents) {
-        AtomicReference<Consumer<List<T>>> recursiveRef = new AtomicReference<>();
-        Consumer<List<T>> recursive = values -> Steam.of(values).forEach(value -> {
-            List<T> children = pIdValuesMap.get(idGetter.apply(value));
-            childrenSetter.accept(value, children);
-            recursiveRef.get().accept(children);
-        });
-        recursiveRef.set(recursive);
-        recursive.accept(parents);
-        return parents;
+    public <R extends Comparable<R>> List<T> toTree(
+            final Function<T, R> idGetter,
+            final Function<T, R> pIdGetter,
+            final BiConsumer<T, List<T>> childrenSetter,
+            final Predicate<T> parentPredicate) {
+        return collect(Collective.toTree(idGetter, pIdGetter, childrenSetter, parentPredicate, isParallel()));
     }
 
     /**
