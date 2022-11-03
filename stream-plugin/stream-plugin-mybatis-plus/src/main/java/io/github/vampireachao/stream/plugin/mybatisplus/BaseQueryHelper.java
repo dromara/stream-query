@@ -65,7 +65,7 @@ public abstract class BaseQueryHelper<
     }
 
     public VR peek(SerCons<T> peek) {
-        this.peekConsumer.andThen(peek);
+        this.peekConsumer = this.peekConsumer.andThen(peek);
         return (VR) this;
     }
 

@@ -39,8 +39,8 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
     private UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator = SerUnOp.identity();
 
     private boolean isParallel = false;
-    private final SerCons<T> middlePeek = SerCons.nothing();
-    private final SerCons<U> attachPeek = SerCons.nothing();
+    private SerCons<T> middlePeek = SerCons.nothing();
+    private SerCons<U> attachPeek = SerCons.nothing();
 
     public OneToManyToOne(SFunction<T, K> middleKey) {
         this.middleKey = middleKey;
@@ -104,12 +104,12 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
     }
 
     public OneToManyToOne<T, K, V, U, A> peek(SerCons<T> middlePeek) {
-        this.middlePeek.andThen(middlePeek);
+        this.middlePeek = this.middlePeek.andThen(middlePeek);
         return this;
     }
 
     public OneToManyToOne<T, K, V, U, A> attachPeek(SerCons<U> attachPeek) {
-        this.attachPeek.andThen(attachPeek);
+        this.attachPeek = this.attachPeek.andThen(attachPeek);
         return this;
     }
 

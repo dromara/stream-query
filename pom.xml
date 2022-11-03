@@ -119,6 +119,11 @@
                             <head>Implementation Note:</head>
                         </tag>
                         <tag>
+                            <name>inheritDoc</name>
+                            <placement>a</placement>
+                            <head>Implementation Note:</head>
+                        </tag>
+                        <tag>
                             <name>param</name>
                         </tag>
                         <tag>
