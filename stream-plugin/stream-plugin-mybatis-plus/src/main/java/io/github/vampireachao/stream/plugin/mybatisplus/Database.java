@@ -86,7 +86,7 @@ public class Database {
 
     public static <T, E extends Serializable>
     Opp<LambdaQueryWrapper<T>> lambdaQuery(Collection<E> dataList, SFunction<T, E> condition) {
-        return Opp.of(dataList).filter(s -> !s.isEmpty())
+        return Opp.ofColl(dataList)
                 .map(value -> Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition)))
                         .in(condition, new HashSet<>(value))).filter(Database::isActive);
     }
