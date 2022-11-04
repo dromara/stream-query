@@ -39,13 +39,13 @@
 <dependency>
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-plugin-mybatis-plus</artifactId>
-    <version>1.1.14</version>
+    <version>1.1.15</version>
 </dependency>
 <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-core -->
 <dependency>
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-core</artifactId>
-    <version>1.1.14</version>
+    <version>1.1.15</version>
 </dependency>
 ```
 ### 🍊Gradle
@@ -68,7 +68,7 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1
 ### 📚包说明
 | 包名            | 内容                       |
 |---------------|--------------------------|
-| stream-query  | 对Optional的优化和对Stream流的封装 |
+| stream-query  | 优雅的流式操作 |
 | stream-plugin | 对复杂的CRUD进行封装             |
 
 ### 🐾贡献代码的步骤
