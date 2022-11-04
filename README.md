@@ -69,7 +69,7 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1
 | 包名            | 内容                       |
 |---------------|--------------------------|
 | stream-query  | 优雅的流式操作 |
-| stream-plugin | 对复杂的CRUD进行封装             |
+| stream-plugin | orm框架->使用优雅的Lambda进行对数据库进行一系列操作             |
 
 ### 🐾贡献代码的步骤
 1. 在`Gitee`或者`Github`上`fork`项目到自己的`repo`
