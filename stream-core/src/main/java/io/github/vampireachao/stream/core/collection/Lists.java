@@ -1,8 +1,9 @@
 package io.github.vampireachao.stream.core.collection;
 
-import io.github.vampireachao.stream.core.stream.Steam;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author VampireAchao 请我吃早饭
@@ -58,17 +59,5 @@ public class Lists {
         list.sort(Collections.reverseOrder());
         return list;
     }
-
-    /**
-     * 查找指定集合中的元素，如不存在返回-1
-     * @param list 要查询集合
-     * @param objectives 要查找元素
-     * @return {@link Integer} 所查找元素的索引，如不存在返回-1
-     */
-    public static <T> Integer binarySearch(List<T> list,T objectives) {
-
-       return Steam.of(list).findFirstIdx((value) -> value == objectives);
-    }
-
 
 }
