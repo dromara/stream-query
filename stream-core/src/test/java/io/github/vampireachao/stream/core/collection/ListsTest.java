@@ -1,11 +1,10 @@
 package io.github.vampireachao.stream.core.collection;
 
-import lombok.Builder;
-import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author VampireAchao
@@ -35,7 +34,7 @@ class ListsTest {
 
     @Test
     void testBinarySearch() {
-        Assertions.assertEquals(2, Lists.binarySearch(Arrays.asList(2, 3, 1),1));
+        Assertions.assertEquals(2, Collections.binarySearch(Arrays.asList(2, 3, 1), 1));
     }
 
 
