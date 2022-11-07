@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 
@@ -953,6 +954,27 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
                         .is(s -> !s.isEmpty()));
         recursiveRef.set(recursive);
         return filter(recursive);
+    }
+
+    /**
+     * 树里的每个节点都执行一下
+     *
+     * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
+     * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
+     * @param action         操作
+     * @return 叠加操作后的流
+     */
+    public Steam<T> peekTree(
+            Function<T, List<T>> childrenGetter,
+            BiConsumer<T, List<T>> childrenSetter,
+            Consumer<T> action) {
+        AtomicReference<Consumer<T>> recursiveRef = new AtomicReference<>();
+        Consumer<T> recursive = SerCons.multi(action::accept,
+                e -> Opp.ofColl(childrenGetter.apply(e))
+                        .peek(children -> Steam.of(children).forEach(recursiveRef.get()))
+                        .ifPresent(children -> childrenSetter.accept(e, children)));
+        recursiveRef.set(recursive);
+        return peek(recursive);
     }
 
     public interface Builder<T> extends Consumer<T> {

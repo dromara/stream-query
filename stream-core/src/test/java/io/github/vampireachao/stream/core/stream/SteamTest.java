@@ -503,6 +503,47 @@ class SteamTest {
 
     }
 
+    @Test
+    void testPeekTree() {
+        List<Student> studentTree = asList(
+                Student.builder().id(1L).name("dromara")
+                        .children(asList(Student.builder().id(3L).name("hutool").parentId(1L)
+                                        .children(singletonList(Student.builder().id(6L).name("looly").parentId(3L).build()))
+                                        .build(),
+                                Student.builder().id(4L).name("sa-token").parentId(1L)
+                                        .children(singletonList(Student.builder().id(7L).name("click33").parentId(4L).build()))
+                                        .build()))
+                        .build(),
+                Student.builder().id(2L).name("baomidou")
+                        .children(singletonList(
+                                Student.builder().id(5L).name("mybatis-plus").parentId(2L)
+                                        .children(singletonList(
+                                                Student.builder().id(8L).name("jobob").parentId(5L).build()
+                                        ))
+                                        .build()))
+                        .build()
+        );
+        Assertions.assertEquals(asList(
+                Student.builder().id(1L).name("【open source】dromara")
+                        .children(asList(Student.builder().id(3L).name("【open source】hutool").parentId(1L)
+                                        .children(singletonList(Student.builder().id(6L).name("【open source】looly").parentId(3L).build()))
+                                        .build(),
+                                Student.builder().id(4L).name("【open source】sa-token").parentId(1L)
+                                        .children(singletonList(Student.builder().id(7L).name("【open source】click33").parentId(4L).build()))
+                                        .build()))
+                        .build(),
+                Student.builder().id(2L).name("【open source】baomidou")
+                        .children(singletonList(
+                                Student.builder().id(5L).name("【open source】mybatis-plus").parentId(2L)
+                                        .children(singletonList(
+                                                Student.builder().id(8L).name("【open source】jobob").parentId(5L).build()
+                                        ))
+                                        .build()))
+                        .build()
+        ), Steam.of(studentTree).peekTree(Student::getChildren, Student::setChildren, s -> s.setName("【open source】" + s.getName())).toList());
+
+    }
+
     @Data
     @Builder
     public static class Student {
