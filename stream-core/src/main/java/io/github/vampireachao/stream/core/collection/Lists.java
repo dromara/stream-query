@@ -45,7 +45,7 @@ public class Lists {
      * @return {@link List}<{@link T}> 排序后集合
      */
     public static <T> List<T> ascend(List<T> list) {
-        list.sort(null);
+        list.sort(Collections.reverseOrder().reversed());
         return list;
     }
 
@@ -60,4 +60,7 @@ public class Lists {
         return list;
     }
 
+    public static <T> int binarySearch(List<? extends Comparable<? super T>> list, T key) {
+        return Collections.binarySearch(ascend(list), key);
+    }
 }
