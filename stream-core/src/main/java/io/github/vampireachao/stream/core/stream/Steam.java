@@ -2,6 +2,7 @@ package io.github.vampireachao.stream.core.stream;
 
 import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
@@ -921,7 +922,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      *
      * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
      * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
-     * @return Steam<T> 返回Steam流方便后续操作
+     * @return 扁平化树以后的流
      * eg:
      * {@code List students = Steam.of(studentTree).flatTree(Student::getChildren, Student::setChildren).toList() }
      */
@@ -930,6 +931,28 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
         Function<T, Steam<T>> recursive = e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
         recursiveRef.set(recursive);
         return flat(recursive).peek(e -> childrenSetter.accept(e, null));
+    }
+
+    /**
+     * 过滤树
+     *
+     * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
+     * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
+     * @param predicate      过滤条件，满足条件的节点，包括所有子节点都保留
+     * @return 过滤后的流
+     */
+    public Steam<T> filterTree(
+            Function<T, List<T>> childrenGetter,
+            BiConsumer<T, List<T>> childrenSetter,
+            Predicate<T> predicate) {
+        AtomicReference<Predicate<T>> recursiveRef = new AtomicReference<>();
+        Predicate<T> recursive = SerPred.multiOr(predicate::test,
+                e -> Opp.ofColl(childrenGetter.apply(e))
+                        .map(children -> Steam.of(children).filter(recursiveRef.get()).toList())
+                        .peek(children -> childrenSetter.accept(e, children))
+                        .is(s -> !s.isEmpty()));
+        recursiveRef.set(recursive);
+        return filter(recursive);
     }
 
     public interface Builder<T> extends Consumer<T> {
