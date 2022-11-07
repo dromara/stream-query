@@ -934,7 +934,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * 过滤树
+     * 过滤树，满足条件的节点，包括所有子节点都保留
      *
      * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
      * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
