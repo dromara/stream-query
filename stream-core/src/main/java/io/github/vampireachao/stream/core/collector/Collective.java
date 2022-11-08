@@ -277,7 +277,6 @@ public class Collective {
      * <pre>{@code
      * List<Student> studentTree = students.stream().collect(toTree(Student::getId, Student::getParentId, 0L, Student::setChildren, isParallel));
      * }</pre>
-     * @author VampireAchao
      */
     public static <R extends Comparable<R>, T> Collector<T, ?, List<T>> toTree(
             final Function<T, R> idGetter,
@@ -306,7 +305,6 @@ public class Collective {
      * List<Student> studentTree = EasyStream.of(students).
      * 	.toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent);
      * }</pre>
-     * @author VampireAchao
      */
     public static <R extends Comparable<R>, T> Collector<T, ?, List<T>> toTree(
             final Function<T, R> idGetter,

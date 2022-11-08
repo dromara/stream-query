@@ -572,7 +572,7 @@ public class Opp<T> {
 
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 判断传入参数是否与 {@code Opp}相等
      * 在以下情况下返回true
@@ -597,7 +597,7 @@ public class Opp<T> {
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 如果包裹内元素为空，则返回0，否则返回元素的 {@code hashcode}
      */
@@ -607,7 +607,7 @@ public class Opp<T> {
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 返回包裹内元素调用{@code toString()}的结果，不存在则返回{@code null}
      */

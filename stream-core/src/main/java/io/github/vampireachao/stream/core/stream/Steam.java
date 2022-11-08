@@ -118,7 +118,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 返回无限有序流
      * 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
@@ -198,7 +198,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 返回无限串行无序流
      * 其中每一个元素都由给定的{@code Supplier}生成
@@ -209,7 +209,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。
      * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
@@ -227,7 +227,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。
      * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
@@ -335,7 +335,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 返回与指定函数将元素作为参数执行的结果组成的流
      * 这是一个无状态中间操作
@@ -384,7 +384,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
@@ -685,7 +685,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * 构建一个{@link Steam}实例
      */
@@ -695,7 +695,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * hashcode
      */
@@ -705,7 +705,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * equals
      */
@@ -718,7 +718,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     * {@inheritDoc}
+     *  
      * <p>
      * toString
      */
@@ -850,7 +850,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      *
      * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
      * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
-     * @param childrenSetter children的setter对应的lambda，可以写作{ @code Student::setChildren}
+     * @param childrenSetter children的setter对应的lambda，可以写作{@code Student::setChildren}
      * @param <R>            此处是id、parentId的泛型限制
      * @return list 组装好的树 <br>
      * eg:
@@ -858,7 +858,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * List<Student> studentTree = EasyStream.of(students).
      * 	toTree(Student::getId, Student::getParentId, Student::setChildren);
      * }</pre>
-     * @author VampireAchao
      */
     public <R extends Comparable<R>> List<T> toTree(
             final Function<T, R> idGetter,
@@ -874,7 +873,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
      * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
      * @param pIdValue       parentId的值，支持 {@code null}
-     * @param childrenSetter children的setter对应的lambda，可以写作{ @code Student::setChildren}
+     * @param childrenSetter children的setter对应的lambda，可以写作{@code Student::setChildren}
      * @param <R>            此处是id、parentId的泛型限制
      * @return list 组装好的树 <br>
      * eg:
@@ -882,7 +881,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * List<Student> studentTree = EasyStream.of(students).
      * 	toTree(Student::getId, Student::getParentId, 0L, Student::setChildren);
      * }</pre>
-     * @author VampireAchao
      */
     public <R extends Comparable<R>> List<T> toTree(
             final Function<T, R> idGetter,
@@ -907,7 +905,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * List<Student> studentTree = EasyStream.of(students).
      * 	.toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent);
      * }</pre>
-     * @author VampireAchao
      */
     public <R extends Comparable<R>> List<T> toTree(
             final Function<T, R> idGetter,

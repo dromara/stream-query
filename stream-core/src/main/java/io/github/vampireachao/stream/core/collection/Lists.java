@@ -20,7 +20,7 @@ public class Lists {
 
     /**
      * @param values 集合元素
-     * @return {@link List}<{@link T}>
+     * @return {@link List}<{@code  T}> 集合元素类型
      */
     @SafeVarargs
     public static <T> List<T> of(T... values) {
@@ -31,7 +31,7 @@ public class Lists {
      * 翻转集合元素
      *
      * @param list 需翻转集合元素
-     * @return {@link List}<{@link T}> 翻转之后集合元素
+     * @return {@link List}<{@code  T}>
      */
     public static <T> List<T> reverse(List<T> list) {
         Collections.reverse(list);
@@ -42,7 +42,7 @@ public class Lists {
      * 升序排序
      *
      * @param list 需排序集合
-     * @return {@link List}<{@link T}> 排序后集合
+     * @return {@link List}<{@code  T}>
      */
     public static <T> List<T> ascend(List<T> list) {
         list.sort(Collections.reverseOrder().reversed());
@@ -53,13 +53,18 @@ public class Lists {
      * 降序排序
      *
      * @param list 需排序集合
-     * @return {@link List}<{@link T}> 排序后集合
+     * @return {@link List}<{@code  T}>
      */
     public static <T> List<T> descend(List<T> list) {
         list.sort(Collections.reverseOrder());
         return list;
     }
 
+    /**
+     * @param list 要查找的集合
+     * @param key 想要查找的数据
+     * @return int 坐标
+     */
     public static <T> int binarySearch(List<? extends Comparable<? super T>> list, T key) {
         return Collections.binarySearch(ascend(list), key);
     }
