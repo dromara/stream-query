@@ -1,15 +1,21 @@
 package io.github.vampireachao.stream.core.collector;
 
 import io.github.vampireachao.stream.core.stream.Steam;
+import lombok.Builder;
+import lombok.Data;
+import lombok.experimental.Tolerate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.github.vampireachao.stream.core.collector.Collective.*;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * Collectors测试
@@ -123,6 +129,90 @@ class CollectiveTest {
             }
         }, map);
     }
+    @Test
+    void testToTree() {
+        Consumer<Object> test = o -> {
+            List< Student> studentTree = Steam
+                    .of(
+                             Student.builder().id(1L).name("dromara").build(),
+                             Student.builder().id(2L).name("baomidou").build(),
+                             Student.builder().id(3L).name("hutool").parentId(1L).build(),
+                             Student.builder().id(4L).name("sa-token").parentId(1L).build(),
+                             Student.builder().id(5L).name("mybatis-plus").parentId(2L).build(),
+                             Student.builder().id(6L).name("looly").parentId(3L).build(),
+                             Student.builder().id(7L).name("click33").parentId(4L).build(),
+                             Student.builder().id(8L).name("jobob").parentId(5L).build()
+                    )
+                    .collect(Collective.toTree( Student::getId,  Student::getParentId,  Student::setChildren,Boolean.TRUE));;
+            Assertions.assertEquals(asList(
+                     Student.builder().id(1L).name("dromara")
+                            .children(asList(
+                                     Student.builder().id(3L).name("hutool").parentId(1L)
+                                            .children(singletonList( Student.builder().id(6L).name("looly").parentId(3L).build()))
+                                            .build(),
+                                     Student.builder().id(4L).name("sa-token").parentId(1L)
+                                            .children(singletonList( Student.builder().id(7L).name("click33").parentId(4L).build()))
+                                            .build()))
+                            .build(),
+                     Student.builder().id(2L).name("baomidou")
+                            .children(singletonList(
+                                     Student.builder().id(5L).name("mybatis-plus").parentId(2L)
+                                            .children(singletonList(
+                                                     Student.builder().id(8L).name("jobob").parentId(5L).build()
+                                            ))
+                                            .build()))
+                            .build()
+            ), studentTree);
+        };
+        test = test.andThen(o -> {
+            List< Student> studentTree = Steam
+                    .of(
+                             Student.builder().id(1L).name("dromara").matchParent(true).build(),
+                             Student.builder().id(2L).name("baomidou").matchParent(true).build(),
+                             Student.builder().id(3L).name("hutool").parentId(1L).build(),
+                             Student.builder().id(4L).name("sa-token").parentId(1L).build(),
+                             Student.builder().id(5L).name("mybatis-plus").parentId(2L).build(),
+                             Student.builder().id(6L).name("looly").parentId(3L).build(),
+                             Student.builder().id(7L).name("click33").parentId(4L).build(),
+                             Student.builder().id(8L).name("jobob").parentId(5L).build()
+                    )
+                    .collect(Collective.toTree(Student::getId,  Student::getParentId,  Student::setChildren,  Student::getMatchParent, Boolean.TRUE));
+            Assertions.assertEquals(asList(
+                     Student.builder().id(1L).name("dromara").matchParent(true)
+                            .children(asList(
+                                     Student.builder().id(3L).name("hutool").parentId(1L)
+                                            .children(singletonList( Student.builder().id(6L).name("looly").parentId(3L).build()))
+                                            .build(),
+                                     Student.builder().id(4L).name("sa-token").parentId(1L)
+                                            .children(singletonList( Student.builder().id(7L).name("click33").parentId(4L).build()))
+                                            .build()))
+                            .build(),
+                     Student.builder().id(2L).name("baomidou").matchParent(true)
+                            .children(singletonList(
+                                     Student.builder().id(5L).name("mybatis-plus").parentId(2L)
+                                            .children(singletonList(
+                                                     Student.builder().id(8L).name("jobob").parentId(5L).build()
+                                            ))
+                                            .build()))
+                            .build()
+            ), studentTree);
+        });
+    }
 
+    @Data
+    @Builder
+    public static class Student {
+        @Tolerate
+        public Student() {
+            // this is an accessible parameterless constructor.
+        }
+
+        private String name;
+        private Integer age;
+        private Long id;
+        private Long parentId;
+        private List<Student> children;
+        private Boolean matchParent;
+    }
 
 }
