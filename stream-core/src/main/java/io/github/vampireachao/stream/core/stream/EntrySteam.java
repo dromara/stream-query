@@ -5,7 +5,6 @@ import io.github.vampireachao.stream.core.collector.Collective;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -198,10 +197,10 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * @return {@link io.github.vampireachao.stream.core.stream.EntrySteam}实例
      */
     public <N> EntrySteam<K, N> foldByKey(BiFunction<K, Collection<V>, N> valueFolder) {
-        Map<K, List<Map.Entry<K, V>>> grouped = super.collect(Collectors.groupingBy(Map.Entry::getKey));
+        Map<K, List<Map.Entry<K, V>>> grouped = super.collect(Collective.groupingBy(Map.Entry::getKey));
         Map<K, N> newMap = new LinkedHashMap<>(grouped.size());
         grouped.forEach((k, es) -> {
-            Collection<V> values = es.stream().map(Map.Entry::getValue).collect(Collectors.toList());
+            Collection<V> values = es.stream().map(Map.Entry::getValue).collect(Collective.toList());
             newMap.put(k, valueFolder.apply(k, values));
         });
         return of(newMap);
@@ -405,12 +404,12 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * @param mapFactory 获取集合的工厂方法
      * @param operator   当存在重复键时的处理
      * @return 集合
-     * @see Collectors#toMap(Function, Function, BinaryOperator, Supplier)
+     * @see Collective#toMap(Function, Function, BinaryOperator, Supplier)
      */
     public Map<K, V> toMap(Supplier<Map<K, V>> mapFactory, BinaryOperator<V> operator) {
         Objects.requireNonNull(mapFactory);
         Objects.requireNonNull(operator);
-        return super.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, operator, mapFactory));
+        return super.collect(Collective.toMap(Map.Entry::getKey, Map.Entry::getValue, operator, mapFactory));
     }
 
     /**
@@ -418,11 +417,11 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      *
      * @param mapFactory 获取集合的工厂方法
      * @return 集合
-     * @see Collectors#toMap(Function, Function, BinaryOperator)
+     * @see Collective#toMap(Function, Function, BinaryOperator)
      */
     public Map<K, V> toMap(Supplier<Map<K, V>> mapFactory) {
         Objects.requireNonNull(mapFactory);
-        return super.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (t1, t2) -> t2, mapFactory));
+        return super.collect(Collective.toMap(Map.Entry::getKey, Map.Entry::getValue, (t1, t2) -> t2, mapFactory));
     }
 
     /**
@@ -430,10 +429,10 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      *
      * @return 集合
      * @throws java.lang.IllegalArgumentException 当键重复时抛出
-     * @see Collectors#toMap(Function, Function)
+     * @see Collective#toMap(Function, Function)
      */
     public Map<K, V> toMap() {
-        return super.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return super.collect(Collective.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -442,19 +441,19 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * @param rowKeyMapper  将键映射为父集合中键的方法
      * @param colMapFactory 创建子集合的工厂方法
      * @param operator      当存在重复键时的处理
+     * @param <N>           a N class
      * @return 集合
-     * @see Collectors#groupingBy(Function, Supplier, Collector)
-     * @param <N> a N class
+     * @see Collective#groupingBy(Function, Supplier, Collector)
      */
     public <N> Map<N, Map<K, V>> toTable(
             BiFunction<K, V, N> rowKeyMapper, Supplier<Map<K, V>> colMapFactory, BinaryOperator<V> operator) {
         Objects.requireNonNull(rowKeyMapper);
         Objects.requireNonNull(colMapFactory);
         Objects.requireNonNull(operator);
-        return collect(Collectors.groupingBy(
+        return collect(Collective.groupingBy(
                 e -> rowKeyMapper.apply(e.getKey(), e.getValue()),
                 HashMap::new,
-                Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, operator, colMapFactory)
+                Collective.toMap(Map.Entry::getKey, Map.Entry::getValue, operator, colMapFactory)
         ));
     }
 
@@ -528,7 +527,7 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * @return 集合
      */
     public Map<K, List<V>> groupByKey() {
-        return groupByKey(Collectors.toList());
+        return groupByKey(Collective.toList());
     }
 
     /**
@@ -552,7 +551,7 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * @return 集合
      */
     public <C extends Collection<V>, M extends Map<K, C>> M groupByKey(Supplier<M> mapFactory, Collector<V, ?, C> collector) {
-        return super.collect(Collectors.groupingBy(
+        return super.collect(Collective.groupingBy(
                 Map.Entry::getKey, mapFactory,
                 Collective.transform(ArrayList::new, s -> s.stream().map(Map.Entry::getValue).collect(collector))
         ));

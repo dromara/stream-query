@@ -16,7 +16,7 @@ import java.util.function.UnaryOperator;
  * 公共方法抽象
  *
  * @param <TR> 原返回值
- * @param <VR> value改变后的返回值
+ * @param <S>  value改变后的返回值
  * @param <T>  实体类型
  * @param <K>  key值类型
  * @param <V>  value或后续操作返回值类型
@@ -25,8 +25,7 @@ import java.util.function.UnaryOperator;
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseQueryHelper<
-        TR extends BaseQueryHelper<TR, ?, T, K, T>,
-        VR extends BaseQueryHelper<TR, VR, T, K, V>,
+        S extends BaseQueryHelper<S, T, K, V>,
         T,
         K extends Serializable & Comparable<K>,
         V
@@ -36,37 +35,37 @@ public abstract class BaseQueryHelper<
         super(keyFunction);
     }
 
-    public TR eq(K data) {
+    public S eq(K data) {
         wrapper = Sf.of(data).mayLet(value -> wrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
-        return (TR) this;
+        return (S) this;
     }
 
-    public TR in(Collection<K> dataList) {
+    public S in(Collection<K> dataList) {
         wrapper = Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
-        return (TR) this;
+        return (S) this;
     }
 
-    public VR condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
+    public S condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
         wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
-        return (VR) this;
+        return (S) this;
     }
 
-    public VR parallel(boolean isParallel) {
+    public S parallel(boolean isParallel) {
         this.isParallel = isParallel;
-        return (VR) this;
+        return (S) this;
     }
 
-    public VR parallel() {
+    public S parallel() {
         return parallel(true);
     }
 
-    public VR sequential() {
+    public S sequential() {
         return parallel(false);
     }
 
-    public VR peek(SerCons<T> peek) {
+    public S peek(SerCons<T> peek) {
         this.peekConsumer = this.peekConsumer.andThen(peek);
-        return (VR) this;
+        return (S) this;
     }
 
     protected <R> void attachSingle(SFunction<T, R> valueFunction) {

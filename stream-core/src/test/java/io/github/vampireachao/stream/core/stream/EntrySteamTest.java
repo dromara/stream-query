@@ -75,8 +75,8 @@ class EntrySteamTest {
 	void testPeekKey() {
 		List<Integer> keys = new ArrayList<>();
 		EntrySteam.of(Arrays.asList(new Entry<>(1, 1), new Entry<>(1, 2), new Entry<>(2, 1), new Entry<>(2, 2)))
-			.peekKey(keys::add)
-			.count();
+				.peekKey(keys::add)
+				.collect(Collectors.toList());
 		Assertions.assertEquals(Arrays.asList(1, 1, 2, 2), keys);
 	}
 
@@ -84,8 +84,8 @@ class EntrySteamTest {
 	void testPeekValue() {
 		List<Integer> values = new ArrayList<>();
 		EntrySteam.of(Arrays.asList(new Entry<>(1, 1), new Entry<>(1, 2), new Entry<>(2, 1), new Entry<>(2, 2)))
-			.peekValue(values::add)
-			.count();
+				.peekValue(values::add)
+				.collect(Collectors.toList());
 		Assertions.assertEquals(Arrays.asList(1, 2, 1, 2), values);
 	}
 
@@ -415,7 +415,7 @@ class EntrySteamTest {
 
 		@Override
 		public V setValue(V value) {
-			return null;
+			return value;
 		}
 	}
 

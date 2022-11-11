@@ -14,7 +14,7 @@ import java.util.List;
  * @since 2022/6/18 21:21
  */
 @SuppressWarnings("unchecked")
-public class Many<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<Many<T, K, T>, Many<T, K, V>, T, K, V> {
+public class Many<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<Many<T, K, V>, T, K, V> {
 
     public Many(SFunction<T, K> keyFunction) {
         super(keyFunction);

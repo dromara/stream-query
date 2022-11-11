@@ -12,9 +12,9 @@ import java.util.stream.*;
 abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T>, Iterable<T> {
 
 	/**
-	 * 原始的流实例
-	 */
-	protected final Stream<T> stream;
+     * 原始的流实例
+     */
+    protected Stream<T> stream;
 
     /**
      * 创建一个流包装器

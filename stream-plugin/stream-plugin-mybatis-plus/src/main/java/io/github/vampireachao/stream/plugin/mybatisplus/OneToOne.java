@@ -17,7 +17,7 @@ import java.util.function.IntFunction;
  * @since 2022/5/20
  */
 @SuppressWarnings("unchecked")
-public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToOne<T, K, T>, OneToOne<T, K, V>, T, K, V> {
+public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToOne<T, K, V>, T, K, V> {
 
     public static <T, K extends Serializable & Comparable<K>> OneToOne<T, K, T> of(SFunction<T, K> keyFunction) {
         return new OneToOne<>(keyFunction);

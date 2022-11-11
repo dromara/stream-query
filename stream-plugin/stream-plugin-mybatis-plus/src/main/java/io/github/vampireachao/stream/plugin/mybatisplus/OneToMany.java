@@ -19,7 +19,7 @@ import java.util.stream.Collector;
  * @since 2022/5/23 17:40
  */
 @SuppressWarnings("unchecked")
-public class OneToMany<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToMany<T, K, T>, OneToMany<T, K, V>, T, K, V> {
+public class OneToMany<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToMany<T, K, V>, T, K, V> {
 
     public OneToMany(SFunction<T, K> keyFunction) {
         super(keyFunction);
