@@ -957,19 +957,16 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * 树里的每个节点都执行一下
      *
      * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
-     * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
      * @param action         操作
      * @return 叠加操作后的流
      */
     public Steam<T> peekTree(
             Function<T, List<T>> childrenGetter,
-            BiConsumer<T, List<T>> childrenSetter,
             Consumer<T> action) {
         AtomicReference<Consumer<T>> recursiveRef = new AtomicReference<>();
         Consumer<T> recursive = SerCons.multi(action::accept,
                 e -> Opp.ofColl(childrenGetter.apply(e))
-                        .peek(children -> Steam.of(children).forEach(recursiveRef.get()))
-                        .ifPresent(children -> childrenSetter.accept(e, children)));
+                        .peek(children -> Steam.of(children).forEach(recursiveRef.get())));
         recursiveRef.set(recursive);
         return peek(recursive);
     }

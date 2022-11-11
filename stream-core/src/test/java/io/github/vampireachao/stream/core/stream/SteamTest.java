@@ -540,7 +540,7 @@ class SteamTest {
                                         ))
                                         .build()))
                         .build()
-        ), Steam.of(studentTree).peekTree(Student::getChildren, Student::setChildren, s -> s.setName("【open source】" + s.getName())).toList());
+        ), Steam.of(studentTree).peekTree(Student::getChildren, s -> s.setName("【open source】" + s.getName())).toList());
 
     }
 
