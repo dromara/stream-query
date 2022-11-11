@@ -32,6 +32,10 @@ public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends Base
         return (OneToOne<T, K, R>) this;
     }
 
+    /*public <U, A extends Serializable & Comparable<A>, R> OneToOne<T, K, R> and(OneToOne<U, A, R> engine) {
+
+    }*/
+
     public Map<K, V> query() {
         return query(HashMap::new);
     }
