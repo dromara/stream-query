@@ -27,7 +27,7 @@
 
 ## 📝文档
 
-[中文文档](https://vampireachao.gitee.io/stream-query-docs/)&nbsp;  &nbsp;[仓库地址](https://gitee.com/VampireAchao/stream-query-docs)
+[中文文档](https://vampireachao.gitee.io/stream-query-docs/)&nbsp;  &nbsp;[仓库地址](https://gitee.com/VampireAchao/stream-query-docs)&nbsp;  &nbsp;[对应视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
 ## 📦安装
 
 ### 🍊Maven
