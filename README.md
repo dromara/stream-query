@@ -88,3 +88,4 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1
 
 powered by [GitHub Copilot](https://copilot.github.com/) 
 powered by [JetBrains](https://www.jetbrains.com/)Open source license
+ 
