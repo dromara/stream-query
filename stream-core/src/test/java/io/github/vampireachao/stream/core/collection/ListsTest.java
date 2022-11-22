@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author VampireAchao
@@ -14,6 +15,11 @@ class ListsTest {
     @Test
     void testOf() {
         Assertions.assertEquals("value", Lists.of("value").get(0));
+    }
+
+    @Test
+    void testOfColl() {
+        Assertions.assertTrue(Lists.ofColl(Collections.emptySet()).isEmpty());
     }
 
     @Test

@@ -1,9 +1,6 @@
 package io.github.vampireachao.stream.core.collection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author VampireAchao 请我吃早饭
@@ -25,6 +22,17 @@ public class Lists {
     @SafeVarargs
     public static <T> List<T> of(T... values) {
         return new ArrayList<>(Arrays.asList(values));
+    }
+
+    /**
+     * @param values 集合元素
+     * @return {@link List}<{@code  T}> 集合元素类型
+     */
+    public static <T> List<T> ofColl(Collection<T> values) {
+        if (Objects.isNull(values)) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(values);
     }
 
     /**
