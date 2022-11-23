@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 /**
  * 查询单条测试
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/6/18 14:25
  */
 @MybatisPlusTest

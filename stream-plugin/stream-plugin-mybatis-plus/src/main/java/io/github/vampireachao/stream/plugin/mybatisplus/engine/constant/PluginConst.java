@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus.engine.constant;
 
 /**
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  */
 public interface PluginConst {
 

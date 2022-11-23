@@ -22,7 +22,7 @@ import java.util.function.Function;
 /**
  * LambdaHelper测试
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/5/31 19:51
  */
 class LambdaHelperTest {

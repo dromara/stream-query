@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 /**
  * 可序列化的Predicate
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @see Predicate
  */
 @FunctionalInterface

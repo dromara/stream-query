@@ -19,7 +19,7 @@ import java.util.WeakHashMap;
 /**
  * LambdaHelper
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/5/29 9:19
  */
 public class LambdaHelper {

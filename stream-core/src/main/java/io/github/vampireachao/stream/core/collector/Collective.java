@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * 收集器
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/5/29 8:55
  */
 public class Collective {

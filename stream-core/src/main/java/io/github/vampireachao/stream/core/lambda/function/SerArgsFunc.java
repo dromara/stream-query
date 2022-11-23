@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * 可序列化的SerArgsFunc
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @see SerArgsFunc
  */
 @SuppressWarnings("all")

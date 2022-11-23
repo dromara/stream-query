@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * <p>QueryCondition class.</p>
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/8/15 16:39
  */
 public class QueryCondition<T> extends LambdaQueryWrapper<T> {

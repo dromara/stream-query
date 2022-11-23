@@ -7,7 +7,7 @@ import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 /**
  * UserInfoMapper
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/5/21
  */
 public interface UserInfoMapper extends IMapper<UserInfo> {

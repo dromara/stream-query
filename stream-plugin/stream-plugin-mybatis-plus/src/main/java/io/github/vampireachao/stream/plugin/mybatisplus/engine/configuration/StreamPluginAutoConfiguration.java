@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * MPSql注入
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  */
 public class StreamPluginAutoConfiguration {
 

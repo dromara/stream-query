@@ -8,7 +8,7 @@ import java.util.function.Function;
 /**
  * 可序列化的Function
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @see java.util.function.Function
  */
 @FunctionalInterface

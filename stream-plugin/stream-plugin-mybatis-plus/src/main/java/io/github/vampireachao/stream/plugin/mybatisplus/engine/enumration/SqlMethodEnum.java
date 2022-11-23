@@ -3,7 +3,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration;
 /**
  * sql方法类型
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  */
 public enum SqlMethodEnum {
     /**

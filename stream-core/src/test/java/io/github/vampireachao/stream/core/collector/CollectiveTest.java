@@ -20,7 +20,7 @@ import static java.util.Collections.singletonList;
 /**
  * Collectors测试
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/6/22 11:10
  */
 class CollectiveTest {

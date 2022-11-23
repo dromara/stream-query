@@ -3,7 +3,7 @@ package io.github.vampireachao.stream.core.business.highlight;
 /**
  * <p>FoundWord class.</p>
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  */
 public class FoundWord {
 

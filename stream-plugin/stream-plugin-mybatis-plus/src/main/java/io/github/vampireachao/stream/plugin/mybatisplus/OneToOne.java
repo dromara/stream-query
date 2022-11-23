@@ -13,7 +13,7 @@ import java.util.function.IntFunction;
 /**
  * 一对一
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/5/20
  */
 @SuppressWarnings("unchecked")

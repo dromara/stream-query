@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * scope-functions
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @see <a href="https://www.kotlincn.net/docs/reference/scope-functions.html"/>
  * @since 2022/9/15
  */

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * MybatisPlusTestApplication less Create Retrieve Update Delete
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/5/21
  */
 @EnableMybatisPlusPlugin

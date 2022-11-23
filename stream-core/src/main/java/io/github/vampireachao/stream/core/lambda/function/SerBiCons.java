@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 /**
  * SerSerBiCons
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/6/8
  */
 @FunctionalInterface

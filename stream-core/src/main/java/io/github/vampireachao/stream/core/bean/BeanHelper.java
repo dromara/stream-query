@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * <p>BeanHelper class.</p>
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  */
 public class BeanHelper {
 

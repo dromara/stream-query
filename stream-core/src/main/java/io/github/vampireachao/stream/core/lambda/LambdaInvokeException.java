@@ -3,7 +3,7 @@ package io.github.vampireachao.stream.core.lambda;
 /**
  * LambdaInvokeException
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 2022/9/4
  */
 public class LambdaInvokeException extends RuntimeException {

@@ -30,7 +30,7 @@ import java.util.List;
  * Similar to a Java 8 Executable but with a return type.
  * reference apache-flink
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  */
 public class LambdaExecutable {
 

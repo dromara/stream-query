@@ -44,7 +44,7 @@ import java.util.stream.StreamSupport;
  * 并行流会使用拆分器{@link java.util.Spliterator}将操作拆分为多个异步任务{@link java.util.concurrent.ForkJoinTask}执行
  * 这些异步任务默认使用{@link java.util.concurrent.ForkJoinPool}线程池进行管理
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @see java.util.stream.Stream
  */
 public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>

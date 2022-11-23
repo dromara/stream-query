@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 /**
  * 辅助类
  *
- * @author VampireAchao ZVerify
+ * @author VampireAchao Cizai_
  * @since 1.0
  */
 public class Database {
