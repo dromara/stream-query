@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.KeyManagementException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -196,12 +197,23 @@ class OppTest {
             throw new IllegalStateException();
         }, NullPointerException.class));
 
+
     }
 
     @Test
     void testEmpty() {
         Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
         Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, 1, null)).isPresent());
+    }
+    @Test
+    void testNotTry() {
+        Assertions.assertDoesNotThrow(()->Opp.notTry(() -> {
+            throw new ArithmeticException();
+        }, NullPointerException.class,KeyManagementException.class));
+
+        Assertions.assertThrows(RuntimeException.class,()->Opp.notTry(() -> {
+            throw new NullPointerException();
+        }, NullPointerException.class,KeyManagementException.class));
     }
 
     @Test
