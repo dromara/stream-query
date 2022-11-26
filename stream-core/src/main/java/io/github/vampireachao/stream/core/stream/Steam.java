@@ -1,9 +1,6 @@
 package io.github.vampireachao.stream.core.stream;
 
-import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.lambda.function.SerCons;
-import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 
 import java.util.*;
@@ -758,8 +755,8 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      * @param <R>    操作返回值类型
      * @return 过滤同类型集合中某一操作相同值的数据
      */
-    public <R> Steam<T> filterIter(Function<? super T, ? extends R> mapper,
-                                   Iterable<T> others) {
+    public <R> Steam<T> filterContains(Function<? super T, ? extends R> mapper,
+                                       Iterable<T> others) {
         List<? extends R> otherList = Steam.of(others).map(mapper).toList();
         return filter(a -> Objects.nonNull(a) && otherList.contains(mapper.apply(a)));
     }
@@ -841,134 +838,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public Steam<List<T>> splitList(final int batchSize) {
         return split(batchSize).map(Steam::toList);
-    }
-
-
-    /**
-     * <p>将集合转换为树，默认用 {@code parentId == null} 来判断树的根节点
-     * 因为需要在当前传入数据里查找，所以这是一个结束操作 <br>
-     *
-     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
-     * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
-     * @param childrenSetter children的setter对应的lambda，可以写作{@code Student::setChildren}
-     * @param <R>            此处是id、parentId的泛型限制
-     * @return list 组装好的树 <br>
-     * eg:
-     * <pre>{@code
-     * List<Student> studentTree = EasyStream.of(students).
-     * 	toTree(Student::getId, Student::getParentId, Student::setChildren);
-     * }</pre>
-     */
-    public <R extends Comparable<R>> List<T> toTree(
-            final Function<T, R> idGetter,
-            final Function<T, R> pIdGetter,
-            final BiConsumer<T, List<T>> childrenSetter) {
-        return collect(Collective.toTree(idGetter, pIdGetter, childrenSetter, isParallel()));
-    }
-
-    /**
-     * <p>将集合转换为树，传入 {@code parentId == pidValue} 来判断树的根节点
-     * 因为需要在当前传入数据里查找，所以这是一个结束操作 <br>
-     *
-     * @param idGetter       id的getter对应的lambda，可以写作 {@code Student::getId}
-     * @param pIdGetter      parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
-     * @param pIdValue       parentId的值，支持 {@code null}
-     * @param childrenSetter children的setter对应的lambda，可以写作{@code Student::setChildren}
-     * @param <R>            此处是id、parentId的泛型限制
-     * @return list 组装好的树 <br>
-     * eg:
-     * <pre>{@code
-     * List<Student> studentTree = EasyStream.of(students).
-     * 	toTree(Student::getId, Student::getParentId, 0L, Student::setChildren);
-     * }</pre>
-     */
-    public <R extends Comparable<R>> List<T> toTree(
-            final Function<T, R> idGetter,
-            final Function<T, R> pIdGetter,
-            final R pIdValue,
-            final BiConsumer<T, List<T>> childrenSetter) {
-        return collect(Collective.toTree(idGetter, pIdGetter, pIdValue, childrenSetter, isParallel()));
-    }
-
-    /**
-     * 将集合转换为树，自定义根节点的判断条件
-     * 因为需要在当前传入数据里查找，所以这是一个结束操作
-     *
-     * @param idGetter        id的getter对应的lambda，可以写作 {@code Student::getId}
-     * @param pIdGetter       parentId的getter对应的lambda，可以写作 {@code Student::getParentId}
-     * @param childrenSetter  children的setter对应的lambda，可以写作 {@code Student::setChildren}
-     * @param parentPredicate 树顶部的判断条件，可以写作 {@code s -> Objects.equals(s.getParentId(),0L) }
-     * @param <R>             此处是id、parentId的泛型限制
-     * @return list 组装好的树 <br>
-     * eg:
-     * <pre>{@code
-     * List<Student> studentTree = EasyStream.of(students).
-     * 	.toTree(Student::getId, Student::getParentId, Student::setChildren, Student::getMatchParent);
-     * }</pre>
-     */
-    public <R extends Comparable<R>> List<T> toTree(
-            final Function<T, R> idGetter,
-            final Function<T, R> pIdGetter,
-            final BiConsumer<T, List<T>> childrenSetter,
-            final Predicate<T> parentPredicate) {
-        return collect(Collective.toTree(idGetter, pIdGetter, childrenSetter, parentPredicate, isParallel()));
-    }
-
-    /**
-     * 将树递归扁平化为集合，内置一个小递归(没错，lambda可以写递归)
-     * 这是一个无状态中间操作
-     *
-     * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
-     * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
-     * @return 扁平化树以后的流
-     * eg:
-     * {@code List students = Steam.of(studentTree).flatTree(Student::getChildren, Student::setChildren).toList() }
-     */
-    public Steam<T> flatTree(Function<T, List<T>> childrenGetter, BiConsumer<T, List<T>> childrenSetter) {
-        AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
-        Function<T, Steam<T>> recursive = e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
-        recursiveRef.set(recursive);
-        return flat(recursive).peek(e -> childrenSetter.accept(e, null));
-    }
-
-    /**
-     * 过滤树，满足条件的节点，包括所有子节点都保留
-     *
-     * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
-     * @param childrenSetter 设置子节点的lambda，可以写作 {@code Student::setChildren}
-     * @param predicate      过滤条件，满足条件的节点，包括所有子节点都保留
-     * @return 过滤后的流
-     */
-    public Steam<T> filterTree(
-            Function<T, List<T>> childrenGetter,
-            BiConsumer<T, List<T>> childrenSetter,
-            Predicate<T> predicate) {
-        AtomicReference<Predicate<T>> recursiveRef = new AtomicReference<>();
-        Predicate<T> recursive = SerPred.multiOr(predicate::test,
-                e -> Opp.ofColl(childrenGetter.apply(e))
-                        .map(children -> Steam.of(children).filter(recursiveRef.get()).toList())
-                        .peek(children -> childrenSetter.accept(e, children))
-                        .is(s -> !s.isEmpty()));
-        recursiveRef.set(recursive);
-        return filter(recursive);
-    }
-
-    /**
-     * 树里的每个节点都执行一下
-     *
-     * @param childrenGetter 获取子节点的lambda，可以写作 {@code Student::getChildren}
-     * @param action         操作
-     * @return 叠加操作后的流
-     */
-    public Steam<T> peekTree(
-            Function<T, List<T>> childrenGetter,
-            Consumer<T> action) {
-        AtomicReference<Consumer<T>> recursiveRef = new AtomicReference<>();
-        Consumer<T> recursive = SerCons.multi(action::accept,
-                e -> Opp.ofColl(childrenGetter.apply(e))
-                        .peek(children -> Steam.of(children).forEach(recursiveRef.get())));
-        recursiveRef.set(recursive);
-        return peek(recursive);
     }
 
     public interface Builder<T> extends Consumer<T> {
