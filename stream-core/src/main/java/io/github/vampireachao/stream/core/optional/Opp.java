@@ -161,6 +161,30 @@ public class Opp<T> {
         }
     }
 
+
+    /**
+     * 如果当前操作发生异常的话只抛出在想要抛出的范围内的异常，如果不在在想要抛出的范围内就捕获到Opp对象中
+     * @param callable 操作
+     * @param exceptionTypes 不想捕获的异常...
+     * @return 操作执行后的值如果发生我们想抛出的异常则直接抛出，如果发生的异常不是我们想抛出的则直接捕获返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
+     * @param <T> 类型
+     */
+    @SafeVarargs
+    public static <T> Opp<T> notTry(Callable<T> callable,
+                                   Class<? extends Exception>... exceptionTypes) {
+        try {
+            return Opp.of(callable.call());
+        } catch (Exception e) {
+            if (Steam.of(exceptionTypes).anyMatch(clazz -> clazz.isInstance(e))) {
+                throw new IllegalArgumentException(e);
+            }
+            Opp<T> empty = new Opp<>(null);
+            empty.exception = e;
+            return empty;
+        }
+    }
+
+
     /**
      * 返回包裹里的元素，取不到则为{@code null}，注意！！！此处和{@link java.util.Optional#get()}不同的一点是本方法并不会抛出{@code NoSuchElementException}
      * 如果元素为空，则返回{@code null}，如果需要一个绝对不能为{@code null}的值，则使用{@link #orElseThrow()}
