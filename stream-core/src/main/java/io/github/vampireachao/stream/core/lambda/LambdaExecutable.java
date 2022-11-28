@@ -70,7 +70,7 @@ public class LambdaExecutable {
             if (CONSTRUCTOR_METHOD_NAME.equals(lambda.getImplMethodName())) {
                 initConstructor(ReflectHelper.getConstructorByDescriptor(implClass, lambda.getImplMethodSignature()));
             } else {
-                initMethod(ReflectHelper.getMethodByDescriptor(implClass, lambda.getImplMethodSignature()));
+                initMethod(ReflectHelper.getMethodByDescriptor(lambda.getImplMethodName(), implClass, lambda.getImplMethodSignature()));
             }
         } catch (IllegalStateException e) {
             this.setParameterTypes(ReflectHelper.getArgsFromDescriptor(lambda.getImplMethodSignature()));

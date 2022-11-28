@@ -96,7 +96,6 @@ public class ReflectHelper {
         }
         if (executable instanceof Method) {
             Method method = (Method) executable;
-            // if (method.getName().equals("toString")) return "toString";
             stringBuilder.append(')');
             appendDescriptor(method.getReturnType(), stringBuilder);
             return stringBuilder.toString();
@@ -413,12 +412,13 @@ public class ReflectHelper {
      * <p>getMethodByDescriptor.</p>
      *
      * @param clazz            a {@link java.lang.Class} object
+     * @param methodName       a {@link java.lang.String} object
      * @param methodDescriptor a {@link java.lang.String} object
      * @return a {@link java.lang.reflect.Method} object
      */
-    public static Method getMethodByDescriptor(final Class<?> clazz, final String methodDescriptor) {
+    public static Method getMethodByDescriptor(final String methodName, final Class<?> clazz, final String methodDescriptor) {
         for (Method method : ReflectHelper.getMethods(clazz)) {
-            if (ReflectHelper.getDescriptor(method).equals(methodDescriptor)) {
+            if (method.getName().equals(methodName) && ReflectHelper.getDescriptor(method).equals(methodDescriptor)) {
                 return method;
             }
         }
