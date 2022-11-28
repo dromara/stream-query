@@ -1,8 +1,5 @@
 package io.github.vampireachao.stream.core.collection;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.experimental.Tolerate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,20 +42,5 @@ class ListsTest {
     void testBinarySearch() {
         Assertions.assertEquals(2, Lists.binarySearch(Lists.of(1, 2, 3), 3));
     }
-
-    @Data
-    @Builder
-    private static class Student {
-        private String name;
-        private Double age;
-        private Long id;
-
-        @Tolerate
-        public Student() {
-            // this is an accessible parameterless constructor.
-        }
-
-    }
-
 
 }
