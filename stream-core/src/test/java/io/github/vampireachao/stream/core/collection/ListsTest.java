@@ -6,9 +6,7 @@ import lombok.experimental.Tolerate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 
@@ -46,23 +44,6 @@ class ListsTest {
     @Test
     void testBinarySearch() {
         Assertions.assertEquals(2, Lists.binarySearch(Lists.of(1, 2, 3), 3));
-    }
-
-    @Test
-    void testCustomSort() {
-        List<Student> list = asList(
-                Student.builder().name("aaa").age(23.0).id(123L).build(),
-                Student.builder().name("azb").age(21.0).id(122L).build(),
-                Student.builder().name("amb").age(22.0).id(124L).build()
-        );
-        List<Student> others = asList(
-                Student.builder().name("azb").age(21.0).id(122L).build(),
-                Student.builder().name("amb").age(22.0).id(124L).build(),
-                Student.builder().name("aaa").age(23.0).id(123L).build()
-        );
-        List<Student> students = Lists.customSort(list, Student::getName, () -> Boolean.FALSE);
-
-        Assertions.assertEquals(students,others);
     }
 
     @Data
