@@ -34,6 +34,7 @@ public class Lists {
         }
         return new ArrayList<>(values);
     }
+
     /**
      * 升序排序
      *
@@ -69,7 +70,7 @@ public class Lists {
 
     /**
      * @param list 要查找的集合
-     * @param key 想要查找的数据
+     * @param key  想要查找的数据
      * @return int 坐标
      */
     public static <T> int binarySearch(List<? extends Comparable<? super T>> list, T key) {

@@ -11,7 +11,6 @@ import java.lang.reflect.Type;
 public abstract class AbstractTypeReference<T> implements Type {
 
     /**
-     *  
      * <p>
      * Returns a string describing this type, including information
      * about any type parameters.

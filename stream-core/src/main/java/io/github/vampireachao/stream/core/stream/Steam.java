@@ -115,7 +115,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * 返回无限有序流
      * 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
@@ -195,7 +194,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * 返回无限串行无序流
      * 其中每一个元素都由给定的{@code Supplier}生成
@@ -206,7 +204,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。
      * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
@@ -224,7 +221,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。
      * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
@@ -332,7 +328,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * 返回与指定函数将元素作为参数执行的结果组成的流
      * 这是一个无状态中间操作
@@ -381,7 +376,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
@@ -682,7 +676,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * 构建一个{@link Steam}实例
      */
@@ -692,7 +685,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * hashcode
      */
@@ -702,7 +694,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * equals
      */
@@ -715,7 +706,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
-     *  
      * <p>
      * toString
      */

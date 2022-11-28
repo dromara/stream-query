@@ -40,7 +40,7 @@ public class Sf<T> {
 
     /**
      * 将参数包裹到Sf中,无论参数是否为{@code null}
-     * 
+     *
      * @param value 包裹的值
      * @return {@link Sf}{@code <T>}
      */

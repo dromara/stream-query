@@ -113,7 +113,6 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
     // ================================ 中间操作 ================================
 
     /**
-     *  
      * <p>
      * 根据一个原始的流，返回一个新包装类实例
      */
@@ -285,8 +284,8 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 将键映射为另一类型
      *
      * @param mapper 映射方法
+     * @param <N>    a N class
      * @return {@link io.github.vampireachao.stream.core.stream.EntrySteam}实例
-     * @param <N> a N class
      */
     public <N> EntrySteam<N, V> mapKeys(Function<K, N> mapper) {
         return new EntrySteam<>(
@@ -298,8 +297,8 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 将值映射为另一类型
      *
      * @param mapper 映射方法
+     * @param <N>    a N class
      * @return {@link io.github.vampireachao.stream.core.stream.EntrySteam}实例
-     * @param <N> a N class
      */
     public <N> EntrySteam<K, N> mapValues(Function<V, N> mapper) {
         Objects.requireNonNull(mapper);
@@ -309,8 +308,6 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
     }
 
     /**
-     *  
-     *
      * 返回与指定函数将元素作为参数执行的结果组成的流
      * 这是一个无状态中间操作
      */
@@ -324,8 +321,8 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 将实例转为根据键值对生成的单对象{@link java.util.stream.Stream}实例
      *
      * @param mapper 映射方法
+     * @param <N>    a N class
      * @return 映射后的单对象组成的流
-     * @param <N> a N class
      */
     public <N> Steam<N> map(BiFunction<K, V, N> mapper) {
         Objects.requireNonNull(mapper);
@@ -333,8 +330,6 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
     }
 
     /**
-     *  
-     *
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流<br>
      * 这是一个无状态中间操作<br>
      * 例如，将users里所有user的id和parentId组合在一起，形成一个新的流:
@@ -461,9 +456,9 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 将键值对分组后再转为二维{@link java.util.HashMap}集合
      *
      * @param rowKeyMapper 创建父集合的工厂方法
+     * @param <N>          a N class
      * @return 集合
      * @throws java.lang.IllegalArgumentException 当父集合或子集合中的键重复时抛出
-     * @param <N> a N class
      */
     public <N> Map<N, Map<K, V>> toTable(BiFunction<K, V, N> rowKeyMapper) {
         return toTable(rowKeyMapper, HashMap::new, throwingMerger());
@@ -475,8 +470,8 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * @param rowKeyMapper  将键映射为父集合中键的方法
      * @param colMapFactory 创建子集合的工厂方法
      * @param operator      当存在重复键时的处理
+     * @param <N>           a N class
      * @return 集合
-     * @param <N> a N class
      */
     public <N> Map<N, Map<K, V>> toTableByKey(
             Function<K, N> rowKeyMapper, Supplier<Map<K, V>> colMapFactory, BinaryOperator<V> operator) {
@@ -487,9 +482,9 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 将键值对按键分组后再转为二维{@link java.util.HashMap}集合
      *
      * @param rowKeyMapper 创建父集合的工厂方法
+     * @param <N>          a N class
      * @return 集合
      * @throws java.lang.IllegalArgumentException 当父集合或子集合中的键重复时抛出
-     * @param <N> a N class
      */
     public <N> Map<N, Map<K, V>> toTableByKey(Function<K, N> rowKeyMapper) {
         return toTable((k, v) -> rowKeyMapper.apply(k));
@@ -501,8 +496,8 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * @param rowKeyMapper  将键映射为父集合中键的方法
      * @param colMapFactory 创建子集合的工厂方法
      * @param operator      当存在重复键时的处理
+     * @param <N>           a N class
      * @return 集合
-     * @param <N> a N class
      */
     public <N> Map<N, Map<K, V>> toTableByValue(
             Function<V, N> rowKeyMapper, Supplier<Map<K, V>> colMapFactory, BinaryOperator<V> operator) {
@@ -513,9 +508,9 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 将键值对按键分组后再转为二维{@link java.util.HashMap}集合
      *
      * @param rowKeyMapper 创建父集合的工厂方法
+     * @param <N>          a N class
      * @return 集合
      * @throws java.lang.IllegalArgumentException 当父集合或子集合中的键重复时抛出
-     * @param <N> a N class
      */
     public <N> Map<N, Map<K, V>> toTableByValue(Function<V, N> rowKeyMapper) {
         return toTable((k, v) -> rowKeyMapper.apply(v));
@@ -600,8 +595,8 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 收集键
      *
      * @param collector 收集器
+     * @param <R>       a R class
      * @return 收集容器
-     * @param <R> a R class
      */
     public <R> R collectKeys(Collector<K, ?, R> collector) {
         return toKeyStream().collect(collector);
@@ -611,8 +606,8 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * 收集值
      *
      * @param collector 收集器
+     * @param <R>       a R class
      * @return 收集容器
-     * @param <R> a R class
      */
     public <R> R collectValues(Collector<V, ?, R> collector) {
         return toValueStream().collect(collector);

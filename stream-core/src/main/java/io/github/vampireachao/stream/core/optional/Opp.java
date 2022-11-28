@@ -164,14 +164,15 @@ public class Opp<T> {
 
     /**
      * 如果当前操作发生异常的话只抛出在想要抛出的范围内的异常，如果不在在想要抛出的范围内就捕获到Opp对象中
-     * @param callable 操作
+     *
+     * @param callable       操作
      * @param exceptionTypes 不想捕获的异常...
+     * @param <T>            类型
      * @return 操作执行后的值如果发生我们想抛出的异常则直接抛出，如果发生的异常不是我们想抛出的则直接捕获返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
-     * @param <T> 类型
      */
     @SafeVarargs
     public static <T> Opp<T> notTry(Callable<T> callable,
-                                   Class<? extends Exception>... exceptionTypes) {
+                                    Class<? extends Exception>... exceptionTypes) {
         try {
             return Opp.of(callable.call());
         } catch (Exception e) {
@@ -596,7 +597,6 @@ public class Opp<T> {
 
 
     /**
-     *  
      * <p>
      * 判断传入参数是否与 {@code Opp}相等
      * 在以下情况下返回true
@@ -621,7 +621,6 @@ public class Opp<T> {
     }
 
     /**
-     *  
      * <p>
      * 如果包裹内元素为空，则返回0，否则返回元素的 {@code hashcode}
      */
@@ -631,7 +630,6 @@ public class Opp<T> {
     }
 
     /**
-     *  
      * <p>
      * 返回包裹内元素调用{@code toString()}的结果，不存在则返回{@code null}
      */

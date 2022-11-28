@@ -48,7 +48,7 @@ class ListsTest {
 
     @Data
     @Builder
-    private static class Student{
+    private static class Student {
         private String name;
         private Double age;
         private Long id;
@@ -59,8 +59,6 @@ class ListsTest {
         }
 
     }
-
-
 
 
 }
