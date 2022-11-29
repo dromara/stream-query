@@ -187,7 +187,7 @@ public class Sf<T> {
      */
     public Sf<T> mayAlso(SerCons<T> consumer) {
         if (isEmpty()) {
-            return this;
+            return empty();
         }
         return also(consumer);
     }
