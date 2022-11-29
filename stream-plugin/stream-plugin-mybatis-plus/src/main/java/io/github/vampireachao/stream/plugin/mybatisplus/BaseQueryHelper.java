@@ -46,7 +46,7 @@ public abstract class BaseQueryHelper<
     }
 
     public S like(String data) {
-        wrapper = Sf.of(data).mayLet(value -> wrapper.like(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
+        wrapper = Sf.ofStr(data).mayLet(value -> wrapper.like(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
         return (S) this;
     }
 
