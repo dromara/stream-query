@@ -216,7 +216,7 @@ public class Sf<T> {
      */
     public Sf<T> mayTakeIf(SerFunc<T, Boolean> function) {
         if (isEmpty()) {
-            return this;
+            return empty();
         }
         return takeIf(function);
     }
