@@ -45,6 +45,11 @@ public abstract class BaseQueryHelper<
         return (S) this;
     }
 
+    public S like(String data) {
+        wrapper = Sf.of(data).mayLet(value -> wrapper.like(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
+        return (S) this;
+    }
+
     public S condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
         wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
         return (S) this;
