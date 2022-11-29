@@ -245,7 +245,7 @@ public class Sf<T> {
      */
     public Sf<T> mayTakeUnless(SerFunc<T, Boolean> function) {
         if (isEmpty()) {
-            return this;
+            return empty();
         }
         return takeUnless(function);
     }
