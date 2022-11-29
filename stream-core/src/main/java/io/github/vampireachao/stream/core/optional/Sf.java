@@ -40,7 +40,7 @@ public class Sf<T> {
         this.notActive = Objects.isNull(this.value);
     }
 
-    Sf(T value, boolean notActive) {
+    public Sf(T value, boolean notActive) {
         this.value = value;
         this.notActive = notActive;
     }
