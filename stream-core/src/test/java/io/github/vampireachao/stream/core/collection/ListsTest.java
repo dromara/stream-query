@@ -21,6 +21,36 @@ class ListsTest {
     @Test
     void testOfColl() {
         Assertions.assertTrue(Lists.ofColl(Collections.emptySet()).isEmpty());
+        Assertions.assertTrue(Lists.ofColl(null).isEmpty());
+    }
+
+    @Test
+    void testEmpty() {
+        Assertions.assertEquals(Collections.emptyList(), Lists.empty());
+    }
+
+    @Test
+    void testFirst() {
+        Assertions.assertEquals(1, Lists.first(Lists.of(1, 2, 3)));
+        Assertions.assertNull(Lists.first(null));
+        Assertions.assertNull(Lists.first(Lists.empty()));
+    }
+
+    @Test
+    void testLast() {
+        Assertions.assertEquals(3, Lists.last(Lists.of(1, 2, 3)));
+        Assertions.assertNull(Lists.last(null));
+        Assertions.assertNull(Lists.last(Lists.empty()));
+    }
+
+    @Test
+    void testIsEmpty() {
+        Assertions.assertTrue(Lists.isEmpty(Collections.emptyList()));
+    }
+
+    @Test
+    void testIsNotEmpty() {
+        Assertions.assertTrue(Lists.isNotEmpty(asList(1, 2, 3)));
     }
 
     @Test

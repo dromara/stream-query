@@ -1,8 +1,6 @@
 package io.github.vampireachao.stream.core.collection;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author VampireAchao
@@ -17,6 +15,13 @@ public class Sets {
     @SafeVarargs
     public static <T> Set<T> of(T... values) {
         return new HashSet<>(Arrays.asList(values));
+    }
+
+    public static <T> Set<T> ofColl(Collection<T> values) {
+        if (Objects.isNull(values)) {
+            return new HashSet<>();
+        }
+        return new HashSet<>(values);
     }
 
 }

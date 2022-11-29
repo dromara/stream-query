@@ -35,6 +35,20 @@ public class Lists {
         return new ArrayList<>(values);
     }
 
+    public static <T> T first(List<T> values) {
+        if (isEmpty(values)) {
+            return null;
+        }
+        return values.get(0);
+    }
+
+    public static <T> T last(List<T> values) {
+        if (isEmpty(values)) {
+            return null;
+        }
+        return values.get(values.size() - 1);
+    }
+
     /**
      * 升序排序
      *
@@ -77,5 +91,15 @@ public class Lists {
         return Collections.binarySearch(ascend(list), key);
     }
 
+    public static boolean isEmpty(List<?> list) {
+        return Objects.isNull(list) || list.isEmpty();
+    }
 
+    public static boolean isNotEmpty(List<?> list) {
+        return Objects.nonNull(list) && !list.isEmpty();
+    }
+
+    public static <T> List<T> empty() {
+        return new ArrayList<>();
+    }
 }
