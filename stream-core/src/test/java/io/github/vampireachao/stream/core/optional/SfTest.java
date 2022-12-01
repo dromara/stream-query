@@ -71,8 +71,9 @@ class SfTest {
         Sf<String> stringSf = Sf.mayStr(null).mayLet(a -> a.toString().length()).let(a -> Z_VERIFY_NAME);
         Sf<Integer> isNotNull = Sf.mayStr(Z_VERIFY_NAME).mayLet(String::length);
 
-        Assertions.assertEquals(Z_VERIFY_NAME, stringSf.get());
+        Assertions.assertNull(stringSf.get());
         Assertions.assertEquals(Z_VERIFY_NAME.length(), isNotNull.get());
+
 
     }
 
