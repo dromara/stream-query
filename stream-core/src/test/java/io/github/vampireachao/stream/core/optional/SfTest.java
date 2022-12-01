@@ -81,6 +81,7 @@ class SfTest {
     void testAlso() {
         AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Sf.of(null).also(a -> name.set("ZVerify"));
+        Sf.of(null).mayAlso(a -> name.set("ZVerify")).also(a -> name.set("CiZai"));
         Assertions.assertEquals("ZVerify", name.get());
     }
 
