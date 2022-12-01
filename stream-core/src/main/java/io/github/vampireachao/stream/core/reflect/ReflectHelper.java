@@ -36,6 +36,7 @@ import java.util.logging.Logger;
  * 反射工具类
  *
  * @author VampireAchao Cizai_
+
  * @since 2022/6/2 17:02
  */
 public class ReflectHelper {
@@ -362,6 +363,7 @@ public class ReflectHelper {
      *
      * @param clazz            a {@link java.lang.Class} object
      * @param methodDescriptor a {@link java.lang.String} object
+     * @param <T>              a T class
      * @return a {@link java.lang.reflect.Constructor} object
      */
     @SuppressWarnings("unchecked")

@@ -14,6 +14,7 @@ import java.util.Objects;
  * scope-functions
  *
  * @author VampireAchao Cizai_
+
  * @see <a href="https://www.kotlincn.net/docs/reference/scope-functions.html"/>
  * @since 2022/9/15
  */
@@ -40,6 +41,12 @@ public class Sf<T> {
         this.notActive = Objects.isNull(this.value);
     }
 
+    /**
+     * <p>Constructor for Sf.</p>
+     *
+     * @param value     a T object
+     * @param notActive a boolean
+     */
     public Sf(T value, boolean notActive) {
         this.value = value;
         this.notActive = notActive;
@@ -49,7 +56,8 @@ public class Sf<T> {
      * 将参数包裹到Sf中,无论参数是否为{@code null}
      *
      * @param value 包裹的值
-     * @return {@link Sf}{@code <T>}
+     * @param <T>   a T class
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public static <T> Sf<T> of(T value) {
         return new Sf<>(value, false);
@@ -63,7 +71,9 @@ public class Sf<T> {
      * 将参数(集合)包裹到Sf中无论是否为{@code null}
      *
      * @param value 包裹的集合
-     * @return {@link Sf}{@code <T>}
+     * @param <E>   a E class
+     * @param <T>   a T class
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public static <E, T extends Collection<E>> Sf<T> ofColl(T value) {
         return of(value).mayTakeIf(c -> !c.isEmpty());
@@ -73,7 +83,9 @@ public class Sf<T> {
      * 将集合包裹到Sf中自动过滤掉元素为{@code null}的
      *
      * @param value 包裹的集合
-     * @return {@link Sf}{@code <T>}
+     * @param <E>   a E class
+     * @param <T>   a T class
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public static <E, T extends Collection<E>> Sf<T> mayColl(T value) {
         return ofColl(value).mayTakeIf(c -> Steam.of(c).anyMatch(Objects::nonNull));
@@ -83,7 +95,8 @@ public class Sf<T> {
      * 将传入字符串包裹到Sf中无论是否为{@code null}
      *
      * @param value 包裹的字符串
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
+     * @param <T> a T class
      */
     public static <T extends CharSequence> Sf<T> ofStr(T value) {
         return of(value).mayTakeIf(c -> !c.toString().isEmpty());
@@ -93,7 +106,8 @@ public class Sf<T> {
      * 将传入字符串包裹到Sf中如果为空字符串则过滤掉
      *
      * @param value 包裹的字符串
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
+     * @param <T> a T class
      */
     public static <T extends CharSequence> Sf<T> mayStr(T value) {
         return ofStr(value).mayTakeIf(c -> Steam.split(c.toString(), "").anyMatch(e -> !" ".equals(e)));
@@ -102,7 +116,8 @@ public class Sf<T> {
     /**
      * 返回一个空的{@code Sf}
      *
-     * @return {@link Sf}{@code <R>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <R>}
+     * @param <R> a R class
      */
     public static <R> Sf<R> empty() {
         @SuppressWarnings("unchecked")
@@ -142,7 +157,8 @@ public class Sf<T> {
      * 用于操作非{@code null}，否则抛出NPE如为了保证安全操作可以使用mayLet
      *
      * @param function 执行的操作
-     * @return {@link Sf}{@code <R>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <R>}
+     * @param <R> a R class
      */
     public <R> Sf<R> let(SerFunc<T, R> function) {
         if (notActive) {
@@ -156,7 +172,8 @@ public class Sf<T> {
      * 如果所操作对象为null则不进行操作
      *
      * @param function 值存在时执行的操作
-     * @return {@link Sf}{@code <R>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <R>}
+     * @param <R> a R class
      */
     public <R> Sf<R> mayLet(SerFunc<T, R> function) {
         if (isEmpty()) {
@@ -169,7 +186,7 @@ public class Sf<T> {
      * 对当前{@code Sf}中所包裹对象进行消费操作无返回值，用于操作非{@code null}，否则抛出NPE如为了保证安全操作可以使用mayAlso
      *
      * @param consumer 执行的操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> also(SerCons<T> consumer) {
         if (notActive) {
@@ -183,7 +200,7 @@ public class Sf<T> {
      * 对当前{@code Sf}中所包裹对象进行消费操作无返回值，如果所操作对象为{@code null}则不进行操作
      *
      * @param consumer 值存在时执行的操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> mayAlso(SerCons<T> consumer) {
         if (isEmpty()) {
@@ -198,7 +215,7 @@ public class Sf<T> {
      * 用于操作非{@code null}，否则抛出NPE如为了保证安全操作可以使用mayTakeIf
      *
      * @param function 执行的操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> takeIf(SerFunc<T, Boolean> function) {
         if (notActive || !Boolean.TRUE.equals(function.apply(value))) {
@@ -212,7 +229,7 @@ public class Sf<T> {
      * 如果当前返回值为false则将Sf中包裹的数据置为{@code null}返回true则不变，如果所操作对象为{@code null}则不进行操作
      *
      * @param function 值存在时执行的操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> mayTakeIf(SerFunc<T, Boolean> function) {
         if (isEmpty()) {
@@ -229,7 +246,7 @@ public class Sf<T> {
      * 用于操作非{@code null}，否则抛出NPE如为了保证安全操作可以使用mayTakeUnless
      *
      * @param function 执行的操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> takeUnless(SerFunc<T, Boolean> function) {
         return takeIf(v -> Boolean.FALSE.equals(function.apply(v)));
@@ -241,7 +258,7 @@ public class Sf<T> {
      * 如果当前返回值为true则将Sf中包裹的数据置为{@code null}返回false则不变，如果所操作对象为{@code null}则不进行操作
      *
      * @param function 值存在时执行的操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> mayTakeUnless(SerFunc<T, Boolean> function) {
         if (isEmpty()) {
@@ -265,8 +282,9 @@ public class Sf<T> {
      * 不为{@code null}则返回{@code Sf}对象（中间操作）
      *
      * @param supplier 操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      * @throws X 如果给定的操作为 {@code null}，抛出指定异常
+     * @param <X> a X class
      */
     public <X extends Throwable> Sf<T> require(SerSupp<X> supplier) throws X {
         if (isPresent()) {
@@ -278,7 +296,7 @@ public class Sf<T> {
     /**
      * 默认情况下获取当前{@code Sf}对象如果当前{@code Sf}中所包裹元素为{@code null}则抛出NoSuchElementException异常，
      *
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> require() {
         return require(NoSuchElementException::new);
@@ -289,7 +307,7 @@ public class Sf<T> {
      * 如果当前{@code Sf}中所包裹元素为{@code null}则拿到生产者所生产对象包裹到{@code Sf}中替换原有值，不为{@code null}则返回{@code Sf}本身
      *
      * @param supplier 操作
-     * @return {@link Sf}{@code <T>}
+     * @return {@link io.github.vampireachao.stream.core.optional.Sf}{@code <T>}
      */
     public Sf<T> or(SerSupp<Sf<T>> supplier) {
         if (isPresent()) {
@@ -329,7 +347,7 @@ public class Sf<T> {
     /**
      * <p>orRun.</p>
      *
-     * @param mapper a {@link SerRunn} object
+     * @param mapper a {@link io.github.vampireachao.stream.core.lambda.function.SerRunn} object
      * @return a T object
      */
     public T orRun(SerRunn mapper) {
@@ -347,6 +365,7 @@ public class Sf<T> {
      * @param supplier 操作
      * @return {@code  T}
      * @throws X 如果给定的操作为 {@code null}，抛出指定异常
+     * @param <X> a X class
      */
     public <X extends Throwable> T orThrow(SerSupp<X> supplier) throws X {
         if (isPresent()) {

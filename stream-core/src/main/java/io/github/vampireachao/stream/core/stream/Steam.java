@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.core.stream;
 
+import io.github.vampireachao.stream.core.collection.Maps;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.optional.Opp;
 
@@ -43,6 +44,7 @@ import java.util.stream.StreamSupport;
  *
  * @author VampireAchao Cizai_
  * @see java.util.stream.Stream
+
  */
 public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
         implements Stream<T>, Iterable<T>, CollectableStream<T> {
@@ -194,6 +196,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * 返回无限串行无序流
      * 其中每一个元素都由给定的{@code Supplier}生成
@@ -204,17 +207,13 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。
      * 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
      * 当结果流关闭时，两个输入流的关闭处理程序都会被调用。
      *
      * <p>从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}</p>
-     *
-     * @param a   第一个流
-     * @param b   第二个流
-     * @param <T> 元素类型
-     * @return 拼接后的流
      */
     public static <T> Steam<T> concat(Stream<? extends T> a, Stream<? extends T> b) {
         return new Steam<>(Stream.concat(a, b));
@@ -276,6 +275,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      *
      * @param str   字符串
      * @param regex 正则
+     * @param <T>   a T class
      * @return 拆分后元素组成的流
      */
     public static <T extends CharSequence> Steam<String> split(T str, String regex) {
@@ -328,6 +328,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * 返回与指定函数将元素作为参数执行的结果组成的流
      * 这是一个无状态中间操作
@@ -376,6 +377,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
@@ -539,7 +541,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public Integer findFirstIdx(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        return this.mapIdx((e, i) -> new EntrySteam.Entry<>(i, e))
+        return this.mapIdx((e, i) -> Maps.entry(i, e))
                 .filter(e -> predicate.test(e.getValue()))
                 .findFirst()
                 .map(Map.Entry::getKey)
@@ -590,7 +592,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
      */
     public Integer findLastIdx(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        return this.mapIdx((e, i) -> new EntrySteam.Entry<>(i, e))
+        return this.mapIdx((e, i) -> Maps.entry(i, e))
                 .filter(e -> predicate.test(e.getValue()))
                 .findLast()
                 .map(Map.Entry::getKey)
@@ -600,6 +602,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     /**
      * 反转顺序
      *
+     * @param comparator a {@link java.util.Comparator} object
      * @return 反转排序顺序
      */
     public Steam<T> reverseSorted(Comparator<T> comparator) {
@@ -676,6 +679,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * 构建一个{@link Steam}实例
      */
@@ -685,6 +689,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * hashcode
      */
@@ -694,6 +699,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * equals
      */
@@ -706,6 +712,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     }
 
     /**
+     *
      * <p>
      * toString
      */

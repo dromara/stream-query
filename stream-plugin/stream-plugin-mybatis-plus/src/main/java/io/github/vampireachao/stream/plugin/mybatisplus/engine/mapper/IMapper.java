@@ -12,6 +12,7 @@ import java.util.Collection;
  * 拓展BaseMapper
  *
  * @author VampireAchao Cizai_
+
  */
 public interface IMapper<T> extends BaseMapper<T> {
 

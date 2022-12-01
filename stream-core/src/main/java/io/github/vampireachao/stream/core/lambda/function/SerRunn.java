@@ -9,6 +9,7 @@ import java.util.stream.Stream;
  * 可序列化的Runnable
  *
  * @author VampireAchao Cizai_
+
  * @see java.lang.Runnable
  */
 @FunctionalInterface
@@ -23,6 +24,7 @@ public interface SerRunn extends Runnable, Serializable {
      * The general contract of the method <code>run</code> is that it may
      * take any action whatsoever.
      *
+     * @throws java.lang.Exception if any.
      * @see Thread#run()
      */
     @SuppressWarnings("all")

@@ -10,6 +10,7 @@ import java.util.function.BiFunction;
  * SerBiFunc
  *
  * @author VampireAchao Cizai_
+
  * @since 2022/6/8
  */
 @FunctionalInterface
@@ -21,16 +22,13 @@ public interface SerBiFunc<T, U, R> extends BiFunction<T, U, R>, Serializable {
      * @param t the first function argument
      * @param u the second function argument
      * @return the function result
+     * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
     R applying(T t, U u) throws Exception;
 
     /**
      * Applies this function to the given arguments.
-     *
-     * @param t the first function argument
-     * @param u the second function argument
-     * @return the function result
      */
     @Override
     default R apply(T t, U u) {
@@ -52,7 +50,7 @@ public interface SerBiFunc<T, U, R> extends BiFunction<T, U, R>, Serializable {
      * @param after the function to apply after this function is applied
      * @return a composed function that first applies this function and then
      * applies the {@code after} function
-     * @throws NullPointerException if after is null
+     * @throws java.lang.NullPointerException if after is null
      */
     default <V> SerBiFunc<T, U, V> andThen(SerFunc<? super R, ? extends V> after) {
         Objects.requireNonNull(after);

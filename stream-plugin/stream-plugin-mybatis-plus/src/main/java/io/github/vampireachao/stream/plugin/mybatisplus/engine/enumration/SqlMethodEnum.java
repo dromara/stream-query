@@ -4,6 +4,7 @@ package io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration;
  * sql方法类型
  *
  * @author VampireAchao Cizai_
+
  */
 public enum SqlMethodEnum {
     /**
@@ -22,14 +23,29 @@ public enum SqlMethodEnum {
         this.sql = sql;
     }
 
+    /**
+     * <p>Getter for the field <code>method</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getMethod() {
         return method;
     }
 
+    /**
+     * <p>Getter for the field <code>desc</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getDesc() {
         return desc;
     }
 
+    /**
+     * <p>Getter for the field <code>sql</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getSql() {
         return sql;
     }

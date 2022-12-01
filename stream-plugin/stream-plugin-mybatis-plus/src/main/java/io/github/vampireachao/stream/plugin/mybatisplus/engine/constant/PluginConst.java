@@ -1,6 +1,8 @@
 package io.github.vampireachao.stream.plugin.mybatisplus.engine.constant;
 
 /**
+ * <p>PluginConst interface.</p>
+ *
  * @author VampireAchao Cizai_
  */
 public interface PluginConst {

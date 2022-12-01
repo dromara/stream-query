@@ -11,6 +11,7 @@ import java.util.stream.Stream;
  * 可序列化的Consumer
  *
  * @author VampireAchao Cizai_
+
  * @see java.util.function.Consumer
  */
 @FunctionalInterface
@@ -20,14 +21,13 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
      * Performs this operation on the given argument.
      *
      * @param t the input argument
+     * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
     void accepting(T t) throws Exception;
 
     /**
      * Performs this operation on the given argument.
-     *
-     * @param t the input argument
      */
     @Override
     default void accept(T t) {
@@ -61,7 +61,7 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
      * @param after the operation to perform after this operation
      * @return a composed {@code Consumer} that performs in sequence this
      * operation followed by the {@code after} operation
-     * @throws NullPointerException if {@code after} is null
+     * @throws java.lang.NullPointerException if {@code after} is null
      */
     default SerCons<T> andThen(SerCons<? super T> after) {
         Objects.requireNonNull(after);
@@ -74,6 +74,7 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
     /**
      * nothing
      *
+     * @param <T> a T class
      * @return nothing
      */
     static <T> SerCons<T> nothing() {

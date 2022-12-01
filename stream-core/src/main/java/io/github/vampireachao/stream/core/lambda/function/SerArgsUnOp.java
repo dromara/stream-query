@@ -4,6 +4,7 @@ package io.github.vampireachao.stream.core.lambda.function;
  * SerArgsUnOp
  *
  * @author VampireAchao Cizai_
+
  * @since 2022/6/8
  */
 @FunctionalInterface

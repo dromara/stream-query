@@ -23,17 +23,17 @@ import org.apache.ibatis.mapping.SqlSource;
  */
 public class SaveOneSql extends AbstractMethod implements PluginConst {
 
+    /**
+     * <p>Constructor for SaveOneSql.</p>
+     *
+     * @param methodName a {@link java.lang.String} object
+     */
     public SaveOneSql(String methodName) {
         super(methodName);
     }
 
     /**
      * 注入自定义 MappedStatement
-     *
-     * @param mapperClass mapper 接口
-     * @param modelClass  mapper 泛型
-     * @param tableInfo   数据库表反射信息
-     * @return MappedStatement
      */
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {

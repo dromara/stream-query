@@ -16,6 +16,7 @@ import java.util.stream.Stream;
  * 允许实现类直接跳过{@link java.util.stream.Stream#collect(Collector)}使用{@link java.util.stream.Collector}中一些常用方法
  *
  * @author huangchengxing
+
  */
 public interface CollectableStream<T> extends Stream<T> {
 

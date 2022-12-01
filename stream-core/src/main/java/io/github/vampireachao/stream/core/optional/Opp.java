@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  *
  * @param <T> 包裹里元素的类型
  * @author VampireAchao Cizai_
+
  * @see java.util.Optional
  */
 public class Opp<T> {
@@ -270,7 +271,7 @@ public class Opp<T> {
     }
 
     /**
-     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link SerFunc#apply}执行结果是否为true)
+     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link io.github.vampireachao.stream.core.lambda.function.SerFunc#apply}执行结果是否为true)
      * 如果满足条件则返回本身
      * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      *
@@ -622,6 +623,7 @@ public class Opp<T> {
     }
 
     /**
+     *
      * <p>
      * 如果包裹内元素为空，则返回0，否则返回元素的 {@code hashcode}
      */
@@ -631,6 +633,7 @@ public class Opp<T> {
     }
 
     /**
+     *
      * <p>
      * 返回包裹内元素调用{@code toString()}的结果，不存在则返回{@code null}
      */

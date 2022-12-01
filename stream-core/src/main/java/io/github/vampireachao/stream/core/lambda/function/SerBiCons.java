@@ -11,6 +11,7 @@ import java.util.stream.Stream;
  * SerSerBiCons
  *
  * @author VampireAchao Cizai_
+
  * @since 2022/6/8
  */
 @FunctionalInterface
@@ -20,6 +21,7 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
      *
      * @param consumers lambda
      * @param <T>       type
+     * @param <U>       a U class
      * @return lambda
      */
     @SafeVarargs
@@ -33,15 +35,14 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
      *
      * @param t the first input argument
      * @param u the second input argument
+     * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
     void accepting(T t, U u) throws Exception;
 
     /**
-     * Performs this operation on the given arguments.
      *
-     * @param t the first input argument
-     * @param u the second input argument
+     * Performs this operation on the given arguments.
      */
     @Override
     default void accept(T t, U u) {
@@ -62,7 +63,7 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
      * @param after the operation to perform after this operation
      * @return a composed {@code SerBiCons} that performs in sequence this
      * operation followed by the {@code after} operation
-     * @throws NullPointerException if {@code after} is null
+     * @throws java.lang.NullPointerException if {@code after} is null
      */
     default SerBiCons<T, U> andThen(SerBiCons<? super T, ? super U> after) {
         Objects.requireNonNull(after);
@@ -75,6 +76,8 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
     /**
      * nothing
      *
+     * @param <T> a T class
+     * @param <U> a U class
      * @return nothing
      */
     static <T, U> SerBiCons<T, U> nothing() {

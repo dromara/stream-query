@@ -10,6 +10,7 @@ import java.util.stream.Stream;
  * SerArgsSerArgsCons
  *
  * @author VampireAchao Cizai_
+
  * @since 2022/6/8
  */
 @FunctionalInterface
@@ -32,7 +33,7 @@ public interface SerArgsCons<T> extends Serializable {
      * Performs this operation on the given argument.
      *
      * @param t the input arguments
-     * @throws Exception maybe throw exception
+     * @throws java.lang.Exception maybe throw exception
      */
     @SuppressWarnings("unchecked")
     void accepting(T... t) throws Exception;
@@ -61,7 +62,7 @@ public interface SerArgsCons<T> extends Serializable {
      * @param after the operation to perform after this operation
      * @return a composed {@code SerArgsCons} that performs in sequence this
      * operation followed by the {@code after} operation
-     * @throws NullPointerException if {@code after} is null
+     * @throws java.lang.NullPointerException if {@code after} is null
      */
     default SerArgsCons<T> andThen(SerArgsCons<? super T> after) {
         Objects.requireNonNull(after);
@@ -74,6 +75,7 @@ public interface SerArgsCons<T> extends Serializable {
     /**
      * nothing
      *
+     * @param <T> a T class
      * @return nothing
      */
     static <T> SerArgsCons<T> nothing() {

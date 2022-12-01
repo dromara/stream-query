@@ -10,6 +10,7 @@ import java.util.function.BiPredicate;
  * SerBiPred
  *
  * @author VampireAchao Cizai_
+
  * @since 2022/6/8
  */
 @FunctionalInterface
@@ -23,17 +24,13 @@ public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
      * @param u the second input argument
      * @return {@code true} if the input arguments match the predicate,
      * otherwise {@code false}
+     * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
     boolean testing(T t, U u) throws Exception;
 
     /**
      * Evaluates this predicate on the given arguments.
-     *
-     * @param t the first input argument
-     * @param u the second input argument
-     * @return {@code true} if the input arguments match the predicate,
-     * otherwise {@code false}
      */
     @Override
     default boolean test(T t, U u) {
@@ -59,7 +56,7 @@ public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
      *              predicate
      * @return a composed predicate that represents the short-circuiting logical
      * AND of this predicate and the {@code other} predicate
-     * @throws NullPointerException if other is null
+     * @throws java.lang.NullPointerException if other is null
      */
     default SerBiPred<T, U> and(SerBiPred<? super T, ? super U> other) {
         Objects.requireNonNull(other);
@@ -67,11 +64,9 @@ public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
     }
 
     /**
+     *
      * Returns a predicate that represents the logical negation of this
      * predicate.
-     *
-     * @return a predicate that represents the logical negation of this
-     * predicate
      */
     @Override
     default SerBiPred<T, U> negate() {
@@ -92,7 +87,7 @@ public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
      *              predicate
      * @return a composed predicate that represents the short-circuiting logical
      * OR of this predicate and the {@code other} predicate
-     * @throws NullPointerException if other is null
+     * @throws java.lang.NullPointerException if other is null
      */
     default SerBiPred<T, U> or(SerBiPred<? super T, ? super U> other) {
         Objects.requireNonNull(other);

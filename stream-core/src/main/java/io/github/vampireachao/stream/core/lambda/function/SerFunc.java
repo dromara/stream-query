@@ -9,6 +9,7 @@ import java.util.function.Function;
  * 可序列化的Function
  *
  * @author VampireAchao Cizai_
+
  * @see java.util.function.Function
  */
 @FunctionalInterface
@@ -19,15 +20,13 @@ public interface SerFunc<T, R> extends Function<T, R>, Serializable {
      *
      * @param t the function argument
      * @return the function result
+     * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
     R applying(T t) throws Exception;
 
     /**
      * Applies this function to the given argument.
-     *
-     * @param t the function argument
-     * @return the function result
      */
     @Override
     default R apply(T t) {

@@ -19,6 +19,11 @@ import java.util.List;
  */
 public class StreamPluginAutoConfiguration {
 
+    /**
+     * <p>defaultSqlInjector.</p>
+     *
+     * @return a {@link com.baomidou.mybatisplus.core.injector.DefaultSqlInjector} object
+     */
     @Bean
     @Order
     @ConditionalOnMissingBean(DefaultSqlInjector.class)

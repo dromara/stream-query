@@ -5,7 +5,6 @@ import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.optional.Opp;
-import io.github.vampireachao.stream.core.stream.EntrySteam;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.util.*;
@@ -20,6 +19,7 @@ import java.util.stream.Stream;
  * 收集器
  *
  * @author VampireAchao Cizai_
+
  * @since 2022/5/29 8:55
  */
 public class Collective {
@@ -1576,24 +1576,6 @@ public class Collective {
         public int hashCode() {
             return Objects.hash(super.hashCode(), forTrue, forFalse);
         }
-    }
-
-
-    /**
-     * 将流转为{@link io.github.vampireachao.stream.core.stream.EntrySteam}
-     *
-     * @param keyMapper   键的映射方法
-     * @param valueMapper 值的映射方法
-     * @param <T>         输入元素类型
-     * @param <K>         元素的键类型
-     * @param <V>         元素的值类型
-     * @return 收集器
-     */
-    public static <T, K, V> Collector<T, List<T>, EntrySteam<K, V>> toEntrySteam(
-            Function<T, K> keyMapper, Function<T, V> valueMapper) {
-        Objects.requireNonNull(keyMapper);
-        Objects.requireNonNull(valueMapper);
-        return transform(ArrayList::new, list -> EntrySteam.of(list, keyMapper, valueMapper));
     }
 
     /**

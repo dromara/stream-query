@@ -11,6 +11,7 @@ import java.util.stream.Stream;
  * 可序列化的Predicate
  *
  * @author VampireAchao Cizai_
+
  * @see java.util.function.Predicate
  */
 @FunctionalInterface
@@ -22,16 +23,12 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      * @param t the input argument
      * @return {@code true} if the input argument matches the predicate,
      * otherwise {@code false}
-     * @throws Exception exception
+     * @throws java.lang.Exception exception
      */
     Boolean testing(T t) throws Exception;
 
     /**
      * Evaluates this predicate on the given argument.
-     *
-     * @param t the input argument
-     * @return {@code true} if the input argument matches the predicate,
-     * otherwise {@code false}
      */
     @Override
     default boolean test(T t) {
@@ -67,14 +64,9 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
     }
 
     /**
+     *
      * Returns a predicate that tests if two arguments are equal according
      * to {@link Objects#equals(Object, Object)}.
-     *
-     * @param <T>       the type of arguments to the predicate
-     * @param targetRef the object reference with which to compare for equality,
-     *                  which may be {@code null}
-     * @return a predicate that tests if two arguments are equal according
-     * to {@link Objects#equals(Object, Object)}
      */
     static <T> SerPred<T> isEqual(Object... targetRef) {
         return (null == targetRef)
@@ -96,7 +88,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      *              predicate
      * @return a composed predicate that represents the short-circuiting logical
      * AND of this predicate and the {@code other} predicate
-     * @throws NullPointerException if other is null
+     * @throws java.lang.NullPointerException if other is null
      */
     default SerPred<T> and(SerPred<? super T> other) {
         Objects.requireNonNull(other);
@@ -104,11 +96,9 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
     }
 
     /**
+     *
      * Returns a predicate that represents the logical negation of this
      * predicate.
-     *
-     * @return a predicate that represents the logical negation of this
-     * predicate
      */
     @Override
     default SerPred<T> negate() {
@@ -129,7 +119,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
      *              predicate
      * @return a composed predicate that represents the short-circuiting logical
      * OR of this predicate and the {@code other} predicate
-     * @throws NullPointerException if other is null
+     * @throws java.lang.NullPointerException if other is null
      */
     default SerPred<T> or(SerPred<? super T> other) {
         Objects.requireNonNull(other);

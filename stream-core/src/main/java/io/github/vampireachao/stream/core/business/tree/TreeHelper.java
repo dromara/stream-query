@@ -20,6 +20,7 @@ import java.util.function.Predicate;
  * 树先生
  *
  * @author VampireAchao
+
  * @since 2022/11/26
  */
 public class TreeHelper<T, R extends Comparable<R>> {
@@ -45,6 +46,18 @@ public class TreeHelper<T, R extends Comparable<R>> {
         this.childrenSetter = childrenSetter;
     }
 
+    /**
+     * <p>of.</p>
+     *
+     * @param idGetter       a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param pidGetter      a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param pidValue       a R object
+     * @param childrenGetter a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param childrenSetter a {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
+     * @param <T>            a T class
+     * @param <R>            a R class
+     * @return a {@link io.github.vampireachao.stream.core.business.tree.TreeHelper} object
+     */
     public static <T, R extends Comparable<R>> TreeHelper<T, R> of(SerFunc<T, R> idGetter,
                                                                    SerFunc<T, R> pidGetter,
                                                                    R pidValue,
@@ -53,6 +66,18 @@ public class TreeHelper<T, R extends Comparable<R>> {
         return new TreeHelper<>(idGetter, pidGetter, pidValue, null, childrenGetter, childrenSetter);
     }
 
+    /**
+     * <p>ofMatch.</p>
+     *
+     * @param idGetter        a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param pidGetter       a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param parentPredicate a {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
+     * @param childrenGetter  a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param childrenSetter  a {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
+     * @param <T>             a T class
+     * @param <R>             a R class
+     * @return a {@link io.github.vampireachao.stream.core.business.tree.TreeHelper} object
+     */
     public static <T, R extends Comparable<R>> TreeHelper<T, R> ofMatch(SerFunc<T, R> idGetter,
                                                                         SerFunc<T, R> pidGetter,
                                                                         SerPred<T> parentPredicate,
@@ -61,6 +86,12 @@ public class TreeHelper<T, R extends Comparable<R>> {
         return new TreeHelper<>(idGetter, pidGetter, null, parentPredicate, childrenGetter, childrenSetter);
     }
 
+    /**
+     * <p>toTree.</p>
+     *
+     * @param list a {@link java.util.List} object
+     * @return a {@link java.util.List} object
+     */
     public List<T> toTree(List<T> list) {
         if (Objects.isNull(parentPredicate)) {
             final Map<R, List<T>> pIdValuesMap = Steam.of(list).filter(e -> Objects.nonNull(idGetter.apply(e))).group(pidGetter);
@@ -79,6 +110,12 @@ public class TreeHelper<T, R extends Comparable<R>> {
         return parents;
     }
 
+    /**
+     * <p>flat.</p>
+     *
+     * @param list a {@link java.util.List} object
+     * @return a {@link java.util.List} object
+     */
     public List<T> flat(List<T> list) {
         AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
         Function<T, Steam<T>> recursive = e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
@@ -86,6 +123,13 @@ public class TreeHelper<T, R extends Comparable<R>> {
         return Steam.of(list).flat(recursive).peek(e -> childrenSetter.accept(e, null)).toList();
     }
 
+    /**
+     * <p>filter.</p>
+     *
+     * @param list      a {@link java.util.List} object
+     * @param condition a {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
+     * @return a {@link java.util.List} object
+     */
     public List<T> filter(List<T> list, SerPred<T> condition) {
         AtomicReference<Predicate<T>> recursiveRef = new AtomicReference<>();
         Predicate<T> recursive = SerPred.multiOr(condition::test,
@@ -97,6 +141,13 @@ public class TreeHelper<T, R extends Comparable<R>> {
         return Steam.of(list).filter(recursive).toList();
     }
 
+    /**
+     * <p>forEach.</p>
+     *
+     * @param list   a {@link java.util.List} object
+     * @param action a {@link io.github.vampireachao.stream.core.lambda.function.SerCons} object
+     * @return a {@link java.util.List} object
+     */
     public List<T> forEach(List<T> list, SerCons<T> action) {
         AtomicReference<Consumer<T>> recursiveRef = new AtomicReference<>();
         Consumer<T> recursive = SerCons.multi(action::accept,

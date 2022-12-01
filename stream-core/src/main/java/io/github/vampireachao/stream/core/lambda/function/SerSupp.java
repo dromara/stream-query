@@ -10,6 +10,7 @@ import java.util.stream.Stream;
  * 可序列化的Supplier
  *
  * @author VampireAchao Cizai_
+
  * @see java.util.function.Supplier
  */
 @FunctionalInterface
@@ -19,14 +20,12 @@ public interface SerSupp<T> extends Supplier<T>, Serializable {
      * Gets a result.
      *
      * @return a result
-     * @throws Exception exception
+     * @throws java.lang.Exception exception
      */
     T getting() throws Exception;
 
     /**
      * Gets a result.
-     *
-     * @return a result
      */
     @Override
     default T get() {

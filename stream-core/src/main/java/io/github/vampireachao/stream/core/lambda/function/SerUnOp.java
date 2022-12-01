@@ -10,6 +10,7 @@ import java.util.function.UnaryOperator;
  * 可序列化的UnaryOperator
  *
  * @author VampireAchao Cizai_
+
  * @see java.util.function.UnaryOperator
  */
 @FunctionalInterface
@@ -20,15 +21,13 @@ public interface SerUnOp<T> extends UnaryOperator<T>, Serializable {
      *
      * @param t the function argument
      * @return the function result
+     * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
     T applying(T t) throws Exception;
 
     /**
      * Applies this function to the given argument.
-     *
-     * @param t the function argument
-     * @return the function result
      */
     @Override
     default T apply(T t) {
@@ -56,6 +55,7 @@ public interface SerUnOp<T> extends UnaryOperator<T>, Serializable {
      * @param function source function
      * @param <T>      param type
      * @param <R>      result type
+     * @param <F>      a F class
      * @return identity after casting
      */
     @SuppressWarnings("unchecked")

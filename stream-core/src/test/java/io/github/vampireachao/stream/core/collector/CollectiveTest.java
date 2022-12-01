@@ -68,20 +68,6 @@ class CollectiveTest {
     }
 
     @Test
-    void testToEntryStream() {
-        Map<String, Integer> map = Stream.of(1, 2, 3, 4, 5)
-                // 转为EntryStream
-                .collect(Collective.toEntrySteam(Function.identity(), String::valueOf))
-                // 过滤偶数
-                .filterByKey(k -> (k & 1) == 1)
-                .inverse()
-                .toMap();
-        Assertions.assertEquals((Integer) 1, map.get("1"));
-        Assertions.assertEquals((Integer) 3, map.get("3"));
-        Assertions.assertEquals((Integer) 5, map.get("5"));
-    }
-
-    @Test
     void testToCollection() {
         HashSet<Integer> list = Steam.of(1, 2, 3, 4, 5).parallel()
                 .collect(Collective.toCollection(HashSet::new));
