@@ -24,7 +24,8 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
      */
     @SafeVarargs
     static <T, U> SerBiCons<T, U> multi(SerBiCons<T, U>... consumers) {
-        return Stream.of(consumers).reduce(SerBiCons::andThen).orElseGet(() -> (o, q) -> {});
+        return Stream.of(consumers).reduce(SerBiCons::andThen).orElseGet(() -> (o, q) -> {
+        });
     }
 
     /**
@@ -77,6 +78,7 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
      * @return nothing
      */
     static <T, U> SerBiCons<T, U> nothing() {
-        return (l, r) -> {};
+        return (l, r) -> {
+        };
     }
 }

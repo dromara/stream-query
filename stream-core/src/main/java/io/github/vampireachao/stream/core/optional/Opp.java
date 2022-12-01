@@ -381,7 +381,8 @@ public class Opp<T> {
      */
     @SafeVarargs
     public final Opp<T> peeks(Consumer<T>... actions) throws NullPointerException {
-        return peek(Stream.of(actions).reduce(Consumer::andThen).orElseGet(() -> o -> {}));
+        return peek(Stream.of(actions).reduce(Consumer::andThen).orElseGet(() -> o -> {
+        }));
     }
 
     /**

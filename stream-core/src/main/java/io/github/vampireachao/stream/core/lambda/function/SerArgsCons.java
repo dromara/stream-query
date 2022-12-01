@@ -24,7 +24,8 @@ public interface SerArgsCons<T> extends Serializable {
      */
     @SafeVarargs
     static <T> SerArgsCons<T> multi(SerArgsCons<T>... consumers) {
-        return Stream.of(consumers).reduce(SerArgsCons::andThen).orElseGet(() -> o -> {});
+        return Stream.of(consumers).reduce(SerArgsCons::andThen).orElseGet(() -> o -> {
+        });
     }
 
     /**
@@ -76,6 +77,7 @@ public interface SerArgsCons<T> extends Serializable {
      * @return nothing
      */
     static <T> SerArgsCons<T> nothing() {
-        return t -> {};
+        return t -> {
+        };
     }
 }

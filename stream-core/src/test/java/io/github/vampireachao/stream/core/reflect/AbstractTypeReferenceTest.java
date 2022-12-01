@@ -13,12 +13,15 @@ class AbstractTypeReferenceTest {
 
     @Test
     void testGetTypeName() {
-        Assertions.assertEquals("java.lang.String", new AbstractTypeReference<String>() {}.getTypeName());
-        Assertions.assertEquals("java.util.ArrayList<java.lang.String>", new AbstractTypeReference<ArrayList<String>>() {}.getTypeName());
+        Assertions.assertEquals("java.lang.String", new AbstractTypeReference<String>() {
+        }.getTypeName());
+        Assertions.assertEquals("java.util.ArrayList<java.lang.String>", new AbstractTypeReference<ArrayList<String>>() {
+        }.getTypeName());
     }
 
     @Test
     void testGetType() {
-        Assertions.assertEquals(String.class, new AbstractTypeReference<String>() {}.getType());
+        Assertions.assertEquals(String.class, new AbstractTypeReference<String>() {
+        }.getType());
     }
 }

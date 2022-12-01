@@ -190,7 +190,7 @@ class SfTest {
         Sf.mayStr("   ").orRun(() -> isNullStr.set(Z_VERIFY_NAME));
         Sf.mayStr(Z_VERIFY_NAME).orRun(() -> isNotNullStr.set(" " + Z_VERIFY_NAME));
 
-        Assertions.assertEquals(isNullStr.get(),Z_VERIFY_NAME);
+        Assertions.assertEquals(isNullStr.get(), Z_VERIFY_NAME);
         Assertions.assertNull(isNotNullStr.get());
     }
 

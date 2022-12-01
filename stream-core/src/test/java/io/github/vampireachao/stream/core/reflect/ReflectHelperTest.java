@@ -20,7 +20,8 @@ class ReflectHelperTest {
 
     @Test
     void testGetDescriptor() {
-        Assertions.assertEquals("()V", ReflectHelper.getDescriptor(LambdaHelper.resolve((Serializable & Runnable) () -> {}).getExecutable()));
+        Assertions.assertEquals("()V", ReflectHelper.getDescriptor(LambdaHelper.resolve((Serializable & Runnable) () -> {
+        }).getExecutable()));
         Assertions.assertEquals("Ljava/lang/Void;", ReflectHelper.getDescriptor(Void.class));
         Assertions.assertEquals("Z", ReflectHelper.getDescriptor(boolean.class));
         Assertions.assertEquals("Ljava/lang/Boolean;", ReflectHelper.getDescriptor(Boolean.class));
@@ -31,18 +32,21 @@ class ReflectHelperTest {
         class StringArrayList extends ArrayList<String> {
             private static final long serialVersionUID = 5735314375293577082L;
         }
-        Type[] stringType = ReflectHelper.getGenericTypes(new AbstractTypeReference<String>() {}.getClass());
+        Type[] stringType = ReflectHelper.getGenericTypes(new AbstractTypeReference<String>() {
+        }.getClass());
         Assertions.assertEquals(String.class, stringType[0]);
         Type[] stringArrayListType = ReflectHelper.getGenericTypes(StringArrayList.class);
         Assertions.assertEquals(String.class, stringArrayListType[0]);
-        Type[] hashMapType = ReflectHelper.getGenericTypes(new HashMap<String, Object>() {}.getClass());
+        Type[] hashMapType = ReflectHelper.getGenericTypes(new HashMap<String, Object>() {
+        }.getClass());
         Assertions.assertEquals(String.class, hashMapType[0]);
         Assertions.assertEquals(Object.class, hashMapType[1]);
     }
 
     @Test
     void testIsInstance() {
-        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new AbstractTypeReference<Map<?, ?>>() {}.getClass()));
+        Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new AbstractTypeReference<Map<?, ?>>() {
+        }.getClass()));
         Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), Map.class));
     }
 

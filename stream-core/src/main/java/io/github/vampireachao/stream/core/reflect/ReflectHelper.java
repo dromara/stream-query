@@ -294,40 +294,6 @@ public class ReflectHelper {
     }
 
     /**
-     * 判断当前的对象是否实现了指定的接口
-     *
-     * @param szInterface     所实现接口
-     * @param clazz           当前操作类加载对象
-     * @param comparableClass
-     * @return
-     */
-    /**
-     * 判断对象实现的所有接口中是否包含szInterface
-     *
-     * @param clazz
-     * @param szInterface
-     * @return
-     */
-    public static boolean isImplementsOf(Class<?> clazz, Class<?> szInterface) {
-        boolean flag = false;
-
-        Class<?>[] face = clazz.getInterfaces();
-        for (Class<?> c : face) {
-            if (c == szInterface) {
-                flag = true;
-            } else {
-                flag = isImplementsOf(c, szInterface);
-            }
-        }
-
-        if (!flag && null != clazz.getSuperclass()) {
-            return isImplementsOf(clazz.getSuperclass(), szInterface);
-        }
-
-        return flag;
-    }
-
-    /**
      * <p>isInstance.</p>
      *
      * @param obj a T object

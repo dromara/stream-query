@@ -246,12 +246,14 @@ class OppTest {
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
+            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {
+            }.getClass(), (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
+            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {
+            }.getClass(), (array) -> isExecute.set(true));
             Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }).forEach(SerRunn::run);
@@ -271,7 +273,8 @@ class OppTest {
             Opp<Boolean> opp = Opp.of("").typeOfMap((String str) -> {
                 isExecute.set(true);
                 return isExecute.get();
-            }).typeOfMap(Object.class, i -> false).typeOfMap(new AbstractTypeReference<String>() {}, i -> true);
+            }).typeOfMap(Object.class, i -> false).typeOfMap(new AbstractTypeReference<String>() {
+            }, i -> true);
             Assertions.assertTrue(opp.isEmpty());
         }).forEach(SerRunn::run);
     }

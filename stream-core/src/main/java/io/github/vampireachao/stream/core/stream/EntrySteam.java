@@ -107,7 +107,9 @@ public class EntrySteam<K, V> extends AbstractStreamWrapper<Map.Entry<K, V>, Ent
      * key重复时直接抛出异常
      */
     private static <T> BinaryOperator<T> throwingMerger() {
-        return (u, v) -> {throw new IllegalStateException(String.format("Duplicate key %s", u));};
+        return (u, v) -> {
+            throw new IllegalStateException(String.format("Duplicate key %s", u));
+        };
     }
 
     // ================================ 中间操作 ================================
