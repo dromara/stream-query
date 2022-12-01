@@ -67,7 +67,11 @@ class SfTest {
     @Test
     void test$Let() {
         Sf<String> stringSf = Sf.mayStr(null).mayLet(a -> a.toString().length()).let(a -> Z_VERIFY_NAME);
+        Sf<Integer> isNotNull = Sf.mayStr(Z_VERIFY_NAME).mayLet(String::length);
+
         Assertions.assertEquals(Z_VERIFY_NAME, stringSf.get());
+        Assertions.assertEquals(Z_VERIFY_NAME.length(), isNotNull.get());
+
     }
 
     @Test
@@ -108,8 +112,13 @@ class SfTest {
     @Test
     void test$TakeUnless() {
         AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
-        Sf.of(name.get()).mayTakeUnless(Objects::nonNull).mayAlso(a -> name.set("ZVerify"));
-        Assertions.assertEquals(Z_VERIFY_NAME, name.get());
+        Sf<String> isNotNullStr = Sf.of(name.get()).mayTakeUnless(Objects::nonNull).mayAlso(a -> name.set("ZVerify"));
+
+        name.set("   ");
+        Sf<String> isNullStr = Sf.mayStr(name.get()).mayTakeUnless(Objects::isNull).mayAlso(a -> name.set("ZVerify"));
+        Assertions.assertNull(isNotNullStr.get());
+        Assertions.assertNull(isNullStr.get());
+
     }
 
     @Test
@@ -122,16 +131,24 @@ class SfTest {
     void testRequire() {
         AtomicReference<String> name = new AtomicReference<>(null);
         Sf<String> stringSf = Sf.ofStr(name.get());
+
+        name.set(Z_VERIFY_NAME);
+        Sf<String> sfNotNull = Sf.ofStr(name.get());
         Assertions.assertThrows(NoSuchElementException.class, stringSf::require);
         Assertions.assertThrows(IllegalStateException.class, () -> stringSf.require(IllegalStateException::new));
+        Assertions.assertEquals(Z_VERIFY_NAME, sfNotNull.require(IllegalStateException::new).get());
     }
 
     @Test
     void testOrThrow() {
         AtomicReference<String> name = new AtomicReference<>(null);
         Sf<String> stringSf = Sf.ofStr(name.get());
+        name.set(Z_VERIFY_NAME);
+        Sf<String> sfNotNull = Sf.ofStr(name.get());
+
         Assertions.assertThrows(NoSuchElementException.class, stringSf::orThrow);
         Assertions.assertThrows(IllegalStateException.class, () -> stringSf.orThrow(IllegalStateException::new));
+        Assertions.assertEquals(Z_VERIFY_NAME, sfNotNull.orThrow(IllegalStateException::new));
     }
 
 
@@ -139,21 +156,38 @@ class SfTest {
     void testOr() {
         AtomicReference<String> name = new AtomicReference<>(null);
         Sf<String> or = Sf.ofStr(name.get()).or(() -> Sf.ofStr(Z_VERIFY_NAME));
+        Sf<String> isThis = Sf.ofStr(Z_VERIFY_NAME).or(() -> Sf.ofStr("NULL"));
         Assertions.assertEquals(Z_VERIFY_NAME, or.get());
+        Assertions.assertEquals(Z_VERIFY_NAME, isThis.get());
     }
 
     @Test
     void testOrGet() {
         AtomicReference<String> name = new AtomicReference<>(null);
         String orGet = Sf.ofStr(name.get()).orGet(() -> Z_VERIFY_NAME);
+        String isNotNull = Sf.ofStr(Z_VERIFY_NAME).orGet(() -> Z_VERIFY_NAME + Z_VERIFY_NAME);
         Assertions.assertEquals(Z_VERIFY_NAME, orGet);
+        Assertions.assertEquals(Z_VERIFY_NAME, isNotNull);
     }
 
     @Test
     void testOrElse() {
         AtomicReference<String> name = new AtomicReference<>(null);
         String orElse = Sf.ofStr(name.get()).orElse(Z_VERIFY_NAME);
+        String isNotNull = Sf.ofStr(Z_VERIFY_NAME).orElse(Z_VERIFY_NAME + Z_VERIFY_NAME);
         Assertions.assertEquals(Z_VERIFY_NAME, orElse);
+        Assertions.assertEquals(Z_VERIFY_NAME, isNotNull);
+    }
+
+    @Test
+    void testOrRun() {
+        AtomicReference<String> isNullStr = new AtomicReference<>();
+        AtomicReference<String> isNotNullStr = new AtomicReference<>();
+        Sf.mayStr("   ").orRun(() -> isNullStr.set(Z_VERIFY_NAME));
+        Sf.mayStr(Z_VERIFY_NAME).orRun(() -> isNotNullStr.set(" " + Z_VERIFY_NAME));
+
+        Assertions.assertEquals(isNullStr.get(),Z_VERIFY_NAME);
+        Assertions.assertNull(isNotNullStr.get());
     }
 
 
