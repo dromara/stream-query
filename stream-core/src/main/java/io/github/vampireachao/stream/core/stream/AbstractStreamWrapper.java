@@ -11,7 +11,7 @@ import java.util.stream.*;
  */
 abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T>, Iterable<T> {
 
-	/**
+    /**
      * 原始的流实例
      */
     protected Stream<T> stream;
@@ -22,19 +22,18 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      * @param stream 包装的流对象
      */
     protected AbstractStreamWrapper(Stream<T> stream) {
-		Objects.requireNonNull(stream, "stream must not null");
-		this.stream = stream;
-	}
+        Objects.requireNonNull(stream, "stream must not null");
+        this.stream = stream;
+    }
 
 
     /**
-     *  
      * <p>
      * 过滤元素，返回与指定断言匹配的元素组成的流
      * 这是一个无状态中间操作
      *
      * @param predicate
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I filter(Predicate<? super T> predicate) {
@@ -42,7 +41,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为int类型
      * 这是一个无状态中间操作
@@ -56,7 +54,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为long类型
      * 这是一个无状态中间操作
@@ -70,7 +67,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为double类型
      * 这是一个无状态中间操作
@@ -84,7 +80,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
@@ -98,7 +93,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
@@ -112,7 +106,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
      * 这是一个无状态中间操作
@@ -126,12 +119,11 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回一个具有去重特征的流 非并行流(顺序流)下对于重复元素，保留遇到顺序中最先出现的元素，并行流情况下不能保证具体保留哪一个
      * 这是一个有状态中间操作
      *
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I distinct() {
@@ -139,14 +131,13 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回一个元素按自然顺序排序的流
      * 如果此流的元素不是{@code Comparable} ，则在执行终端操作时可能会抛出 {@code java.lang.ClassCastException}
      * 对于顺序流，排序是稳定的。 对于无序流，没有稳定性保证。
      * 这是一个有状态中间操作
      *
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I sorted() {
@@ -154,7 +145,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回一个元素按指定的{@link Comparator}排序的流
      * 如果此流的元素不是{@code Comparable} ，则在执行终端操作时可能会抛出{@code java.lang.ClassCastException}
@@ -162,7 +152,7 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      * 这是一个有状态中间操作
      *
      * @param comparator
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I sorted(Comparator<? super T> comparator) {
@@ -170,13 +160,12 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回与指定函数将元素作为参数执行后组成的流。
      * 这是一个无状态中间操作
      *
      * @param action
-     * @return  实现类
+     * @return 实现类
      * @apiNote 该方法存在的意义主要是用来调试
      * 当你需要查看经过操作管道某处的元素，可以执行以下操作:
      * <pre>{@code
@@ -194,13 +183,12 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回截取后面一些元素的流
      * 这是一个短路状态中间操作
      *
      * @param maxSize
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I limit(long maxSize) {
@@ -208,13 +196,12 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回丢弃前面n个元素后的剩余元素组成的流，如果当前元素个数小于n，则返回一个元素为空的流
      * 这是一个有状态中间操作
      *
      * @param n
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I skip(long n) {
@@ -222,7 +209,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 对流里面的每一个元素执行一个操作
      * 这是一个终端操作
@@ -235,7 +221,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 对流里面的每一个元素按照顺序执行一个操作
      * 这是一个终端操作
@@ -248,7 +233,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回一个包含此流元素的数组
      * 这是一个终端操作
@@ -261,7 +245,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回一个包含此流元素的指定的数组，例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
      * <pre>{@code String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new); }</pre>
@@ -275,7 +258,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 对元素进行聚合，并返回聚合后的值，相当于在for循环里写sum=sum+ints[i]
      * 这是一个终端操作<br>
@@ -302,7 +284,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 对元素进行聚合，并返回聚合后用 {@link Optional}包裹的值，相当于在for循环里写sum=sum+ints[i]
      * 该操作相当于：
@@ -338,7 +319,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 对元素进行聚合，并返回聚合后的值，并行流时聚合拿到的初始值不稳定
      * 这是一个终端操作
@@ -356,7 +336,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 对元素进行收集，并返回收集后的容器
      * 这是一个终端操作
@@ -372,7 +351,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 对元素进行收集，并返回收集后的元素
      * 这是一个终端操作
@@ -386,7 +364,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 获取最小值
      *
@@ -399,7 +376,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 获取最大值
      *
@@ -412,7 +388,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回流元素个数
      *
@@ -424,7 +399,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 判断是否有任何一个元素满足给定断言
      *
@@ -437,7 +411,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 判断是否所有元素满足给定断言
      *
@@ -450,7 +423,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 判断是否没有元素满足给定断言
      *
@@ -463,7 +435,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 获取第一个元素
      *
@@ -475,7 +446,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 考虑性能，随便取一个，这里不是随机取一个，是随便取一个
      *
@@ -487,7 +457,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回流的迭代器
      *
@@ -499,7 +468,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回流的拆分器
      *
@@ -511,7 +479,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回流的并行状态
      *
@@ -523,11 +490,10 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回一个串行流，该方法可以将并行流转换为串行流
      *
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I sequential() {
@@ -535,11 +501,10 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 将流转换为并行
      *
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I parallel() {
@@ -547,12 +512,11 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 返回一个无序流(无手动排序)
      * <p>标记一个流是不在意元素顺序的, 在并行流的某些情况下可以提高性能</p>
      *
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I unordered() {
@@ -560,12 +524,11 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 在流关闭时执行操作
      *
      * @param closeHandler
-     * @return  实现类
+     * @return 实现类
      */
     @Override
     public I onClose(Runnable closeHandler) {
@@ -573,7 +536,6 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
     }
 
     /**
-     *  
      * <p>
      * 关闭流
      *

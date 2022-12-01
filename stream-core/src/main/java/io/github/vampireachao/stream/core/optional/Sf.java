@@ -28,6 +28,7 @@ public class Sf<T> {
      * Sf中要操作的{@code value}
      */
     private final T value;
+    private final boolean notActive;
 
     /**
      * {@code Sf}的构造方法
@@ -36,16 +37,26 @@ public class Sf<T> {
      */
     public Sf(T value) {
         this.value = value;
+        this.notActive = Objects.isNull(this.value);
+    }
+
+    public Sf(T value, boolean notActive) {
+        this.value = value;
+        this.notActive = notActive;
     }
 
     /**
      * 将参数包裹到Sf中,无论参数是否为{@code null}
-     * 
+     *
      * @param value 包裹的值
      * @return {@link Sf}{@code <T>}
      */
     public static <T> Sf<T> of(T value) {
-        return new Sf<>(value);
+        return new Sf<>(value, false);
+    }
+
+    static <T> Sf<T> of(T value, boolean notActive) {
+        return new Sf<>(value, notActive);
     }
 
     /**
@@ -134,7 +145,10 @@ public class Sf<T> {
      * @return {@link Sf}{@code <R>}
      */
     public <R> Sf<R> let(SerFunc<T, R> function) {
-        return of(function.apply(value));
+        if (notActive) {
+            return empty();
+        }
+        return of(function.apply(value), false);
     }
 
     /**
@@ -158,6 +172,9 @@ public class Sf<T> {
      * @return {@link Sf}{@code <T>}
      */
     public Sf<T> also(SerCons<T> consumer) {
+        if (notActive) {
+            return empty();
+        }
         consumer.accept(value);
         return this;
     }
@@ -170,7 +187,7 @@ public class Sf<T> {
      */
     public Sf<T> mayAlso(SerCons<T> consumer) {
         if (isEmpty()) {
-            return this;
+            return empty();
         }
         return also(consumer);
     }
@@ -184,7 +201,7 @@ public class Sf<T> {
      * @return {@link Sf}{@code <T>}
      */
     public Sf<T> takeIf(SerFunc<T, Boolean> function) {
-        if (!Boolean.TRUE.equals(function.apply(value))) {
+        if (notActive || !Boolean.TRUE.equals(function.apply(value))) {
             return empty();
         }
         return this;
@@ -199,7 +216,7 @@ public class Sf<T> {
      */
     public Sf<T> mayTakeIf(SerFunc<T, Boolean> function) {
         if (isEmpty()) {
-            return this;
+            return empty();
         }
         return takeIf(function);
     }
@@ -228,7 +245,7 @@ public class Sf<T> {
      */
     public Sf<T> mayTakeUnless(SerFunc<T, Boolean> function) {
         if (isEmpty()) {
-            return this;
+            return empty();
         }
         return takeUnless(function);
     }

@@ -28,7 +28,7 @@ class SfTest {
     }
 
     @Test
-    void test$OfColl() {
+    void testMayOfColl() {
         Assertions.assertTrue(Sf.mayColl(Arrays.asList(null, null, null)).isEmpty());
     }
 
@@ -38,7 +38,7 @@ class SfTest {
     }
 
     @Test
-    void test$OfStr() {
+    void testMayOfStr() {
         Assertions.assertTrue(Sf.mayStr("  ").isEmpty());
     }
 
@@ -60,12 +60,14 @@ class SfTest {
 
     @Test
     void testLet() {
-        Sf<Integer> let = Sf.ofStr("  ").let(String::length);
+        Sf<Integer> let = Sf.ofStr("12").let(String::length);
         Assertions.assertEquals(2, let.get());
+
+        Assertions.assertFalse(Sf.of(1).let(s -> null).let(Objects::isNull).let(b -> !b).get());
     }
 
     @Test
-    void test$Let() {
+    void testMayLet() {
         Sf<String> stringSf = Sf.mayStr(null).mayLet(a -> a.toString().length()).let(a -> Z_VERIFY_NAME);
         Sf<Integer> isNotNull = Sf.mayStr(Z_VERIFY_NAME).mayLet(String::length);
 
@@ -82,7 +84,7 @@ class SfTest {
     }
 
     @Test
-    void test$Also() {
+    void testMayAlso() {
         AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Sf.of(null).mayAlso(a -> name.set("ZVerify"));
         Assertions.assertEquals(Z_VERIFY_NAME, name.get());
@@ -96,7 +98,7 @@ class SfTest {
     }
 
     @Test
-    void test$TakeIf() {
+    void testMayTakeIf() {
         AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Sf.of(name).mayTakeIf((a) -> true).also(a -> a.set("ZVerify"));
         Assertions.assertEquals("ZVerify", name.get());
@@ -110,7 +112,7 @@ class SfTest {
     }
 
     @Test
-    void test$TakeUnless() {
+    void testMayTakeUnless() {
         AtomicReference<String> name = new AtomicReference<>(Z_VERIFY_NAME);
         Sf<String> isNotNullStr = Sf.of(name.get()).mayTakeUnless(Objects::nonNull).mayAlso(a -> name.set("ZVerify"));
 

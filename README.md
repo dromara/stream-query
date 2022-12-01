@@ -27,7 +27,10 @@
 
 ## 📝文档
 
-[中文文档](https://vampireachao.gitee.io/stream-query-docs/)&nbsp;&nbsp;[仓库地址](https://gitee.com/VampireAchao/stream-query-docs)&nbsp;  &nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
+[中文文档](https://vampireachao.gitee.io/stream-query-docs/)
+&nbsp;&nbsp;[仓库地址](https://gitee.com/VampireAchao/stream-query-docs)&nbsp;
+&nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
+
 ## 📦安装
 
 ### 🍊Maven
@@ -48,13 +51,14 @@
     <version>1.1.16</version>
 </dependency>
 ```
+
 ### 🍊Gradle
 
 在项目的build.gradle的dependencies中加入以下内容:
+
 ```Gradle
 implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1.1.16'
 ```
-
 
 ## 🐞提供bug反馈或建议
 
@@ -64,14 +68,18 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1
 [Github issue](https://github.com/VampireAchao/stream-query/issues)
 
 ## 🏗️添砖加瓦️
+
 如果您感觉我们的代码有需要优化的地方或者有更好的方案欢迎随时提pr
+
 ### 📚包说明
+
 | 包名            | 内容                       |
 |---------------|--------------------------|
 | stream-query  | 优雅的流式操作 |
 | stream-plugin | orm框架->使用优雅的Lambda进行对数据库进行一系列操作             |
 
 ### 🐾贡献代码的步骤
+
 1. 在`Gitee`或者`Github`上`fork`项目到自己的`repo`
 2. 把`fork`过去的项目也就是你的项目`clone`到你的本地
 3. 修改代码
@@ -80,11 +88,13 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1
    等待维护者合并
 
 ### 📐PR遵照的原则
-`stream-query`欢迎任何人为`stream-query`添砖加瓦，贡献代码，不过维护者是一个强迫症患者，为了照顾病人，需要提交的pr（pull request）符合一些规范，规范如下：
+
+`stream-query`欢迎任何人为`stream-query`添砖加瓦，贡献代码，不过维护者是一个强迫症患者，为了照顾病人，需要提交的pr（pull
+request）符合一些规范，规范如下：
 
 - 注释完备，尤其每个新增的方法应按照Java文档规范标明方法说明、参数说明、返回值说明等信息，必要时请添加单元测试，如果愿意，也可以加上你的大名。
 - 新加的方法不要使用额外的第三方库方法
 - 我们如果关闭了你的issue或pr，请不要诧异，这是我们保持问题处理整洁的一种方式，你依旧可以继续讨论，当有讨论结果时我们会重新打开。
 
-powered by [GitHub Copilot](https://copilot.github.com/) 
+powered by [GitHub Copilot](https://copilot.github.com/)
 powered by [JetBrains](https://www.jetbrains.com/)Open source license

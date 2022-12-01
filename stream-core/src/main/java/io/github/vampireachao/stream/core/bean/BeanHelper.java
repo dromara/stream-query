@@ -45,7 +45,7 @@ public class BeanHelper {
             originProperty = getterOrSetter.replaceFirst(SETTER_PREFIX, "");
         }
         if (Objects.isNull(originProperty)) {
-            throw new UnsupportedOperationException(getterOrSetter + "is not getter or setter");
+            throw new UnsupportedOperationException(getterOrSetter + " is not getter or setter");
         }
         return originProperty.substring(0, 1).toLowerCase() + originProperty.substring(1);
     }

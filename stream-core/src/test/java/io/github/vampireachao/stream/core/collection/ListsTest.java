@@ -1,14 +1,9 @@
 package io.github.vampireachao.stream.core.collection;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.experimental.Tolerate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 
@@ -26,6 +21,36 @@ class ListsTest {
     @Test
     void testOfColl() {
         Assertions.assertTrue(Lists.ofColl(Collections.emptySet()).isEmpty());
+        Assertions.assertTrue(Lists.ofColl(null).isEmpty());
+    }
+
+    @Test
+    void testEmpty() {
+        Assertions.assertEquals(Collections.emptyList(), Lists.empty());
+    }
+
+    @Test
+    void testFirst() {
+        Assertions.assertEquals(1, Lists.first(Lists.of(1, 2, 3)));
+        Assertions.assertNull(Lists.first(null));
+        Assertions.assertNull(Lists.first(Lists.empty()));
+    }
+
+    @Test
+    void testLast() {
+        Assertions.assertEquals(3, Lists.last(Lists.of(1, 2, 3)));
+        Assertions.assertNull(Lists.last(null));
+        Assertions.assertNull(Lists.last(Lists.empty()));
+    }
+
+    @Test
+    void testIsEmpty() {
+        Assertions.assertTrue(Lists.isEmpty(Collections.emptyList()));
+    }
+
+    @Test
+    void testIsNotEmpty() {
+        Assertions.assertTrue(Lists.isNotEmpty(asList(1, 2, 3)));
     }
 
     @Test
@@ -47,39 +72,5 @@ class ListsTest {
     void testBinarySearch() {
         Assertions.assertEquals(2, Lists.binarySearch(Lists.of(1, 2, 3), 3));
     }
-
-    @Test
-    void testCustomSort() {
-        List<Student> list = asList(
-                Student.builder().name("aaa").age(23.0).id(123L).build(),
-                Student.builder().name("azb").age(21.0).id(122L).build(),
-                Student.builder().name("amb").age(22.0).id(124L).build()
-        );
-        List<Student> others = asList(
-                Student.builder().name("azb").age(21.0).id(122L).build(),
-                Student.builder().name("amb").age(22.0).id(124L).build(),
-                Student.builder().name("aaa").age(23.0).id(123L).build()
-        );
-        List<Student> students = Lists.customSort(list, Student::getName, () -> Boolean.FALSE);
-
-        Assertions.assertEquals(students,others);
-    }
-
-    @Data
-    @Builder
-    private static class Student{
-        private String name;
-        private Double age;
-        private Long id;
-
-        @Tolerate
-        public Student() {
-            // this is an accessible parameterless constructor.
-        }
-
-    }
-
-
-
 
 }

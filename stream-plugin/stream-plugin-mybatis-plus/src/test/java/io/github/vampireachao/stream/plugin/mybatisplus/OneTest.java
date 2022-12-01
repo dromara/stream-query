@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
@@ -25,6 +26,7 @@ class OneTest {
         Assertions.assertNotNull(userInfo);
         Assertions.assertNotNull(name);
         Assertions.assertNotNull(leAgeName);
+        Assertions.assertThrows(MybatisPlusException.class, () -> One.of(UserInfo::getName).like("a").query());
     }
 
 }

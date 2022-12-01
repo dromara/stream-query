@@ -205,15 +205,16 @@ class OppTest {
         Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
         Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, 1, null)).isPresent());
     }
+
     @Test
     void testNotTry() {
-        Assertions.assertDoesNotThrow(()->Opp.notTry(() -> {
+        Assertions.assertDoesNotThrow(() -> Opp.notTry(() -> {
             throw new ArithmeticException();
-        }, NullPointerException.class,KeyManagementException.class));
+        }, NullPointerException.class, KeyManagementException.class));
 
-        Assertions.assertThrows(RuntimeException.class,()->Opp.notTry(() -> {
+        Assertions.assertThrows(RuntimeException.class, () -> Opp.notTry(() -> {
             throw new NullPointerException();
-        }, NullPointerException.class,KeyManagementException.class));
+        }, NullPointerException.class, KeyManagementException.class));
     }
 
     @Test
