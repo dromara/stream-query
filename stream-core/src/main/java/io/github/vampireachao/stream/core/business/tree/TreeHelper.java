@@ -47,15 +47,15 @@ public class TreeHelper<T, R extends Comparable<R>> {
     }
 
     /**
-     * <p>of.</p>
+     * <p>获取树先生的帮助</p>
      *
-     * @param idGetter       a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
-     * @param pidGetter      a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
-     * @param pidValue       a R object
-     * @param childrenGetter a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
-     * @param childrenSetter a {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
-     * @param <T>            a T class
-     * @param <R>            a R class
+     * @param idGetter       获取节点id操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param pidGetter      获取父节点id操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param pidValue       父节点值
+     * @param childrenGetter 获取子节点操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param childrenSetter 操作子节点 {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
+     * @param <T>            树节点类型
+     * @param <R>            父id类型
      * @return a {@link io.github.vampireachao.stream.core.business.tree.TreeHelper} object
      */
     public static <T, R extends Comparable<R>> TreeHelper<T, R> of(SerFunc<T, R> idGetter,
@@ -69,13 +69,13 @@ public class TreeHelper<T, R extends Comparable<R>> {
     /**
      * <p>ofMatch.</p>
      *
-     * @param idGetter        a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
-     * @param pidGetter       a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
-     * @param parentPredicate a {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
-     * @param childrenGetter  a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
-     * @param childrenSetter  a {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
-     * @param <T>             a T class
-     * @param <R>             a R class
+     * @param idGetter        获取节点id操作  {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param pidGetter       获取父节点id操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param parentPredicate 是否是父节点断言操作 {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
+     * @param childrenGetter  获取子节点操作 { {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
+     * @param childrenSetter  操作子节点  {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
+     * @param <T>             树节点类型 T class
+     * @param <R>             父id类型 R class
      * @return a {@link io.github.vampireachao.stream.core.business.tree.TreeHelper} object
      */
     public static <T, R extends Comparable<R>> TreeHelper<T, R> ofMatch(SerFunc<T, R> idGetter,
@@ -87,10 +87,10 @@ public class TreeHelper<T, R extends Comparable<R>> {
     }
 
     /**
-     * <p>toTree.</p>
+     * <p>拾取果实构建树</p>
      *
-     * @param list a {@link java.util.List} object
-     * @return a {@link java.util.List} object
+     * @param list 果篮 {@link java.util.List} object
+     * @return 树 {@link java.util.List} object
      */
     public List<T> toTree(List<T> list) {
         if (Objects.isNull(parentPredicate)) {
@@ -111,10 +111,10 @@ public class TreeHelper<T, R extends Comparable<R>> {
     }
 
     /**
-     * <p>flat.</p>
+     * <p>将树上所有的果实摘取到果篮中</p>
      *
-     * @param list a {@link java.util.List} object
-     * @return a {@link java.util.List} object
+     * @param list 要摘取果实的树 {@link java.util.List} object
+     * @return 果篮(包装果实的集合) {@link java.util.List} object
      */
     public List<T> flat(List<T> list) {
         AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
@@ -124,11 +124,11 @@ public class TreeHelper<T, R extends Comparable<R>> {
     }
 
     /**
-     * <p>filter.</p>
+     * <p>将树中干净的果实摘取</p>
      *
-     * @param list      a {@link java.util.List} object
-     * @param condition a {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
-     * @return a {@link java.util.List} object
+     * @param list      要摘取的树 {@link java.util.List} object
+     * @param condition 符合我们想要摘取果实的断言 {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
+     * @return  摘取下来的果实重新组成的树 {@link java.util.List} object
      */
     public List<T> filter(List<T> list, SerPred<T> condition) {
         AtomicReference<Predicate<T>> recursiveRef = new AtomicReference<>();
@@ -142,11 +142,11 @@ public class TreeHelper<T, R extends Comparable<R>> {
     }
 
     /**
-     * <p>forEach.</p>
+     * <p>给你的树上果实包装一层商标叭</p>
      *
-     * @param list   a {@link java.util.List} object
-     * @param action a {@link io.github.vampireachao.stream.core.lambda.function.SerCons} object
-     * @return a {@link java.util.List} object
+     * @param list   果篮 {@link java.util.List} object
+     * @param action 加工商 {@link io.github.vampireachao.stream.core.lambda.function.SerCons} object
+     * @return 完成包装的树 {@link java.util.List} object
      */
     public List<T> forEach(List<T> list, SerCons<T> action) {
         AtomicReference<Consumer<T>> recursiveRef = new AtomicReference<>();
