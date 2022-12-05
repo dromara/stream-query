@@ -71,7 +71,7 @@ public class TreeHelper<T, R extends Comparable<R>> {
      *
      * @param idGetter        获取节点id操作  {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
      * @param pidGetter       获取父节点id操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
-     * @param parentPredicate 是否是父节点断言操作 {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
+     * @param parentPredicate 是否是祖宗节点断言操作 {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
      * @param childrenGetter  获取子节点操作 { {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
      * @param childrenSetter  操作子节点  {@link io.github.vampireachao.stream.core.lambda.function.SerBiCons} object
      * @param <T>             树节点类型 T class
