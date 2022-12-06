@@ -36,7 +36,7 @@ public class Opp<T> {
      * 包裹里实际的元素
      */
     protected final T value;
-    protected Exception exception;
+    protected Throwable throwable;
 
     /**
      * {@code Opp}的构造函数
@@ -157,7 +157,7 @@ public class Opp<T> {
                 throw new IllegalArgumentException(e);
             }
             Opp<T> empty = new Opp<>(null);
-            empty.exception = e;
+            empty.throwable = e;
             return empty;
         }
     }
@@ -181,7 +181,7 @@ public class Opp<T> {
                 throw new IllegalArgumentException(e);
             }
             Opp<T> empty = new Opp<>(null);
-            empty.exception = e;
+            empty.throwable = e;
             return empty;
         }
     }
@@ -228,8 +228,8 @@ public class Opp<T> {
      *
      * @return 异常
      */
-    public Exception getException() {
-        return this.exception;
+    public Throwable getThrowable() {
+        return this.throwable;
     }
 
     /**
@@ -239,7 +239,7 @@ public class Opp<T> {
      * @return 是否失败
      */
     public boolean isFail() {
-        return null != this.exception;
+        return null != this.throwable;
     }
 
     /**

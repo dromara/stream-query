@@ -181,8 +181,8 @@ class OppTest {
                 }
             });
             Assertions.assertTrue(
-                    (i % 2 == 0 && opp.getException() instanceof IllegalStateException) ||
-                            (i % 2 != 0 && opp.getException() instanceof NullPointerException)
+                    (i % 2 == 0 && opp.getThrowable() instanceof IllegalStateException) ||
+                            (i % 2 != 0 && opp.getThrowable() instanceof NullPointerException)
             );
         });
 
