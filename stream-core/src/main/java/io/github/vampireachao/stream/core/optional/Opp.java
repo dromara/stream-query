@@ -36,7 +36,7 @@ public class Opp<T> {
      * 包裹里实际的元素
      */
     protected final T value;
-    protected Exception exception;
+    protected Throwable throwable;
 
     /**
      * {@code Opp}的构造函数
@@ -135,7 +135,7 @@ public class Opp<T> {
      * @return 操作执行后的值
      */
     public static <T> Opp<T> ofTry(Callable<T> callable) {
-        return Opp.ofTry(callable, Exception.class);
+        return Opp.ofTry(callable, Throwable.class);
     }
 
     /**
@@ -148,16 +148,16 @@ public class Opp<T> {
      * @return 操作执行后的值如果发生异常则返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
      */
     @SafeVarargs
-    public static <T> Opp<T> ofTry(Callable<T> callable, Class<? extends Exception> exceptionType,
-                                   Class<? extends Exception>... exceptionTypes) {
+    public static <T> Opp<T> ofTry(Callable<T> callable, Class<? extends Throwable> exceptionType,
+                                   Class<? extends Throwable>... exceptionTypes) {
         try {
             return Opp.of(callable.call());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (Steam.of(exceptionTypes).unshift(exceptionType).noneMatch(clazz -> clazz.isInstance(e))) {
                 throw new IllegalArgumentException(e);
             }
             Opp<T> empty = new Opp<>(null);
-            empty.exception = e;
+            empty.throwable = e;
             return empty;
         }
     }
@@ -173,15 +173,15 @@ public class Opp<T> {
      */
     @SafeVarargs
     public static <T> Opp<T> notTry(Callable<T> callable,
-                                    Class<? extends Exception>... exceptionTypes) {
+                                    Class<? extends Throwable>... exceptionTypes) {
         try {
             return Opp.of(callable.call());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (Steam.of(exceptionTypes).anyMatch(clazz -> clazz.isInstance(e))) {
                 throw new IllegalArgumentException(e);
             }
             Opp<T> empty = new Opp<>(null);
-            empty.exception = e;
+            empty.throwable = e;
             return empty;
         }
     }
@@ -228,8 +228,8 @@ public class Opp<T> {
      *
      * @return 异常
      */
-    public Exception getException() {
-        return this.exception;
+    public Throwable getThrowable() {
+        return this.throwable;
     }
 
     /**
@@ -239,7 +239,7 @@ public class Opp<T> {
      * @return 是否失败
      */
     public boolean isFail() {
-        return null != this.exception;
+        return null != this.throwable;
     }
 
     /**

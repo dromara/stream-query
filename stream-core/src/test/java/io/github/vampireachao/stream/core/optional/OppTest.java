@@ -181,8 +181,8 @@ class OppTest {
                 }
             });
             Assertions.assertTrue(
-                    (i % 2 == 0 && opp.getException() instanceof IllegalStateException) ||
-                            (i % 2 != 0 && opp.getException() instanceof NullPointerException)
+                    (i % 2 == 0 && opp.getThrowable() instanceof IllegalStateException) ||
+                            (i % 2 != 0 && opp.getThrowable() instanceof NullPointerException)
             );
         });
 
@@ -192,7 +192,9 @@ class OppTest {
         Assertions.assertDoesNotThrow(() -> Opp.ofTry(() -> {
             throw new IllegalStateException();
         }, NullPointerException.class, IllegalStateException.class));
-
+        Assertions.assertThrows(AssertionError.class, ()-> Opp.ofTry(() -> {
+            throw new AssertionError("");
+        }, NullPointerException.class));
         Assertions.assertThrows(RuntimeException.class, () -> Opp.ofTry(() -> {
             throw new IllegalStateException();
         }, NullPointerException.class));
@@ -211,7 +213,9 @@ class OppTest {
         Assertions.assertDoesNotThrow(() -> Opp.notTry(() -> {
             throw new ArithmeticException();
         }, NullPointerException.class, KeyManagementException.class));
-
+        Assertions.assertThrows(RuntimeException.class, ()-> Opp.notTry(() -> {
+            throw new AssertionError("");
+        }, AssertionError.class));
         Assertions.assertThrows(RuntimeException.class, () -> Opp.notTry(() -> {
             throw new NullPointerException();
         }, NullPointerException.class, KeyManagementException.class));
