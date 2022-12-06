@@ -192,7 +192,7 @@ class OppTest {
         Assertions.assertDoesNotThrow(() -> Opp.ofTry(() -> {
             throw new IllegalStateException();
         }, NullPointerException.class, IllegalStateException.class));
-        Assertions.assertThrows(AssertionError.class, ()-> Opp.ofTry(() -> {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Opp.ofTry(() -> {
             throw new AssertionError("");
         }, NullPointerException.class));
         Assertions.assertThrows(RuntimeException.class, () -> Opp.ofTry(() -> {
