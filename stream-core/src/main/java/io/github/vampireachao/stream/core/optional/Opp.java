@@ -152,7 +152,7 @@ public class Opp<T> {
                                    Class<? extends Throwable>... exceptionTypes) {
         try {
             return Opp.of(callable.call());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (Steam.of(exceptionTypes).unshift(exceptionType).noneMatch(clazz -> clazz.isInstance(e))) {
                 throw new IllegalArgumentException(e);
             }
