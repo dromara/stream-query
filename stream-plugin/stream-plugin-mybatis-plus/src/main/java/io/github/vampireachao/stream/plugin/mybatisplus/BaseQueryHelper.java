@@ -26,7 +26,7 @@ import java.util.function.UnaryOperator;
 public abstract class BaseQueryHelper<
         S extends BaseQueryHelper<S, T, K, V>,
         T,
-        K extends Serializable & Comparable<K>,
+        K extends Serializable & Comparable<? super K>,
         V
         > extends BaseQuery<T, K, V> {
 

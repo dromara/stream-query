@@ -30,7 +30,7 @@ import java.util.function.UnaryOperator;
  * @since 2022/5/24 14:15
  */
 @SuppressWarnings("unchecked")
-public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U, A> {
+public class OneToManyToOne<T, K extends Serializable & Comparable<? super K>, V extends Serializable & Comparable<V>, U, A> {
 
     private final SFunction<T, K> middleKey;
     private SFunction<T, V> middleValue;
@@ -63,7 +63,7 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<K>, V extends
      * @param <U>         a U class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
      */
-    public static <T, K extends Serializable & Comparable<K>, V extends Serializable & Comparable<V>, U>
+    public static <T, K extends Serializable & Comparable<? super K>, V extends Serializable & Comparable<V>, U>
     OneToManyToOne<T, K, V, U, T> of(SFunction<T, K> keyFunction) {
         return new OneToManyToOne<>(keyFunction);
     }

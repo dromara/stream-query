@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @since 2022/6/18 14:47
  */
 @SuppressWarnings("unchecked")
-public class One<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<One<T, K, V>, T, K, V> {
+public class One<T, K extends Serializable & Comparable<? super K>, V> extends BaseQueryHelper<One<T, K, V>, T, K, V> {
 
     /**
      * <p>of.</p>
@@ -22,7 +22,7 @@ public class One<T, K extends Serializable & Comparable<K>, V> extends BaseQuery
      * @param <K>         a K class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.One} object
      */
-    public static <T, K extends Serializable & Comparable<K>>
+    public static <T, K extends Serializable & Comparable<? super K>>
     One<T, K, T> of(SFunction<T, K> keyFunction) {
         return new One<>(keyFunction);
     }

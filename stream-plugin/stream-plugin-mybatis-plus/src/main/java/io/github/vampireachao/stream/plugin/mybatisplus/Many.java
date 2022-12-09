@@ -14,7 +14,7 @@ import java.util.List;
  * @since 2022/6/18 21:21
  */
 @SuppressWarnings("unchecked")
-public class Many<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<Many<T, K, V>, T, K, V> {
+public class Many<T, K extends Serializable & Comparable<? super K>, V> extends BaseQueryHelper<Many<T, K, V>, T, K, V> {
 
     /**
      * <p>Constructor for Many.</p>
@@ -33,7 +33,7 @@ public class Many<T, K extends Serializable & Comparable<K>, V> extends BaseQuer
      * @param <K>         a K class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.Many} object
      */
-    public static <T, K extends Serializable & Comparable<K>> Many<T, K, T> of(SFunction<T, K> keyFunction) {
+    public static <T, K extends Serializable & Comparable<? super K>> Many<T, K, T> of(SFunction<T, K> keyFunction) {
         return new Many<>(keyFunction);
     }
 

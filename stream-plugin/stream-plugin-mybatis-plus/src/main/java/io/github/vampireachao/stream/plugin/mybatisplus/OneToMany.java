@@ -19,7 +19,7 @@ import java.util.stream.Collector;
  * @since 2022/5/23 17:40
  */
 @SuppressWarnings("unchecked")
-public class OneToMany<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToMany<T, K, V>, T, K, V> {
+public class OneToMany<T, K extends Serializable & Comparable<? super K>, V> extends BaseQueryHelper<OneToMany<T, K, V>, T, K, V> {
 
     /**
      * <p>Constructor for OneToMany.</p>
@@ -38,7 +38,7 @@ public class OneToMany<T, K extends Serializable & Comparable<K>, V> extends Bas
      * @param <K>         a K class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToMany} object
      */
-    public static <T, K extends Serializable & Comparable<K>> OneToMany<T, K, T> of(SFunction<T, K> keyFunction) {
+    public static <T, K extends Serializable & Comparable<? super K>> OneToMany<T, K, T> of(SFunction<T, K> keyFunction) {
         return new OneToMany<>(keyFunction);
     }
 

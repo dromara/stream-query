@@ -17,7 +17,7 @@ import java.util.function.IntFunction;
  * @since 2022/5/20
  */
 @SuppressWarnings("unchecked")
-public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends BaseQueryHelper<OneToOne<T, K, V>, T, K, V> {
+public class OneToOne<T, K extends Serializable & Comparable<? super K>, V> extends BaseQueryHelper<OneToOne<T, K, V>, T, K, V> {
 
     /**
      * <p>of.</p>
@@ -27,7 +27,7 @@ public class OneToOne<T, K extends Serializable & Comparable<K>, V> extends Base
      * @param <K>         a K class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToOne} object
      */
-    public static <T, K extends Serializable & Comparable<K>> OneToOne<T, K, T> of(SFunction<T, K> keyFunction) {
+    public static <T, K extends Serializable & Comparable<? super K>> OneToOne<T, K, T> of(SFunction<T, K> keyFunction) {
         return new OneToOne<>(keyFunction);
     }
 
