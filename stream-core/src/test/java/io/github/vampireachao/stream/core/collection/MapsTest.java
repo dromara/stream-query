@@ -5,10 +5,7 @@ import io.github.vampireachao.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author VampireAchao
@@ -56,6 +53,9 @@ class MapsTest {
                 String::toUpperCase
         ).collect(Collective.entryToMap());
         Assertions.assertEquals("GOOD", map.get("key"));
+        final Map<String, String> treeMap = Steam.of(Maps.entry("GOOD", ""), Maps.entry("BAD", ""))
+                .collect(Collective.entryToMap(TreeMap::new));
+        Assertions.assertEquals("GOOD", Steam.of(treeMap.keySet()).findFirst().orElse(null));
     }
 
     @Test

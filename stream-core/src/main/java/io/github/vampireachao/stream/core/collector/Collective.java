@@ -1468,6 +1468,10 @@ public class Collective {
         return toMap(Map.Entry::getKey, Map.Entry::getValue);
     }
 
+    public static <K, V, M extends Map<K, V>> Collector<Map.Entry<K, V>, ?, M> entryToMap(Supplier<M> mapSupplier) {
+        return toMap(Map.Entry::getKey, Map.Entry::getValue, SerBiOp.justAfter(), mapSupplier);
+    }
+
     /**
      * Simple implementation class for {@code Collector}.
      *

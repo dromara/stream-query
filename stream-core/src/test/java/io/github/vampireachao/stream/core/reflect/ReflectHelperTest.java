@@ -44,6 +44,14 @@ class ReflectHelperTest {
     }
 
     @Test
+    void testGetGenericMap() {
+        final Map<String, Type> genericMap = ReflectHelper.getGenericMap(new HashMap<String, Object>() {
+        }.getClass());
+        Assertions.assertEquals(String.class, genericMap.get("K"));
+        Assertions.assertEquals(Object.class, genericMap.get("V"));
+    }
+
+    @Test
     void testIsInstance() {
         Assertions.assertTrue(ReflectHelper.isInstance(Collections.singletonMap(1, ""), new AbstractTypeReference<Map<?, ?>>() {
         }.getClass()));

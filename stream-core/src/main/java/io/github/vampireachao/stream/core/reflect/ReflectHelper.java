@@ -18,17 +18,17 @@
 package io.github.vampireachao.stream.core.reflect;
 
 
+import io.github.vampireachao.stream.core.collection.Maps;
+import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -276,6 +276,27 @@ public class ReflectHelper {
      * @return an array of {@link java.lang.reflect.Type} objects
      */
     public static Type[] getGenericTypes(Type paramType) {
+        Type type = resolveType(paramType);
+        if (type instanceof ParameterizedType) {
+            ParameterizedType ty = (ParameterizedType) type;
+            return ty.getActualTypeArguments();
+        }
+        return new Type[0];
+    }
+
+    public static Map<String, Type> getGenericMap(Type paramType) {
+        Type type = resolveType(paramType);
+        if (type instanceof ParameterizedTypeImpl) {
+            ParameterizedTypeImpl ty = (ParameterizedTypeImpl) type;
+            final Class<?> rawType = ty.getRawType();
+            return Steam.of(rawType.getTypeParameters()).map(Type::getTypeName)
+                    .zip(Steam.of(ty.getActualTypeArguments()), Maps::entry)
+                    .collect(Collective.entryToMap(LinkedHashMap::new));
+        }
+        return new HashMap<>();
+    }
+
+    private static Type resolveType(Type paramType) {
         Type type;
         for (type = paramType;
              type instanceof Class;
@@ -287,11 +308,7 @@ public class ReflectHelper {
                 }
             }
         }
-        if (type instanceof ParameterizedType) {
-            ParameterizedType ty = (ParameterizedType) type;
-            return ty.getActualTypeArguments();
-        }
-        return new Type[0];
+        return type;
     }
 
     /**

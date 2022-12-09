@@ -5,6 +5,7 @@ import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.reflect.AbstractTypeReference;
+import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +16,9 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandleProxies;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -75,6 +78,10 @@ class LambdaHelperTest {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     void testProxy() {
+        final LambdaExecutable resolve = LambdaHelper.<SerFunc<A, ?>>resolve(A::getR);
+        final Type type = resolve.getInstantiatedTypes()[0];
+        final Map<String, Type> genericMap = ReflectHelper.getGenericMap(type);
+//        Assertions.assertEquals(A.class, genericType);
         Assertions.assertEquals(int.class, LambdaHelper.<SerFunc<Integer, String[]>>resolve(String[]::new).getParameterTypes()[0]);
         Assertions.assertEquals(int.class, LambdaHelper.<SerFunc<Integer, Integer[][]>>resolve(Integer[][]::new).getParameterTypes()[0]);
         Assertions.assertEquals(Object.class, LambdaHelper.<SerCons<Object>>resolve(System.out::println).getParameterTypes()[0]);
@@ -85,6 +92,17 @@ class LambdaHelperTest {
         Assertions.assertDoesNotThrow(() -> lambda.apply(new LambdaExecutable()));
         LambdaExecutable lambdaExecutable = LambdaHelper.resolve(lambda);
         Assertions.assertEquals(LambdaExecutable.class, lambdaExecutable.getClazz());
+    }
+
+    private abstract static class B<T, R> {
+
+        R getR() {
+            return null;
+        }
+
+    }
+
+    private static class A extends B<Object, A> {
     }
 
 
