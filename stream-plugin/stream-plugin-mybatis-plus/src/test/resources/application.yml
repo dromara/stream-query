@@ -8,8 +8,9 @@ spring:
 logging:
   level:
     root: DEBUG
+    com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean: INFO
 mybatis-plus:
   mapper-locations:
     - classpath:mapper/*.xml
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
