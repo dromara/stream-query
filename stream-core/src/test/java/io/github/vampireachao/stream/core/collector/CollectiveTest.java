@@ -68,6 +68,13 @@ class CollectiveTest {
     }
 
     @Test
+    void testToArray() {
+        final Integer[] arrays = Steam.of(1, 2, 3, 4, 5).collect(toArray(Integer[]::new));
+        Assertions.assertEquals(5, arrays.length);
+        Assertions.assertEquals(5, arrays[4]);
+    }
+
+    @Test
     void testToCollection() {
         HashSet<Integer> list = Steam.of(1, 2, 3, 4, 5).parallel()
                 .collect(Collective.toCollection(HashSet::new));

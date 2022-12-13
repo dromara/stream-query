@@ -43,6 +43,18 @@ public class Collective {
     }
 
     /**
+     * toArray
+     *
+     * @param arrayFactor arrayFactor
+     * @param <T>         item type
+     * @return array
+     */
+    public static <T>
+    Collector<T, ?, T[]> toArray(IntFunction<T[]> arrayFactor) {
+        return collectingAndThen(toList(), list -> list.toArray(arrayFactor.apply(list.size())));
+    }
+
+    /**
      * Returns a {@code Collector} that accumulates the input elements into a
      * new {@code Collection}, in encounter order.  The {@code Collection} is
      * created by the provided factory.
