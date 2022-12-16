@@ -81,7 +81,7 @@ class LambdaHelperTest {
         final LambdaExecutable resolve = LambdaHelper.<SerFunc<A, ?>>resolve(A::getR);
         final Type type = resolve.getInstantiatedTypes()[0];
         final Map<String, Type> genericMap = ReflectHelper.getGenericMap(type);
-//        Assertions.assertEquals(A.class, genericType);
+        Assertions.assertEquals(A.class, genericMap.get("R"));
         Assertions.assertEquals(int.class, LambdaHelper.<SerFunc<Integer, String[]>>resolve(String[]::new).getParameterTypes()[0]);
         Assertions.assertEquals(int.class, LambdaHelper.<SerFunc<Integer, Integer[][]>>resolve(Integer[][]::new).getParameterTypes()[0]);
         Assertions.assertEquals(Object.class, LambdaHelper.<SerCons<Object>>resolve(System.out::println).getParameterTypes()[0]);

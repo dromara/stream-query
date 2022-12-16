@@ -3,14 +3,12 @@ package io.github.vampireachao.stream.core.reflect;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author VampireAchao Cizai_
@@ -45,10 +43,10 @@ class ReflectHelperTest {
 
     @Test
     void testGetGenericMap() {
-        final Map<String, Type> genericMap = ReflectHelper.getGenericMap(new HashMap<String, Object>() {
+        final Map<String, Type> genericMap = ReflectHelper.getGenericMap(new HashMap<String, TreeMap<String, Object>>() {
         }.getClass());
         Assertions.assertEquals(String.class, genericMap.get("K"));
-        Assertions.assertEquals(Object.class, genericMap.get("V"));
+        Assertions.assertEquals(ParameterizedTypeImpl.make(TreeMap.class, new Type[]{String.class, Object.class}, null), genericMap.get("V"));
     }
 
     @Test
