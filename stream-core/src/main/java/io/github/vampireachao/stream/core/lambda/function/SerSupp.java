@@ -22,7 +22,7 @@ public interface SerSupp<T> extends Supplier<T>, Serializable {
      * @return a result
      * @throws java.lang.Exception exception
      */
-    T getting() throws Exception;
+    T getting() throws Throwable;
 
     /**
      * Gets a result.
@@ -31,7 +31,7 @@ public interface SerSupp<T> extends Supplier<T>, Serializable {
     default T get() {
         try {
             return getting();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

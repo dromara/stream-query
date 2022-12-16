@@ -209,7 +209,7 @@ public class Database {
         if (Objects.isNull(entity)) {
             return false;
         }
-        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
         Integer result = execute(entityClass, baseMapper -> baseMapper.insert(entity));
         return SqlHelper.retBool(result);
     }
@@ -408,7 +408,7 @@ public class Database {
         if (Objects.isNull(entity)) {
             return false;
         }
-        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
         return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
     }
 
@@ -435,7 +435,7 @@ public class Database {
         if (Objects.isNull(entity)) {
             return false;
         }
-        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
         return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
     }
 
@@ -557,7 +557,7 @@ public class Database {
         if (Objects.isNull(entity)) {
             return false;
         }
-        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
+        Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
@@ -973,7 +973,7 @@ public class Database {
         Class<T> entityClass = null;
         for (T entity : entityList) {
             if (entity != null && entity.getClass() != null) {
-                entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
+                entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
                 break;
             }
         }
@@ -992,7 +992,7 @@ public class Database {
         if (entityClass == null) {
             T entity = queryWrapper.getEntity();
             if (entity != null) {
-                entityClass = SerFunc.<Class<?>, Class<T>>castingIdentity().apply(entity.getClass());
+                entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
             }
         }
         Assert.notNull(entityClass, "error: can not get entityClass from wrapper");

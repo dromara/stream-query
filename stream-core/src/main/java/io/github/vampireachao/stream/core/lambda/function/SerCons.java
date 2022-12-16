@@ -24,7 +24,7 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
-    void accepting(T t) throws Exception;
+    void accepting(T t) throws Throwable;
 
     /**
      * Performs this operation on the given argument.
@@ -33,7 +33,7 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
     default void accept(T t) {
         try {
             accepting(t);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

@@ -20,8 +20,10 @@ package io.github.vampireachao.stream.core.lambda;
 
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 
+import java.io.Serializable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.*;
 import java.util.List;
@@ -66,6 +68,9 @@ public class LambdaExecutable {
      * @param lambda a {@link java.lang.invoke.SerializedLambda} object
      */
     public LambdaExecutable(final SerializedLambda lambda) {
+        final MethodType methodType = MethodType.fromMethodDescriptorString(lambda.getInstantiatedMethodType(), Thread.currentThread().getContextClassLoader());
+        final Class<?>[] instantiatedTypes = ReflectHelper.getFieldValue(methodType, "ptypes");
+        final Class<?> returnType = ReflectHelper.getFieldValue(methodType, "rtype");
         try {
             Class<?> implClass = ReflectHelper.loadClass(lambda.getImplClass());
             if (CONSTRUCTOR_METHOD_NAME.equals(lambda.getImplMethodName())) {
@@ -75,10 +80,10 @@ public class LambdaExecutable {
             }
         } catch (IllegalStateException e) {
             this.setParameterTypes(ReflectHelper.getArgsFromDescriptor(lambda.getImplMethodSignature()));
-            this.setReturnType(ReflectHelper.getReturnTypeFromDescriptor(lambda.getInstantiatedMethodType()));
             this.setName(lambda.getImplMethodName());
         }
-        this.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(lambda.getInstantiatedMethodType()));
+        this.setInstantiatedTypes(instantiatedTypes);
+        this.setReturnType(returnType);
         this.setLambda(lambda);
     }
 
@@ -120,16 +125,21 @@ public class LambdaExecutable {
     public static LambdaExecutable initProxy(Proxy proxy) {
         InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
-        LambdaExecutable lambdaExecutable;
+        Executable executable = MethodHandles.reflectAs(Executable.class, methodHandle);
+        Class<Serializable> lambdaClazz = ReflectHelper.getFieldValue(handler, "val$intfc");
+        Serializable lambda = LambdaHelper.revert(lambdaClazz, executable);
         try {
-            lambdaExecutable = new LambdaExecutable(MethodHandles.reflectAs(Executable.class, methodHandle));
-            lambdaExecutable.setInstantiatedTypes(ReflectHelper.getArgsFromDescriptor(methodHandle.type().toMethodDescriptorString()));
+            final LambdaExecutable resolve = LambdaHelper.resolve(lambda);
+            /*final MethodType instantiatedMethodType = methodHandle.type();
+            final Type[] parameterTypes = ReflectHelper.invoke(instantiatedMethodType, ReflectHelper.getMethod(MethodType.class, "ptypes"));
+            resolve.setInstantiatedTypes(parameterTypes);*/
+            return resolve;
         } catch (IllegalArgumentException e) {
             // array constructor reference is not direct method handle
-            lambdaExecutable = notDirectMethodHandle(methodHandle);
+            final LambdaExecutable lambdaExecutable = notDirectMethodHandle(methodHandle);
+            lambdaExecutable.setProxy(proxy);
+            return lambdaExecutable;
         }
-        lambdaExecutable.setProxy(proxy);
-        return lambdaExecutable;
     }
 
     /**

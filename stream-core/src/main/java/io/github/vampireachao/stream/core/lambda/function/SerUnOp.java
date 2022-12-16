@@ -24,7 +24,7 @@ public interface SerUnOp<T> extends UnaryOperator<T>, Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
-    T applying(T t) throws Exception;
+    T applying(T t) throws Throwable;
 
     /**
      * Applies this function to the given argument.
@@ -33,7 +33,7 @@ public interface SerUnOp<T> extends UnaryOperator<T>, Serializable {
     default T apply(T t) {
         try {
             return applying(t);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

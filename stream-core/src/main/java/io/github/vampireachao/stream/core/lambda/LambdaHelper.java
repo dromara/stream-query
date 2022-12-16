@@ -1,16 +1,16 @@
 package io.github.vampireachao.stream.core.lambda;
 
+import com.sun.xml.internal.ws.util.UtilException;
 import io.github.vampireachao.stream.core.bean.BeanHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.invoke.*;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
@@ -73,6 +73,45 @@ public class LambdaHelper {
         return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(lambda.getClass().getName(),
                 key -> new LambdaExecutable(serialize(lambda)));
     }
+
+    public static <T> T revert(Class<T> clazz, Executable executable) {
+        final Method funcMethod = Steam.of(clazz.getMethods()).findFirst(method -> Modifier.isAbstract(method.getModifiers()))
+                .orElseThrow(() -> new UtilException("not a functional interface"));
+        final MethodHandle implMethod;
+        final MethodType instantiatedMethodType;
+        if (executable instanceof Method) {
+            final Method method = (Method) executable;
+            implMethod = ((SerSupp<MethodHandle>) () -> MethodHandles.lookup().unreflect(method)).get();
+            instantiatedMethodType = MethodType.methodType(method.getReturnType(), method.getDeclaringClass(), method.getParameterTypes());
+        } else {
+            final Constructor<?> constructor = (Constructor<?>) executable;
+            implMethod = ((SerSupp<MethodHandle>) () -> MethodHandles.lookup().unreflectConstructor(constructor)).get();
+            instantiatedMethodType = MethodType.methodType(constructor.getDeclaringClass(), constructor.getParameterTypes());
+        }
+        final CallSite callSite = ((SerSupp<CallSite>) () ->
+                Serializable.class.isAssignableFrom(clazz) ?
+                        LambdaMetafactory.altMetafactory(
+                                MethodHandles.lookup(),
+                                funcMethod.getName(),
+                                MethodType.methodType(clazz),
+                                MethodType.methodType(funcMethod.getReturnType(), funcMethod.getParameterTypes()),
+                                implMethod,
+                                instantiatedMethodType,
+                                LambdaMetafactory.FLAG_SERIALIZABLE
+                        ) :
+                        LambdaMetafactory.metafactory(
+                                MethodHandles.lookup(),
+                                funcMethod.getName(),
+                                MethodType.methodType(clazz),
+                                MethodType.methodType(funcMethod.getReturnType(), funcMethod.getParameterTypes()),
+                                implMethod,
+                                instantiatedMethodType
+                        )
+        ).get();
+        final MethodHandle target = callSite.getTarget();
+        return ((SerSupp<T>) () -> SerFunc.<Object, T>cast().apply(target.invoke())).get();
+    }
+
 
     /**
      * <p>getPropertyNames.</p>

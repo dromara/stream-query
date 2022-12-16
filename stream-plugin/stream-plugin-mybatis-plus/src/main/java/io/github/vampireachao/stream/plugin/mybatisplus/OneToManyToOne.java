@@ -211,7 +211,7 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<? super K>, V
      */
     public <R> R query(BiFunction<Map<K, List<V>>, Map<V, A>, R> mapper) {
         Map<K, List<V>> middleKeyValuesMap = Steam.of(Database.list(middleWrapper)).parallel(isParallel).peek(middlePeek)
-                .group(middleKey, Collective.mapping(Sf.of(middleValue).orGet(() -> SerFunc.<T, V>castingIdentity()::apply), Collective.toList()));
+                .group(middleKey, Collective.mapping(Sf.of(middleValue).orGet(() -> SerFunc.<T, V>cast()::apply), Collective.toList()));
         if (Objects.isNull(attachKey)) {
             return mapper.apply(middleKeyValuesMap, new HashMap<>(middleKeyValuesMap.size()));
         }

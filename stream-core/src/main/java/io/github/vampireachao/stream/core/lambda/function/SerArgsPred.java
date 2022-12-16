@@ -66,7 +66,7 @@ public interface SerArgsPred<T> extends Serializable {
      * @throws java.lang.Exception maybe throw exception
      */
     @SuppressWarnings("unchecked")
-    boolean testing(T... t) throws Exception;
+    boolean testing(T... t) throws Throwable;
 
     /**
      * Evaluates this predicate on the given argument.
@@ -79,7 +79,7 @@ public interface SerArgsPred<T> extends Serializable {
     default boolean test(T... t) {
         try {
             return testing(t);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

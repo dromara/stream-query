@@ -28,7 +28,7 @@ public interface SerRunn extends Runnable, Serializable {
      * @see Thread#run()
      */
     @SuppressWarnings("all")
-    void running() throws Exception;
+    void running() throws Throwable;
 
     /**
      * When an object implementing interface <code>Runnable</code> is used
@@ -45,7 +45,7 @@ public interface SerRunn extends Runnable, Serializable {
     default void run() {
         try {
             running();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

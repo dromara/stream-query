@@ -36,7 +36,7 @@ public interface SerArgsCons<T> extends Serializable {
      * @throws java.lang.Exception maybe throw exception
      */
     @SuppressWarnings("unchecked")
-    void accepting(T... t) throws Exception;
+    void accepting(T... t) throws Throwable;
 
     /**
      * Performs this operation on the given argument.
@@ -47,7 +47,7 @@ public interface SerArgsCons<T> extends Serializable {
     default void accept(T... t) {
         try {
             accepting(t);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

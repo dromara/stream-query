@@ -27,7 +27,7 @@ public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
-    boolean testing(T t, U u) throws Exception;
+    boolean testing(T t, U u) throws Throwable;
 
     /**
      * Evaluates this predicate on the given arguments.
@@ -36,7 +36,7 @@ public interface SerBiPred<T, U> extends BiPredicate<T, U>, Serializable {
     default boolean test(T t, U u) {
         try {
             return testing(t, u);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

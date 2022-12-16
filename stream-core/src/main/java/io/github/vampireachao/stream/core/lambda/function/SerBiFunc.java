@@ -25,7 +25,7 @@ public interface SerBiFunc<T, U, R> extends BiFunction<T, U, R>, Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
-    R applying(T t, U u) throws Exception;
+    R applying(T t, U u) throws Throwable;
 
     /**
      * Applies this function to the given arguments.
@@ -34,7 +34,7 @@ public interface SerBiFunc<T, U, R> extends BiFunction<T, U, R>, Serializable {
     default R apply(T t, U u) {
         try {
             return this.applying(t, u);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

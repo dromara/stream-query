@@ -38,7 +38,7 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
-    void accepting(T t, U u) throws Exception;
+    void accepting(T t, U u) throws Throwable;
 
     /**
      *
@@ -48,7 +48,7 @@ public interface SerBiCons<T, U> extends BiConsumer<T, U>, Serializable {
     default void accept(T t, U u) {
         try {
             accepting(t, u);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

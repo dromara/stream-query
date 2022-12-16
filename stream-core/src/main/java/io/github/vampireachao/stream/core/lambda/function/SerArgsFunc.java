@@ -34,7 +34,7 @@ public interface SerArgsFunc<T, R> extends Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("unchecked")
-    R applying(T... t) throws Exception;
+    R applying(T... t) throws Throwable;
 
     /**
      * Applies this function to the given argument.
@@ -46,7 +46,7 @@ public interface SerArgsFunc<T, R> extends Serializable {
     default R apply(T... t) {
         try {
             return applying(t);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

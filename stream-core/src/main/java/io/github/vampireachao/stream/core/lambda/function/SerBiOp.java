@@ -26,7 +26,7 @@ public interface SerBiOp<T> extends BinaryOperator<T>, Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
-    T applying(T t, T u) throws Exception;
+    T applying(T t, T u) throws Throwable;
 
     /**
      * Applies this function to the given arguments.
@@ -35,7 +35,7 @@ public interface SerBiOp<T> extends BinaryOperator<T>, Serializable {
     default T apply(T t, T u) {
         try {
             return this.applying(t, u);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }

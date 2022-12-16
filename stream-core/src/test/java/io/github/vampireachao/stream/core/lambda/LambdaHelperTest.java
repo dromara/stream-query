@@ -12,10 +12,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandleProxies;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -87,11 +86,10 @@ class LambdaHelperTest {
         Assertions.assertEquals(Object.class, LambdaHelper.<SerCons<Object>>resolve(System.out::println).getParameterTypes()[0]);
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
-        MethodHandle getName = lookup.findVirtual(LambdaExecutable.class, "getName", MethodType.methodType(String.class));
-        SerFunc<LambdaExecutable, String> lambda = MethodHandleProxies.asInterfaceInstance(SerFunc.class, getName);
-        Assertions.assertDoesNotThrow(() -> lambda.apply(new LambdaExecutable()));
+        MethodHandle getR = lookup.findVirtual(B.class, "getR", MethodType.methodType(Object.class));
+        SerFunc<LambdaExecutable, String> lambda = MethodHandleProxies.asInterfaceInstance(SerFunc.class, getR);
         LambdaExecutable lambdaExecutable = LambdaHelper.resolve(lambda);
-        Assertions.assertEquals(LambdaExecutable.class, lambdaExecutable.getClazz());
+        Assertions.assertEquals(B.class, LambdaHelper.resolve(lambda).getInstantiatedTypes()[0]);
     }
 
     private abstract static class B<T, R> {
@@ -103,6 +101,42 @@ class LambdaHelperTest {
     }
 
     private static class A extends B<Object, A> {
+    }
+
+    @Test
+    void testRevert() {
+        final LambdaExecutable getName = LambdaHelper.<SerFunc<LambdaExecutable, String>>resolve(LambdaExecutable::getName);
+        final SerFunc<LambdaExecutable, String> revertedGetName = LambdaHelper.revert(SerFunc.class, getName.getExecutable());
+        Assertions.assertEquals(revertedGetName.apply(getName), getName.getName());
+
+        final LambdaExecutable constructor = LambdaHelper.<SerSupp<LambdaExecutable>>resolve(LambdaExecutable::new);
+        final SerSupp<LambdaExecutable> revertedConstructor = LambdaHelper.revert(SerSupp.class, constructor.getExecutable());
+        Assertions.assertEquals(LambdaExecutable.class, revertedConstructor.get().getClass());
+    }
+
+
+    @Test
+    @SneakyThrows
+    void testVirtual() {
+        final MethodHandle virtual = MethodHandles.lookup().findVirtual(LambdaExecutable.class, "getName", MethodType.methodType(String.class));
+        final SerFunc<LambdaExecutable, String> proxy = MethodHandleProxies.asInterfaceInstance(SerFunc.class, virtual);
+        InvocationHandler handler = Proxy.getInvocationHandler(proxy);
+        MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
+        final CallSite callSite = LambdaMetafactory.altMetafactory(
+                MethodHandles.lookup(),
+                "apply",
+                MethodType.methodType(SerFunc.class),
+                MethodType.methodType(Object.class, Object.class),
+                methodHandle,
+                MethodType.methodType(String.class, LambdaExecutable.class),
+                LambdaMetafactory.FLAG_SERIALIZABLE
+        );
+        final MethodHandle target = callSite.getTarget();
+        final SerFunc<LambdaExecutable, String> invoke = (SerFunc<LambdaExecutable, String>) target.invoke();
+        final LambdaExecutable executable = new LambdaExecutable();
+        executable.setName("test");
+        Assertions.assertEquals("test", invoke.apply(executable));
+        Assertions.assertEquals("getName", LambdaHelper.resolve(invoke).getName());
     }
 
 

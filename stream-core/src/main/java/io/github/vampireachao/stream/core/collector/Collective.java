@@ -867,7 +867,7 @@ public class Collective {
             SerUnOp<A> downstreamFinisher = SerUnOp.casting(downstream.finisher());
             Function<Map<K, A>, M> finisher = intermediate -> {
                 intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-                return SerFunc.<Map<K, A>, M>castingIdentity().apply(intermediate);
+                return SerFunc.<Map<K, A>, M>cast().apply(intermediate);
             };
             return new Collective.CollectorImpl<>(mangledFactory, accumulator, merger, finisher, CH_NOID);
         }
@@ -996,7 +996,7 @@ public class Collective {
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
         BinaryOperator<ConcurrentMap<K, A>> merger = Collective.mapMerger(downstream.combiner());
         Supplier<ConcurrentMap<K, A>> mangledFactory = SerFunc.<Supplier<M>, Supplier<ConcurrentMap<K, A>>>
-                castingIdentity().apply(mapFactory);
+                cast().apply(mapFactory);
         BiConsumer<ConcurrentMap<K, A>, T> accumulator;
         if (downstream.characteristics().contains(Collector.Characteristics.CONCURRENT)) {
             accumulator = (m, t) -> {
@@ -1020,7 +1020,7 @@ public class Collective {
             SerUnOp<A> downstreamFinisher = SerUnOp.casting(downstream.finisher());
             Function<ConcurrentMap<K, A>, M> finisher = intermediate -> {
                 intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-                return SerFunc.<ConcurrentMap<K, A>, M>castingIdentity().apply(intermediate);
+                return SerFunc.<ConcurrentMap<K, A>, M>cast().apply(intermediate);
             };
             return new Collective.CollectorImpl<>(mangledFactory, accumulator, merger, finisher, CH_CONCURRENT_NOID);
         }
@@ -1513,7 +1513,7 @@ public class Collective {
                       BiConsumer<A, T> accumulator,
                       BinaryOperator<A> combiner,
                       Set<Characteristics> characteristics) {
-            this(supplier, accumulator, combiner, SerFunc.castingIdentity(), characteristics);
+            this(supplier, accumulator, combiner, SerFunc.cast(), characteristics);
         }
 
         @Override

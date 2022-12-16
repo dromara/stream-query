@@ -23,7 +23,7 @@ public interface SerFunc<T, R> extends Function<T, R>, Serializable {
      * @throws java.lang.Exception if any.
      */
     @SuppressWarnings("all")
-    R applying(T t) throws Exception;
+    R applying(T t) throws Throwable;
 
     /**
      * Applies this function to the given argument.
@@ -32,7 +32,7 @@ public interface SerFunc<T, R> extends Function<T, R>, Serializable {
     default R apply(T t) {
         try {
             return applying(t);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new LambdaInvokeException(e);
         }
     }
@@ -48,14 +48,14 @@ public interface SerFunc<T, R> extends Function<T, R>, Serializable {
     }
 
     /**
-     * casting identity
+     * cast identity
      *
      * @param <T> param type
      * @param <R> result type
      * @return identity after casting
      */
     @SuppressWarnings("unchecked")
-    static <T, R> Function<T, R> castingIdentity() {
+    static <T, R> Function<T, R> cast() {
         return t -> (R) t;
     }
 }

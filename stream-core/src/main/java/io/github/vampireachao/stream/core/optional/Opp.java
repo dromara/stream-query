@@ -91,7 +91,7 @@ public class Opp<T> {
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Opp<T> of(Optional<T> optional) {
-        return Opp.<Object>of(optional).flattedMap(SerFunc.castingIdentity());
+        return Opp.<Object>of(optional).flattedMap(SerFunc.cast());
     }
 
     /**

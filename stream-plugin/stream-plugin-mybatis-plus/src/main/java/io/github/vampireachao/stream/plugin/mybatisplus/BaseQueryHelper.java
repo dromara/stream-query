@@ -151,7 +151,7 @@ public abstract class BaseQueryHelper<
      * @return a {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
      */
     protected SerFunc<T, V> valueOrIdentity() {
-        return t -> Sf.of(valueFunction).orGet(() -> SerFunc.<T, V>castingIdentity()::apply).apply(t);
+        return t -> Sf.of(valueFunction).orGet(() -> SerFunc.<T, V>cast()::apply).apply(t);
     }
 
 }
