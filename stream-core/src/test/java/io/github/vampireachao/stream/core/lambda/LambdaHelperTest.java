@@ -87,7 +87,7 @@ class LambdaHelperTest {
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle getR = lookup.findVirtual(B.class, "getR", MethodType.methodType(Object.class));
-        SerFunc<LambdaExecutable, String> lambda = MethodHandleProxies.asInterfaceInstance(SerFunc.class, getR);
+        SerFunc<A, A> lambda = MethodHandleProxies.asInterfaceInstance(SerFunc.class, getR);
         LambdaExecutable lambdaExecutable = LambdaHelper.resolve(lambda);
         Assertions.assertEquals(B.class, LambdaHelper.resolve(lambda).getInstantiatedTypes()[0]);
     }
