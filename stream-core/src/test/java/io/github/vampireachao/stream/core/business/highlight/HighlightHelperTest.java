@@ -1,6 +1,5 @@
 package io.github.vampireachao.stream.core.business.highlight;
 
-import cn.hutool.dfa.WordTree;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
