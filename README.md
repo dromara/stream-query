@@ -1,6 +1,6 @@
 <h1 align="center">stream-query</h1>
 <p align="center">
-  <strong>hardcore extreme opinionated.</strong> 
+  <strong>hardcore extreme opinionated.</strong>
 </p>
 <p align="center">
 	👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈
@@ -25,7 +25,7 @@
 封装 热门orm常用操作
 封装 使用`stream`进行数据返回处理
 
-## 📝文档 
+## 📝文档
 
 [中文文档](https://vampireachao.gitee.io/stream-query-docs/)
 &nbsp;&nbsp;[仓库地址](https://gitee.com/VampireAchao/stream-query-docs)&nbsp;
