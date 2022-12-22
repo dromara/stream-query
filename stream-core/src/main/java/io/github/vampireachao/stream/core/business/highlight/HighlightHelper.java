@@ -55,7 +55,6 @@ public class HighlightHelper {
                 // 这里没有判断是否找到是因为只要进入当前的if语句那么必定有重复串可以找到
                 String suffix = fondWord.getWord().substring(index+1);
                 word = last.getWord() + suffix;
-
             } else {
                 // 否则根据历史下标到当前词汇下标进行查找额外部分
                 String partOne = text.substring(lastIdx, fondWord.getIndex());
