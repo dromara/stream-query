@@ -42,13 +42,13 @@
 <dependency>
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-plugin-mybatis-plus</artifactId>
-    <version>1.1.16</version>
+    <version>1.1.19</version>
 </dependency>
 <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-core -->
 <dependency>
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-core</artifactId>
-    <version>1.1.16</version>
+    <version>1.1.19</version>
 </dependency>
 ```
 
@@ -57,7 +57,7 @@
 在项目的build.gradle的dependencies中加入以下内容:
 
 ```Gradle
-implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1.1.16'
+implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1.1.19'
 ```
 
 ## 🐞提供bug反馈或建议
