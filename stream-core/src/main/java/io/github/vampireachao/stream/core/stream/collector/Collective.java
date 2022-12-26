@@ -1,4 +1,4 @@
-package io.github.vampireachao.stream.core.collector;
+package io.github.vampireachao.stream.core.stream.collector;
 
 import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;

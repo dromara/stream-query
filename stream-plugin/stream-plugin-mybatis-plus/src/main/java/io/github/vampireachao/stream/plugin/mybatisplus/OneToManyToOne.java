@@ -3,12 +3,12 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.github.vampireachao.stream.core.collection.Maps;
-import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.optional.Sf;
 import io.github.vampireachao.stream.core.stream.Steam;
+import io.github.vampireachao.stream.core.stream.collector.Collective;
 
 import java.io.Serializable;
 import java.util.*;

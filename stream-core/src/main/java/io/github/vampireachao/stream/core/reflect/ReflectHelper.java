@@ -19,10 +19,10 @@ package io.github.vampireachao.stream.core.reflect;
 
 
 import io.github.vampireachao.stream.core.collection.Maps;
-import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
+import io.github.vampireachao.stream.core.stream.collector.Collective;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.*;

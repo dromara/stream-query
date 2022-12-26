@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.core.stream;
 
-import io.github.vampireachao.stream.core.collector.Collective;
 import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.stream.collector.Collective;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

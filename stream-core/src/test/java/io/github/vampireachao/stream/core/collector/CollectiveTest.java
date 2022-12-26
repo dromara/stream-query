@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.core.collector;
 
 import io.github.vampireachao.stream.core.stream.Steam;
+import io.github.vampireachao.stream.core.stream.collector.Collective;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.github.vampireachao.stream.core.collector.Collective.*;
+import static io.github.vampireachao.stream.core.stream.collector.Collective.*;
 
 /**
  * Collectors测试
