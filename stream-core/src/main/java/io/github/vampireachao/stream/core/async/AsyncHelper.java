@@ -20,10 +20,12 @@ public class AsyncHelper {
         /* Do not new me! */
     }
 
+    @SafeVarargs
     public static <T> List<T> supply(Supplier<T>... suppliers) {
         return supply(defaultConfig, suppliers);
     }
 
+    @SafeVarargs
     @SuppressWarnings("unchecked")
     public static <T> List<T> supply(AsyncConfig asyncConfig, Supplier<T>... suppliers) {
         final AsyncInterceptor interceptor = asyncConfig.getInterceptor();

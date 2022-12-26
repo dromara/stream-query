@@ -1,7 +1,6 @@
-package io.github.vampireachao.stream.core.collector;
+package io.github.vampireachao.stream.core.stream.collector;
 
 import io.github.vampireachao.stream.core.stream.Steam;
-import io.github.vampireachao.stream.core.stream.collector.Collective;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
