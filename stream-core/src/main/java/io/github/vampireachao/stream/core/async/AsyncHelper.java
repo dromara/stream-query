@@ -1,7 +1,6 @@
 package io.github.vampireachao.stream.core.async;
 
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
-import io.github.vampireachao.stream.core.lambda.function.SerRunn;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
@@ -33,7 +32,8 @@ public class AsyncHelper {
         final CompletableFuture<T>[] futures = Steam.of(suppliers)
                 .map(supplier -> CompletableFuture.supplyAsync(() -> interceptor.execute(supplier), asyncConfig.getExecutor()))
                 .toArray(CompletableFuture[]::new);
-        ((SerRunn) () -> CompletableFuture.allOf(futures).exceptionally(interceptor::onError).get(asyncConfig.getTimeout(), asyncConfig.getTimeUnit())).run();
+        final CompletableFuture<Void> exceptionally = CompletableFuture.allOf(futures).exceptionally(interceptor::onError);
+        ((SerSupp<?>) () -> asyncConfig.getTimeout() == -1 ? exceptionally.get() : exceptionally.get(asyncConfig.getTimeout(), asyncConfig.getTimeUnit())).get();
         interceptor.after();
         return Steam.of(futures).map((SerFunc<CompletableFuture<T>, T>) CompletableFuture::get).toList();
     }

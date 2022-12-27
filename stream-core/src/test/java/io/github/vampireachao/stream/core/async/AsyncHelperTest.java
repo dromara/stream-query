@@ -59,12 +59,15 @@ class AsyncHelperTest {
 
             @Override
             public void after() {
+                threadLocal.remove();
             }
 
             @Override
             public <T> T onError(Throwable throwable) {
-                return null;
+                return AsyncInterceptor.super.onError(throwable);
             }
         });
+        final Integer result = AsyncHelper.supply(asyncConfig, threadLocal::get).get(0);
+        Assertions.assertEquals(1, result);
     }
 }
