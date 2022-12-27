@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.async;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.util.function.Supplier;
 
 /**
@@ -19,7 +21,7 @@ public interface AsyncInterceptor {
     }
 
     default <T> T onError(Throwable throwable) {
-        return null;
+        throw new LambdaInvokeException(throwable);
     }
 
 }
