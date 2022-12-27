@@ -25,6 +25,7 @@
         <h2.version>2.1.214</h2.version>
         <junit.version>5.9.0</junit.version>
         <jmh.version>1.35</jmh.version>
+        <ttl.version>2.14.1</ttl.version>
     </properties>
 
     <name>stream-query</name>
