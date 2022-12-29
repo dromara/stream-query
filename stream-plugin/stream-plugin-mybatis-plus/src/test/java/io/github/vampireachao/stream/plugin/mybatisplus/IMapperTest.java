@@ -1,5 +1,6 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import io.github.vampireachao.stream.plugin.mybatisplus.mapper.UserInfoMapper;
@@ -32,7 +33,7 @@ class IMapperTest {
         List<UserInfo> list = Arrays.asList(userInfo, entity);
         long affectRows = userInfoMapper.saveOneSql(list);
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals(7, Database.count(UserInfo.class));
+        Assertions.assertEquals(7, Db.count(UserInfo.class));
     }
 
     @Test
@@ -46,7 +47,7 @@ class IMapperTest {
         List<UserInfo> list = Arrays.asList(userInfo, entity);
         long affectRows = userInfoMapper.saveFewSql(list, PluginConst.DEFAULT_BATCH_SIZE);
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals(7, Database.count(UserInfo.class));
+        Assertions.assertEquals(7, Db.count(UserInfo.class));
     }
 
     @Test
@@ -60,8 +61,8 @@ class IMapperTest {
         ruben.setName("rabbit");
         long affectRows = userInfoMapper.updateOneSql(Arrays.asList(sheep, ruben));
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
-        Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
+        Assertions.assertEquals("bee bee I'm a sheep", Db.getById(1L, UserInfo.class).getName());
+        Assertions.assertEquals("rabbit", Db.getById(2L, UserInfo.class).getName());
     }
 
 }
