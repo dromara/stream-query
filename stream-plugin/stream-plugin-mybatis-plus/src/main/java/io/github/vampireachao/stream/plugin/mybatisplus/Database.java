@@ -44,9 +44,10 @@ import java.util.stream.Stream;
  * 辅助类
  *
  * @author VampireAchao Cizai_
-
  * @since 1.0
+ * @deprecated please use {@link com.baomidou.mybatisplus.extension.toolkit.Db}
  */
+@Deprecated
 public class Database {
     private static final Log log = LogFactory.getLog(Database.class);
 

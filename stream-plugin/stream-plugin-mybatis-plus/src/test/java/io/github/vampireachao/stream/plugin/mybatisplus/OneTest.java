@@ -1,8 +1,8 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class OneTest {
         Assertions.assertNotNull(userInfo);
         Assertions.assertNotNull(name);
         Assertions.assertNotNull(leAgeName);
-        Assertions.assertThrows(MybatisPlusException.class, () -> One.of(UserInfo::getName).like("a").query());
+        Assertions.assertThrows(TooManyResultsException.class, () -> One.of(UserInfo::getName).like("a").query());
     }
 
 }

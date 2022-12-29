@@ -1,6 +1,5 @@
 package io.github.vampireachao.stream.core.lambda;
 
-import com.sun.xml.internal.ws.util.UtilException;
 import io.github.vampireachao.stream.core.bean.BeanHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
@@ -76,7 +75,7 @@ public class LambdaHelper {
 
     public static <T> T revert(Class<T> clazz, Executable executable) {
         final Method funcMethod = Steam.of(clazz.getMethods()).findFirst(method -> Modifier.isAbstract(method.getModifiers()))
-                .orElseThrow(() -> new UtilException("not a functional interface"));
+                .orElseThrow(() -> new LambdaInvokeException("not a functional interface"));
         final MethodHandle implMethod;
         final MethodType instantiatedMethodType;
         if (executable instanceof Method) {

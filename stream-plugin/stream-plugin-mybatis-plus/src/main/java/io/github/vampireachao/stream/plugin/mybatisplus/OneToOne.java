@@ -1,6 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
 import io.github.vampireachao.stream.core.stream.Steam;
 
@@ -73,8 +74,11 @@ public class OneToOne<T, K extends Serializable & Comparable<? super K>, V> exte
      * @return a R object
      */
     public <R extends Map<K, V>> R query(IntFunction<R> mapFactory) {
-        List<T> list = Database.list(wrapper);
-        return Steam.of(list).parallel(isParallel).peek(peekConsumer).toMap(keyFunction, valueOrIdentity(), SerBiOp.justAfter(), () -> mapFactory.apply(list.size()));
+        List<T> list = Db.list(wrapper);
+        return Steam.of(list)
+                .parallel(isParallel)
+                .peek(peekConsumer)
+                .toMap(keyFunction, valueOrIdentity(), SerBiOp.justAfter(), () -> mapFactory.apply(list.size()));
     }
 
 }

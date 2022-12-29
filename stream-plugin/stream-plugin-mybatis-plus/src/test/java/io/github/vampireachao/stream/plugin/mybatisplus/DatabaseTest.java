@@ -1,7 +1,6 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -11,6 +10,7 @@ import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -225,7 +225,7 @@ class DatabaseTest {
     @Test
     void testGetOne() {
         LambdaQueryWrapper<UserInfo> wrapper = Wrappers.lambdaQuery(UserInfo.class);
-        Assertions.assertThrows(MybatisPlusException.class, () -> Database.getOne(wrapper));
+        Assertions.assertThrows(TooManyResultsException.class, () -> Database.getOne(wrapper));
         UserInfo one = Database.getOne(wrapper, false);
         Assertions.assertNotNull(one);
     }
@@ -336,7 +336,7 @@ class DatabaseTest {
                 badPage.addOrder(OrderItem.asc("id;drop table user_info;"));
                 Database.ordersPropertyToColumn(badPage, UserInfo.class);
             } catch (LambdaInvokeException e) {
-                Throwable throwable = e.getRealException();
+                Throwable throwable = e.getCause().getCause();
                 Assertions.assertEquals("order column { id;drop table user_info; } must not null or be sql injection",
                         throwable.getMessage());
                 throw throwable;

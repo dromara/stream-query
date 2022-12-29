@@ -1,7 +1,7 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.stream.Steam;
@@ -29,7 +29,7 @@ class OneToManyToOneTest {
 
     @Test
     void testQuery() {
-        List<UserInfo> userInfos = SimpleQuery.selectList(UserInfo.class, Wrappers.lambdaQuery());
+        List<UserInfo> userInfos = Db.list(Wrappers.lambdaQuery(UserInfo.class));
         Set<Long> userIds = Steam.of(userInfos).map(UserInfo::getId).toSet();
 
         List<String> roleIds = new ArrayList<>();

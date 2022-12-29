@@ -54,7 +54,7 @@ class MapsTest {
         ).collect(Collective.entryToMap());
         Assertions.assertEquals("GOOD", map.get("key"));
         final Map<String, String> treeMap = Steam.of(Maps.entry("GOOD", ""), Maps.entry("BAD", ""))
-                .collect(Collective.entryToMap(TreeMap::new));
+                .collect(Collective.entryToMap(LinkedHashMap::new));
         Assertions.assertEquals("GOOD", Steam.of(treeMap.keySet()).findFirst().orElse(null));
     }
 
