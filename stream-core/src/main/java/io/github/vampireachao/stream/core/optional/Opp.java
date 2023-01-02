@@ -6,9 +6,13 @@ import io.github.vampireachao.stream.core.lambda.function.SerCons;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
 import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
+import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -17,26 +21,29 @@ import java.util.stream.Stream;
  * 拓展hutool中的Opt
  *
  * @param <T> 包裹里元素的类型
- * @author VampireAchao
+ * @author VampireAchao Cizai_
+
  * @see java.util.Optional
  */
 public class Opp<T> {
+
     /**
      * 一个空的{@code Opp}
      */
-    private static final Opp<?> EMPTY = new Opp<>(null);
+    protected static final Opp<?> EMPTY = new Opp<>(null);
+
     /**
      * 包裹里实际的元素
      */
-    private final T value;
-    private Exception exception;
+    protected final T value;
+    protected Throwable throwable;
 
     /**
      * {@code Opp}的构造函数
      *
      * @param value 包裹里的元素
      */
-    private Opp(T value) {
+    protected Opp(T value) {
         this.value = value;
     }
 
@@ -57,7 +64,7 @@ public class Opp<T> {
      * @param value 包裹里的元素
      * @param <T>   包裹里元素的类型
      * @return 一个包裹里元素不可能为空的 {@code Opp}
-     * @throws NullPointerException 如果传入的元素为空，抛出 {@code NPE}
+     * @throws java.lang.NullPointerException 如果传入的元素为空，抛出 {@code NPE}
      */
     public static <T> Opp<T> required(T value) {
         return new Opp<>(Objects.requireNonNull(value));
@@ -75,18 +82,26 @@ public class Opp<T> {
                 : new Opp<>(value);
     }
 
+    /**
+     * <p>of.</p>
+     *
+     * @param optional a {@link java.util.Optional} object
+     * @param <T>      a T class
+     * @return a {@link io.github.vampireachao.stream.core.optional.Opp} object
+     */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Opp<T> of(Optional<T> optional) {
-        return Opp.<Object>of(optional).flattedMap(SerFunc.castingIdentity());
+        return Opp.<Object>of(optional).flattedMap(SerFunc.cast());
     }
 
     /**
      * 返回一个包裹里元素可能为空的{@code Opp}，额外判断了空字符串的情况
      *
      * @param value 传入需要包裹的元素
+     * @param <T>   a T class
      * @return 一个包裹里元素可能为空，或者为空字符串的 {@code Opp}
      */
-    public static <T extends CharSequence> Opp<T> blank(T value) {
+    public static <T extends CharSequence> Opp<T> ofStr(T value) {
         return Opp.of(value).filter(str -> !str.toString().trim().isEmpty());
     }
 
@@ -99,24 +114,78 @@ public class Opp<T> {
      * @param value 传入需要包裹的元素
      * @return 一个包裹里元素可能为空的 {@code Opp}
      */
-    public static <T, R extends Collection<T>> Opp<R> empty(R value) {
-        return Opp.of(value).filter(coll -> !coll.isEmpty() && !Objects.equals(Collections.frequency(value, null), value.size()));
+    public static <T, R extends Collection<T>> Opp<R> ofColl(R value) {
+        if (value == null || value.isEmpty()) {
+            return empty();
+        }
+        for (T t : value) {
+            if (t != null) {
+                return new Opp<>(value);
+            }
+        }
+        // 集合中元素全部为空
+        return empty();
     }
 
     /**
-     * @param supplier 操作
+     * <p>ofTry.</p>
+     *
+     * @param callable 操作
      * @param <T>      类型
      * @return 操作执行后的值
      */
-    public static <T> Opp<T> ofTry(Callable<T> supplier) {
+    public static <T> Opp<T> ofTry(Callable<T> callable) {
+        return Opp.ofTry(callable, Throwable.class);
+    }
+
+    /**
+     * 如果当前操作发生异常的话只抛出不在想要捕获的范围内的异常，如果在想要捕获的范围内就捕获到Opp对象中
+     *
+     * @param callable       操作
+     * @param exceptionType  指定想要捕获的若干个异常类型
+     * @param <T>            类型
+     * @param exceptionTypes a {@link java.lang.Class} object
+     * @return 操作执行后的值如果发生异常则返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
+     */
+    @SafeVarargs
+    public static <T> Opp<T> ofTry(Callable<T> callable, Class<? extends Throwable> exceptionType,
+                                   Class<? extends Throwable>... exceptionTypes) {
         try {
-            return Opp.of(supplier.call());
-        } catch (Exception e) {
-            final Opp<T> empty = new Opp<>(null);
-            empty.exception = e;
+            return Opp.of(callable.call());
+        } catch (Throwable e) {
+            if (Steam.of(exceptionTypes).unshift(exceptionType).noneMatch(clazz -> clazz.isInstance(e))) {
+                throw new IllegalArgumentException(e);
+            }
+            Opp<T> empty = new Opp<>(null);
+            empty.throwable = e;
             return empty;
         }
     }
+
+
+    /**
+     * 如果当前操作发生异常的话只抛出在想要抛出的范围内的异常，如果不在在想要抛出的范围内就捕获到Opp对象中
+     *
+     * @param callable       操作
+     * @param exceptionTypes 不想捕获的异常...
+     * @param <T>            类型
+     * @return 操作执行后的值如果发生我们想抛出的异常则直接抛出，如果发生的异常不是我们想抛出的则直接捕获返回一个空的Opp对象并且产生的异常保存在这个Opp对象中
+     */
+    @SafeVarargs
+    public static <T> Opp<T> notTry(Callable<T> callable,
+                                    Class<? extends Throwable>... exceptionTypes) {
+        try {
+            return Opp.of(callable.call());
+        } catch (Throwable e) {
+            if (Steam.of(exceptionTypes).anyMatch(clazz -> clazz.isInstance(e))) {
+                throw new IllegalArgumentException(e);
+            }
+            Opp<T> empty = new Opp<>(null);
+            empty.throwable = e;
+            return empty;
+        }
+    }
+
 
     /**
      * 返回包裹里的元素，取不到则为{@code null}，注意！！！此处和{@link java.util.Optional#get()}不同的一点是本方法并不会抛出{@code NoSuchElementException}
@@ -133,6 +202,13 @@ public class Opp<T> {
         return this.value;
     }
 
+    /**
+     * <p>get.</p>
+     *
+     * @param mapper a {@link java.util.function.Function} object
+     * @param <R>    a R class
+     * @return a R object
+     */
     public <R> R get(Function<T, R> mapper) {
         return map(mapper).orElse(null);
     }
@@ -142,28 +218,28 @@ public class Opp<T> {
      *
      * @return 包裹里元素的值不存在 则为 {@code true}，否则为{@code false}
      */
-    public boolean isNull() {
+    public boolean isEmpty() {
         return value == null;
     }
 
     /**
      * 获取异常<br>
-     * 当调用 {@link #ofTry(Supplier)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
+     * 当调用 {@link #ofTry(Callable)}时，异常信息不会抛出，而是保存，调用此方法获取抛出的异常
      *
      * @return 异常
      */
-    public Exception getException() {
-        return this.exception;
+    public Throwable getThrowable() {
+        return this.throwable;
     }
 
     /**
      * 是否失败<br>
-     * 当调用 {@link #ofTry(Supplier)}时，抛出异常则表示失败
+     * 当调用 {@link #ofTry(Callable)}时，抛出异常则表示失败
      *
      * @return 是否失败
      */
     public boolean isFail() {
-        return null != this.exception;
+        return null != this.throwable;
     }
 
     /**
@@ -171,12 +247,12 @@ public class Opp<T> {
      *
      * @return 包裹里元素的值存在为 {@code true}，否则为{@code false}
      */
-    public boolean isNonNull() {
+    public boolean isPresent() {
         return value != null;
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link Consumer#accept})
+     * 如果包裹里的值存在，就执行传入的操作({@link java.util.function.Consumer#accept})
      *
      * <p> 例如如果值存在就打印结果
      * <pre>{@code
@@ -185,46 +261,46 @@ public class Opp<T> {
      *
      * @param action 你想要执行的操作
      * @return this
-     * @throws NullPointerException 如果包裹里的值存在，但你传入的操作为{@code null}时抛出
+     * @throws java.lang.NullPointerException 如果包裹里的值存在，但你传入的操作为{@code null}时抛出
      */
     public Opp<T> ifPresent(Consumer<? super T> action) {
-        if (isNonNull()) {
+        if (isPresent()) {
             action.accept(value);
         }
         return this;
     }
 
     /**
-     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
+     * 判断包裹里的值存在并且与给定的条件是否满足 ({@link io.github.vampireachao.stream.core.lambda.function.SerFunc#apply}执行结果是否为true)
      * 如果满足条件则返回本身
      * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      *
      * @param predicate 给定的条件
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
-     * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
+     * @throws java.lang.NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
-    public Opp<T> filter(Predicate<? super T> predicate) {
+    public Opp<T> filter(SerPred<? super T> predicate) {
         Objects.requireNonNull(predicate);
-        if (isNull()) {
-            return this;
+        if (isEmpty()) {
+            return empty();
         } else {
             return predicate.test(value) ? this : empty();
         }
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回一个包裹了该操作返回值的{@code Opp}
+     * 如果包裹里的值存在，就执行传入的操作({@link java.util.function.Function#apply})并返回一个包裹了该操作返回值的{@code Opp}
      * 如果不存在，返回一个空的{@code Opp}
      *
      * @param mapper 值存在时执行的操作
      * @param <U>    操作返回值的类型
-     * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回一个包裹了该操作返回值的{@code Opp}，
+     * @return 如果包裹里的值存在，就执行传入的操作({@link java.util.function.Function#apply})并返回一个包裹了该操作返回值的{@code Opp}，
      * 如果不存在，返回一个空的{@code Opp}
-     * @throws NullPointerException 如果给定的操作为 {@code null}，抛出 {@code NPE}
+     * @throws java.lang.NullPointerException 如果给定的操作为 {@code null}，抛出 {@code NPE}
      */
     public <U> Opp<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
-        if (isNull()) {
+        if (isEmpty()) {
             return empty();
         } else {
             return Opp.of(mapper.apply(value));
@@ -232,19 +308,19 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
+     * 如果包裹里的值存在，就执行传入的操作({@link java.util.function.Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
-     * 和 {@link Opp#map}的区别为 传入的操作返回值必须为 Opp
+     * 和 {@link io.github.vampireachao.stream.core.optional.Opp#map}的区别为 传入的操作返回值必须为 Opp
      *
      * @param mapper 值存在时执行的操作
      * @param <U>    操作返回值的类型
-     * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
+     * @return 如果包裹里的值存在，就执行传入的操作({@link java.util.function.Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
-     * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
+     * @throws java.lang.NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
      */
     public <U> Opp<U> flatMap(Function<? super T, ? extends Opp<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (isNull()) {
+        if (isEmpty()) {
             return empty();
         } else {
             @SuppressWarnings("unchecked") final Opp<U> r = (Opp<U>) mapper.apply(value);
@@ -253,20 +329,20 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
+     * 如果包裹里的值存在，就执行传入的操作({@link java.util.function.Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
-     * 和 {@link Opp#map}的区别为 传入的操作返回值必须为 {@link Optional}
+     * 和 {@link io.github.vampireachao.stream.core.optional.Opp#map}的区别为 传入的操作返回值必须为 {@link java.util.Optional}
      *
      * @param mapper 值存在时执行的操作
      * @param <U>    操作返回值的类型
-     * @return 如果包裹里的值存在，就执行传入的操作({@link Function#apply})并返回该操作返回值
+     * @return 如果包裹里的值存在，就执行传入的操作({@link java.util.function.Function#apply})并返回该操作返回值
      * 如果不存在，返回一个空的{@code Opp}
-     * @throws NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
+     * @throws java.lang.NullPointerException 如果给定的操作为 {@code null}或者给定的操作执行结果为 {@code null}，抛出 {@code NPE}
      * @see Optional#flatMap(Function)
      */
     public <U> Opp<U> flattedMap(Function<? super T, Optional<? extends U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (isNull()) {
+        if (isEmpty()) {
             return empty();
         } else {
             return of(mapper.apply(value).orElse(null));
@@ -281,11 +357,11 @@ public class Opp<T> {
      *
      * @param action 值存在时执行的操作
      * @return this
-     * @throws NullPointerException 如果值存在，并且传入的操作为 {@code null}
+     * @throws java.lang.NullPointerException 如果值存在，并且传入的操作为 {@code null}
      */
     public Opp<T> peek(Consumer<T> action) throws NullPointerException {
         Objects.requireNonNull(action);
-        if (isNull()) {
+        if (isEmpty()) {
             return Opp.empty();
         }
         action.accept(value);
@@ -302,11 +378,12 @@ public class Opp<T> {
      *
      * @param actions 值存在时执行的操作，动态参数，可传入数组，当数组为一个空数组时并不会抛出 {@code NPE}
      * @return this
-     * @throws NullPointerException 如果值存在，并且传入的操作集中的元素为 {@code null}
+     * @throws java.lang.NullPointerException 如果值存在，并且传入的操作集中的元素为 {@code null}
      */
     @SafeVarargs
     public final Opp<T> peeks(Consumer<T>... actions) throws NullPointerException {
-        return peek(Stream.of(actions).reduce(Consumer::andThen).orElseGet(() -> o -> {}));
+        return peek(Stream.of(actions).reduce(Consumer::andThen).orElseGet(() -> o -> {
+        }));
     }
 
     /**
@@ -340,13 +417,14 @@ public class Opp<T> {
     }
 
     /**
-     * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
+     * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link java.util.function.Predicate#test}执行结果是否为true)
      * 如果满足条件则返回本身
      * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      *
      * @param predicate 给定的条件
+     * @param <U>       a U class
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
-     * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
+     * @throws java.lang.NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
     public <U> Opp<T> typeOfFilter(SerPred<U> predicate) {
         return ofTry(() -> {
@@ -383,14 +461,15 @@ public class Opp<T> {
     }
 
     /**
-     * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link Predicate#test}执行结果是否为true)
+     * 判断如果传入的类型一致，或者是父类，并且包裹里的值存在，并且与给定的条件是否满足 ({@link java.util.function.Predicate#test}执行结果是否为true)
      * 如果满足条件则返回本身
      * 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
      *
      * @param type      类型
      * @param predicate 给定的条件
+     * @param <U>       a U class
      * @return 如果满足条件则返回本身, 不满足条件或者元素本身为空时返回一个返回一个空的{@code Opp}
-     * @throws NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
+     * @throws java.lang.NullPointerException 如果给定的条件为 {@code null}，抛出{@code NPE}
      */
     @SuppressWarnings("unchecked")
     public <U> Opp<T> typeOfFilter(Type type, SerPred<U> predicate) {
@@ -402,11 +481,11 @@ public class Opp<T> {
      *
      * @param supplier 不存在时的操作
      * @return 如果包裹里元素的值存在，就返回本身，如果不存在，则使用传入的函数执行后获得的 {@code Opp}
-     * @throws NullPointerException 如果传入的操作为空，或者传入的操作执行后返回值为空，则抛出 {@code NPE}
+     * @throws java.lang.NullPointerException 如果传入的操作为空，或者传入的操作执行后返回值为空，则抛出 {@code NPE}
      */
     public Opp<T> or(Supplier<? extends Opp<? extends T>> supplier) {
         Objects.requireNonNull(supplier);
-        if (isNonNull()) {
+        if (isPresent()) {
             return this;
         } else {
             @SuppressWarnings("unchecked") final Opp<T> r = (Opp<T>) supplier.get();
@@ -415,22 +494,22 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹里元素的值存在，就返回一个包含该元素的 {@link Stream},
-     * 否则返回一个空元素的 {@link Stream}
+     * 如果包裹里元素的值存在，就返回一个包含该元素的 {@link java.util.stream.Stream},
+     * 否则返回一个空元素的 {@link java.util.stream.Stream}
      *
-     * <p> 该方法能将 Opp 中的元素传递给 {@link Stream}
+     * <p> 该方法能将 Opp 中的元素传递给 {@link java.util.stream.Stream}
      * <pre>{@code
      *     Stream<Opp<T>> os = ..
      *     Stream<T> s = os.flatMap(Opp::stream)
      * }</pre>
      *
-     * @return 返回一个包含该元素的 {@link Stream}或空的 {@link Stream}
+     * @return 返回一个包含该元素的 {@link java.util.stream.Stream}或空的 {@link java.util.stream.Stream}
      */
-    public Stream<T> stream() {
-        if (isNull()) {
-            return Stream.empty();
+    public Steam<T> steam() {
+        if (isEmpty()) {
+            return Steam.empty();
         } else {
-            return Stream.of(value);
+            return Steam.of(Stream.of(value));
         }
     }
 
@@ -441,18 +520,19 @@ public class Opp<T> {
      * @return 如果包裹里元素的值存在，则返回该值，否则返回传入的{@code other}
      */
     public T orElse(T other) {
-        return isNonNull() ? value : other;
+        return isPresent() ? value : other;
     }
 
     /**
      * 如果包裹里元素的值存在，则返回该值，否则执行传入的操作
      *
      * @param action 值不存在时执行的操作
+     * @param <R>    a R class
      * @return 如果包裹里元素的值存在，则返回该值，否则执行传入的操作
-     * @throws NullPointerException 如果值不存在，并且传入的操作为 {@code null}
+     * @throws java.lang.NullPointerException 如果值不存在，并且传入的操作为 {@code null}
      */
     public <R extends Runnable> T orElseRun(R action) {
-        if (isNonNull()) {
+        if (isPresent()) {
             return value;
         } else {
             action.run();
@@ -475,17 +555,16 @@ public class Opp<T> {
      *
      * @param supplier 值不存在时需要执行的操作，返回一个类型与 包裹里元素类型 相同的元素
      * @return 如果包裹里元素的值存在，则返回该值，否则返回传入的操作执行后的返回值
-     * @throws NullPointerException 如果之不存在，并且传入的操作为空，则抛出 {@code NPE}
+     * @throws java.lang.NullPointerException 如果之不存在，并且传入的操作为空，则抛出 {@code NPE}
      */
     public T orElseGet(Supplier<? extends T> supplier) {
-        return isNonNull() ? value : supplier.get();
+        return isPresent() ? value : supplier.get();
     }
 
     /**
      * 如果包裹里的值存在，则返回该值，否则抛出 {@code NoSuchElementException}
      *
      * @return 返回一个不为 {@code null} 的包裹里的值
-     * @throws NoSuchElementException 如果包裹里的值不存在则抛出该异常
      */
     public T orElseThrow() {
         return orElseThrow(() -> new NoSuchElementException("No value present"));
@@ -496,13 +575,13 @@ public class Opp<T> {
      * <p>往往是一个包含无参构造器的异常 例如传入{@code IllegalStateException::new}
      *
      * @param <X>               异常类型
-     * @param exceptionSupplier 值不存在时执行的操作，返回值继承 {@link Throwable}
+     * @param exceptionSupplier 值不存在时执行的操作，返回值继承 {@link java.lang.Throwable}
      * @return 包裹里不能为空的值
-     * @throws X                    如果值不存在
-     * @throws NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
+     * @throws X                              如果值不存在
+     * @throws java.lang.NullPointerException 如果值不存在并且 传入的操作为 {@code null}或者操作执行后的返回值为{@code null}
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (isNonNull()) {
+        if (isPresent()) {
             return value;
         } else {
             throw exceptionSupplier.get();
@@ -510,9 +589,9 @@ public class Opp<T> {
     }
 
     /**
-     * 转换为 {@link Optional}对象
+     * 转换为 {@link java.util.Optional}对象
      *
-     * @return {@link Optional}对象
+     * @return {@link java.util.Optional}对象
      */
     public Optional<T> toOptional() {
         return Optional.ofNullable(this.value);
@@ -520,6 +599,7 @@ public class Opp<T> {
 
 
     /**
+     * <p>
      * 判断传入参数是否与 {@code Opp}相等
      * 在以下情况下返回true
      * <ul>
@@ -527,11 +607,6 @@ public class Opp<T> {
      * <li>它们包裹住的元素都为空 或者
      * <li>它们包裹住的元素之间相互 {@code equals()}
      * </ul>
-     *
-     * @param obj 一个要用来判断是否相等的参数
-     * @return 如果传入的参数也是一个 {@code Opp}并且它们包裹住的元素都为空
-     * 或者它们包裹住的元素之间相互 {@code equals()} 就返回{@code true}
-     * 否则返回 {@code false}
      */
     @Override
     public boolean equals(Object obj) {
@@ -548,9 +623,9 @@ public class Opp<T> {
     }
 
     /**
-     * 如果包裹内元素为空，则返回0，否则返回元素的 {@code hashcode}
      *
-     * @return 如果包裹内元素为空，则返回0，否则返回元素的 {@code hashcode}
+     * <p>
+     * 如果包裹内元素为空，则返回0，否则返回元素的 {@code hashcode}
      */
     @Override
     public int hashCode() {
@@ -558,41 +633,76 @@ public class Opp<T> {
     }
 
     /**
-     * 返回包裹内元素调用{@code toString()}的结果，不存在则返回{@code null}
      *
-     * @return 包裹内元素调用{@code toString()}的结果，不存在则返回{@code null}
+     * <p>
+     * 返回包裹内元素调用{@code toString()}的结果，不存在则返回{@code null}
      */
     @Override
     public String toString() {
-        return isNonNull() ? value.toString() : null;
+        return isPresent() ? value.toString() : null;
     }
 
+    /**
+     * <p>filterEqual.</p>
+     *
+     * @param value a R object
+     * @param <R>   a R class
+     * @return a {@link io.github.vampireachao.stream.core.optional.Opp} object
+     */
     public <R> Opp<T> filterEqual(R value) {
-        return filter(Predicate.isEqual(value));
+        return filter(SerPred.isEqual(value));
     }
 
+    /**
+     * <p>isEqual.</p>
+     *
+     * @param value a R object
+     * @param <R>   a R class
+     * @return a boolean
+     */
     public <R> boolean isEqual(R value) {
-        return filterEqual(value).isNonNull();
+        return filterEqual(value).isPresent();
     }
 
-    public boolean is(Predicate<T> predicate) {
-        return filter(predicate).isNonNull();
+    /**
+     * <p>is.</p>
+     *
+     * @param predicate a {@link java.util.function.Predicate} object
+     * @return a boolean
+     */
+    public boolean is(SerPred<T> predicate) {
+        return filter(predicate).isPresent();
     }
 
+    /**
+     * <p>zip.</p>
+     *
+     * @param other  a {@link io.github.vampireachao.stream.core.optional.Opp} object
+     * @param mapper a {@link java.util.function.BiFunction} object
+     * @param <R>    a R class
+     * @return a {@link io.github.vampireachao.stream.core.optional.Opp} object
+     */
     public <R> Opp<R> zip(Opp<R> other, BiFunction<T, R, R> mapper) {
         Objects.requireNonNull(mapper);
-        if (isNull() || other.isNull()) {
+        if (isEmpty() || other.isEmpty()) {
             return empty();
         } else {
             return Opp.of(mapper.apply(value, other.value));
         }
     }
 
+    /**
+     * <p>zipOrSelf.</p>
+     *
+     * @param other  a {@link io.github.vampireachao.stream.core.optional.Opp} object
+     * @param mapper a {@link java.util.function.BinaryOperator} object
+     * @return a {@link io.github.vampireachao.stream.core.optional.Opp} object
+     */
     public Opp<T> zipOrSelf(Opp<T> other, BinaryOperator<T> mapper) {
         Objects.requireNonNull(mapper);
-        if (isNull()) {
+        if (isEmpty()) {
             return empty();
-        } else if (other.isNull()) {
+        } else if (other.isEmpty()) {
             return this;
         } else {
             return Opp.of(mapper.apply(value, other.value));

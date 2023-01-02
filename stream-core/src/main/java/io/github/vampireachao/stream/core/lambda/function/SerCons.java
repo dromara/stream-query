@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -8,11 +10,33 @@ import java.util.stream.Stream;
 /**
  * 可序列化的Consumer
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
+
  * @see java.util.function.Consumer
  */
 @FunctionalInterface
 public interface SerCons<T> extends Consumer<T>, Serializable {
+
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     * @throws java.lang.Exception if any.
+     */
+    @SuppressWarnings("all")
+    void accepting(T t) throws Throwable;
+
+    /**
+     * Performs this operation on the given argument.
+     */
+    @Override
+    default void accept(T t) {
+        try {
+            accepting(t);
+        } catch (Throwable e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * multi
@@ -23,7 +47,8 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
      */
     @SafeVarargs
     static <T> SerCons<T> multi(SerCons<T>... consumers) {
-        return Stream.of(consumers).reduce(SerCons::andThen).orElseGet(() -> o -> {});
+        return Stream.of(consumers).reduce(SerCons::andThen).orElseGet(() -> o -> {
+        });
     }
 
     /**
@@ -36,7 +61,7 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
      * @param after the operation to perform after this operation
      * @return a composed {@code Consumer} that performs in sequence this
      * operation followed by the {@code after} operation
-     * @throws NullPointerException if {@code after} is null
+     * @throws java.lang.NullPointerException if {@code after} is null
      */
     default SerCons<T> andThen(SerCons<? super T> after) {
         Objects.requireNonNull(after);
@@ -49,9 +74,11 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
     /**
      * nothing
      *
+     * @param <T> a T class
      * @return nothing
      */
     static <T> SerCons<T> nothing() {
-        return t -> {};
+        return t -> {
+        };
     }
 }

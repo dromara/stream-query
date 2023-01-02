@@ -1,7 +1,9 @@
 package io.github.vampireachao.stream.plugin.mybatisplus.engine.constant;
 
 /**
- * @author VampireAchao
+ * <p>PluginConst interface.</p>
+ *
+ * @author VampireAchao Cizai_
  */
 public interface PluginConst {
 
@@ -14,9 +16,25 @@ public interface PluginConst {
      */
     String DEFAULT = "default";
     /**
+     * db keyword case
+     */
+    String CASE = "case";
+    /**
+     * db keyword end
+     */
+    String END = "end";
+    /**
      * mapper non null condition
      */
     String NON_NULL_CONDITION = "%s != null and %s != null";
+    /**
+     * mapper not blank condition
+     */
+    String NON_BLANK_CONDITION = "%s != null and %s != null and %s != ''";
+    /**
+     * db keyword when then template
+     */
+    String WHEN_THEN = "when %s then %s";
     /**
      * collection parameter name
      */

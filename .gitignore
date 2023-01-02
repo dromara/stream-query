@@ -3,3 +3,9 @@
 **/pom.xml.versionsBackup
 /stream-plugin/stream-plugin-mybatis-plus/target/
 /target/
+### IDEA ###
+*.iws
+*.iml
+*.ipr
+/stream-core/.flattened-pom.xml
+/.fleet/

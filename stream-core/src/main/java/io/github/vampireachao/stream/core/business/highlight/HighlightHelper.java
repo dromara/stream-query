@@ -12,7 +12,8 @@ import java.util.function.UnaryOperator;
 /**
  * 高亮封装
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
+
  */
 public class HighlightHelper {
 
@@ -20,8 +21,16 @@ public class HighlightHelper {
         /* Do not new me! */
     }
 
+    /**
+     * <p>highlight.</p>
+     *
+     * @param text              a {@link java.lang.String} object
+     * @param fondWords         a {@link java.util.List} object
+     * @param highlightOperator a {@link java.util.function.UnaryOperator} object
+     * @return a {@link java.lang.String} object
+     */
     public static String highlight(String text, List<FoundWord> fondWords, UnaryOperator<String> highlightOperator) {
-        if (Opp.empty(fondWords).isNull() || Opp.blank(text).isNull()) {
+        if (Opp.ofColl(fondWords).isEmpty() || Opp.ofStr(text).isEmpty()) {
             return text;
         }
         fondWords = Steam.of(fondWords)
@@ -41,10 +50,11 @@ public class HighlightHelper {
                 FoundWord last = Objects.requireNonNull(linkedList.pollLast());
                 // 判断上次和这次的长度，如果上次长度大于这次长度，说明这次词语是上次的一部分
                 lastIdx -= last.getWord().length();
-                if (last.getWord().length() > fondWord.getWord().length()) {
-                    // 直接使用上次的词汇以及重置历史下标
-                    word = last.getWord();
-                }
+                // 获取要从哪里开始保留
+                int index = fondWord.getWord().indexOf(last.getWord().charAt(last.getWord().length() - 1));
+                // 这里没有判断是否找到是因为只要进入当前的if语句那么必定有重复串可以找到
+                String suffix = fondWord.getWord().substring(index+1);
+                word = last.getWord() + suffix;
             } else {
                 // 否则根据历史下标到当前词汇下标进行查找额外部分
                 String partOne = text.substring(lastIdx, fondWord.getIndex());
@@ -54,7 +64,7 @@ public class HighlightHelper {
                 linkedList.add(new FoundWord(partOne, lastIdx));
             }
             // 获取本次需要高亮的词汇
-            word = Opp.of(word).orElseGet(fondWord::getWord);
+            word = Opp.ofStr(word).orElseGet(fondWord::getWord);
             // 历史下标往前推进
             lastIdx += word.length();
             // 执行高亮操作

@@ -1,49 +1,70 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.optional.Sf;
 
 import java.io.Serializable;
-import java.util.function.UnaryOperator;
 
 /**
  * 单条
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
  * @since 2022/6/18 14:47
  */
-public class One {
+@SuppressWarnings("unchecked")
+public class One<T, K extends Serializable & Comparable<? super K>, V> extends BaseQueryHelper<One<T, K, V>, T, K, V> {
 
-    private One() {
-        /* Do not new me! */
+    /**
+     * <p>of.</p>
+     *
+     * @param keyFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <T>         a T class
+     * @param <K>         a K class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.One} object
+     */
+    public static <T, K extends Serializable & Comparable<? super K>>
+    One<T, K, T> of(SFunction<T, K> keyFunction) {
+        return new One<>(keyFunction);
     }
 
-    // data key
-
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> $ENTITY query($KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
-        return query(UnaryOperator.identity(), data, keyFunction);
+    /**
+     * <p>Constructor for One.</p>
+     *
+     * @param keyFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     */
+    public One(SFunction<T, K> keyFunction) {
+        super(keyFunction);
     }
 
-    // data key value
-
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
-        return query(UnaryOperator.identity(), data, keyFunction, valueFunction);
+    /**
+     * <p>value.</p>
+     *
+     * @param valueFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <R>           a R class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.One} object
+     */
+    public <R> One<T, K, R> value(SFunction<T, R> valueFunction) {
+        attachSingle(valueFunction);
+        return (One<T, K, R>) this;
     }
 
-    // wrapper data key
-
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> $ENTITY query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction) {
-        return query(queryOperator, data, keyFunction, null);
+    /**
+     * <p>query.</p>
+     *
+     * @return a V object
+     */
+    public V query() {
+        return Sf.of(Database.getOne(wrapper)).mayAlso(peekConsumer).mayLet(valueOrIdentity()).get();
     }
 
-    // wrapper data key value
-
-    @SuppressWarnings("unchecked")
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> $VALUE query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction) {
-        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, (wr, cols) -> wr.select(cols[1]), keyFunction, valueFunction))).map(wrapper -> SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectOne(wrapper))).map(Opp.of(valueFunction).orElse(i -> ($VALUE) i)).orElse(null);
+    /**
+     * <p>query.</p>
+     *
+     * @param throwEx a boolean
+     * @return a V object
+     */
+    public V query(boolean throwEx) {
+        return Sf.of(Database.getOne(wrapper, throwEx)).mayAlso(peekConsumer).mayLet(valueOrIdentity()).get();
     }
 
 

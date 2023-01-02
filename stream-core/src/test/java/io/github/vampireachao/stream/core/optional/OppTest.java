@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.security.KeyManagementException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -22,7 +23,7 @@ class OppTest {
     @Test
     void blankTest() {
         // blank相对于ofNullable考虑了字符串为空串的情况
-        final String hutool = Opp.blank("").orElse("hutool");
+        final String hutool = Opp.ofStr("").orElse("hutool");
         Assertions.assertEquals("hutool", hutool);
     }
 
@@ -30,7 +31,7 @@ class OppTest {
     void getTest() {
         // 和原版Optional有区别的是，get不会抛出NoSuchElementException
         // 如果想使用原版Optional中的get这样，获取一个一定不为空的值，则应该使用orElseThrow
-        final Object opp = Opp.of(null).get();
+        final Object opp = Opp.empty().get();
         Assertions.assertNull(opp);
     }
 
@@ -38,7 +39,7 @@ class OppTest {
     void isEmptyTest() {
         // 这是jdk11 Optional中的新函数，直接照搬了过来
         // 判断包裹内元素是否为空，注意并没有判断空字符串的情况
-        final boolean isEmpty = Opp.empty().isNull();
+        final boolean isEmpty = Opp.empty().isEmpty();
         Assertions.assertTrue(isEmpty);
     }
 
@@ -78,7 +79,7 @@ class OppTest {
 
         // 当然，以下情况不会抛出NPE，但也没什么意义
         Opp.of("hutool").peeks().peeks().peeks();
-        Opp.of(null).peeks(i -> {
+        Opp.empty().peeks(i -> {
         });
 
     }
@@ -87,7 +88,7 @@ class OppTest {
     void orTest() {
         // 这是jdk9 Optional中的新函数，直接照搬了过来
         // 给一个替代的Opp
-        final String str = Opp.<String>of(null).or(() -> Opp.of("Hello hutool!")).map(String::toUpperCase).orElseThrow();
+        final String str = Opp.<String>empty().or(() -> Opp.of("Hello hutool!")).map(String::toUpperCase).orElseThrow();
         Assertions.assertEquals("HELLO HUTOOL!", str);
 
         final User user = User.builder().username("hutool").build();
@@ -102,7 +103,7 @@ class OppTest {
 
     @Test
     void orElseThrowTest() {
-        Opp<Object> opp = Opp.of(null);
+        Opp<Object> opp = Opp.empty();
         // 获取一个不可能为空的值，否则抛出NoSuchElementException异常
         Assertions.assertThrows(NoSuchElementException.class, opp::orElseThrow);
         // 获取一个不可能为空的值，否则抛出自定义异常
@@ -141,10 +142,10 @@ class OppTest {
         // 关键它还很常用，判空和判空集合真的太常用了...
         final List<String> past = Opp.of(Collections.<String>emptyList()).filter(l -> !l.isEmpty()).orElseGet(() -> Collections.singletonList("hutool"));
         // 现在，一个empty搞定
-        final List<String> hutool = Opp.empty(Collections.<String>emptyList()).orElseGet(() -> Collections.singletonList("hutool"));
+        final List<String> hutool = Opp.ofColl(Collections.<String>emptyList()).orElseGet(() -> Collections.singletonList("hutool"));
         Assertions.assertEquals(past, hutool);
         Assertions.assertEquals(Collections.singletonList("hutool"), hutool);
-        Assertions.assertTrue(Opp.empty(Arrays.asList(null, null, null)).isNull());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
     }
 
     @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "ConstantConditions"})
@@ -155,8 +156,8 @@ class OppTest {
 
         // 以前这种写法，简洁但可读性稍低，对资深程序员不太友好
         final List<String> last = null;
-        final String npeSituation = Opp.empty(last).flattedMap(l -> l.stream().findFirst()).orElse("hutool");
-        final String indexOutSituation = Opp.empty(last).map(l -> l.get(0)).orElse("hutool");
+        final String npeSituation = Opp.ofColl(last).flattedMap(l -> l.stream().findFirst()).orElse("hutool");
+        final String indexOutSituation = Opp.ofColl(last).map(l -> l.get(0)).orElse("hutool");
 
         // 现在代码整洁度降低，但可读性up，如果再人说看不懂这代码...
         final String npe = Opp.ofTry(() -> last.get(0)).failOrElse("hutool");
@@ -180,25 +181,44 @@ class OppTest {
                 }
             });
             Assertions.assertTrue(
-                    (i % 2 == 0 && opp.getException() instanceof IllegalStateException) ||
-                            (i % 2 != 0 && opp.getException() instanceof NullPointerException)
+                    (i % 2 == 0 && opp.getThrowable() instanceof IllegalStateException) ||
+                            (i % 2 != 0 && opp.getThrowable() instanceof NullPointerException)
             );
         });
+
+        Assertions.assertDoesNotThrow(() -> Opp.ofTry(() -> {
+            throw new NullPointerException();
+        }, NullPointerException.class, IllegalStateException.class));
+        Assertions.assertDoesNotThrow(() -> Opp.ofTry(() -> {
+            throw new IllegalStateException();
+        }, NullPointerException.class, IllegalStateException.class));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> Opp.ofTry(() -> {
+            throw new AssertionError("");
+        }, NullPointerException.class));
+        Assertions.assertThrows(RuntimeException.class, () -> Opp.ofTry(() -> {
+            throw new IllegalStateException();
+        }, NullPointerException.class));
+
+
     }
 
     @Test
     void testEmpty() {
-        Assertions.assertTrue(Opp.empty(Arrays.asList(null, null, null)).isNull());
-        Assertions.assertTrue(Opp.empty(Arrays.asList(null, 1, null)).isNonNull());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
+        Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, 1, null)).isPresent());
     }
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    static class User {
-        private String username;
-        private String nickname;
+    @Test
+    void testNotTry() {
+        Assertions.assertDoesNotThrow(() -> Opp.notTry(() -> {
+            throw new ArithmeticException();
+        }, NullPointerException.class, KeyManagementException.class));
+        Assertions.assertThrows(RuntimeException.class, ()-> Opp.notTry(() -> {
+            throw new AssertionError("");
+        }, AssertionError.class));
+        Assertions.assertThrows(RuntimeException.class, () -> Opp.notTry(() -> {
+            throw new NullPointerException();
+        }, NullPointerException.class, KeyManagementException.class));
     }
 
     @Test
@@ -206,37 +226,39 @@ class OppTest {
         Stream.<SerRunn>of(() -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<String> opp = Opp.of("").typeOfPeek((String str) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<String> opp = Opp.of("").typeOfPeek(Object.class, (Object str) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<int[]> opp = Opp.of(new int[]{1, 2}).typeOfPeek((int[] array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<List<Integer>> opp = Opp.of(Arrays.asList(1, 2, 3, 4)).typeOfPeek((List<Integer> array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
             Opp<List<Integer>> opp = Opp.of(Arrays.asList(1, 2, 3)).typeOfPeek(List.class, (array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {
+            }.getClass(), (array) -> isExecute.set(true));
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }, () -> {
             AtomicBoolean isExecute = new AtomicBoolean();
-            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {}.getClass(), (array) -> isExecute.set(true));
-            Assertions.assertTrue(opp.isNonNull());
+            Opp<Map<Integer, String>> opp = Opp.of(Collections.singletonMap(1, "")).typeOfPeek(new AbstractTypeReference<Map<Integer, String>>() {
+            }.getClass(), (array) -> isExecute.set(true));
+            Assertions.assertTrue(opp.isPresent());
             Assertions.assertTrue(isExecute.get());
         }).forEach(SerRunn::run);
     }
@@ -255,20 +277,20 @@ class OppTest {
             Opp<Boolean> opp = Opp.of("").typeOfMap((String str) -> {
                 isExecute.set(true);
                 return isExecute.get();
-            }).typeOfMap(Object.class, i -> false).typeOfMap(new AbstractTypeReference<String>() {}, i -> true);
-            Assertions.assertTrue(opp.isNull());
+            }).typeOfMap(Object.class, i -> false).typeOfMap(new AbstractTypeReference<String>() {
+            }, i -> true);
+            Assertions.assertTrue(opp.isEmpty());
         }).forEach(SerRunn::run);
     }
-
 
     @Test
     void testTypeOfFilter() {
         Stream.<SerRunn>of(() -> {
             Opp<String> opp = Opp.of("").typeOfFilter((String str) -> str.trim().isEmpty());
-            Assertions.assertTrue(opp.isNonNull());
+            Assertions.assertTrue(opp.isPresent());
         }, () -> {
             Opp<String> opp = Opp.of("").typeOfFilter((String str) -> !str.trim().isEmpty());
-            Assertions.assertTrue(opp.isNull());
+            Assertions.assertTrue(opp.isEmpty());
         }).forEach(SerRunn::run);
     }
 
@@ -291,11 +313,26 @@ class OppTest {
     @Test
     void testZipOrSelf() {
         Stream.<SerRunn>of(() -> {
-            String compose = Opp.blank("Vampire").zipOrSelf(Opp.of("Achao"), String::concat).get();
+            String compose = Opp.ofStr("Vampire").zipOrSelf(Opp.of("Achao"), String::concat).get();
             Assertions.assertEquals("VampireAchao", compose);
         }, () -> {
-            String compose = Opp.blank("Vampire").zipOrSelf(Opp.empty(), String::concat).get();
+            String compose = Opp.ofStr("Vampire").zipOrSelf(Opp.empty(), String::concat).get();
             Assertions.assertEquals("Vampire", compose);
         }).forEach(SerRunn::run);
+    }
+
+    @Test
+    void testIs() {
+        Boolean flag = null;
+        Assertions.assertFalse(Opp.of(1).is(i -> flag));
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class User {
+        private String username;
+        private String nickname;
     }
 }

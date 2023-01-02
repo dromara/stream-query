@@ -4,7 +4,8 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
-import io.github.vampireachao.stream.plugin.mybatisplus.engine.methods.InsertOneSql;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.methods.SaveOneSql;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.methods.UpdateOneSql;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
@@ -14,10 +15,15 @@ import java.util.List;
 /**
  * MPSql注入
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
  */
 public class StreamPluginAutoConfiguration {
 
+    /**
+     * <p>defaultSqlInjector.</p>
+     *
+     * @return a {@link com.baomidou.mybatisplus.core.injector.DefaultSqlInjector} object
+     */
     @Bean
     @Order
     @ConditionalOnMissingBean(DefaultSqlInjector.class)
@@ -26,7 +32,8 @@ public class StreamPluginAutoConfiguration {
             @Override
             public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
-                methodList.add(new InsertOneSql(SqlMethodEnum.INSERT_ONE_SQL.getMethod()));
+                methodList.add(new SaveOneSql(SqlMethodEnum.SAVE_ONE_SQL.getMethod()));
+                methodList.add(new UpdateOneSql(SqlMethodEnum.UPDATE_ONE_SQL.getMethod()));
                 return methodList;
             }
         };

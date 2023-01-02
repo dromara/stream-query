@@ -1,6 +1,8 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import io.github.vampireachao.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import io.github.vampireachao.stream.plugin.mybatisplus.mapper.UserInfoMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author VampireAchao
+ * @author VampireAchao Cizai_
  * @since 2022/7/26 11:11
  */
 @MybatisPlusTest
@@ -21,7 +23,7 @@ class IMapperTest {
     private UserInfoMapper userInfoMapper;
 
     @Test
-    void testInsertOneSql() {
+    void testSaveOneSql() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -29,13 +31,13 @@ class IMapperTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        long affectRows = userInfoMapper.insertOneSql(list);
+        long affectRows = userInfoMapper.saveOneSql(list);
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals(7, Database.count(UserInfo.class));
+        Assertions.assertEquals(7, Db.count(UserInfo.class));
     }
 
     @Test
-    void testInsertFewSql() {
+    void testSaveFewSql() {
         UserInfo entity = new UserInfo();
         entity.setName("cat");
         entity.setAge(20);
@@ -43,9 +45,9 @@ class IMapperTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setName("ruben");
         List<UserInfo> list = Arrays.asList(userInfo, entity);
-        long affectRows = userInfoMapper.insertFewSql(list);
+        long affectRows = userInfoMapper.saveFewSql(list, PluginConst.DEFAULT_BATCH_SIZE);
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals(7, Database.count(UserInfo.class));
+        Assertions.assertEquals(7, Db.count(UserInfo.class));
     }
 
     @Test
@@ -59,8 +61,8 @@ class IMapperTest {
         ruben.setName("rabbit");
         long affectRows = userInfoMapper.updateOneSql(Arrays.asList(sheep, ruben));
         Assertions.assertEquals(2L, affectRows);
-        Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
-        Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
+        Assertions.assertEquals("bee bee I'm a sheep", Db.getById(1L, UserInfo.class).getName());
+        Assertions.assertEquals("rabbit", Db.getById(2L, UserInfo.class).getName());
     }
 
 }

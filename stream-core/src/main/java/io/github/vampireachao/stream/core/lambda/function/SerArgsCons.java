@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -7,7 +9,8 @@ import java.util.stream.Stream;
 /**
  * SerArgsSerArgsCons
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
+
  * @since 2022/6/8
  */
 @FunctionalInterface
@@ -22,8 +25,18 @@ public interface SerArgsCons<T> extends Serializable {
      */
     @SafeVarargs
     static <T> SerArgsCons<T> multi(SerArgsCons<T>... consumers) {
-        return Stream.of(consumers).reduce(SerArgsCons::andThen).orElseGet(() -> o -> {});
+        return Stream.of(consumers).reduce(SerArgsCons::andThen).orElseGet(() -> o -> {
+        });
     }
+
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input arguments
+     * @throws java.lang.Exception maybe throw exception
+     */
+    @SuppressWarnings("unchecked")
+    void accepting(T... t) throws Throwable;
 
     /**
      * Performs this operation on the given argument.
@@ -31,7 +44,13 @@ public interface SerArgsCons<T> extends Serializable {
      * @param t the input arguments
      */
     @SuppressWarnings("unchecked")
-    void accept(T... t);
+    default void accept(T... t) {
+        try {
+            accepting(t);
+        } catch (Throwable e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a composed {@code SerArgsCons} that performs, in sequence, this
@@ -43,12 +62,12 @@ public interface SerArgsCons<T> extends Serializable {
      * @param after the operation to perform after this operation
      * @return a composed {@code SerArgsCons} that performs in sequence this
      * operation followed by the {@code after} operation
-     * @throws NullPointerException if {@code after} is null
+     * @throws java.lang.NullPointerException if {@code after} is null
      */
     default SerArgsCons<T> andThen(SerArgsCons<? super T> after) {
         Objects.requireNonNull(after);
         return (T... t) -> {
-            accept(t);
+            this.accept(t);
             after.accept(t);
         };
     }
@@ -56,9 +75,11 @@ public interface SerArgsCons<T> extends Serializable {
     /**
      * nothing
      *
+     * @param <T> a T class
      * @return nothing
      */
     static <T> SerArgsCons<T> nothing() {
-        return t -> {};
+        return t -> {
+        };
     }
 }

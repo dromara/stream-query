@@ -1,143 +1,83 @@
 package io.github.vampireachao.stream.plugin.mybatisplus;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.github.vampireachao.stream.core.collector.Collective;
-import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.stream.StreamHelper;
+import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
+import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.UnaryOperator;
+import java.util.function.IntFunction;
 
 /**
  * 一对一
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
  * @since 2022/5/20
  */
-public class OneToOne {
+@SuppressWarnings("unchecked")
+public class OneToOne<T, K extends Serializable & Comparable<? super K>, V> extends BaseQueryHelper<OneToOne<T, K, V>, T, K, V> {
 
-    private OneToOne() {
-        /* Do not new me! */
+    /**
+     * <p>of.</p>
+     *
+     * @param keyFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <T>         a T class
+     * @param <K>         a K class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToOne} object
+     */
+    public static <T, K extends Serializable & Comparable<? super K>> OneToOne<T, K, T> of(SFunction<T, K> keyFunction) {
+        return new OneToOne<>(keyFunction);
     }
 
-
-    // dataList key
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), dataList, keyFunction, false, peeks);
+    /**
+     * <p>Constructor for OneToOne.</p>
+     *
+     * @param keyFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     */
+    protected OneToOne(SFunction<T, K> keyFunction) {
+        super(keyFunction);
     }
 
-    // wrapper dataList key
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, dataList, keyFunction, false, peeks);
+    /**
+     * <p>value.</p>
+     *
+     * @param valueFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <R>           a R class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToOne} object
+     */
+    public <R> OneToOne<T, K, R> value(SFunction<T, R> valueFunction) {
+        attachDouble(valueFunction);
+        return (OneToOne<T, K, R>) this;
     }
 
-    // dataList key parallel
+    /*public <U, A extends Serializable & Comparable<A>, R> OneToOne<T, K, R> and(OneToOne<U, A, R> engine) {
 
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), dataList, keyFunction, isParallel, peeks);
+    }*/
+
+    /**
+     * <p>query.</p>
+     *
+     * @return a {@link java.util.Map} object
+     */
+    public Map<K, V> query() {
+        return query(HashMap::new);
     }
 
-    // wrapper dataList key parallel
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, dataList, keyFunction, i -> i, isParallel, peeks);
+    /**
+     * <p>query.</p>
+     *
+     * @param mapFactory a {@link java.util.function.IntFunction} object
+     * @param <R>        a R class
+     * @return a R object
+     */
+    public <R extends Map<K, V>> R query(IntFunction<R> mapFactory) {
+        List<T> list = Database.list(wrapper);
+        return Steam.of(list)
+                .parallel(isParallel)
+                .peek(peekConsumer)
+                .toMap(keyFunction, valueOrIdentity(), SerBiOp.justAfter(), () -> mapFactory.apply(list.size()));
     }
-
-    // dataList key value
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), dataList, keyFunction, valueFunction, false, peeks);
-    }
-
-    // wrapper dataList key value
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, dataList, keyFunction, valueFunction, false, peeks);
-    }
-
-    // dataList key value parallel
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query(Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), dataList, keyFunction, valueFunction, isParallel, peeks);
-    }
-
-    // wrapper dataList key value parallel
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, Collection<$KEY> dataList, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return Database.lambdaQuery(dataList, keyFunction).map(queryOperator.compose(w -> Database.select(w, keyFunction, valueFunction))).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collective.toMap(keyFunction, valueFunction))).orElseGet(HashMap::new);
-    }
-
-    // data key
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), data, keyFunction, false, peeks);
-    }
-
-    // wrapper data key
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, data, keyFunction, false, peeks);
-    }
-
-    // data key parallel
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), data, keyFunction, isParallel, peeks);
-    }
-
-    // wrapper data key parallel
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $ENTITY> Map<$KEY, $ENTITY> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, data, keyFunction, i -> i, isParallel, peeks);
-    }
-
-    // data key value
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), data, keyFunction, valueFunction, false, peeks);
-    }
-
-    // wrapper data key value
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(queryOperator, data, keyFunction, valueFunction, false, peeks);
-    }
-
-    // data key value parallel
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query($KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return query(UnaryOperator.identity(), data, keyFunction, valueFunction, isParallel, peeks);
-    }
-
-    // wrapper data key value parallel
-
-    @SafeVarargs
-    public static <$KEY extends Serializable & Comparable<$KEY>, $VALUE, $ENTITY> Map<$KEY, $VALUE> query(UnaryOperator<LambdaQueryWrapper<$ENTITY>> queryOperator, $KEY data, SFunction<$ENTITY, $KEY> keyFunction, SFunction<$ENTITY, $VALUE> valueFunction, boolean isParallel, SerBiCons<$ENTITY, Integer>... peeks) {
-        return Database.lambdaQuery(data, keyFunction).map(queryOperator.compose(w -> Database.select(w, keyFunction, valueFunction))).map(wrapper -> StreamHelper.peekStream(SqlHelper.execute(SimpleQuery.getType(keyFunction), m -> m.selectList(wrapper)), isParallel, peeks).collect(Collective.toMap(keyFunction, valueFunction))).orElseGet(HashMap::new);
-    }
-
 
 }

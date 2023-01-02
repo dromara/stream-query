@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -7,11 +9,32 @@ import java.util.stream.Stream;
 /**
  * 可序列化的Supplier
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
+
  * @see java.util.function.Supplier
  */
 @FunctionalInterface
 public interface SerSupp<T> extends Supplier<T>, Serializable {
+
+    /**
+     * Gets a result.
+     *
+     * @return a result
+     * @throws java.lang.Exception exception
+     */
+    T getting() throws Throwable;
+
+    /**
+     * Gets a result.
+     */
+    @Override
+    default T get() {
+        try {
+            return getting();
+        } catch (Throwable e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * last

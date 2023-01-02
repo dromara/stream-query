@@ -1,5 +1,7 @@
 package io.github.vampireachao.stream.core.lambda.function;
 
+import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -8,7 +10,8 @@ import java.util.stream.Stream;
 /**
  * 可序列化的Predicate
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
+
  * @see Predicate
  */
 @FunctionalInterface
@@ -40,13 +43,13 @@ public interface SerArgsPred<T> extends Serializable {
 
     /**
      * Returns a predicate that tests if two arguments are equal according
-     * to {@link Objects#equals(Object, Object)}.
+     * to {@link java.util.Objects#equals(Object, Object)}.
      *
      * @param <T>       the type of arguments to the predicate
      * @param targetRef the object reference with which to compare for equality,
      *                  which may be {@code null}
      * @return a predicate that tests if two arguments are equal according
-     * to {@link Objects#equals(Object, Object)}
+     * to {@link java.util.Objects#equals(Object, Object)}
      */
     static <T> SerArgsPred<T> isEqual(Object... targetRef) {
         return (null == targetRef)
@@ -60,9 +63,26 @@ public interface SerArgsPred<T> extends Serializable {
      * @param t the input argument
      * @return {@code true} if the input argument matches the predicate,
      * otherwise {@code false}
+     * @throws java.lang.Exception maybe throw exception
      */
     @SuppressWarnings("unchecked")
-    boolean test(T... t);
+    boolean testing(T... t) throws Throwable;
+
+    /**
+     * Evaluates this predicate on the given argument.
+     *
+     * @param t the input argument
+     * @return {@code true} if the input argument matches the predicate,
+     * otherwise {@code false}
+     */
+    @SuppressWarnings("unchecked")
+    default boolean test(T... t) {
+        try {
+            return testing(t);
+        } catch (Throwable e) {
+            throw new LambdaInvokeException(e);
+        }
+    }
 
     /**
      * Returns a composed predicate that represents a short-circuiting logical
@@ -78,7 +98,7 @@ public interface SerArgsPred<T> extends Serializable {
      *              predicate
      * @return a composed predicate that represents the short-circuiting logical
      * AND of this predicate and the {@code other} predicate
-     * @throws NullPointerException if other is null
+     * @throws java.lang.NullPointerException if other is null
      */
     default SerArgsPred<T> and(SerArgsPred<? super T> other) {
         Objects.requireNonNull(other);
@@ -110,7 +130,7 @@ public interface SerArgsPred<T> extends Serializable {
      *              predicate
      * @return a composed predicate that represents the short-circuiting logical
      * OR of this predicate and the {@code other} predicate
-     * @throws NullPointerException if other is null
+     * @throws java.lang.NullPointerException if other is null
      */
     default SerArgsPred<T> or(SerArgsPred<? super T> other) {
         Objects.requireNonNull(other);

@@ -19,26 +19,26 @@ import org.apache.ibatis.mapping.SqlSource;
 /**
  * 插入多条数据（mysql语法批量）
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
  */
-public class InsertOneSql extends AbstractMethod implements PluginConst {
+public class SaveOneSql extends AbstractMethod implements PluginConst {
 
-    public InsertOneSql(String methodName) {
+    /**
+     * <p>Constructor for SaveOneSql.</p>
+     *
+     * @param methodName a {@link java.lang.String} object
+     */
+    public SaveOneSql(String methodName) {
         super(methodName);
     }
 
     /**
      * 注入自定义 MappedStatement
-     *
-     * @param mapperClass mapper 接口
-     * @param modelClass  mapper 泛型
-     * @param tableInfo   数据库表反射信息
-     * @return MappedStatement
      */
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
-        SqlMethodEnum sqlMethod = SqlMethodEnum.INSERT_ONE_SQL;
+        SqlMethodEnum sqlMethod = SqlMethodEnum.SAVE_ONE_SQL;
         // column script
         String columnScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList()).map(TableFieldInfo::getColumn)
                         .unshift(tableInfo.getKeyColumn())
@@ -52,7 +52,7 @@ public class InsertOneSql extends AbstractMethod implements PluginConst {
                 DEFAULT + COMMA);
         String valuesScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList())
                         .map(i -> SqlScriptUtils.convertChoose(
-                                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + i.getProperty()),
+                                MpInjectHelper.updateCondition(i, TableFieldInfo::getInsertStrategy),
                                 i.getInsertSqlProperty(ENTITY_DOT),
                                 DEFAULT + COMMA))
                         .unshift(tableInfo.getIdType() == IdType.AUTO ? propertyOrDefault : safeProperty)

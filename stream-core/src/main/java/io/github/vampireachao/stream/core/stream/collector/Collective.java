@@ -1,7 +1,8 @@
-package io.github.vampireachao.stream.core.collector;
+package io.github.vampireachao.stream.core.stream.collector;
 
 import io.github.vampireachao.stream.core.lambda.function.SerBiOp;
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
 import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.core.stream.Steam;
@@ -17,7 +18,8 @@ import java.util.stream.Stream;
 /**
  * 收集器
  *
- * @author VampireAchao
+ * @author VampireAchao Cizai_
+
  * @since 2022/5/29 8:55
  */
 public class Collective {
@@ -38,6 +40,18 @@ public class Collective {
     private static final String NON_NULL_MSG = "element cannot be mapped to a null key";
 
     private Collective() {
+    }
+
+    /**
+     * toArray
+     *
+     * @param arrayFactor arrayFactor
+     * @param <T>         item type
+     * @return array
+     */
+    public static <T>
+    Collector<T, ?, T[]> toArray(IntFunction<T[]> arrayFactor) {
+        return collectingAndThen(toList(), list -> list.toArray(arrayFactor.apply(list.size())));
     }
 
     /**
@@ -212,6 +226,17 @@ public class Collective {
                 downstream.characteristics());
     }
 
+    /**
+     * <p>flatMapping.</p>
+     *
+     * @param mapper     a {@link java.util.function.Function} object
+     * @param downstream a {@link java.util.stream.Collector} object
+     * @param <T>        a T class
+     * @param <U>        a U class
+     * @param <A>        a A class
+     * @param <R>        a R class
+     * @return a {@link java.util.stream.Collector} object
+     */
     public static <T, U, A, R>
     Collector<T, ?, R> flatMapping(Function<? super T, Stream<? extends U>> mapper,
                                    Collector<? super U, A, R> downstream) {
@@ -223,10 +248,41 @@ public class Collective {
                 downstream.characteristics());
     }
 
+    /**
+     * <p>filtering.</p>
+     *
+     * @param predicate  a {@link java.util.function.Predicate} object
+     * @param downstream a {@link java.util.stream.Collector} object
+     * @param <T>        a T class
+     * @param <A>        a A class
+     * @param <R>        a R class
+     * @return a {@link java.util.stream.Collector} object
+     */
+    public static <T, A, R>
+    Collector<T, ?, R> filtering(SerPred<? super T> predicate,
+                                 Collector<? super T, A, R> downstream) {
+        BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
+        return new Collective.CollectorImpl<>(downstream.supplier(),
+                (r, t) -> Opp.of(t).filter(predicate).ifPresent(e -> downstreamAccumulator.accept(r, e)),
+                downstream.combiner(), downstream.finisher(),
+                downstream.characteristics());
+    }
+
+    /**
+     * <p>flatMappingIter.</p>
+     *
+     * @param mapper     a {@link java.util.function.Function} object
+     * @param downstream a {@link java.util.stream.Collector} object
+     * @param <T>        a T class
+     * @param <U>        a U class
+     * @param <A>        a A class
+     * @param <R>        a R class
+     * @return a {@link java.util.stream.Collector} object
+     */
     public static <T, U, A, R>
     Collector<T, ?, R> flatMappingIter(Function<? super T, Iterable<? extends U>> mapper,
                                        Collector<? super U, A, R> downstream) {
-        return flatMapping(t -> Opp.required(t).map(mapper).get(Steam::of), downstream);
+        return flatMapping(t -> Opp.of(t).map(mapper).map(Steam::of).get(), downstream);
     }
 
     /**
@@ -546,8 +602,8 @@ public class Collective {
      * @return a {@code Collector} which implements the reduction operation
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
-     * {@code partitioningBy}.  To perform a simple reduction on a stream,
-     * use {@link Stream#reduce(Object, BinaryOperator)}} instead.
+     * {@code partition}.  To perform a simple reduction on a stream,
+     * use {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}} instead.
      * @see #reducing(BinaryOperator)
      * @see #reducing(Object, Function, BinaryOperator)
      */
@@ -579,8 +635,8 @@ public class Collective {
      * @return a {@code Collector} which implements the reduction operation
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
-     * {@code partitioningBy}.  To perform a simple reduction on a stream,
-     * use {@link Stream#reduce(BinaryOperator)} instead.
+     * {@code partition}.  To perform a simple reduction on a stream,
+     * use {@link java.util.stream.Stream#reduce(BinaryOperator)} instead.
      *
      * <p>For example, given a stream of {@code Person}, to calculate tallest
      * person in each city:
@@ -636,8 +692,8 @@ public class Collective {
      * @return a {@code Collector} implementing the map-reduce operation
      * @apiNote The {@code reducing()} collectors are most useful when used in a
      * multi-level reduction, downstream of {@code groupingBy} or
-     * {@code partitioningBy}.  To perform a simple map-reduce on a stream,
-     * use {@link Stream#map(Function)} and {@link Stream#reduce(Object, BinaryOperator)}
+     * {@code partition}.  To perform a simple map-reduce on a stream,
+     * use {@link java.util.stream.Stream#map(Function)} and {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * instead.
      *
      * <p>For example, given a stream of {@code Person}, to calculate the longest
@@ -791,7 +847,7 @@ public class Collective {
      */
     public static <T, K, D, A, M extends Map<K, D>>
     Collector<T, ?, M> groupingBy(Function<? super T, ? extends K> classifier,
-                                  Supplier<M> mapFactory,
+                                  Supplier<? super M> mapFactory,
                                   Collector<? super T, A, D> downstream) {
         Supplier<A> downstreamSupplier = downstream.supplier();
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
@@ -811,7 +867,7 @@ public class Collective {
             SerUnOp<A> downstreamFinisher = SerUnOp.casting(downstream.finisher());
             Function<Map<K, A>, M> finisher = intermediate -> {
                 intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-                return SerFunc.<Map<K, A>, M>castingIdentity().apply(intermediate);
+                return SerFunc.<Map<K, A>, M>cast().apply(intermediate);
             };
             return new Collective.CollectorImpl<>(mangledFactory, accumulator, merger, finisher, CH_NOID);
         }
@@ -940,7 +996,7 @@ public class Collective {
         BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
         BinaryOperator<ConcurrentMap<K, A>> merger = Collective.mapMerger(downstream.combiner());
         Supplier<ConcurrentMap<K, A>> mangledFactory = SerFunc.<Supplier<M>, Supplier<ConcurrentMap<K, A>>>
-                castingIdentity().apply(mapFactory);
+                cast().apply(mapFactory);
         BiConsumer<ConcurrentMap<K, A>, T> accumulator;
         if (downstream.characteristics().contains(Collector.Characteristics.CONCURRENT)) {
             accumulator = (m, t) -> {
@@ -964,7 +1020,7 @@ public class Collective {
             SerUnOp<A> downstreamFinisher = SerUnOp.casting(downstream.finisher());
             Function<ConcurrentMap<K, A>, M> finisher = intermediate -> {
                 intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-                return SerFunc.<ConcurrentMap<K, A>, M>castingIdentity().apply(intermediate);
+                return SerFunc.<ConcurrentMap<K, A>, M>cast().apply(intermediate);
             };
             return new Collective.CollectorImpl<>(mangledFactory, accumulator, merger, finisher, CH_CONCURRENT_NOID);
         }
@@ -1037,7 +1093,7 @@ public class Collective {
      * mapping functions to the input elements.
      *
      * <p>If the mapped keys contains duplicates (according to
-     * {@link Object#equals(Object)}), an {@code IllegalStateException} is
+     * {@link java.lang.Object#equals(Object)}), an {@code IllegalStateException} is
      * thrown when the collection operation is performed.  If the mapped keys
      * may have duplicates, use {@link #toMap(Function, Function, BinaryOperator)}
      * instead.
@@ -1084,12 +1140,25 @@ public class Collective {
     }
 
     /**
+     * Returns a {@code Collector} that accumulates elements into a {@code Map}
+     *
+     * @param keyMapper a mapping function to produce keys
+     * @param <T>       the type of the input elements
+     * @param <K>       the output type of the key mapping function
+     * @return a {@code Collector} which collects elements into a {@code Map}
+     */
+    public static <T, K>
+    Collector<T, ?, Map<K, T>> toMap(Function<? super T, ? extends K> keyMapper) {
+        return toMap(keyMapper, Function.identity(), SerBiOp.justAfter(), HashMap::new);
+    }
+
+    /**
      * Returns a {@code Collector} that accumulates elements into a
      * {@code Map} whose keys and values are the result of applying the provided
      * mapping functions to the input elements.
      *
      * <p>If the mapped
-     * keys contains duplicates (according to {@link Object#equals(Object)}),
+     * keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.
      *
@@ -1100,7 +1169,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @return a {@code Collector} which collects elements into a {@code Map}
      * whose keys are the result of applying a key mapping function to the input
      * elements, and whose values are the result of applying a value mapping
@@ -1143,7 +1212,7 @@ public class Collective {
      * mapping functions to the input elements.
      *
      * <p>If the mapped
-     * keys contains duplicates (according to {@link Object#equals(Object)}),
+     * keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.  The {@code Map}
      * is created by a provided supplier function.
@@ -1156,7 +1225,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @param mapSupplier   a function which returns a new, empty {@code Map} into
      *                      which the results will be inserted
      * @return a {@code Collector} which collects elements into a {@code Map}
@@ -1195,7 +1264,7 @@ public class Collective {
      * the provided mapping functions to the input elements.
      *
      * <p>If the mapped keys contains duplicates (according to
-     * {@link Object#equals(Object)}), an {@code IllegalStateException} is
+     * {@link java.lang.Object#equals(Object)}), an {@code IllegalStateException} is
      * thrown when the collection operation is performed.  If the mapped keys
      * may have duplicates, use
      * {@link #toConcurrentMap(Function, Function, BinaryOperator)} instead.
@@ -1244,7 +1313,7 @@ public class Collective {
      * {@code ConcurrentMap} whose keys and values are the result of applying
      * the provided mapping functions to the input elements.
      *
-     * <p>If the mapped keys contains duplicates (according to {@link Object#equals(Object)}),
+     * <p>If the mapped keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.
      *
@@ -1255,7 +1324,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @return a concurrent, unordered {@code Collector} which collects elements into a
      * {@code ConcurrentMap} whose keys are the result of applying a key mapping
      * function to the input elements, and whose values are the result of
@@ -1295,7 +1364,7 @@ public class Collective {
      * {@code ConcurrentMap} whose keys and values are the result of applying
      * the provided mapping functions to the input elements.
      *
-     * <p>If the mapped keys contains duplicates (according to {@link Object#equals(Object)}),
+     * <p>If the mapped keys contains duplicates (according to {@link java.lang.Object#equals(Object)}),
      * the value mapping function is applied to each equal element, and the
      * results are merged using the provided merging function.  The
      * {@code ConcurrentMap} is created by a provided supplier function.
@@ -1311,7 +1380,7 @@ public class Collective {
      * @param valueMapper   a mapping function to produce values
      * @param mergeFunction a merge function, used to resolve collisions between
      *                      values associated with the same key, as supplied
-     *                      to {@link Map#merge(Object, Object, BiFunction)}
+     *                      to {@link java.util.Map#merge(Object, Object, BiFunction)}
      * @param mapSupplier   a function which returns a new, empty {@code Map} into
      *                      which the results will be inserted
      * @return a concurrent, unordered {@code Collector} which collects elements into a
@@ -1401,6 +1470,21 @@ public class Collective {
     }
 
     /**
+     * <p>entryToMap.</p>
+     *
+     * @param <K> a K class
+     * @param <V> a V class
+     * @return a {@link java.util.stream.Collector} object
+     */
+    public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> entryToMap() {
+        return toMap(Map.Entry::getKey, Map.Entry::getValue);
+    }
+
+    public static <K, V, M extends Map<K, V>> Collector<Map.Entry<K, V>, ?, M> entryToMap(Supplier<M> mapSupplier) {
+        return toMap(Map.Entry::getKey, Map.Entry::getValue, SerBiOp.justAfter(), mapSupplier);
+    }
+
+    /**
      * Simple implementation class for {@code Collector}.
      *
      * @param <T> the type of elements to be collected
@@ -1429,7 +1513,7 @@ public class Collective {
                       BiConsumer<A, T> accumulator,
                       BinaryOperator<A> combiner,
                       Set<Characteristics> characteristics) {
-            this(supplier, accumulator, combiner, SerFunc.castingIdentity(), characteristics);
+            this(supplier, accumulator, combiner, SerFunc.cast(), characteristics);
         }
 
         @Override
@@ -1459,7 +1543,7 @@ public class Collective {
     }
 
     /**
-     * Implementation class used by partitioningBy.
+     * Implementation class used by partition.
      */
     private static final class Partition<T>
             extends AbstractMap<Boolean, T>
@@ -1509,4 +1593,61 @@ public class Collective {
             return Objects.hash(super.hashCode(), forTrue, forFalse);
         }
     }
+
+    /**
+     * 将流转为{@link io.github.vampireachao.stream.core.stream.Steam}
+     *
+     * @param <T> 输入元素类型
+     * @return 收集器
+     */
+    public static <T> Collector<T, ?, Steam<T>> toSteam() {
+        return transform(ArrayList::new, Steam::of);
+    }
+
+    /**
+     * 收集元素，将其转为指定{@link java.util.Collection}集合后，再对该集合进行转换，并最终返回转换后的结果。
+     * 返回的收集器的效果等同于：
+     * <pre>{@code
+     * 	Collection<T> coll = Stream.of(a, b, c, d)
+     * 		.collect(Collectors.toCollection(collFactory));
+     * 	R result = mapper.apply(coll);
+     * }</pre>
+     *
+     * @param collFactory 中间收集输入元素的集合的创建方法
+     * @param mapper      最终将元素集合映射为返回值的方法
+     * @param <R>         返回值类型
+     * @param <T>         输入元素类型
+     * @param <C>         中间收集输入元素的集合类型
+     * @return 收集器
+     */
+    public static <T, R, C extends Collection<T>> Collector<T, C, R> transform(
+            Supplier<C> collFactory, Function<C, R> mapper) {
+        Objects.requireNonNull(collFactory);
+        Objects.requireNonNull(mapper);
+        return new CollectorImpl<>(
+                collFactory, C::add, (l1, l2) -> {
+            l1.addAll(l2);
+            return l1;
+        }, mapper, CH_NOID
+        );
+    }
+
+    /**
+     * 收集元素，将其转为{@link java.util.ArrayList}集合后，再对该集合进行转换，并最终返回转换后的结果。
+     * 返回的收集器的效果等同于：
+     * <pre>{@code
+     * 	List<T> coll = Stream.of(a, b, c, d)
+     * 		.collect(Collectors.toList());
+     * 	R result = mapper.apply(coll);
+     * }</pre>
+     *
+     * @param mapper 最终将元素集合映射为返回值的方法
+     * @param <R>    返回值类型
+     * @param <T>    输入元素类型
+     * @return 收集器
+     */
+    public static <T, R> Collector<T, List<T>, R> transform(Function<List<T>, R> mapper) {
+        return transform(ArrayList::new, mapper);
+    }
+
 }

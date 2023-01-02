@@ -7,7 +7,7 @@
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-query</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.4</version>
+    <version>${revision}</version>
     <modules>
         <module>stream-core</module>
         <module>stream-plugin</module>
@@ -18,12 +18,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <mybatis-plus.version>3.5.2</mybatis-plus.version>
+        <revision>1.2.1</revision>
+        <mybatis-plus.version>3.5.3</mybatis-plus.version>
         <lombok.version>1.18.24</lombok.version>
         <spring-boot.version>2.7.0</spring-boot.version>
-        <h2.version>2.1.212</h2.version>
-        <junit.version>5.8.2</junit.version>
+        <h2.version>2.1.214</h2.version>
+        <junit.version>5.9.0</junit.version>
         <jmh.version>1.35</jmh.version>
+        <ttl.version>2.14.1</ttl.version>
     </properties>
 
     <name>stream-query</name>
@@ -118,6 +120,11 @@
                             <head>Implementation Note:</head>
                         </tag>
                         <tag>
+                            <name>inheritDoc</name>
+                            <placement>a</placement>
+                            <head>Implementation Note:</head>
+                        </tag>
+                        <tag>
                             <name>param</name>
                         </tag>
                         <tag>
@@ -149,7 +156,32 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!-- gav version -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.2.7</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

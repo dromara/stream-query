@@ -5,7 +5,7 @@
     <parent>
         <artifactId>stream-query</artifactId>
         <groupId>io.github.vampireachao</groupId>
-        <version>1.1.4</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -23,6 +23,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+            <version>${ttl.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

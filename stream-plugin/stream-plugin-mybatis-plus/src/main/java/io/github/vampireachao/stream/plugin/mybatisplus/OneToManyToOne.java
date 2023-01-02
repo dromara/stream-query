@@ -2,466 +2,232 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import io.github.vampireachao.stream.core.collector.Collective;
-import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
-import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.collection.Maps;
+import io.github.vampireachao.stream.core.lambda.function.SerCons;
+import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerUnOp;
+import io.github.vampireachao.stream.core.optional.Sf;
+import io.github.vampireachao.stream.core.stream.Steam;
+import io.github.vampireachao.stream.core.stream.collector.Collective;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import java.util.stream.StreamSupport;
+
 
 /**
  * 一对多对一
  *
- * @author VampireAchao &lt; achao1441470436@gmail.com &gt;
+ * @param <T> 主表类型(关联表)
+ * @param <K> 主表查询key
+ * @param <V> 主表查询value/附表查询key
+ * @param <U> 附表类型(关联主数据)
+ * @param <A> 附表value
+ * @author VampireAchao Cizai_
+
  * @since 2022/5/24 14:15
  */
-public class OneToManyToOne {
-
-    private OneToManyToOne() {
-        /* Do not new me! */
-    }
-
-    // mainDataList middleKey middleValue attachKey
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey attachValue
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey attachValue parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey attachValue
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey attachValue parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey attachValue
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, attachValue, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey attachValue parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey attachValue middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey attachValue parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey attachValue middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey attachValue parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey attachValue middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey attachValue parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainDataList middleKey middleValue attachKey middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, false, middleConsumer, attachConsumer);
-    }
-
-    // mainDataList middleKey middleValue attachKey attachValue middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, attachConsumer);
-    }
-
-    // mainDataList middleKey middleValue attachKey parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // mainDataList middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey attachValue middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainDataList middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainDataList, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey attachValue middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainDataList, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Opp.required(OneToMany.query(middleQueryOperator, mainDataList, middleKey, middleValue, isParallel, middleConsumer, (middle, index) -> Opp.of(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.required(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, isParallel, attachConsumer)).filter(keyAttachMap -> !keyAttachMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
-    }
-
-    // middleQueryOperator attachQueryOperator mainDataList middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, Collection<$MIDDLE_KEY> mainDataList, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Opp.required(OneToMany.query(middleQueryOperator, mainDataList, middleKey, middleValue, isParallel, middleConsumer, (middle, index) -> Opp.of(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.required(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, attachValue, isParallel, attachConsumer)).filter(attachKeyValueMap -> !attachKeyValueMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
-    }
-
-    // mainData middleKey middleValue attachKey
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey attachValue
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey attachValue parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey attachValue
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey attachValue parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey attachValue
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, attachValue, false, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey attachValue parallel
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, attachValue, isParallel, SerBiCons.nothing(), SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey attachValue middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey attachValue parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey attachValue middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey attachValue parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey attachValue middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey attachValue parallel middleConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, SerBiCons.nothing());
-    }
-
-    // mainData middleKey middleValue attachKey middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, false, middleConsumer, attachConsumer);
-    }
-
-    // mainData middleKey middleValue attachKey attachValue middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, attachConsumer);
-    }
-
-    // mainData middleKey middleValue attachKey parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // mainData middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query($MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(UnaryOperator.identity(), UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey attachValue middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator mainData middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, UnaryOperator.identity(), mainData, middleKey, middleValue, attachKey, attachValue, isParallel, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey attachValue middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        return query(middleQueryOperator, attachQueryOperator, mainData, middleKey, middleValue, attachKey, attachValue, false, middleConsumer, attachConsumer);
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Map<$MIDDLE_KEY, List<$ATTACH>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Opp.required(OneToMany.query(middleQueryOperator, mainData, middleKey, middleValue, isParallel, middleConsumer, (middle, index) -> Opp.of(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.required(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, isParallel, attachConsumer)).filter(keyAttachMap -> !keyAttachMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
-    }
-
-    // middleQueryOperator attachQueryOperator mainData middleKey middleValue attachKey attachValue parallel middleConsumer attachConsumer
-
-    public static <$MIDDLE, $ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>, $ATTACH_VALUE extends Serializable> Map<$MIDDLE_KEY, List<$ATTACH_VALUE>> query(UnaryOperator<LambdaQueryWrapper<$MIDDLE>> middleQueryOperator, UnaryOperator<LambdaQueryWrapper<$ATTACH>> attachQueryOperator, $MIDDLE_KEY mainData, SFunction<$MIDDLE, $MIDDLE_KEY> middleKey, SFunction<$MIDDLE, $MIDDLE_VALUE> middleValue, SFunction<$ATTACH, $MIDDLE_VALUE> attachKey, SFunction<$ATTACH, $ATTACH_VALUE> attachValue, boolean isParallel, SerBiCons<$MIDDLE, Integer> middleConsumer, SerBiCons<$ATTACH, Integer> attachConsumer) {
-        Set<$MIDDLE_VALUE> middleFlatValues = isParallel ? new LinkedHashSet<>() : new HashSet<>();
-        return Opp.required(OneToMany.query(middleQueryOperator, mainData, middleKey, middleValue, isParallel, middleConsumer, (middle, index) -> Opp.of(middle).map(middleValue).ifPresent(middleFlatValues::add))).filter(middleKeyValuesMap -> !middleKeyValuesMap.isEmpty()).flatMap(middleKeyValuesMap -> Opp.required(OneToOne.query(attachQueryOperator, middleFlatValues, attachKey, attachValue, isParallel, attachConsumer)).filter(attachKeyValueMap -> !attachKeyValueMap.isEmpty()).map(convertMiddleToAttachFunction(isParallel, middleKeyValuesMap))).orElseGet(HashMap::new);
-    }
-
-
-    private static <$ATTACH, $MIDDLE_KEY extends Serializable & Comparable<$MIDDLE_KEY>, $MIDDLE_VALUE extends Serializable & Comparable<$MIDDLE_VALUE>> Function<Map<$MIDDLE_VALUE, $ATTACH>, Map<$MIDDLE_KEY, List<$ATTACH>>> convertMiddleToAttachFunction(boolean isParallel, Map<$MIDDLE_KEY, List<$MIDDLE_VALUE>> middleKeyValuesMap) {
-        return keyAttachMap -> StreamSupport.stream(middleKeyValuesMap.entrySet().spliterator(), isParallel).collect(Collective.toMap(Map.Entry::getKey, middleKeyValuesEntry -> Opp.of(middleKeyValuesEntry.getValue()).filter(middleValues -> !middleValues.isEmpty()).map(middleValues -> StreamSupport.stream(middleValues.spliterator(), isParallel).map(keyAttachMap::get).filter(Objects::nonNull).collect(Collective.toList())).orElseGet(ArrayList::new)));
+@SuppressWarnings("unchecked")
+public class OneToManyToOne<T, K extends Serializable & Comparable<? super K>, V extends Serializable & Comparable<V>, U, A> {
+
+    private final SFunction<T, K> middleKey;
+    private SFunction<T, V> middleValue;
+    private SFunction<U, V> attachKey;
+    private SFunction<U, A> attachValue;
+    private LambdaQueryWrapper<T> middleWrapper;
+    private UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator = SerUnOp.identity();
+
+    private boolean isParallel = false;
+    private SerCons<T> middlePeek = SerCons.nothing();
+    private SerCons<U> attachPeek = SerCons.nothing();
+
+    /**
+     * <p>Constructor for OneToManyToOne.</p>
+     *
+     * @param middleKey a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     */
+    public OneToManyToOne(SFunction<T, K> middleKey) {
+        this.middleKey = middleKey;
+        this.middleWrapper = Database.lambdaQuery(middleKey);
+    }
+
+    /**
+     * <p>of.</p>
+     *
+     * @param keyFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <T>         a T class
+     * @param <K>         a K class
+     * @param <V>         a V class
+     * @param <U>         a U class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public static <T, K extends Serializable & Comparable<? super K>, V extends Serializable & Comparable<V>, U>
+    OneToManyToOne<T, K, V, U, T> of(SFunction<T, K> keyFunction) {
+        return new OneToManyToOne<>(keyFunction);
+    }
+
+    /**
+     * <p>in.</p>
+     *
+     * @param dataList a {@link java.util.Collection} object
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> in(Collection<K> dataList) {
+        middleWrapper = Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> middleWrapper.in(middleKey, values)).orGet(() -> Database.notActive(middleWrapper));
+        return this;
+    }
+
+    /**
+     * <p>eq.</p>
+     *
+     * @param data a K object
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> eq(K data) {
+        middleWrapper = Sf.of(data).mayLet(value -> middleWrapper.eq(middleKey, value)).orGet(() -> Database.notActive(middleWrapper));
+        return this;
+    }
+
+    /**
+     * <p>value.</p>
+     *
+     * @param middleValue a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <VV>        a VV class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public <VV extends Serializable & Comparable<VV>> OneToManyToOne<T, K, VV, U, VV> value(SFunction<T, VV> middleValue) {
+        this.middleValue = (SFunction<T, V>) middleValue;
+        if (Objects.nonNull(middleWrapper)) {
+            Database.select(middleWrapper, middleKey, middleValue);
+        }
+        return (OneToManyToOne<T, K, VV, U, VV>) this;
+    }
+
+    /**
+     * <p>attachKey.</p>
+     *
+     * @param attachKey a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <UU>      a UU class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public <UU> OneToManyToOne<T, K, V, UU, UU> attachKey(SFunction<UU, V> attachKey) {
+        this.attachKey = (SFunction<U, V>) attachKey;
+        return (OneToManyToOne<T, K, V, UU, UU>) this;
+    }
+
+    /**
+     * <p>attachValue.</p>
+     *
+     * @param attachValue a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+     * @param <AA>        a AA class
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public <AA> OneToManyToOne<T, K, V, T, AA> attachValue(SFunction<U, AA> attachValue) {
+        this.attachValue = (SFunction<U, A>) attachValue;
+        return (OneToManyToOne<T, K, V, T, AA>) this;
+    }
+
+    /**
+     * <p>condition.</p>
+     *
+     * @param queryOperator a {@link java.util.function.UnaryOperator} object
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
+        middleWrapper = Sf.of(queryOperator.apply(middleWrapper)).orGet(() -> Database.notActive(middleWrapper));
+        return this;
+    }
+
+    /**
+     * <p>attachCondition.</p>
+     *
+     * @param attachQueryOperator a {@link java.util.function.UnaryOperator} object
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> attachCondition(UnaryOperator<LambdaQueryWrapper<U>> attachQueryOperator) {
+        this.attachQueryOperator = attachQueryOperator;
+        return this;
+    }
+
+    /**
+     * <p>parallel.</p>
+     *
+     * @param isParallel a boolean
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> parallel(boolean isParallel) {
+        this.isParallel = isParallel;
+        return this;
+    }
+
+    /**
+     * <p>parallel.</p>
+     *
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> parallel() {
+        return parallel(true);
+    }
+
+    /**
+     * <p>sequential.</p>
+     *
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> sequential() {
+        return parallel(false);
+    }
+
+    /**
+     * <p>peek.</p>
+     *
+     * @param middlePeek a {@link io.github.vampireachao.stream.core.lambda.function.SerCons} object
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> peek(SerCons<T> middlePeek) {
+        this.middlePeek = this.middlePeek.andThen(middlePeek);
+        return this;
+    }
+
+    /**
+     * <p>attachPeek.</p>
+     *
+     * @param attachPeek a {@link io.github.vampireachao.stream.core.lambda.function.SerCons} object
+     * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
+     */
+    public OneToManyToOne<T, K, V, U, A> attachPeek(SerCons<U> attachPeek) {
+        this.attachPeek = this.attachPeek.andThen(attachPeek);
+        return this;
+    }
+
+    /**
+     * <p>query.</p>
+     *
+     * @param mapper a {@link java.util.function.BiFunction} object
+     * @param <R>    a R class
+     * @return a R object
+     */
+    public <R> R query(BiFunction<Map<K, List<V>>, Map<V, A>, R> mapper) {
+        Map<K, List<V>> middleKeyValuesMap = Steam.of(Database.list(middleWrapper)).parallel(isParallel).peek(middlePeek)
+                .group(middleKey, Collective.mapping(Sf.of(middleValue).orGet(() -> SerFunc.<T, V>cast()::apply), Collective.toList()));
+        if (Objects.isNull(attachKey)) {
+            return mapper.apply(middleKeyValuesMap, new HashMap<>(middleKeyValuesMap.size()));
+        }
+        List<V> relationDataList = Steam.of(middleKeyValuesMap.values()).flat(Function.identity()).toList();
+        Map<V, A> attachKeyValue = OneToOne.of(attachKey).in(relationDataList).value(attachValue).parallel(isParallel).peek(attachPeek).condition(attachQueryOperator).query();
+        return mapper.apply(middleKeyValuesMap, attachKeyValue);
+    }
+
+    /**
+     * <p>query.</p>
+     *
+     * @return a {@link java.util.Map} object
+     */
+    public Map<K, List<A>> query() {
+        return query((middleKeyValuesMap, attachKeyValue) ->
+                Maps.oneToManyToOne(middleKeyValuesMap, attachKeyValue, Steam::nonNull).parallel(isParallel)
+                        .collect(Collective.entryToMap()));
     }
 }
