@@ -73,7 +73,7 @@ public class LambdaHelper {
                 key -> new LambdaExecutable(serialize(lambda)));
     }
 
-    public static <T> T revert(Class<T> clazz, Executable executable) {
+    public static <T> T revert(Class<? super T> clazz, Executable executable) {
         final Method funcMethod = Steam.of(clazz.getMethods()).findFirst(method -> Modifier.isAbstract(method.getModifiers()))
                 .orElseThrow(() -> new LambdaInvokeException("not a functional interface"));
         final MethodHandle implMethod;
