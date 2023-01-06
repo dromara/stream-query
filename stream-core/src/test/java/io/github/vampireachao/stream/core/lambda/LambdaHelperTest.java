@@ -62,7 +62,7 @@ class LambdaHelperTest {
         Assertions.assertEquals(Void.class, LambdaHelper.resolve((Serializable & Function<Void, Void>) w -> w).getReturnType());
         Assertions.assertEquals(new AbstractTypeReference<T[]>() {
         }.getTypeName(), LambdaHelper.resolve((SerArgsFunc<Object, Steam<?>>) Steam::of).getParameterTypes()[0].getTypeName());
-        Assertions.assertEquals("Steam", LambdaHelper.resolve((SerArgsFunc<Object, Steam<?>>) Steam::of).getReturnType().getTypeName());
+        Assertions.assertEquals(Steam.class.getName(), LambdaHelper.resolve((SerArgsFunc<Object, Steam<?>>) Steam::of).getReturnType().getTypeName());
     }
 
     @Test
