@@ -567,7 +567,9 @@ public class Opp<T> {
      * @return 返回一个不为 {@code null} 的包裹里的值
      */
     public T orElseThrow() {
-        return orElseThrow(() -> new NoSuchElementException("No value present"));
+        return orElseThrow(() -> Objects.nonNull(throwable)
+                ? new RuntimeException(throwable)
+                : new NoSuchElementException("No value present"));
     }
 
     /**
