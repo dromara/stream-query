@@ -4,18 +4,16 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import io.github.vampireachao.stream.core.collection.Lists;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.DynamicMapperHandler;
+import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
+import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
+import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -42,7 +40,8 @@ public class MybatisPlusTestApplication {
 
     @Bean
     public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) throws Exception {
-        String entityPackagePath = "io.github.vampireachao.stream.plugin.mybatisplus.pojo.po";
+        /// 扫描po包下的所有类，作为entity
+        /*String entityPackagePath = "io.github.vampireachao.stream.plugin.mybatisplus.pojo.po";
         Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(entityPackagePath.replace(".", "/"));
         final List<Class<?>> entityClassList = new ArrayList<>();
         while (resources.hasMoreElements()) {
@@ -57,7 +56,8 @@ public class MybatisPlusTestApplication {
                     entityClassList.add(entityClass);
                 }
             }
-        }
+        }*/
+        final List<Class<?>> entityClassList = Lists.of(UserInfo.class, RoleInfo.class, UserRole.class);
         return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
     }
 }
