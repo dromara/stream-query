@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class DynamicMapperHandler {
 
-    public DynamicMapperHandler(SqlSessionFactory sqlSessionFactory, List<Class<?>> entityClassList) {
+    public DynamicMapperHandler(SqlSessionFactory sqlSessionFactory, Collection<Class<?>> entityClassList) {
         Configuration configuration = sqlSessionFactory.getConfiguration();
         if (configuration instanceof MybatisConfiguration) {
             MybatisConfiguration mybatisConfiguration = (MybatisConfiguration) configuration;
