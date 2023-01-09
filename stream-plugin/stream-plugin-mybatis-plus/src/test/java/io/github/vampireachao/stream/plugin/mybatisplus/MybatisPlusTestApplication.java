@@ -4,12 +4,9 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import io.github.vampireachao.stream.core.collection.Lists;
+import io.github.vampireachao.stream.core.clazz.ClassHelper;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.DynamicMapperHandler;
-import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
-import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
-import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserRole;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -41,23 +38,8 @@ public class MybatisPlusTestApplication {
     @Bean
     public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) throws Exception {
         /// 扫描po包下的所有类，作为entity
-        /*String entityPackagePath = "io.github.vampireachao.stream.plugin.mybatisplus.pojo.po";
-        Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(entityPackagePath.replace(".", "/"));
-        final List<Class<?>> entityClassList = new ArrayList<>();
-        while (resources.hasMoreElements()) {
-            URL url = resources.nextElement();
-            File[] files = new File(URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8.name())).listFiles();
-            for (File file : files) {
-                System.out.println(file);
-                String path = file.getAbsolutePath();
-                if (path.endsWith(".class")) {
-                    String substring = path.substring(path.lastIndexOf("\\") + 1, path.length() - 6);
-                    Class<?> entityClass = Class.forName(entityPackagePath + "." + substring);
-                    entityClassList.add(entityClass);
-                }
-            }
-        }*/
-        final List<Class<?>> entityClassList = Lists.of(UserInfo.class, RoleInfo.class, UserRole.class);
+        String entityPackagePath = "io.github.vampireachao.stream.plugin.mybatisplus.pojo.po";
+        final List<Class<?>> entityClassList = ClassHelper.scanClasses(entityPackagePath);
         return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
     }
 }
