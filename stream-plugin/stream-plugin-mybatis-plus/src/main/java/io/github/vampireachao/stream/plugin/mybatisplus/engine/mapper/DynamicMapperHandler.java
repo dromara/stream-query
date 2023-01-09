@@ -5,7 +5,7 @@ import io.github.vampireachao.stream.plugin.mybatisplus.Database;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * DynamicMapperHandler
