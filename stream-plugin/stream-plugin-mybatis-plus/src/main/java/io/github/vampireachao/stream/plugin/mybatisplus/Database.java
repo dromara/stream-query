@@ -35,6 +35,7 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.property.PropertyNamer;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.mybatis.spring.SqlSessionUtils;
@@ -897,7 +898,10 @@ public class Database {
         }
     }
 
-    public static void buildMapper(MybatisConfiguration configuration, Class<?> entityClass) {
+    public static void buildMapper(Configuration configuration, Class<?> entityClass) {
+        if (!(configuration instanceof MybatisConfiguration)) {
+            throw new IllegalArgumentException("configuration must be MybatisConfiguration");
+        }
         ENTITY_MAPPER_CLASS_CACHE.computeIfAbsent(entityClass, k -> {
             Class<?> dynamicMapper = new ByteBuddy()
                     .makeInterface(TypeDescription.Generic.Builder.parameterizedType(IMapper.class, entityClass).build())
@@ -940,9 +944,27 @@ public class Database {
         return ENTITY_MAPPER_CLASS_CACHE;
     }
 
-    public static <T> Class<?> getMapperClass(Class<T> entityClass) {
-        return ENTITY_MAPPER_CLASS_CACHE.computeIfAbsent(entityClass,
-                k -> ClassUtils.toClassConfident(getTableInfo(entityClass).getCurrentNamespace()));
+    public static <T> Class<?> getMapperClass(Class<T> clazz) {
+        if (clazz == null || clazz.isPrimitive() || SimpleTypeRegistry.isSimpleType(clazz) || clazz.isInterface()) {
+            throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法");
+        }
+        Class<?> targetClass = ClassUtils.getUserClass(clazz);
+        Class<?> mapperClass = ENTITY_MAPPER_CLASS_CACHE.get(targetClass);
+        if (null != mapperClass) {
+            return mapperClass;
+        }
+        Class<?> currentClass = clazz;
+        while (null == mapperClass && Object.class != currentClass) {
+            currentClass = currentClass.getSuperclass();
+            mapperClass = ENTITY_MAPPER_CLASS_CACHE.get(ClassUtils.getUserClass(currentClass));
+        }
+        if (mapperClass == null) {
+            ClassUtils.toClassConfident(getTableInfo(clazz).getCurrentNamespace());
+        }
+        if (mapperClass != null) {
+            ENTITY_MAPPER_CLASS_CACHE.put(targetClass, mapperClass);
+        }
+        return mapperClass;
     }
 
     /**

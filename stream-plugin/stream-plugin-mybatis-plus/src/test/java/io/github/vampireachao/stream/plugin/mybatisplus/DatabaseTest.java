@@ -3,6 +3,8 @@ package io.github.vampireachao.stream.plugin.mybatisplus;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
@@ -12,6 +14,7 @@ import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.apache.ibatis.exceptions.TooManyResultsException;
+import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -368,5 +371,18 @@ class DatabaseTest {
                 throw throwable;
             }
         });
+    }
+
+    @Test
+    void testBuildMapper() {
+        UserInfo userInfo = new UserInfo() {{
+            setId(1L);
+            setName("Jone");
+        }};
+        Configuration configuration = TableInfoHelper.getTableInfo(UserInfo.class).getConfiguration();
+        Database.buildMapper(configuration, UserInfo.class);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(userInfo.getClass());
+        Assertions.assertNotNull(tableInfo);
+        Assertions.assertFalse(Database.list(userInfo.getClass()).isEmpty());
     }
 }
