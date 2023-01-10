@@ -122,20 +122,20 @@ public class Lists {
     /**
      * <p>isEmpty.</p>
      *
-     * @param list a {@link java.util.List} object
+     * @param list a {@link java.util.Collection} object
      * @return a boolean
      */
-    public static boolean isEmpty(List<?> list) {
+    public static boolean isEmpty(Collection<?> list) {
         return Objects.isNull(list) || list.isEmpty();
     }
 
     /**
      * <p>isNotEmpty.</p>
      *
-     * @param list a {@link java.util.List} object
+     * @param list a {@link java.util.Collection} object
      * @return a boolean
      */
-    public static boolean isNotEmpty(List<?> list) {
+    public static boolean isNotEmpty(Collection<?> list) {
         return Objects.nonNull(list) && !list.isEmpty();
     }
 

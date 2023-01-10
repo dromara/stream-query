@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import io.github.vampireachao.stream.core.collection.Lists;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
 import io.github.vampireachao.stream.core.lambda.function.SerCons;
@@ -35,6 +36,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
@@ -394,9 +396,10 @@ public class Database {
      * @param id          主键ID
      * @param entityClass 实体类
      * @param <T>         a T class
+     * @param <U>         a U class
      * @return boolean
      */
-    public static <T> boolean removeById(Serializable id, Class<T> entityClass) {
+    public static <T, U extends Serializable & Comparable<? super U>> boolean removeById(U id, Class<T> entityClass) {
         return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(id)));
     }
 
@@ -530,10 +533,25 @@ public class Database {
      * @param list        主键ID或实体列表
      * @param entityClass 实体类
      * @param <T>         a T class
+     * @param <U>         a U class
      * @return boolean
      */
-    public static <T> boolean removeByIds(Collection<? extends Serializable> list, Class<T> entityClass) {
+    public static <T, U extends Serializable & Comparable<? super U>> boolean removeByIds(Collection<U> list, Class<T> entityClass) {
         return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteBatchIds(list)));
+    }
+
+    /**
+     * 删除（根据ID 批量删除）
+     *
+     * @param list 主键ID或实体列表
+     * @param <T>  a T class
+     * @return boolean
+     */
+    public static <T> boolean removeByIds(Collection<T> list) {
+        if (Lists.isEmpty(list)) {
+            return false;
+        }
+        return execute(getEntityClass(list), baseMapper -> SqlHelper.retBool(baseMapper.deleteBatchIds(list)));
     }
 
     /**
@@ -555,7 +573,8 @@ public class Database {
      * @param <T>    a T class
      * @return boolean
      */
-    public static <T> boolean saveOrUpdate(T entity) {
+    @SuppressWarnings("unchecked")
+    public static <T, U extends Serializable & Comparable<? super U>> boolean saveOrUpdate(T entity) {
         if (Objects.isNull(entity)) {
             return false;
         }
@@ -564,8 +583,8 @@ public class Database {
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        Object idVal = tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty());
-        return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal, entityClass)) ?
+        U idVal = (U) tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty());
+        return StringUtils.checkValNull(idVal) || Objects.isNull(getById(idVal, entityClass)) ?
                 save(entity) : updateById(entity);
     }
 
@@ -575,9 +594,10 @@ public class Database {
      * @param id          主键ID
      * @param entityClass 实体类
      * @param <T>         a T class
+     * @param <U>         a U class
      * @return T
      */
-    public static <T> T getById(Serializable id, Class<T> entityClass) {
+    public static <T, U extends Serializable & Comparable<? super U>> T getById(U id, Class<T> entityClass) {
         return execute(entityClass, baseMapper -> baseMapper.selectById(id));
     }
 
@@ -630,9 +650,10 @@ public class Database {
      * @param idList      主键ID列表
      * @param entityClass 实体类
      * @param <T>         a T class
+     * @param <U>         a U class
      * @return {@code java.util.List<T>}
      */
-    public static <T> List<T> listByIds(Collection<? extends Serializable> idList, Class<T> entityClass) {
+    public static <T, U extends Serializable & Comparable<? super U>> List<T> listByIds(Collection<U> idList, Class<T> entityClass) {
         return execute(entityClass, baseMapper -> baseMapper.selectBatchIds(idList));
     }
 
@@ -1027,6 +1048,7 @@ public class Database {
             }
         }
         Assert.notNull(entityClass, "error: can not get entityClass from entityList");
+        Assert.isFalse(SimpleTypeRegistry.isSimpleType(entityClass), "error: entityClass can not be simple type");
         return entityClass;
     }
 

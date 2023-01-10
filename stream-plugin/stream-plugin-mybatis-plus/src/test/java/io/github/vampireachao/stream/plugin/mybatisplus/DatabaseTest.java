@@ -210,8 +210,14 @@ class DatabaseTest {
         boolean isSuccess = Database.removeByIds(Arrays.asList(1L, 2L), UserInfo.class);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(3, Database.count(UserInfo.class));
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(3L);
+        isSuccess = Database.removeByIds(Lists.of(userInfo));
+        Assertions.assertTrue(isSuccess);
+        Assertions.assertEquals(2, Database.count(UserInfo.class));
 
-        Assertions.assertFalse(Database.removeByIds(Lists.empty(), UserInfo.class));
+        Assertions.assertFalse(Database.removeByIds(Lists.<Long>empty(), UserInfo.class));
+        Assertions.assertFalse(Database.removeByIds(Lists.empty()));
     }
 
     @Test
@@ -262,7 +268,7 @@ class DatabaseTest {
         List<UserInfo> list = Database.listByIds(Arrays.asList(1L, 2L), UserInfo.class);
         Assertions.assertEquals(2, list.size());
 
-        Assertions.assertTrue(Database.listByIds(Lists.empty(), UserInfo.class).isEmpty());
+        Assertions.assertTrue(Database.listByIds(Lists.<Long>empty(), UserInfo.class).isEmpty());
     }
 
     @Test
