@@ -36,7 +36,8 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
         SqlMethodEnum sqlMethod = SqlMethodEnum.UPDATE_ONE_SQL;
         String caseWhenScript = buildCaseWhen(tableInfo);
         StringBuilder whereScript = buildWhereSql(tableInfo);
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), caseWhenScript, whereScript);
+        String sql = String.format(SCRIPT_TAGS, SqlScriptUtils.convertIf(sqlMethod.getSql(), String.format(NON_EMPTY_CONDITION, COLLECTION_PARAM_NAME, COLLECTION_PARAM_NAME), true));
+        sql = String.format(sql, tableInfo.getTableName(), caseWhenScript, whereScript);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addUpdateMappedStatement(mapperClass, modelClass, sqlSource);
     }

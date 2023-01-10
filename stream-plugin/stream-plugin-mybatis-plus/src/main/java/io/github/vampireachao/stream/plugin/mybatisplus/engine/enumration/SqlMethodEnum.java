@@ -4,14 +4,13 @@ package io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration;
  * sql方法类型
  *
  * @author VampireAchao Cizai_
-
  */
 public enum SqlMethodEnum {
     /**
      * 插入
      */
-    SAVE_ONE_SQL("saveOneSql", "插入多条数据（mysql语法批量）", "<script>\nINSERT INTO %s %s VALUES %s\n</script>"),
-    UPDATE_ONE_SQL("updateOneSql", "修改多条数据（mysql语法批量）", "<script>\nUPDATE %s SET %s WHERE %s\n</script>"),
+    SAVE_ONE_SQL("saveOneSql", "插入多条数据（mysql语法批量）", "INSERT INTO %s %s VALUES %s"),
+    UPDATE_ONE_SQL("updateOneSql", "修改多条数据（mysql语法批量）", "\nUPDATE %s SET %s WHERE %s\n"),
     ;
     private final String method;
     private final String desc;

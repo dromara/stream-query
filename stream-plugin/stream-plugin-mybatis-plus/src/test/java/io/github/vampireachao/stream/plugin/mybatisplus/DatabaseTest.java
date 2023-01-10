@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import io.github.vampireachao.stream.core.collection.Lists;
 import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
@@ -36,6 +37,7 @@ class DatabaseTest {
         long effectRows = Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(list));
         Assertions.assertEquals(2, effectRows);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
+        Assertions.assertEquals(0L, Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(Lists.empty())));
     }
 
     @Test

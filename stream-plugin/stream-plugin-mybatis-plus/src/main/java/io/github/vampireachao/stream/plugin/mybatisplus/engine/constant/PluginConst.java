@@ -8,6 +8,11 @@ package io.github.vampireachao.stream.plugin.mybatisplus.engine.constant;
 public interface PluginConst {
 
     /**
+     * script tags
+     */
+    String SCRIPT_TAGS = "<script>%s</script>";
+
+    /**
      * default batch commit count
      */
     int DEFAULT_BATCH_SIZE = 1000;
@@ -31,6 +36,10 @@ public interface PluginConst {
      * mapper not blank condition
      */
     String NON_BLANK_CONDITION = "%s != null and %s != null and %s != ''";
+    /**
+     * mapper not empty condition
+     */
+    String NON_EMPTY_CONDITION = "%s != null and !%s.isEmpty()";
     /**
      * db keyword when then template
      */

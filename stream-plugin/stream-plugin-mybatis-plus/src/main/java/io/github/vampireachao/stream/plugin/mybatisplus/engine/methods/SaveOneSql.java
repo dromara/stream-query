@@ -76,7 +76,8 @@ public class SaveOneSql extends AbstractMethod implements PluginConst {
                 keyColumn = tableInfo.getKeyColumn();
             }
         }
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
+        String sql = String.format(SCRIPT_TAGS, SqlScriptUtils.convertIf(sqlMethod.getSql(), String.format(NON_EMPTY_CONDITION, COLLECTION_PARAM_NAME, COLLECTION_PARAM_NAME), true));
+        sql = String.format(sql, tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addInsertMappedStatement(mapperClass, modelClass, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
