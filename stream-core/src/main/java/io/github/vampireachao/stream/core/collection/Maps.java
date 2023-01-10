@@ -3,10 +3,7 @@ package io.github.vampireachao.stream.core.collection;
 import io.github.vampireachao.stream.core.stream.Steam;
 import io.github.vampireachao.stream.core.variable.VariableHelper;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 /**
@@ -157,4 +154,7 @@ public class Maps {
                         .apply(Steam.of(e.getValue()).flat(attachMap::get)).toList()));
     }
 
+    public static <K, V> Map<K, V> empty() {
+        return Collections.emptyMap();
+    }
 }

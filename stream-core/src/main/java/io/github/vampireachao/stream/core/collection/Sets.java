@@ -40,4 +40,9 @@ public class Sets {
         return new HashSet<>(values);
     }
 
+
+    public static <T> Set<T> empty() {
+        return Collections.emptySet();
+    }
+
 }

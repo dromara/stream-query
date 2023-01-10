@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.core.collection.Lists;
+import io.github.vampireachao.stream.core.collection.Maps;
 import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
@@ -37,6 +38,7 @@ class DatabaseTest {
         long effectRows = Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(list));
         Assertions.assertEquals(2, effectRows);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
+
         Assertions.assertEquals(0L, Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(Lists.empty())));
     }
 
@@ -52,6 +54,8 @@ class DatabaseTest {
         boolean isSuccess = Database.saveFewSql(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
+
+        Assertions.assertFalse(Database.saveFewSql(Lists.empty()));
     }
 
     @Test
@@ -66,6 +70,8 @@ class DatabaseTest {
         Assertions.assertTrue(Database.updateFewSql(Arrays.asList(sheep, ruben)));
         Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
         Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
+
+        Assertions.assertFalse(Database.updateFewSql(Lists.empty()));
     }
 
     @Test
@@ -81,6 +87,8 @@ class DatabaseTest {
         boolean isSuccess = Database.saveOrUpdateFewSql(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(6, Database.count(UserInfo.class));
+
+        Assertions.assertFalse(Database.saveOrUpdateFewSql(Lists.empty()));
     }
 
     @Test
@@ -104,6 +112,8 @@ class DatabaseTest {
         boolean isSuccess = Database.saveBatch(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(7, Database.count(UserInfo.class));
+
+        Assertions.assertFalse(Database.saveBatch(Lists.empty()));
     }
 
     @Test
@@ -119,6 +129,8 @@ class DatabaseTest {
         boolean isSuccess = Database.saveOrUpdateBatch(list);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(6, Database.count(UserInfo.class));
+
+        Assertions.assertFalse(Database.saveOrUpdateBatch(Lists.empty()));
     }
 
     @Test
@@ -170,6 +182,8 @@ class DatabaseTest {
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals("bee bee I'm a sheep", Database.getById(1L, UserInfo.class).getName());
         Assertions.assertEquals("rabbit", Database.getById(2L, UserInfo.class).getName());
+
+        Assertions.assertFalse(Database.updateBatchById(Lists.empty()));
     }
 
     @Test
@@ -196,6 +210,8 @@ class DatabaseTest {
         boolean isSuccess = Database.removeByIds(Arrays.asList(1L, 2L), UserInfo.class);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(3, Database.count(UserInfo.class));
+
+        Assertions.assertFalse(Database.removeByIds(Lists.empty(), UserInfo.class));
     }
 
     @Test
@@ -203,6 +219,8 @@ class DatabaseTest {
         boolean isSuccess = Database.removeByMap(Collections.singletonMap("id", 1L), UserInfo.class);
         Assertions.assertTrue(isSuccess);
         Assertions.assertEquals(4, Database.count(UserInfo.class));
+
+        Assertions.assertTrue(Database.removeByMap(Maps.empty(), UserInfo.class));
     }
 
     @Test
@@ -235,12 +253,16 @@ class DatabaseTest {
         List<UserInfo> list = Database.listByMap(map, UserInfo.class);
         Assertions.assertEquals(1, list.size());
         Assertions.assertEquals("Jone", list.get(0).getName());
+
+        Assertions.assertFalse(Database.listByMap(Maps.empty(), UserInfo.class).isEmpty());
     }
 
     @Test
     void testByIds() {
         List<UserInfo> list = Database.listByIds(Arrays.asList(1L, 2L), UserInfo.class);
         Assertions.assertEquals(2, list.size());
+
+        Assertions.assertTrue(Database.listByIds(Lists.empty(), UserInfo.class).isEmpty());
     }
 
     @Test
