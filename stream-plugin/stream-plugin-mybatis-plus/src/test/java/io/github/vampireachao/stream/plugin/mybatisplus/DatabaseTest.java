@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.core.collection.Lists;
 import io.github.vampireachao.stream.core.collection.Maps;
-import io.github.vampireachao.stream.core.lambda.LambdaInvokeException;
+import io.github.vampireachao.stream.core.optional.Opp;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -92,6 +92,15 @@ class DatabaseTest {
         Assertions.assertEquals(6, Database.count(UserInfo.class));
 
         Assertions.assertFalse(Database.saveOrUpdateFewSql(Lists.empty()));
+
+        Assertions.assertTrue(Database.saveOrUpdateFewSql(Lists.of(new UserInfo() {{
+            setId(1L);
+            setName("cate");
+        }})));
+
+        Assertions.assertTrue(Database.saveOrUpdateFewSql(Lists.of(new UserInfo() {{
+            setName("xxx");
+        }})));
     }
 
     @Test
@@ -359,19 +368,16 @@ class DatabaseTest {
         Assertions.assertDoesNotThrow(() -> Database.page(page, UserInfo.class));
 
         // sql injection
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            try {
-                Page<UserInfo> badPage = new Page<>();
-                badPage.addOrder(OrderItem.asc("id;drop table user_info;"));
-                Database.ordersPropertyToColumn(badPage, UserInfo.class);
-            } catch (LambdaInvokeException e) {
-                Throwable throwable = e.getCause().getCause();
-                Assertions.assertEquals("order column { id;drop table user_info; } must not null or be sql injection",
-                        throwable.getMessage());
-                throw throwable;
-            }
-        });
+        Page<UserInfo> badPage = new Page<>();
+        badPage.addOrder(OrderItem.asc("id;drop table user_info;"));
+        Throwable throwable = Opp.ofTry(() -> {
+            Database.ordersPropertyToColumn(badPage, UserInfo.class);
+            return null;
+        }).getThrowable().getCause().getCause();
+        Assertions.assertEquals("order column { id;drop table user_info; } must not null or be sql injection",
+                throwable.getMessage());
     }
+
 
     @Test
     void testBuildMapper() {
