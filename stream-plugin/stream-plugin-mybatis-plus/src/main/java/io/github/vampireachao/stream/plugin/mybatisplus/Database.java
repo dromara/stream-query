@@ -959,7 +959,7 @@ public class Database {
             mapperClass = ENTITY_MAPPER_CLASS_CACHE.get(ClassUtils.getUserClass(currentClass));
         }
         if (mapperClass == null) {
-            ClassUtils.toClassConfident(getTableInfo(clazz).getCurrentNamespace());
+            mapperClass = ClassUtils.toClassConfident(getTableInfo(clazz).getCurrentNamespace());
         }
         if (mapperClass != null) {
             ENTITY_MAPPER_CLASS_CACHE.put(targetClass, mapperClass);
