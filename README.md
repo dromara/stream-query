@@ -38,17 +38,19 @@
 在项目的pom.xml的dependencies中加入以下内容:
 
 ```xml
+<!-- 已包含mybatis-plus、stream-core、不用重复引入 -->
 <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-plugin-mybatis-plus -->
 <dependency>
     <groupId>io.github.vampireachao</groupId>
-    <artifactId>stream-plugin-mybatis-plus</artifactId>
-    <version>1.2.2</version>
+   <artifactId>stream-plugin-mybatis-plus</artifactId>
+   <version>x.x.x</version>
 </dependency>
+<!-- 可单独引入 -->
 <!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-core -->
 <dependency>
     <groupId>io.github.vampireachao</groupId>
     <artifactId>stream-core</artifactId>
-    <version>1.2.2</version>
+    <version>x.x.x</version>
 </dependency>
 ```
 
@@ -57,7 +59,8 @@
 在项目的build.gradle的dependencies中加入以下内容:
 
 ```Gradle
-implementation group: 'io.github.vampireachao', name: 'stream-core', version: '1.2.2'
+implementation group: 'io.github.vampireachao', name: 'stream-plugin-mybatis-plus', version: 'x.x.x'
+implementation group: 'io.github.vampireachao', name: 'stream-core', version: 'x.x.x'
 ```
 
 ## 🐞提供bug反馈或建议
