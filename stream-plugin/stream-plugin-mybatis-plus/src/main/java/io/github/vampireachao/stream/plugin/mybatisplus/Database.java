@@ -277,7 +277,19 @@ public class Database {
         TableInfo tableInfo = getTableInfo(entityClass);
         Map<Boolean, List<T>> isInsertDataListMap = Steam.of(entityList)
                 .partition(entity -> Objects.isNull(tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty())));
-        return saveFewSql(isInsertDataListMap.get(true)) && updateFewSql(isInsertDataListMap.get(false));
+        final List<T> saveList = isInsertDataListMap.get(true);
+        final List<T> updateList = isInsertDataListMap.get(false);
+        boolean isSuccess = true;
+        if (Lists.isNotEmpty(saveList)) {
+            isSuccess = saveFewSql(saveList, batchSize);
+        }
+        if (Lists.isNotEmpty(updateList)) {
+            final boolean isUpdateSuccess = updateFewSql(updateList, batchSize);
+            if (isSuccess) {
+                isSuccess = isUpdateSuccess;
+            }
+        }
+        return isSuccess;
     }
 
     /**
