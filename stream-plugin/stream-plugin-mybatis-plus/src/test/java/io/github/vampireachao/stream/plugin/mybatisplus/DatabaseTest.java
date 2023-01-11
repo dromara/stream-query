@@ -270,7 +270,7 @@ class DatabaseTest {
         map.put("id", 1L);
         List<UserInfo> list = Database.listByMap(map, UserInfo.class);
         Assertions.assertEquals(1, list.size());
-        Assertions.assertEquals("Jone", list.get(0).getName());
+        Assertions.assertEquals("Jon", list.get(0).getName());
 
         Assertions.assertFalse(Database.listByMap(Maps.empty(), UserInfo.class).isEmpty());
     }
@@ -316,7 +316,7 @@ class DatabaseTest {
         Assertions.assertEquals(5, objectList.size());
 
         List<String> names = Database.listObjs(UserInfo.class, UserInfo::getName);
-        Assertions.assertArrayEquals(new String[]{"Jone", "Jack", "Tom", "Sandy", "Billie"}, names.toArray());
+        Assertions.assertArrayEquals(new String[]{"Jon", "Jack", "Tom", "Sandy", "Billie"}, names.toArray());
     }
 
     @Test
@@ -340,7 +340,7 @@ class DatabaseTest {
     @Test
     void testGetObj() {
         String name = Database.getObj(Wrappers.lambdaQuery(UserInfo.class).eq(UserInfo::getId, 1L), UserInfo::getName);
-        Assertions.assertEquals("Jone", name);
+        Assertions.assertEquals("Jon", name);
     }
 
     @Test
@@ -383,7 +383,7 @@ class DatabaseTest {
     void testBuildMapper() {
         UserInfo userInfo = new UserInfo() {{
             setId(1L);
-            setName("Jone");
+            setName("Jon");
         }};
         Configuration configuration = TableInfoHelper.getTableInfo(UserInfo.class).getConfiguration();
         Database.buildMapper(configuration, UserInfo.class);

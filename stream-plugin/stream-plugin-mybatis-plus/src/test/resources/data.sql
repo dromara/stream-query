@@ -2,7 +2,7 @@ DELETE
 FROM user_info;
 
 INSERT INTO user_info (name, age, email)
-VALUES ('Jone', 18, 'test1@baomidou.com'),
+VALUES ('Jon', 18, 'test1@baomidou.com'),
        ('Jack', 18, 'test2@baomidou.com'),
        ('Tom', 28, 'test3@baomidou.com'),
        ('Sandy', 21, 'test4@baomidou.com'),
