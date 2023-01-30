@@ -46,7 +46,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S eq(K data) {
-        wrapper = Sf.of(data).mayLet(value -> wrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
+        Sf.of(data).mayLet(value -> this.eq(keyFunction, value)).orGet(() -> Database.notActive(this));
         return (S) this;
     }
 
@@ -57,7 +57,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S in(Collection<K> dataList) {
-        wrapper = Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
+        Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> this.in(keyFunction, values)).orGet(() -> Database.notActive(this));
         return (S) this;
     }
 
@@ -68,7 +68,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S like(String data) {
-        wrapper = Sf.ofStr(data).mayLet(value -> wrapper.like(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
+        Sf.ofStr(data).mayLet(value -> this.like(keyFunction, value)).orGet(() -> Database.notActive(this));
         return (S) this;
     }
 
@@ -79,7 +79,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
-        wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
+        Sf.of(queryOperator.apply(this)).orGet(() -> Database.notActive(this));
         return (S) this;
     }
 
@@ -131,7 +131,7 @@ public abstract class BaseQueryHelper<
      */
     protected <R> void attachSingle(SFunction<T, R> valueFunction) {
         this.valueFunction = (SFunction<T, V>) valueFunction;
-        Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
+        Database.select(this, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
     }
 
     /**
@@ -142,7 +142,7 @@ public abstract class BaseQueryHelper<
      */
     protected <R> void attachDouble(SFunction<T, R> valueFunction) {
         this.valueFunction = (SFunction<T, V>) valueFunction;
-        Database.select(wrapper, keyFunction, valueFunction);
+        Database.select(this, keyFunction, valueFunction);
     }
 
     /**
