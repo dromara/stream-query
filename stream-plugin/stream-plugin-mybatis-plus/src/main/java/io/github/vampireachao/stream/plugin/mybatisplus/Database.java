@@ -917,7 +917,7 @@ public class Database {
         ENTITY_MAPPER_CLASS_CACHE.computeIfAbsent(entityClass, k -> {
             Class<?> dynamicMapper = new ByteBuddy()
                     .makeInterface(TypeDescription.Generic.Builder.parameterizedType(IMapper.class, entityClass).build())
-                    .name(String.format("io.github.vampireachao.mapper.%sMapper", entityClass.getSimpleName()))
+                    .name(String.format("io.github.vampireachao.stream.plugin.mybatisplus.mapper.dynamicMapper.%sMapper", entityClass.getSimpleName()))
                     .make()
                     .load(ClassUtils.class.getClassLoader())
                     .getLoaded();
