@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.security.KeyManagementException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 /**
@@ -33,6 +34,8 @@ class OppTest {
         // 如果想使用原版Optional中的get这样，获取一个一定不为空的值，则应该使用orElseThrow
         final Object opp = Opp.empty().get();
         Assertions.assertNull(opp);
+        final String oppGetMap = Opp.empty().get((data) -> "hutool");
+        Assertions.assertNull(oppGetMap);
     }
 
     @Test
@@ -109,18 +112,6 @@ class OppTest {
         // 获取一个不可能为空的值，否则抛出自定义异常
         Assertions.assertThrows(IllegalStateException.class,
                 () -> opp.orElseThrow(IllegalStateException::new));
-    }
-
-    @Test
-    void orElseRunTest() {
-        // 判断一个值是否为空，为空执行一段逻辑,否则执行另一段逻辑
-        final Map<String, Integer> map = new HashMap<>();
-        final String key = "key";
-        map.put(key, 1);
-        Opp.of(map.get(key))
-                .ifPresent(v -> map.put(key, v + 1))
-                .orElseRun(() -> map.remove(key));
-        Assertions.assertEquals((Object) 2, map.get(key));
     }
 
     @Test
@@ -311,6 +302,13 @@ class OppTest {
     }
 
     @Test
+    void testToOptional() {
+        final Optional<String> optional = Opp.ofStr("stream-query").toOptional();
+        optional.ifPresent(s -> Assertions.assertEquals(s, "stream-query"));
+
+    }
+
+    @Test
     void testZipOrSelf() {
         Stream.<SerRunn>of(() -> {
             String compose = Opp.ofStr("Vampire").zipOrSelf(Opp.of("Achao"), String::concat).get();
@@ -318,13 +316,43 @@ class OppTest {
         }, () -> {
             String compose = Opp.ofStr("Vampire").zipOrSelf(Opp.empty(), String::concat).get();
             Assertions.assertEquals("Vampire", compose);
+        }, () -> {
+            String compose = Opp.ofStr("").zipOrSelf(Opp.empty(), String::concat).get();
+            Assertions.assertNull(compose);
         }).forEach(SerRunn::run);
     }
 
     @Test
     void testIs() {
-        Boolean flag = null;
-        Assertions.assertFalse(Opp.of(1).is(i -> flag));
+        Assertions.assertFalse(Opp.of(1).is(i -> null));
+    }
+
+    @Test
+    void testOrElseRun() {
+        final AtomicReference<String> oppStrNull = new AtomicReference<>("");
+        Opp.ofStr(oppStrNull.get()).orElseRun(() -> {
+            oppStrNull.set("stream-query");
+        });
+        final String elseRun = Opp.ofStr(oppStrNull.get()).orElseRun(() -> {
+            oppStrNull.set("");
+        });
+        Assertions.assertEquals(oppStrNull.get(), "stream-query");
+        Assertions.assertEquals(elseRun, "stream-query");
+    }
+
+    @Test
+    void testIfPresent() {
+        final AtomicReference<String> oppStrNull = new AtomicReference<>("");
+        Opp.ofStr("stream-query").ifPresent(data-> oppStrNull.set("stream-query"));
+        Assertions.assertEquals(oppStrNull.get(), "stream-query");
+        Opp.ofStr("").ifPresent(data-> oppStrNull.set(""));
+        Assertions.assertEquals(oppStrNull.get(), "stream-query");
+    }
+
+    @Test
+    void testFilter() {
+        final String isNull = Opp.of("stream-query").filter(Objects::isNull).get();
+        Assertions.assertNull(isNull);
     }
 
     @Data
