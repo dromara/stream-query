@@ -1,16 +1,8 @@
-spring:
-  datasource:
-    driver-class-name: org.h2.Driver
-    schema: classpath:schema.sql
-    data: classpath:data.sql
-    url: jdbc:h2:mem:test
-
 logging:
   level:
     root: DEBUG
-    com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean: INFO
-#mybatis-plus:
-#  mapper-locations:
-#    - classpath:mapper/*.xml
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+spring:
+  sql:
+    init:
+      schema-locations: schema.sql
+      data-locations: data.sql
