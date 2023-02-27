@@ -1124,20 +1124,18 @@ public class Database {
         }
         final Class<T> entityClass = getEntityClass(dataList);
         final List<TableFieldInfo> fieldList = TableInfoHelper.getTableInfo(entityClass).getFieldList();
-        wrapper.nested(w -> {
-            Steam.of(fieldList).forEachIdx((tableField, idx) -> {
-                Method getter = ReflectHelper.getMethod(entityClass,
-                        BeanHelper.GETTER_PREFIX +
-                                tableField.getProperty().substring(0, 1).toUpperCase(Locale.ROOT) +
-                                tableField.getProperty().substring(1));
-                SFunction<T, ?> getterFunction = LambdaHelper.revert(SFunction.class, getter);
-                final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
-                if (idx != 0) {
-                    w.or();
-                }
-                w.in(Lists.isNotEmpty(list), getterFunction, list);
-            });
-        });
+        wrapper.nested(w -> Steam.of(fieldList).forEachIdx((tableField, idx) -> {
+            Method getter = ReflectHelper.getMethod(entityClass,
+                    BeanHelper.GETTER_PREFIX +
+                            tableField.getProperty().substring(0, 1).toUpperCase(Locale.ROOT) +
+                            tableField.getProperty().substring(1));
+            SFunction<T, ?> getterFunction = LambdaHelper.revert(SFunction.class, getter);
+            final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
+            if (idx != 0) {
+                w.or();
+            }
+            w.in(Lists.isNotEmpty(list), getterFunction, list);
+        }));
         return wrapper;
     }
 }
