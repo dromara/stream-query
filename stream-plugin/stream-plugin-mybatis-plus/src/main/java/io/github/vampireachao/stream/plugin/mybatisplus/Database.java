@@ -61,6 +61,8 @@ public class Database {
     private static final Map<Class<?>, Map<String, String>> TABLE_COLUMN_PROPERTY_CACHE = new ConcurrentHashMap<>();
     private static final Map<Class<?>, Class<?>> ENTITY_MAPPER_CLASS_CACHE = new ConcurrentHashMap<>();
 
+    private static final Map<String, SFunction<?, ?>> LAMBDA_GETTER_CACHE = new WeakHashMap<>();
+
     /**
      *
      */
@@ -1118,6 +1120,7 @@ public class Database {
                         entityClass.getName()));
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> LambdaQueryWrapper<T> inList(LambdaQueryWrapper<T> wrapper, List<T> dataList) {
         if (Lists.isEmpty(dataList)) {
             return wrapper;
@@ -1125,11 +1128,15 @@ public class Database {
         final Class<T> entityClass = getEntityClass(dataList);
         final List<TableFieldInfo> fieldList = TableInfoHelper.getTableInfo(entityClass).getFieldList();
         wrapper.nested(w -> Steam.of(fieldList).forEachIdx((tableField, idx) -> {
-            Method getter = ReflectHelper.getMethod(entityClass,
-                    BeanHelper.GETTER_PREFIX +
-                            tableField.getProperty().substring(0, 1).toUpperCase(Locale.ROOT) +
-                            tableField.getProperty().substring(1));
-            SFunction<T, ?> getterFunction = LambdaHelper.revert(SFunction.class, getter);
+            SFunction<T, ?> getterFunction = (SFunction<T, ?>) LAMBDA_GETTER_CACHE.computeIfAbsent(
+                    entityClass + StringPool.AT + tableField.getProperty(),
+                    property -> {
+                        Method getter = ReflectHelper.getMethod(entityClass,
+                                BeanHelper.GETTER_PREFIX +
+                                        tableField.getProperty().substring(0, 1).toUpperCase(Locale.ROOT) +
+                                        tableField.getProperty().substring(1));
+                        return LambdaHelper.revert(SFunction.class, getter);
+                    });
             final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
             if (idx != 0) {
                 w.or();
