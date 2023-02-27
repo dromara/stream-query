@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import io.github.vampireachao.stream.core.bean.BeanHelper;
 import io.github.vampireachao.stream.core.collection.Lists;
 import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.lambda.function.SerBiCons;
@@ -41,6 +42,7 @@ import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -1116,4 +1118,26 @@ public class Database {
                         entityClass.getName()));
     }
 
+    public static <T> LambdaQueryWrapper<T> inList(LambdaQueryWrapper<T> wrapper, List<T> dataList) {
+        if (Lists.isEmpty(dataList)) {
+            return wrapper;
+        }
+        final Class<T> entityClass = getEntityClass(dataList);
+        final List<TableFieldInfo> fieldList = TableInfoHelper.getTableInfo(entityClass).getFieldList();
+        wrapper.nested(w -> {
+            Steam.of(fieldList).forEachIdx((tableField, idx) -> {
+                Method getter = ReflectHelper.getMethod(entityClass,
+                        BeanHelper.GETTER_PREFIX +
+                                tableField.getProperty().substring(0, 1).toUpperCase(Locale.ROOT) +
+                                tableField.getProperty().substring(1));
+                SFunction<T, ?> getterFunction = LambdaHelper.revert(SFunction.class, getter);
+                final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
+                if (idx != 0) {
+                    w.or();
+                }
+                w.in(Lists.isNotEmpty(list), getterFunction, list);
+            });
+        });
+        return wrapper;
+    }
 }
