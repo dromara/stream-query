@@ -25,6 +25,7 @@ import java.util.WeakHashMap;
 public class LambdaHelper {
 
     private static final WeakHashMap<String, LambdaExecutable> SERIALIZED_LAMBDA_EXECUTABLE_CACHE = new WeakHashMap<>();
+    private static final WeakHashMap<Class<?>, WeakHashMap<Executable, Object>> LAMBDA_REVERT_CACHE = new WeakHashMap<>();
 
     private LambdaHelper() {
         /* Do not new me! */
@@ -73,42 +74,48 @@ public class LambdaHelper {
                 key -> new LambdaExecutable(serialize(lambda)));
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T revert(Class<? super T> clazz, Executable executable) {
-        final Method funcMethod = Steam.of(clazz.getMethods()).findFirst(method -> Modifier.isAbstract(method.getModifiers()))
-                .orElseThrow(() -> new LambdaInvokeException("not a functional interface"));
-        final MethodHandle implMethod;
-        final MethodType instantiatedMethodType;
-        if (executable instanceof Method) {
-            final Method method = (Method) executable;
-            implMethod = ((SerSupp<MethodHandle>) () -> MethodHandles.lookup().unreflect(method)).get();
-            instantiatedMethodType = MethodType.methodType(method.getReturnType(), method.getDeclaringClass(), method.getParameterTypes());
-        } else {
-            final Constructor<?> constructor = (Constructor<?>) executable;
-            implMethod = ((SerSupp<MethodHandle>) () -> MethodHandles.lookup().unreflectConstructor(constructor)).get();
-            instantiatedMethodType = MethodType.methodType(constructor.getDeclaringClass(), constructor.getParameterTypes());
-        }
-        final CallSite callSite = ((SerSupp<CallSite>) () ->
-                Serializable.class.isAssignableFrom(clazz) ?
-                        LambdaMetafactory.altMetafactory(
-                                MethodHandles.lookup(),
-                                funcMethod.getName(),
-                                MethodType.methodType(clazz),
-                                MethodType.methodType(funcMethod.getReturnType(), funcMethod.getParameterTypes()),
-                                implMethod,
-                                instantiatedMethodType,
-                                LambdaMetafactory.FLAG_SERIALIZABLE
-                        ) :
-                        LambdaMetafactory.metafactory(
-                                MethodHandles.lookup(),
-                                funcMethod.getName(),
-                                MethodType.methodType(clazz),
-                                MethodType.methodType(funcMethod.getReturnType(), funcMethod.getParameterTypes()),
-                                implMethod,
-                                instantiatedMethodType
-                        )
-        ).get();
-        final MethodHandle target = callSite.getTarget();
-        return ((SerSupp<T>) () -> SerFunc.<Object, T>cast().apply(target.invoke())).get();
+        WeakHashMap<Executable, Object> lambdaCache = LAMBDA_REVERT_CACHE.computeIfAbsent(clazz, key -> new WeakHashMap<>());
+        return (T) lambdaCache.computeIfAbsent(executable, key -> {
+            final Method funcMethod = Steam.of(clazz.getMethods()).findFirst(method -> Modifier.isAbstract(method.getModifiers()))
+                    .orElseThrow(() -> new LambdaInvokeException("not a functional interface"));
+            final MethodHandle implMethod;
+            final MethodType instantiatedMethodType;
+            if (executable instanceof Method) {
+                final Method method = (Method) executable;
+                implMethod = ((SerSupp<MethodHandle>) () -> MethodHandles.lookup().unreflect(method)).get();
+                instantiatedMethodType = MethodType.methodType(method.getReturnType(), method.getDeclaringClass(), method.getParameterTypes());
+            } else {
+                final Constructor<?> constructor = (Constructor<?>) executable;
+                implMethod = ((SerSupp<MethodHandle>) () -> MethodHandles.lookup().unreflectConstructor(constructor)).get();
+                instantiatedMethodType = MethodType.methodType(constructor.getDeclaringClass(), constructor.getParameterTypes());
+            }
+            final CallSite callSite = ((SerSupp<CallSite>) () ->
+                    Serializable.class.isAssignableFrom(clazz) ?
+                            LambdaMetafactory.altMetafactory(
+                                    MethodHandles.lookup(),
+                                    funcMethod.getName(),
+                                    MethodType.methodType(clazz),
+                                    MethodType.methodType(funcMethod.getReturnType(), funcMethod.getParameterTypes()),
+                                    implMethod,
+                                    instantiatedMethodType,
+                                    LambdaMetafactory.FLAG_SERIALIZABLE
+                            ) :
+                            LambdaMetafactory.metafactory(
+                                    MethodHandles.lookup(),
+                                    funcMethod.getName(),
+                                    MethodType.methodType(clazz),
+                                    MethodType.methodType(funcMethod.getReturnType(), funcMethod.getParameterTypes()),
+                                    implMethod,
+                                    instantiatedMethodType
+                            )
+            ).get();
+            final MethodHandle target = callSite.getTarget();
+            return ((SerSupp<T>) () -> SerFunc.<Object, T>cast().apply(target.invoke())).get();
+        });
+
+
     }
 
 
