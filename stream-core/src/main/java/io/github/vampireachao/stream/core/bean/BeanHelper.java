@@ -81,4 +81,12 @@ public class BeanHelper {
         return Opp.ofStr(methodName).is(s -> s.startsWith(SETTER_PREFIX));
     }
 
+    public static String getSetterName(String propertyName) {
+        return SETTER_PREFIX + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+    }
+
+    public static String getGetterName(String propertyName) {
+        return GETTER_PREFIX + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+    }
+
 }
