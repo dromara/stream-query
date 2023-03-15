@@ -46,7 +46,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S eq(K data) {
-        Sf.of(data).mayLet(value -> this.eq(keyFunction, value)).orGet(() -> Database.notActive(this));
+        wrapper = Sf.of(data).mayLet(value -> wrapper.eq(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
         return (S) this;
     }
 
@@ -57,7 +57,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S in(Collection<K> dataList) {
-        Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> this.in(keyFunction, values)).orGet(() -> Database.notActive(this));
+        wrapper = Sf.mayColl(dataList).mayLet(HashSet::new).mayLet(values -> wrapper.in(keyFunction, values)).orGet(() -> Database.notActive(wrapper));
         return (S) this;
     }
 
@@ -68,7 +68,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S like(String data) {
-        Sf.ofStr(data).mayLet(value -> this.like(keyFunction, value)).orGet(() -> Database.notActive(this));
+        wrapper = Sf.ofStr(data).mayLet(value -> wrapper.like(keyFunction, value)).orGet(() -> Database.notActive(wrapper));
         return (S) this;
     }
 
@@ -79,7 +79,7 @@ public abstract class BaseQueryHelper<
      * @return a S object
      */
     public S condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
-        Sf.of(queryOperator.apply(this)).orGet(() -> Database.notActive(this));
+        wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
         return (S) this;
     }
 
@@ -122,7 +122,6 @@ public abstract class BaseQueryHelper<
         this.peekConsumer = this.peekConsumer.andThen(peek);
         return (S) this;
     }
-
     /**
      * <p>attachSingle.</p>
      *
@@ -131,7 +130,7 @@ public abstract class BaseQueryHelper<
      */
     protected <R> void attachSingle(SFunction<T, R> valueFunction) {
         this.valueFunction = (SFunction<T, V>) valueFunction;
-        Database.select(this, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
+        Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
     }
 
     /**
@@ -142,9 +141,8 @@ public abstract class BaseQueryHelper<
      */
     protected <R> void attachDouble(SFunction<T, R> valueFunction) {
         this.valueFunction = (SFunction<T, V>) valueFunction;
-        Database.select(this, keyFunction, valueFunction);
+        Database.select(wrapper, keyFunction, valueFunction);
     }
-
     /**
      * <p>valueOrIdentity.</p>
      *

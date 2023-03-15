@@ -52,10 +52,6 @@ public class OneToOne<T, K extends Serializable & Comparable<? super K>, V> exte
         return (OneToOne<T, K, R>) this;
     }
 
-    /*public <U, A extends Serializable & Comparable<A>, R> OneToOne<T, K, R> and(OneToOne<U, A, R> engine) {
-
-    }*/
-
     /**
      * <p>query.</p>
      *
@@ -73,7 +69,7 @@ public class OneToOne<T, K extends Serializable & Comparable<? super K>, V> exte
      * @return a R object
      */
     public <R extends Map<K, V>> R query(IntFunction<R> mapFactory) {
-        List<T> list = Database.list(this);
+        List<T> list = Database.list(wrapper);
         return Steam.of(list)
                 .parallel(isParallel)
                 .peek(peekConsumer)

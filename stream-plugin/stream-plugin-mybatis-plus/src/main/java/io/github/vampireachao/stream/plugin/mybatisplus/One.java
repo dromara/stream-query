@@ -54,7 +54,7 @@ public class One<T, K extends Serializable & Comparable<? super K>, V> extends B
      * @return a V object
      */
     public V query() {
-        return Sf.of(Database.getOne(this)).mayAlso(peekConsumer).mayLet(valueOrIdentity()).get();
+        return Sf.of(Database.getOne(wrapper)).mayAlso(peekConsumer).mayLet(valueOrIdentity()).get();
     }
 
     /**
@@ -64,7 +64,7 @@ public class One<T, K extends Serializable & Comparable<? super K>, V> extends B
      * @return a V object
      */
     public V query(boolean throwEx) {
-        return Sf.of(Database.getOne(this, throwEx)).mayAlso(peekConsumer).mayLet(valueOrIdentity()).get();
+        return Sf.of(Database.getOne(wrapper, throwEx)).mayAlso(peekConsumer).mayLet(valueOrIdentity()).get();
     }
 
 

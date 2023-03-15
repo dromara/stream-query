@@ -57,7 +57,7 @@ public class Many<T, K extends Serializable & Comparable<? super K>, V> extends 
      * @return a R object
      */
     public <R> R query(SerFunc<Steam<V>, R> mapper) {
-        return mapper.apply(Steam.of(Database.list(this)).peek(peekConsumer).parallel(isParallel).nonNull().map(valueOrIdentity()));
+        return mapper.apply(Steam.of(Database.list(wrapper)).peek(peekConsumer).parallel(isParallel).nonNull().map(valueOrIdentity()));
     }
 
     /**
