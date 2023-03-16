@@ -52,6 +52,9 @@ public interface PluginConst {
      * wrapper not active
      */
     String WRAPPER_NOT_ACTIVE = "WRAPPER_NOT_ACTIVE";
-
+    /**
+     * dynamic mapper prefix
+     */
+    String DYNAMIC_MAPPER_PREFIX = "$dynamicMapper";
 
 }

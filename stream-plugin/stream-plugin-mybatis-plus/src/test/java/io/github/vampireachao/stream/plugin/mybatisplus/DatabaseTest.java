@@ -5,19 +5,26 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import io.github.vampireachao.stream.core.collection.Lists;
 import io.github.vampireachao.stream.core.collection.Maps;
 import io.github.vampireachao.stream.core.optional.Opp;
+import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.mapper.IMapper;
+import io.github.vampireachao.stream.plugin.mybatisplus.mapper.UserInfoMapper;
+import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import io.github.vampireachao.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
@@ -390,6 +397,26 @@ class DatabaseTest {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(userInfo.getClass());
         Assertions.assertNotNull(tableInfo);
         Assertions.assertFalse(Database.list(userInfo.getClass()).isEmpty());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testMapperPriority() {
+        try (SqlSession sqlSession = SqlHelper.sqlSession(UserInfo.class)) {
+            IMapper<UserInfo> userMapper = Database.getMapper(UserInfo.class, sqlSession);
+            MybatisMapperProxy<UserInfoMapper> userMapperProxy =
+                    (MybatisMapperProxy<UserInfoMapper>) Proxy.getInvocationHandler(userMapper);
+            Class<UserInfoMapper> userMapperClass = ReflectHelper.getFieldValue(userMapperProxy, "mapperInterface");
+            Assertions.assertEquals(UserInfoMapper.class, userMapperClass);
+            Assertions.assertFalse(Database.isDynamicMapper(userMapperClass.getName()));
+
+            IMapper<RoleInfo> roleMapper = Database.getMapper(RoleInfo.class, sqlSession);
+            MybatisMapperProxy<? super IMapper<RoleInfo>> roleMapperProxy =
+                    (MybatisMapperProxy<? super IMapper<RoleInfo>>) Proxy.getInvocationHandler(roleMapper);
+            Class<? super IMapper<RoleInfo>> roleMapperClass = ReflectHelper.getFieldValue(roleMapperProxy, "mapperInterface");
+            Assertions.assertTrue(Database.isDynamicMapper(roleMapperClass.getName()));
+        }
+
     }
 
     @Test
