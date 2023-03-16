@@ -47,14 +47,16 @@ class AsyncHelperTest {
         ThreadLocal<Integer> threadLocal = new TransmittableThreadLocal<>();
         AsyncConfig asyncConfig = AsyncConfig.create();
         asyncConfig.setInterceptor(new AsyncInterceptor() {
+        Object capture;
             @Override
             public void before() {
                 threadLocal.set(1);
+                capture = TransmittableThreadLocal.Transmitter.capture();
             }
 
             @Override
             public <T> T execute(Supplier<T> supplier) {
-                return TransmittableThreadLocal.Transmitter.runSupplierWithCaptured(TransmittableThreadLocal.Transmitter.capture(), supplier);
+                return TransmittableThreadLocal.Transmitter.runSupplierWithCaptured(capture, supplier);
             }
 
             @Override
