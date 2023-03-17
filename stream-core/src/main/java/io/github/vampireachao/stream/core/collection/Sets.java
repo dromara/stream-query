@@ -43,7 +43,12 @@ public class Sets {
         return new HashSet<>(values);
     }
 
-
+    /**
+     * 获取一个空的Set
+     *
+     * @param <T> 元素类型
+     * @return 一个空的set
+     */
     public static <T> Set<T> empty() {
         return Collections.emptySet();
     }
