@@ -671,7 +671,7 @@ public class Database {
      * @return {@code java.util.List<T>}
      */
     public static <T, U extends Serializable & Comparable<? super U>> List<T> listByIds(Collection<U> idList, Class<T> entityClass) {
-        return execute(entityClass, baseMapper -> baseMapper.selectBatchIds(idList));
+        return Opp.ofColl(idList).map(ids -> execute(entityClass, baseMapper -> baseMapper.selectBatchIds(ids))).orElse(Lists.empty());
     }
 
     /**
