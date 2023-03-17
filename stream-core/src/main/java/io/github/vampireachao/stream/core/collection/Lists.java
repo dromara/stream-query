@@ -26,6 +26,9 @@ public class Lists {
      */
     @SafeVarargs
     public static <T> List<T> of(T... values) {
+        if (Objects.isNull(values) || values.length == 0) {
+            return new ArrayList<>();
+        }
         return new ArrayList<>(Arrays.asList(values));
     }
 
@@ -146,6 +149,6 @@ public class Lists {
      * @return a {@link java.util.List} object
      */
     public static <T> List<T> empty() {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

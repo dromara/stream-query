@@ -23,6 +23,9 @@ public class Sets {
      */
     @SafeVarargs
     public static <T> Set<T> of(T... values) {
+        if (Objects.isNull(values) || values.length == 0) {
+            return new HashSet<>();
+        }
         return new HashSet<>(Arrays.asList(values));
     }
 
