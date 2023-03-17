@@ -914,6 +914,12 @@ public class Database {
         }
     }
 
+    /**
+     * buildMapper 动态构建Mapper
+     *
+     * @param configuration mybatis-plus配置
+     * @param entityClass   实体类
+     */
     public static void buildMapper(Configuration configuration, Class<?> entityClass) {
         if (!(configuration instanceof MybatisConfiguration)) {
             throw new IllegalArgumentException("configuration must be MybatisConfiguration");
