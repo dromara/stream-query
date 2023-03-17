@@ -554,6 +554,9 @@ public class Database {
      * @return boolean
      */
     public static <T, U extends Serializable & Comparable<? super U>> boolean removeByIds(Collection<U> list, Class<T> entityClass) {
+        if (Lists.isEmpty(list)) {
+            return false;
+        }
         return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteBatchIds(list)));
     }
 
@@ -671,7 +674,10 @@ public class Database {
      * @return {@code java.util.List<T>}
      */
     public static <T, U extends Serializable & Comparable<? super U>> List<T> listByIds(Collection<U> idList, Class<T> entityClass) {
-        return Opp.ofColl(idList).map(ids -> execute(entityClass, baseMapper -> baseMapper.selectBatchIds(ids))).orElse(Lists.empty());
+        if (Lists.isEmpty(idList)) {
+            return Lists.empty();
+        }
+        return execute(entityClass, baseMapper -> baseMapper.selectBatchIds(idList));
     }
 
     /**
