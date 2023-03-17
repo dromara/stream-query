@@ -1120,6 +1120,14 @@ public class Database {
                         entityClass.getName()));
     }
 
+    /**
+     * in查询
+     *
+     * @param wrapper  条件构造器
+     * @param dataList 数据
+     * @param <T>      类型
+     * @return 条件构造器
+     */
     @SuppressWarnings("unchecked")
     public static <T> LambdaQueryWrapper<T> inList(LambdaQueryWrapper<T> wrapper, List<T> dataList) {
         if (Lists.isEmpty(dataList)) {
@@ -1146,6 +1154,12 @@ public class Database {
         return wrapper;
     }
 
+    /**
+     * 判断是否动态mapper
+     *
+     * @param mapperClassName mapper类名
+     * @return 是否动态mapper
+     */
     public static boolean isDynamicMapper(String mapperClassName) {
         return mapperClassName.startsWith(PluginConst.DYNAMIC_MAPPER_PREFIX);
     }
