@@ -956,10 +956,22 @@ public class Database {
         return (M) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
     }
 
+    /**
+     * 获取实体类和mapper缓存
+     *
+     * @return 实体类和mapper缓存
+     */
     public static Map<Class<?>, Class<?>> getEntityMapperClassCache() {
         return ENTITY_MAPPER_CLASS_CACHE;
     }
 
+    /**
+     * 获取mapperClass
+     *
+     * @param clazz 实体类
+     * @param <T>   实体类型
+     * @return mapperClass
+     */
     public static <T> Class<?> getMapperClass(Class<T> clazz) {
         if (clazz == null || clazz.isPrimitive() || SimpleTypeRegistry.isSimpleType(clazz) || clazz.isInterface()) {
             throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法");
