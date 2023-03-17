@@ -25,6 +25,12 @@ public class ClassHelper {
         /* Do not new me! */
     }
 
+    /**
+     * 扫描对应包下的类
+     *
+     * @param packageName 包名，例如io.github.vampireachao.stream.core.clazz
+     * @return 包下的类
+     */
     public static List<Class<?>> scanClasses(String packageName) {
         Enumeration<URL> resources = ((SerSupp<Enumeration<URL>>) () ->
                 ClassLoader.getSystemClassLoader().getResources(packageName.replace(".", "/"))
