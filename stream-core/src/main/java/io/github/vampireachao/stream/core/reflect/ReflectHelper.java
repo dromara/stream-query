@@ -76,6 +76,9 @@ public class ReflectHelper {
      * @return accessibleObject
      */
     public static <$ACCESSIBLE_OBJECT extends AccessibleObject> $ACCESSIBLE_OBJECT accessible($ACCESSIBLE_OBJECT accessibleObject) {
+        if (accessibleObject.isAccessible()) {
+            return accessibleObject;
+        }
         return AccessController.doPrivileged((PrivilegedAction<$ACCESSIBLE_OBJECT>) () -> {
             accessibleObject.setAccessible(true);
             return accessibleObject;
