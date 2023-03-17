@@ -81,6 +81,12 @@ public class BeanHelper {
         return Opp.ofStr(methodName).is(s -> s.startsWith(SETTER_PREFIX));
     }
 
+    /**
+     * 通过属性名得到setter名
+     *
+     * @param propertyName 属性名
+     * @return setter名
+     */
     public static String getSetterName(String propertyName) {
         return SETTER_PREFIX + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
