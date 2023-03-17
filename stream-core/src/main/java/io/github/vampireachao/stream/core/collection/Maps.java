@@ -154,6 +154,13 @@ public class Maps {
                         .apply(Steam.of(e.getValue()).flat(attachMap::get)).toList()));
     }
 
+    /**
+     * 获取一个空的Map
+     *
+     * @param <K> key
+     * @param <V> value
+     * @return 空的Map
+     */
     public static <K, V> Map<K, V> empty() {
         return Collections.emptyMap();
     }
