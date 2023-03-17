@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import io.github.vampireachao.stream.core.lambda.LambdaHelper;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.plugin.mybatisplus.Database;
 import io.github.vampireachao.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
@@ -24,6 +25,8 @@ import java.util.List;
  * @author VampireAchao Cizai_
  */
 public class StreamPluginAutoConfiguration {
+
+    private static final String CURRENT_NAMESPACE = LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
 
     /**
      * <p>defaultSqlInjector.</p>
@@ -54,7 +57,7 @@ public class StreamPluginAutoConfiguration {
                 if (Database.isDynamicMapper(tableInfo.getCurrentNamespace()) &&
                         !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
                     // 降低动态mapper优先级
-                    ReflectHelper.setFieldValue(tableInfo, "currentNamespace", mapperClass.getName());
+                    ReflectHelper.setFieldValue(tableInfo, CURRENT_NAMESPACE, mapperClass.getName());
                     Database.getEntityMapperClassCache().put(modelClass, mapperClass);
                 }
             }
