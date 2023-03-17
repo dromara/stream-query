@@ -91,6 +91,12 @@ public class BeanHelper {
         return SETTER_PREFIX + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
 
+    /**
+     * 通过属性名获取getter名
+     *
+     * @param propertyName 属性名
+     * @return getter名
+     */
     public static String getGetterName(String propertyName) {
         return GETTER_PREFIX + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
