@@ -22,7 +22,8 @@
 
 ## 📚简介
 
-热门orm常用操作（目前支持mybatis-plus）的封装及拓展
+允许完全摆脱`Mapper`的`mybatis-plus`体验！
+
 封装`stream`和lambda操作进行数据返回处理
 
 ## 📝文档
@@ -63,6 +64,27 @@ implementation group: 'io.github.vampireachao', name: 'stream-plugin-mybatis-plu
 implementation group: 'io.github.vampireachao', name: 'stream-core', version: 'x.x.x'
 ```
 
+## 🔧 配置
+
+注入动态`Mapper`处理器
+
+```java
+    @Bean
+    public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) throws Exception {
+        // 使用ClassHelper的scanClasses方法扫描对应路径下的po生成Class文件集合放入第二个参数就可以了
+        final List<Class<?>> entityClassList = ClassHelper.scanClasses("com.ruben.pojo.po");
+        return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
+    }
+```
+
+## 📚使用
+
+```java
+    Database.saveBatch(userList);
+```
+
+更多请看[文档](https://vampireachao.gitee.io/stream-query-docs)
+
 ## 🐞提供bug反馈或建议
 
 提交问题反馈请说明正在使用的JDK版本、stream-query版本和相关依赖库版本。如果可以请尽量详细或加图片以便于我们去复现
@@ -92,11 +114,10 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: 'x
 
 ### 📐PR遵照的原则
 
-`stream-query`欢迎任何人为`stream-query`添砖加瓦，贡献代码，不过维护者是一个强迫症患者，为了照顾病人，需要提交的pr（pull
-request）符合一些规范，规范如下：
+`stream-query`欢迎任何人为`stream-query`添砖加瓦，贡献代码，规范如下：
 
 - 注释完备，尤其每个新增的方法应按照Java文档规范标明方法说明、参数说明、返回值说明等信息，必要时请添加单元测试，如果愿意，也可以加上你的大名。
-- 新加的方法不要使用额外的第三方库方法
+- 新加的方法尽可能不要使用额外的第三方库方法
 - 我们如果关闭了你的issue或pr，请不要诧异，这是我们保持问题处理整洁的一种方式，你依旧可以继续讨论，当有讨论结果时我们会重新打开。
 
 powered by [GitHub Copilot](https://copilot.github.com)
