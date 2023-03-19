@@ -20,10 +20,9 @@ import java.util.function.Predicate;
  * 树先生
  *
  * @author VampireAchao
-
  * @since 2022/11/26
  */
-public class TreeHelper<T, R extends Comparable<R>> {
+public class TreeHelper<T, R extends Comparable<? super R>> {
 
     private final SerFunc<T, R> idGetter;
     private final SerFunc<T, R> pidGetter;
@@ -58,11 +57,11 @@ public class TreeHelper<T, R extends Comparable<R>> {
      * @param <R>            父id类型
      * @return a {@link io.github.vampireachao.stream.core.business.tree.TreeHelper} object
      */
-    public static <T, R extends Comparable<R>> TreeHelper<T, R> of(SerFunc<T, R> idGetter,
-                                                                   SerFunc<T, R> pidGetter,
-                                                                   R pidValue,
-                                                                   SerFunc<T, List<T>> childrenGetter,
-                                                                   SerBiCons<T, List<T>> childrenSetter) {
+    public static <T, R extends Comparable<? super R>> TreeHelper<T, R> of(SerFunc<T, R> idGetter,
+                                                                           SerFunc<T, R> pidGetter,
+                                                                           R pidValue,
+                                                                           SerFunc<T, List<T>> childrenGetter,
+                                                                           SerBiCons<T, List<T>> childrenSetter) {
         return new TreeHelper<>(idGetter, pidGetter, pidValue, null, childrenGetter, childrenSetter);
     }
 
@@ -78,11 +77,11 @@ public class TreeHelper<T, R extends Comparable<R>> {
      * @param <R>             父id类型 R class
      * @return a {@link io.github.vampireachao.stream.core.business.tree.TreeHelper} object
      */
-    public static <T, R extends Comparable<R>> TreeHelper<T, R> ofMatch(SerFunc<T, R> idGetter,
-                                                                        SerFunc<T, R> pidGetter,
-                                                                        SerPred<T> parentPredicate,
-                                                                        SerFunc<T, List<T>> childrenGetter,
-                                                                        SerBiCons<T, List<T>> childrenSetter) {
+    public static <T, R extends Comparable<? super R>> TreeHelper<T, R> ofMatch(SerFunc<T, R> idGetter,
+                                                                                SerFunc<T, R> pidGetter,
+                                                                                SerPred<T> parentPredicate,
+                                                                                SerFunc<T, List<T>> childrenGetter,
+                                                                                SerBiCons<T, List<T>> childrenSetter) {
         return new TreeHelper<>(idGetter, pidGetter, null, parentPredicate, childrenGetter, childrenSetter);
     }
 

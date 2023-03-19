@@ -1045,11 +1045,11 @@ public class Database {
      * 通过属性lambda获取字段名
      *
      * @param property 属性lambda
+     * @param <T>      a T class
+     * @param <R>      a R class
      * @return 字段名
-     * @param <T> a T class
-     * @param <R> a R class
      */
-    public static <T, R extends Comparable<R>> String propertyToColumn(SFunction<T, R> property) {
+    public static <T, R extends Comparable<? super R>> String propertyToColumn(SFunction<T, R> property) {
         LambdaMeta lambdaMeta = LambdaUtils.extract(property);
         return propertyToColumn(lambdaMeta.getInstantiatedClass(),
                 PropertyNamer.methodToProperty(lambdaMeta.getImplMethodName()));

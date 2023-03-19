@@ -30,7 +30,7 @@ import java.util.function.UnaryOperator;
  * @since 2022/5/24 14:15
  */
 @SuppressWarnings("unchecked")
-public class OneToManyToOne<T, K extends Serializable & Comparable<? super K>, V extends Serializable & Comparable<V>, U, A> {
+public class OneToManyToOne<T, K extends Serializable & Comparable<? super K>, V extends Serializable & Comparable<? super V>, U, A> {
 
     private final SFunction<T, K> middleKey;
     private SFunction<T, V> middleValue;
@@ -97,7 +97,7 @@ public class OneToManyToOne<T, K extends Serializable & Comparable<? super K>, V
      * @param <VV>        a VV class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.OneToManyToOne} object
      */
-    public <VV extends Serializable & Comparable<VV>> OneToManyToOne<T, K, VV, U, VV> value(SFunction<T, VV> middleValue) {
+    public <VV extends Serializable & Comparable<? super VV>> OneToManyToOne<T, K, VV, U, VV> value(SFunction<T, VV> middleValue) {
         this.middleValue = (SFunction<T, V>) middleValue;
         if (Objects.nonNull(middleWrapper)) {
             Database.select(middleWrapper, middleKey, middleValue);

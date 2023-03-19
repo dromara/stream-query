@@ -64,7 +64,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
      * @param <R>    a R class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.QueryCondition} object
      */
-    public <R extends Comparable<R>> QueryCondition<T> eq(SFunction<T, R> column, R data) {
+    public <R extends Comparable<? super R>> QueryCondition<T> eq(SFunction<T, R> column, R data) {
         super.eq(Objects.nonNull(data), column, data);
         return this;
     }
@@ -89,7 +89,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
      * @param <R>      a R class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.QueryCondition} object
      */
-    public <R extends Comparable<R>> QueryCondition<T> in(SFunction<T, R> column, Collection<R> dataList) {
+    public <R extends Comparable<? super R>> QueryCondition<T> in(SFunction<T, R> column, Collection<R> dataList) {
         super.in(CollectionUtils.isNotEmpty(dataList), column, dataList);
         return this;
     }
@@ -115,7 +115,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
      * @param <R>    a R class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.QueryCondition} object
      */
-    public <R extends Comparable<R>> QueryCondition<T> activeEq(SFunction<T, R> column, R data) {
+    public <R extends Comparable<? super R>> QueryCondition<T> activeEq(SFunction<T, R> column, R data) {
         Opp.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
@@ -140,7 +140,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
      * @param <R>      a R class
      * @return a {@link io.github.vampireachao.stream.plugin.mybatisplus.QueryCondition} object
      */
-    public <R extends Comparable<R>> QueryCondition<T> activeIn(SFunction<T, R> column, Collection<R> dataList) {
+    public <R extends Comparable<? super R>> QueryCondition<T> activeIn(SFunction<T, R> column, Collection<R> dataList) {
         Opp.ofColl(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
         return this;
     }
