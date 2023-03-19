@@ -46,7 +46,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
 
     /**
-     * <p>获取树先生的帮助</p>
+     * <p>通过提供节点信息构造树先生，此方法用于根节点为Null时</p>
      *
      * @param idGetter       获取节点id操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
      * @param pidGetter      获取父节点id操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
@@ -66,7 +66,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
 
     /**
-     * <p>ofMatch.</p>
+     * <p>通过提供节点信息构造树先生,此方法用于自定义(通过第三个参数判断返回True则为祖宗节点)根节点的值</p>
      *
      * @param idGetter        获取节点id操作  {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
      * @param pidGetter       获取父节点id操作 {@link io.github.vampireachao.stream.core.lambda.function.SerFunc} object
@@ -86,10 +86,10 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
 
     /**
-     * <p>拾取果实构建树</p>
+     * <p>传入List集合通过创建树先生时所传入信息去构造树结构</p>
      *
-     * @param list 果篮 {@link java.util.List} object
-     * @return 树 {@link java.util.List} object
+     * @param list 需要构建树结构的集合 {@link java.util.List} object
+     * @return 符合树结构的集合 {@link java.util.List} object
      */
     public List<T> toTree(List<T> list) {
         if (Objects.isNull(parentPredicate)) {
@@ -110,10 +110,10 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
 
     /**
-     * <p>将树上所有的果实摘取到果篮中</p>
+     * <p>将树结构进行扁平化</p>
      *
-     * @param list 要摘取果实的树 {@link java.util.List} object
-     * @return 果篮(包装果实的集合) {@link java.util.List} object
+     * @param list 要操作的树结构 {@link java.util.List} object
+     * @return 扁平化之后的集合 {@link java.util.List} object
      */
     public List<T> flat(List<T> list) {
         AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
@@ -123,11 +123,11 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
 
     /**
-     * <p>将树中干净的果实摘取</p>
+     * <p>根据给定的条件过滤列表中的元素，并且递归过滤子元素列表</p>
      *
-     * @param list      要摘取的树 {@link java.util.List} object
-     * @param condition 符合我们想要摘取果实的断言 {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
-     * @return  摘取下来的果实重新组成的树 {@link java.util.List} object
+     * @param list      要过滤的列表 {@link java.util.List} object
+     * @param condition 过滤条件 {@link io.github.vampireachao.stream.core.lambda.function.SerPred} object
+     * @return  过滤后的列表 {@link java.util.List} object
      */
     public List<T> filter(List<T> list, SerPred<T> condition) {
         AtomicReference<Predicate<T>> recursiveRef = new AtomicReference<>();
@@ -141,11 +141,11 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
 
     /**
-     * <p>给你的树上果实包装一层商标叭</p>
+     * <p>对列表中的元素以及它们的子元素列表进行递归遍历，并在每个元素上执行给定的操作</p>
      *
-     * @param list   果篮 {@link java.util.List} object
-     * @param action 加工商 {@link io.github.vampireachao.stream.core.lambda.function.SerCons} object
-     * @return 完成包装的树 {@link java.util.List} object
+     * @param list   要操作的树 {@link java.util.List} object
+     * @param action 要执行的操作 {@link io.github.vampireachao.stream.core.lambda.function.SerCons} object
+     * @return 操作结果 {@link java.util.List} object
      */
     public List<T> forEach(List<T> list, SerCons<T> action) {
         AtomicReference<Consumer<T>> recursiveRef = new AtomicReference<>();
