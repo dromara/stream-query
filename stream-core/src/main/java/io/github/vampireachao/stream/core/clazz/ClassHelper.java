@@ -1,17 +1,22 @@
 package io.github.vampireachao.stream.core.clazz;
 
 import io.github.vampireachao.stream.core.lambda.function.SerFunc;
+import io.github.vampireachao.stream.core.lambda.function.SerPred;
 import io.github.vampireachao.stream.core.lambda.function.SerSupp;
 import io.github.vampireachao.stream.core.reflect.ReflectHelper;
 import io.github.vampireachao.stream.core.stream.Steam;
 
 import java.io.File;
+import java.lang.reflect.Modifier;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
  * ClassHelper
@@ -36,14 +41,29 @@ public class ClassHelper {
                 ClassLoader.getSystemClassLoader().getResources(packageName.replace(".", "/"))
         ).get();
         return Steam.of(Collections.list(resources))
-                .map(URL::getFile)
-                .map((SerFunc<String, File>) f -> new File(URLDecoder.decode(f, StandardCharsets.UTF_8.name())))
-                .filter(dir -> dir.exists() && dir.isDirectory())
-                .map(File::listFiles)
-                .flat(files -> Steam.of(files).map(File::getAbsolutePath)
-                        .filter(path -> path.endsWith(".class"))
-                        .map(path -> path.substring(path.lastIndexOf("\\") + 1, path.length() - 6))
-                        .<Class<?>>map(className -> ReflectHelper.loadClass(packageName + "." + className)))
+                .flat((SerFunc<URL, Steam<String>>) (url -> {
+                    if ("file".equals(url.getProtocol())) {
+                        File dir = new File(URLDecoder.decode(url.getFile(), StandardCharsets.UTF_8.name()));
+                        if (!dir.exists() || !dir.isDirectory()) {
+                            return null;
+                        }
+                        return Steam.of(dir.listFiles()).map(File::getAbsolutePath)
+                                .filter(path -> path.endsWith(".class"))
+                                .map(path -> path.substring(path.lastIndexOf("\\") + 1, path.length() - 6))
+                                .map(name -> packageName + "." + name);
+                    }
+                    JarURLConnection urlConnection = (JarURLConnection) url.openConnection();
+                    JarFile jarFile = urlConnection.getJarFile();
+                    return Steam.of(Collections.list(jarFile.entries()))
+                            .filter(SerPred.multiAnd(
+                                    e -> e.getName().endsWith(".class"),
+                                    e -> !e.isDirectory()))
+                            .map(ZipEntry::getName)
+                            .map(name -> name.substring(0, name.length() - 6).replace("/", "."));
+                }))
+                .filter(className -> !className.contains("$"))
+                .<Class<?>>map(ReflectHelper::loadClass)
+                .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()) && !Modifier.isInterface(clazz.getModifiers()))
                 .toList();
     }
 
