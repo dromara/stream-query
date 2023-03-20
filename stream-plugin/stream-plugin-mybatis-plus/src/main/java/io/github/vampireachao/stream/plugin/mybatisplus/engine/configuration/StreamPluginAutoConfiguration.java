@@ -53,6 +53,7 @@ public class StreamPluginAutoConfiguration {
                 if (modelClass == null) {
                     return;
                 }
+                Database.getEntityMapperClassCache().computeIfAbsent(modelClass, k -> mapperClass);
                 TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
                 if (Database.isDynamicMapper(tableInfo.getCurrentNamespace()) &&
                         !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
