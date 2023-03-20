@@ -12,8 +12,8 @@
     <a target="_blank" href='https://www.apache.org/licenses/LICENSE-2.0.html'>
         <img src='https://img.shields.io/badge/license-Apache%202-4EB1BA.svg'/>
     </a>	
-    <a target="_blank" href='https://gitee.com/VampireAchao/stream-query'>
-        <img src='https://gitee.com/vampireachao/stream-query/badge/star.svg' alt='star'/>
+    <a target="_blank" href='https://gitee.com/dromara/stream-query'>
+        <img src='https://gitee.com/dromara/stream-query/badge/star.svg' alt='star'/>
     </a>
     <a target="_blank" href='https://github.com/VampireAchao/stream-query'>
         <img src="https://img.shields.io/github/stars/vampireachao/stream-query.svg?style=social" alt="github star"/>
@@ -29,7 +29,7 @@
 ## 📝文档
 
 [中文文档](https://vampireachao.gitee.io/stream-query-docs/)
-&nbsp;[仓库地址](https://gitee.com/VampireAchao/stream-query-docs)
+&nbsp;[仓库地址](https://gitee.com/dromara/stream-query-docs)
 &nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
 
 ## 📦安装
@@ -100,7 +100,7 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: 'x
 
 提交问题反馈请说明正在使用的JDK版本、stream-query版本和相关依赖库版本。如果可以请尽量详细或加图片以便于我们去复现
 
-[Gitee issue](https://gitee.com/VampireAchao/stream-query/issues)<br/>
+[Gitee issue](https://gitee.com/dromara/stream-query/issues)<br/>
 [Github issue](https://github.com/VampireAchao/stream-query/issues)
 
 ## 🏗️添砖加瓦️
