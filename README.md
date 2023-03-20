@@ -83,6 +83,17 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: 'x
     Database.saveBatch(userList);
 ```
 
+```java
+    // 批量保存
+    Database.saveBatch(userList);
+    // 使用userIds进行in查询，得到map key为id，value为entity对象
+    Map<Long, UserInfo> idUserMap = OneToOne.of(UserInfo::getId).in(userIds).query();
+```
+
+[更多使用姿势-Database](https://vampireachao.gitee.io/stream-query-docs/#/docs/module/plugin/mybatis-plus/database)
+
+[更多使用姿势-One/Many/OneToMany](https://vampireachao.gitee.io/stream-query-docs/#/docs/module/plugin/mybatis-plus/query?id=one)
+
 更多请看[文档](https://vampireachao.gitee.io/stream-query-docs)
 
 ## 🐞提供bug反馈或建议
