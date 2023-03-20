@@ -53,12 +53,13 @@ public class StreamPluginAutoConfiguration {
                 if (modelClass == null) {
                     return;
                 }
-                Database.getEntityMapperClassCache().computeIfAbsent(modelClass, k -> mapperClass);
                 TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
                 if (Database.isDynamicMapper(tableInfo.getCurrentNamespace()) &&
                         !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
                     // 降低动态mapper优先级
                     ReflectHelper.setFieldValue(tableInfo, CURRENT_NAMESPACE, mapperClass.getName());
+                }
+                if (!Database.isDynamicMapper(mapperClass.getName())) {
                     Database.getEntityMapperClassCache().put(modelClass, mapperClass);
                 }
             }
