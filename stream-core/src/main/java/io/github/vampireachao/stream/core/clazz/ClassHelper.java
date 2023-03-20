@@ -37,8 +37,9 @@ public class ClassHelper {
      * @return 包下的类
      */
     public static List<Class<?>> scanClasses(String packageName) {
+        String packagePath = packageName.replace(".", "/");
         Enumeration<URL> resources = ((SerSupp<Enumeration<URL>>) () ->
-                ClassLoader.getSystemClassLoader().getResources(packageName.replace(".", "/"))
+                Thread.currentThread().getContextClassLoader().getResources(packagePath)
         ).get();
         return Steam.of(Collections.list(resources))
                 .flat((SerFunc<URL, Steam<String>>) (url -> {
@@ -56,6 +57,7 @@ public class ClassHelper {
                     JarFile jarFile = urlConnection.getJarFile();
                     return Steam.of(Collections.list(jarFile.entries()))
                             .filter(SerPred.multiAnd(
+                                    e -> e.getName().startsWith(packagePath),
                                     e -> e.getName().endsWith(".class"),
                                     e -> !e.isDirectory()))
                             .map(ZipEntry::getName)
