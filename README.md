@@ -1,135 +1,72 @@
-<h1 align="center">stream-query</h1>
-<p align="center">
-  <strong>hardcore extreme opinionated.</strong>
-</p>
-<p align="center">
-	👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈
-</p>
-<p align="center">
-    <a target="_blank" href="https://search.maven.org/artifact/io.github.vampireachao/stream-query">
-        <img src="https://img.shields.io/maven-central/v/io.github.vampireachao/stream-query.svg?label=Maven%20Central" />
-    </a>
-    <a target="_blank" href='https://www.apache.org/licenses/LICENSE-2.0.html'>
-        <img src='https://img.shields.io/badge/license-Apache%202-4EB1BA.svg'/>
-    </a>	
-    <a target="_blank" href='https://gitee.com/dromara/stream-query'>
-        <img src='https://gitee.com/dromara/stream-query/badge/star.svg' alt='star'/>
-    </a>
-    <a target="_blank" href='https://github.com/VampireAchao/stream-query'>
-        <img src="https://img.shields.io/github/stars/vampireachao/stream-query.svg?style=social" alt="github star"/>
-    </a>
-</p>
+## 简介
 
-## 📚简介
+- stream-query允许完全摆脱`Mapper`的`mybatis-plus`体验！，可以使用类似“工具类”这样的静态函数进行数据库操作
 
-允许完全摆脱`Mapper`的`mybatis-plus`体验！
+## 安装
 
-封装`stream`和lambda操作进行数据返回处理
+[install](/docs/install.md ':include')
 
-## 📝文档
+## 快速开始
 
-[中文文档](https://vampireachao.gitee.io/stream-query-docs/)
-&nbsp;[仓库地址](https://gitee.com/dromara/stream-query-docs)
-&nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
+[get-started](/docs/get-started.md ':include')
 
-## 📦安装
+## 相关信息
 
-### 🍊Maven
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.vampireachao/stream-query.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.github.vampireachao/stream-query)
+[![stars](https://gitee.com/vampireachao/stream-query/badge/star.svg)](https://gitee.com/VampireAchao/stream-query)
+[![stars](https://img.shields.io/github/stars/vampireachao/stream-query.svg?style=social)](https://github.com/VampireAchao/stream-query)
+[![LICENSE](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/VampireAchao/stream-query/blob/master/LICENSE)
+[![java8](https://img.shields.io/badge/java-8+-blue)](https://docs.oracle.com/javase/8/docs/)
 
-在项目的pom.xml的dependencies中加入以下内容:
+## 项目参与者
 
-```xml
-<!-- 已包含mybatis-plus、stream-core、不用重复引入 -->
-<!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-plugin-mybatis-plus -->
-<dependency>
-    <groupId>io.github.vampireachao</groupId>
-   <artifactId>stream-plugin-mybatis-plus</artifactId>
-   <version>x.x.x</version>
-</dependency>
-<!-- 可单独引入 -->
-<!-- https://mvnrepository.com/artifact/io.github.vampireachao/stream-core -->
-<dependency>
-    <groupId>io.github.vampireachao</groupId>
-    <artifactId>stream-core</artifactId>
-    <version>x.x.x</version>
-</dependency>
-```
+[![logo](/static/img/VampireAchao.png ':class=round :size=50  :alt=阿超')](https://gitee.com/VampireAchao )
+[![logo](/static/img/ZVerify.png ':class=round :size=50  :alt=瓷瓷瓷瓷瓷仔')](https://gitee.com/ZVerify )
+[![logo](/static/img/Looo.png ':class=round :size=50  :alt=Looo')](https://gitee.com/yangzhihong )
+[![logo](/static/img/kongbai.png ':class=round :size=50  :alt=kong bai')](https://gitee.com/github-bot )
+[![logo](/static/img/handy.png ':class=round :size=50  :alt=handy')](https://gitee.com/handy-git )
+[![logo](/static/img/Javaer.png ':class=round :size=50  :alt=javaer')](https://gitee.com/xingxichen )
+[![logo](/static/img/CherryRum.png ':class=round :size=50  :alt=CherryRum')](https://gitee.com/henan_is_unique_oldletter )
+[![logo](/static/img/mawang.png ':class=round :size=50  :alt=mawang')](https://gitee.com/huangyoupeng )
+[![logo](/static/img/qimadezuopin.png ':class=round :size=50  :alt=齐马的作品')](https://gitee.com/zimablue )
+[![logo](/static/img/mawang.png ':class=round :size=50  :alt=meijiall')](https://gitee.com/chlwmj )
+[![logo](/static/img/adeng.png ':class=round :size=50  :alt=adeng')](https://gitee.com/HiAscend )
+[![logo](/static/img/Hwwwww.png ':class=round :size=50  :alt=hwwwww')](https://gitee.com/hwwwww )
+[![logo](/static/img/moli.png ':class=round :size=50  :alt=沫离')](https://gitee.com/oldx )
+[![logo](/static/img/Rain.png ':class=round :size=50  :alt=Rain')](https://gitee.com/hfruiyun )
+[![logo](/static/img/yangdaxia.png ':class=round :size=50  :alt=杨大侠')](https://gitee.com/kotiger )
+[![logo](/static/img/huangkaicheng.png ':class=round :size=50  :alt=黄凯成')](https://gitee.com/eleven716 )
+[![logo](/static/img/zhaojiafan.png ':class=round :size=50  :alt=赵佳帆')](https://gitee.com/zjfDemo_admin )
+[![logo](/static/img/emptypoint.png ':class=round :size=50  :alt=emptypoint')](https://gitee.com/emptypoint )
 
-### 🍊Gradle
+剩余[点击查看](https://gitee.com/VampireAchao/stream-query/contributors)
 
-在项目的build.gradle的dependencies中加入以下内容:
+## 项目动态
 
-```Gradle
-implementation group: 'io.github.vampireachao', name: 'stream-plugin-mybatis-plus', version: 'x.x.x'
-implementation group: 'io.github.vampireachao', name: 'stream-core', version: 'x.x.x'
-```
+[![阿超/stream-query](https://gitee.com/VampireAchao/stream-query/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b)](https://gitee.com/VampireAchao/stream-query)
 
-## 🔧 配置
+## star 趋势
 
-注入动态`Mapper`处理器
+[![点击进入Gitee仓库](https://zangzang.oss-cn-beijing.aliyuncs.com/img/stream-query.jpg)](https://gitee.com/VampireAchao/stream-query)
 
-```java
-    @Bean
-    public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) throws Exception {
-        // 使用ClassHelper的scanClasses方法扫描对应路径下的po生成Class文件集合放入第二个参数就可以了
-        final List<Class<?>> entityClassList = ClassHelper.scanClasses("com.ruben.pojo.po");
-        return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
-    }
-```
+## 友链
 
-## 📚使用
+[comment]: <> ( AIoTDB物联网时序数据库,https://aiotdb.net/无法访问临时注释)
+> ## Restful Fast Request
+[![logo](https://dromara.gitee.io/fast-request/img/logo/logo.svg ':class=round :size=50  :alt=为简化调试API而生')](https://dromara.gitee.io/fast-request/ )
 
-```java
-    Database.saveBatch(userList);
-```
+## 特别鸣谢
 
-```java
-    // 批量保存
-    Database.saveBatch(userList);
-    // 使用userIds进行in查询，得到map key为id，value为entity对象
-    Map<Long, UserInfo> idUserMap = OneToOne.of(UserInfo::getId).in(userIds).query();
-```
+| 赞助人 | 金额        | 他的留言      | 赞助时间       |
+|-----|-----------|-----------|------------|
+| 某不知道名三线程序员    | **`￥10`** | 感谢您的开源项目! | 2022-10-20 |
+| 某不知道名三线程序员    | **`￥20`** | 感谢您的开源项目! | 2022-10-20 |
+| 某不知道名三线程序员    | **`￥50`** | 感谢您的开源项目! | 2022-10-20 |
+| 阿超    | **`￥10`** | 感谢您的开源项目! | 2022-10-20 |
+| 阿超    | **`￥10`** | 感谢您的开源项目! | 2022-10-20 |
 
-[更多使用姿势-Database](https://vampireachao.gitee.io/stream-query-docs/#/docs/module/plugin/mybatis-plus/database)
+## 目录
 
-[更多使用姿势-One/Many/OneToMany](https://vampireachao.gitee.io/stream-query-docs/#/docs/module/plugin/mybatis-plus/query?id=one)
+[目录](_sidebar.md ':include')
 
-更多请看[文档](https://vampireachao.gitee.io/stream-query-docs)
 
-## 🐞提供bug反馈或建议
-
-提交问题反馈请说明正在使用的JDK版本、stream-query版本和相关依赖库版本。如果可以请尽量详细或加图片以便于我们去复现
-
-[Gitee issue](https://gitee.com/dromara/stream-query/issues)<br/>
-[Github issue](https://github.com/VampireAchao/stream-query/issues)
-
-## 🏗️添砖加瓦️
-
-如果您感觉我们的代码有需要优化的地方或者有更好的方案欢迎随时提pr
-
-### 📚包说明
-
-| 包名            | 内容                       |
-|---------------|--------------------------|
-| stream-query  | 优雅的流式操作 |
-| stream-plugin | orm框架->使用优雅的Lambda进行对数据库进行一系列操作            |
-
-### 🐾贡献代码的步骤
-
-1. 在`Gitee`或者`Github`上`fork`项目到自己的`repo`
-2. 把`fork`过去的项目也就是你的项目`clone`到你的本地
-3. 修改代码
-4. `commit`后`push`到自己的库
-5. 登录`Gitee`或`Github`在你仓库首页可以看到一个 `pull request` 按钮，点击它，填写一些说明信息，然后提交即可。
-   等待维护者合并
-
-### 📐PR遵照的原则
-
-`stream-query`欢迎任何人为`stream-query`添砖加瓦，贡献代码，规范如下：
-
-- 注释完备，尤其每个新增的方法应按照Java文档规范标明方法说明、参数说明、返回值说明等信息，必要时请添加单元测试，如果愿意，也可以加上你的大名。
-- 新加的方法尽可能不要使用额外的第三方库方法
-- 我们如果关闭了你的issue或pr，请不要诧异，这是我们保持问题处理整洁的一种方式，你依旧可以继续讨论，当有讨论结果时我们会重新打开。
-
-powered by [GitHub Copilot](https://copilot.github.com)
-powered by [JetBrains](https://www.jetbrains.com)Open source license

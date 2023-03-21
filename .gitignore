@@ -1,11 +1,1 @@
 /.idea/
-*/target/**
-**/pom.xml.versionsBackup
-/stream-plugin/stream-plugin-mybatis-plus/target/
-/target/
-### IDEA ###
-*.iws
-*.iml
-*.ipr
-/.fleet/
-*.flattened-pom.xml
