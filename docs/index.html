@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>stream-query</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content="Description">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="./static/css/docsify.css">
+    <!-- 日夜模式 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/docsify-darklight-theme/3.2.0/docsify-style.min.css"/>
+    <style>
+        * {
+            font-family: Comic sans ms, fantasy;
+        }
+
+        :root {
+            --docsifytabs-border-color: #ededed;
+            --docsifytabs-tab-highlight-color: #42b983;
+        }
+
+        .left-img {
+            float: left;
+        }
+
+        .round {
+            border-radius: 50%;
+        }
+
+        .hover-rotate, .hover-rotate-reverse {
+            transition: all .3s ease;
+        }
+
+        .hover-rotate:hover {
+            transform: rotate(360deg);
+        }
+
+        .hover-rotate-reverse:hover {
+            transform: rotate(-360deg);
+        }
+
+        .left-person-fencing {
+            transform: rotateY(180deg) translateX(20px);
+        }
+
+        .left-person-fencing:hover {
+            transform: rotateY(180deg) translateX(-236px);
+        }
+
+        .person-fencing {
+            transition: all .3s ease;
+        }
+
+        .right-person-fencing:hover {
+            transform: translateX(-256px);
+        }
+
+        .flex {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+	window.$docsify = {
+		name: 'stream-query',
+		repo: 'https://github.com/VampireAchao/stream-query.git',
+		loadSidebar: true,
+		loadNavbar: true,
+		alias: {
+			'/.*/_sidebar.md': '/_sidebar.md',
+			'/.*/_navbar.md': '/_navbar.md',
+		},
+		coverpage: true,
+		search: 'auto',
+		subMaxLevel: 10,
+		tabs: {
+			persist: true,      // default
+			sync: true,      // default
+			theme: 'classic', // default
+			tabComments: true,      // default
+			tabHeadings: true,       // default
+		},
+		// docsify-copy-code
+		copyCode: {
+			buttonText: '点击复制',
+			errorText: 'Error',
+			successText: '已复制',
+		},
+	};
+
+</script>
+<!-- Docsify v4 -->
+<script src="./static/js/docsify.js"></script>
+<script src="./static/js/search.min.js"></script>
+<script src="./static/js/emoji.min.js"></script>
+<script src="./static/js/external-script.min.js"></script>
+<script src="./static/js/zoom-image.min.js"></script>
+<script src="./static/js/docsify-copy-code.min.js"></script>
+<script src="./static/js/docsify-pagination.min.js"></script>
+<script src="./static/js/docsify-tabs@1.js"></script>
+<script src="./static/js/docsify-katex.js"></script>
+<!-- 日夜模式 -->
+<script src="https://cdn.staticfile.org/docsify-darklight-theme/3.2.0/index.min.js"></script>
+<!-- 代码复制 -->
+<script src="https://cdn.staticfile.org/docsify-copy-code/2.1.1/docsify-copy-code.min.js"></script>
+
+</body>
+</html>
