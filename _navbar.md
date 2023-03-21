@@ -1,6 +1,6 @@
 <!-- _navbar.md -->
 
-[![img](https://waibi.oss-cn-chengdu.aliyuncs.com/picGo/logo.png ':class=left-img  :alt=Stream-Query')](https://vampireachao.gitee.io/stream-query-docs/)
+[![img](https://waibi.oss-cn-chengdu.aliyuncs.com/picGo/logo.png ':class=left-img  :alt=Stream-Query')](https://dromara.gitee.io/stream-query/)
 
 * [Gitee](https://gitee.com/VampireAchao/stream-query)
 * [Github](https://github.com/VampireAchao/stream-query)
