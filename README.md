@@ -98,7 +98,7 @@
 
 ## 友链
 
-[AIoTDB物联网时序数据库](https://aiotdb.net/ 'AIoTDB物联网时序数据库')
+[AIoTDB物联网时序数据库](https://786744873.github.io/aiotdb/#/docs/02-core 'AIoTDB物联网时序数据库')
 
 ## 特别鸣谢
 
