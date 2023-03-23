@@ -3,7 +3,7 @@
   <strong>hardcore extreme opinionated.</strong>
 </p>
 <p align="center">
-	👉 <a href="https://vampireachao.gitee.io/stream-query-docs/#/">stream-query</a> 👈
+	👉 <a href="https://dromara.gitee.io/stream-query/#/">stream-query</a> 👈
 </p>
 <p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/io.github.vampireachao/stream-query">
@@ -28,7 +28,7 @@
 
 ## 📝文档
 
-[中文文档](https://vampireachao.gitee.io/stream-query-docs/)
+[中文文档](https://dromara.gitee.io/stream-query/)
 &nbsp;[仓库地址](https://gitee.com/dromara/stream-query-docs)
 &nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
 
@@ -90,11 +90,11 @@ implementation group: 'io.github.vampireachao', name: 'stream-core', version: 'x
     Map<Long, UserInfo> idUserMap = OneToOne.of(UserInfo::getId).in(userIds).query();
 ```
 
-[更多使用姿势-Database](https://vampireachao.gitee.io/stream-query-docs/#/docs/module/plugin/mybatis-plus/database)
+[更多使用姿势-Database](https://dromara.gitee.io/stream-query/#/docs/module/plugin/mybatis-plus/database)
 
-[更多使用姿势-One/Many/OneToMany](https://vampireachao.gitee.io/stream-query-docs/#/docs/module/plugin/mybatis-plus/query?id=one)
+[更多使用姿势-One/Many/OneToMany](https://dromara.gitee.io/stream-query/#/docs/module/plugin/mybatis-plus/query?id=one)
 
-更多请看[文档](https://vampireachao.gitee.io/stream-query-docs)
+更多请看[文档](https://dromara.gitee.io/stream-query)
 
 ## 🐞提供bug反馈或建议
 
