@@ -28,7 +28,7 @@
 
 ## 📝文档
 
-[中文文档](https://dromara.gitee.io/stream-query/)
+[中文文档](https://dromara.gitee.io/stream-query)
 &nbsp;[仓库地址](https://gitee.com/dromara/stream-query-docs)
 &nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
 
