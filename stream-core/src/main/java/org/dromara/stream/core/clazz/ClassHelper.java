@@ -33,7 +33,7 @@ public class ClassHelper {
     /**
      * 扫描对应包下的类
      *
-     * @param packageName 包名，例如io.github.vampireachao.stream.core.clazz
+     * @param packageName 包名，例如org.dromara.stream.core.clazz
      * @return 包下的类
      */
     public static List<Class<?>> scanClasses(String packageName) {

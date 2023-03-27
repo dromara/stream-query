@@ -38,7 +38,7 @@ public class MybatisPlusTestApplication {
     @Bean
     public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) throws Exception {
         /// 扫描po包下的所有类，作为entity
-        String entityPackagePath = "io.github.vampireachao.stream.plugin.mybatisplus.pojo.po";
+        String entityPackagePath = "org.dromara.stream.plugin.mybatisplus.pojo.po";
         final List<Class<?>> entityClassList = ClassHelper.scanClasses(entityPackagePath);
         return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
     }
