@@ -16,7 +16,7 @@
         <img src='https://gitee.com/dromara/stream-query/badge/star.svg' alt='star'/>
     </a>
     <a target="_blank" href='https://github.com/dromara/stream-query'>
-        <img src="https://img.shields.io/github/stars/vampireachao/stream-query.svg?style=social" alt="github star"/>
+        <img src="https://img.shields.io/github/stars/dromara/stream-query.svg?style=social" alt="github star"/>
     </a>
 </p>
 
