@@ -15,7 +15,7 @@
     <a target="_blank" href='https://gitee.com/dromara/stream-query'>
         <img src='https://gitee.com/dromara/stream-query/badge/star.svg' alt='star'/>
     </a>
-    <a target="_blank" href='https://github.com/VampireAchao/stream-query'>
+    <a target="_blank" href='https://github.com/dromara/stream-query'>
         <img src="https://img.shields.io/github/stars/vampireachao/stream-query.svg?style=social" alt="github star"/>
     </a>
 </p>
@@ -101,7 +101,7 @@ implementation group: 'org.dromara', name: 'stream-core', version: 'x.x.x'
 提交问题反馈请说明正在使用的JDK版本、stream-query版本和相关依赖库版本。如果可以请尽量详细或加图片以便于我们去复现
 
 [Gitee issue](https://gitee.com/dromara/stream-query/issues)<br/>
-[Github issue](https://github.com/VampireAchao/stream-query/issues)
+[Github issue](https://github.com/dromara/stream-query/issues)
 
 ## 🏗️添砖加瓦️
 

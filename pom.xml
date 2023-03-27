@@ -31,11 +31,11 @@
 
     <name>stream-query</name>
     <description>封装热门orm+stream常用操作</description>
-    <url>https://github.com/VampireAchao/stream-query</url>
+    <url>https://github.com/dromara/stream-query</url>
 
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/VampireAchao/stream-query/issues</url>
+        <url>https://github.com/dromara/stream-query/issues</url>
     </issueManagement>
 
     <organization>
