@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.vampireachao</groupId>
+    <groupId>org.dromara</groupId>
     <artifactId>stream-query</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
@@ -38,6 +38,11 @@
         <url>https://github.com/VampireAchao/stream-query/issues</url>
     </issueManagement>
 
+    <organization>
+        <name>dromara</name>
+        <url>https://dromara.org</url>
+    </organization>
+
     <licenses>
         <license>
             <name>Apache Software License, Version 2.0</name>
@@ -54,7 +59,19 @@
     <developers>
         <developer>
             <name>VampireAchao</name>
-            <email>achao1441470436@gmail.com</email>
+            <email>vampireachao@dromara.org</email>
+            <organization>dromara.org</organization>
+            <roles>
+                <role>author</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Cizai_</name>
+            <email>2556450572@qq.com</email>
+            <organization>dromara.org</organization>
+            <roles>
+                <role>commiter</role>
+            </roles>
         </developer>
     </developers>
 

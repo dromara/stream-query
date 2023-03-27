@@ -1,1 +1,1 @@
-io.github.vampireachao.stream.plugin.mybatisplus.engine.configuration.StreamPluginAutoConfiguration
+org.dromara.stream.plugin.mybatisplus.engine.configuration.StreamPluginAutoConfiguration
