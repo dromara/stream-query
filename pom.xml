@@ -51,9 +51,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git@github.com:VampireAchao/stream-query.git</connection>
-        <developerConnection>scm:git@github.com:VampireAchao/stream-query.git</developerConnection>
-        <url>git@github.com:VampireAchao/stream-query.git</url>
+        <connection>scm:git@github.com:dromara/stream-query.git</connection>
+        <developerConnection>scm:git@github.com:dromara/stream-query.git</developerConnection>
+        <url>git@github.com:dromara/stream-query.git</url>
     </scm>
 
     <developers>
