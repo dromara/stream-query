@@ -139,7 +139,7 @@ UPDATE user_info SET name=? WHERE gmt_deleted='2001-01-01 00:00:00' AND (id = ?)
 >
 >参数一: 实体对象
 >
->参数二: 可变长参数SFunction操作 (传入clmbda指定要修改字段)
+>参数二: 可变长参数SFunction操作 (传入lambda指定要修改字段)
 
 ```java
 UserInfo sheep = new UserInfo();
