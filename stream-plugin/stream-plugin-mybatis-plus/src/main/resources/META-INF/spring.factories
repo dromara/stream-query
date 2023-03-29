@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.dromara.stream.plugin.mybatisplus.engine.configuration.StreamPluginAutoConfiguration
+org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.StreamPluginAutoConfiguration
