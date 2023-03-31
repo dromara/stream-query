@@ -39,7 +39,7 @@ List<Integer> list = Steam.iterate(1,i->i<=5,i->++i).toList();// d第一个参�
 ## filterIter
 
 > 声明：此方法的作者：[臧臧](https://gitee.com/ZVerify)，
-> PR来自：https://gitee.com/VampireAchao/stream-query/pulls/30 </br>
+> PR来自：https://gitee.com/dromara/stream-query/pulls/30 </br>
 > 该方法可以通过我们当前的集合去和另一个集合通过某一操作相同值进行`过滤`
 
 ```java

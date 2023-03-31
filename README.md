@@ -39,15 +39,15 @@
 [![logo](/static/img/zhaojiafan.png ':class=round :size=50  :alt=赵佳帆')](https://gitee.com/zjfDemo_admin )
 [![logo](/static/img/emptypoint.png ':class=round :size=50  :alt=emptypoint')](https://gitee.com/emptypoint )
 
-剩余[点击查看](https://gitee.com/VampireAchao/stream-query/contributors)
+剩余[点击查看](https://gitee.com/dromara/stream-query/contributors)
 
 ## 项目动态
 
-[![阿超/stream-query](https://gitee.com/VampireAchao/stream-query/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b)](https://gitee.com/VampireAchao/stream-query)
+[![阿超/stream-query](https://gitee.com/dromara/stream-query/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b)](https://gitee.com/dromara/stream-query)
 
 ## star 趋势
 
-[![点击进入Gitee仓库](https://zangzang.oss-cn-beijing.aliyuncs.com/img/stream-query.jpg)](https://gitee.com/VampireAchao/stream-query)
+[![点击进入Gitee仓库](https://zangzang.oss-cn-beijing.aliyuncs.com/img/stream-query.jpg)](https://gitee.com/dromara/stream-query)
 
 ## Dromara 组织成员项目
 

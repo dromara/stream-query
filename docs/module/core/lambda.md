@@ -14,7 +14,7 @@ LambdaExecutable lambdaExecutable=LambdaHelper.resolve((Serializable&BiConsumer<
 //  returnType=void,
 //  name='lambda$testResolve$9b6dfab2$1', 
 //  clazz=class org.dromara.streamquery.stream.core.lambda.LambdaHelperTest,
-//  lambda=SerializedLambda[capturingClass=class org.dromara.streamquery.stream.core.lambda.LambdaHelperTest, functionalInterfaceMethod=java/util/function/BiConsumer.accept:(Ljava/lang/Object;Ljava/lang/Object;)V, implementation=invokeStatic io/github/vampireachao/stream/core/lambda/LambdaHelperTest.lambda$testResolve$c70a867a$1:([[Ljava/lang/Integer;Ljava/lang/Integer;)V, instantiatedMethodType=([[Ljava/lang/Integer;Ljava/lang/Integer;)V, numCaptured=0],
+//  lambda=SerializedLambda[capturingClass=class org.dromara.streamquery.stream.core.lambda.LambdaHelperTest, functionalInterfaceMethod=java/util/function/BiConsumer.accept:(Ljava/lang/Object;Ljava/lang/Object;)V, implementation=invokeStatic org/dromara/streamquery/stream/core/lambda/LambdaHelperTest.lambda$testResolve$c70a867a$1:([[Ljava/lang/Integer;Ljava/lang/Integer;)V, instantiatedMethodType=([[Ljava/lang/Integer;Ljava/lang/Integer;)V, numCaptured=0],
 //  proxy=null
 // }
 ```
