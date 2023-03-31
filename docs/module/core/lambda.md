@@ -5,16 +5,16 @@
 例如可以通过lambda获取其信息
 
 ```java
-LambdaExecutable lambdaExecutable = LambdaHelper.resolve((Serializable & BiConsumer<Integer[][], Integer>) (i, a) -> {});
-System.out.println(lambdaExecutable);
+LambdaExecutable lambdaExecutable=LambdaHelper.resolve((Serializable&BiConsumer<Integer[][],Integer>)(i,a)->{});
+        System.out.println(lambdaExecutable);
 // LambdaExecutable{
-//  executable=private static void io.github.vampireachao.stream.core.lambda.LambdaHelperTest.lambda$testResolve$9b6dfab2$1(java.lang.Integer[][],java.lang.Integer),
+//  executable=private static void org.dromara.streamquery.stream.core.lambda.LambdaHelperTest.lambda$testResolve$9b6dfab2$1(java.lang.Integer[][],java.lang.Integer),
 //  instantiatedTypes=[class [[Ljava.lang.Integer;, class java.lang.Integer],
 //  parameterTypes=[class [[Ljava.lang.Integer;, class java.lang.Integer],
 //  returnType=void,
 //  name='lambda$testResolve$9b6dfab2$1', 
-//  clazz=class io.github.vampireachao.stream.core.lambda.LambdaHelperTest,
-//  lambda=SerializedLambda[capturingClass=class io.github.vampireachao.stream.core.lambda.LambdaHelperTest, functionalInterfaceMethod=java/util/function/BiConsumer.accept:(Ljava/lang/Object;Ljava/lang/Object;)V, implementation=invokeStatic io/github/vampireachao/stream/core/lambda/LambdaHelperTest.lambda$testResolve$c70a867a$1:([[Ljava/lang/Integer;Ljava/lang/Integer;)V, instantiatedMethodType=([[Ljava/lang/Integer;Ljava/lang/Integer;)V, numCaptured=0],
+//  clazz=class org.dromara.streamquery.stream.core.lambda.LambdaHelperTest,
+//  lambda=SerializedLambda[capturingClass=class org.dromara.streamquery.stream.core.lambda.LambdaHelperTest, functionalInterfaceMethod=java/util/function/BiConsumer.accept:(Ljava/lang/Object;Ljava/lang/Object;)V, implementation=invokeStatic io/github/vampireachao/stream/core/lambda/LambdaHelperTest.lambda$testResolve$c70a867a$1:([[Ljava/lang/Integer;Ljava/lang/Integer;)V, instantiatedMethodType=([[Ljava/lang/Integer;Ljava/lang/Integer;)V, numCaptured=0],
 //  proxy=null
 // }
 ```
@@ -28,10 +28,10 @@ System.out.println(lambdaExecutable);
 使用`SerCons.multi`，可以让你的`forEach`支持多个`lambda`操作
 
 ```java
-import static io.github.vampireachao.stream.core.lambda.function.SerCons.multi;
+import static org.dromara.streamquery.stream.core.lambda.function.SerCons.multi;
 
 
-Arrays.asList("vampire", "a chao").forEach(multi(
+Arrays.asList("vampire","a chao").forEach(multi(
         System.out::println,
         System.err::println,
         i -> System.out.println(i.equals("vampire"))
