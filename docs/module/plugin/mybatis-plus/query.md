@@ -59,14 +59,20 @@ List<String> emailList = Many.of(UserInfo::getName).eq("ZVerify").value(UserInfo
 >map的key为of里的筛选条件，value默认为entity对象，使用value之后为其传入lambda返回值
 
 ```java
-// 返回map key为id，value为entity对象
+// 返回map key为id，value为entity对象，如果in函数中的userIds为空，则不会进行查询
 Map<Long, UserInfo> idUserMap = OneToOne.of(UserInfo::getId).in(userIds).query();
 
-// 返回map key为id，value为查询到entity的name
-Map<Long, String> userIdNameMap = OneToOne.of(UserInfo::getId).in(userIds).value(UserInfo::getName).query();
+// 返回map key为id，value为查询到entity的name，且只会查询id和name字段
+        Map<Long, String> userIdNameMap = OneToOne.of(UserInfo::getId).in(userIds)
+        .value(UserInfo::getName).query();
 
-// 返回map key为id，value为一个boolean类型的值，因为我们传入的value(SFunction)是一个判断操作，判断key所对应的entity对象的name是否不为null，并且包含a字符串
-Map<Long, String> userIdHasANameMap = OneToOne.of(UserInfo::getId).in(userIds).condition(w -> w.select(UserInfo::getId, UserInfo::getName)).value(userInfo -> userInfo.getName() != null && userInfo.getName().contains("a")).query();
+// 返回key为id，value为判断条件(userInfo的name是否不为null，并且包含a字符串)的map
+// eq/in函数如果省略的话，则查询全表并按key转换为map，可以通过下面的condition函数限制查询条件
+        Map<Long, String> userIdHasANameMap = OneToOne.of(UserInfo::getId)
+        .condition(w -> w.select(UserInfo::getId, UserInfo::getName))
+        .value(userInfo -> userInfo.getName() != null &&
+        userInfo.getName().contains("a"))
+        .query();
 ```
 
 ## OneToMany
