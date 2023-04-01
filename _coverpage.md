@@ -6,6 +6,6 @@
 [![stars](https://gitee.com/dromara/stream-query/badge/star.svg)](https://gitee.com/dromara/stream-query)
 [![stars](https://img.shields.io/github/stars/dromara/stream-query.svg?style=social)](https://github.com/dromara/stream-query)
 
-##### <div class='flex'>工具类 <div class='hover-rotate'>:wrench:</div> 及mybatis-plus<div class='hover-rotate-reverse'>:corn:</div>封装</div>
+##### <div class='flex'>允许完全摆脱Mapper的mybatis-plus<div class='hover-rotate-reverse'>:corn:</div>体验！可以使用类似“工具类”<div class='hover-rotate'>:wrench:</div>这样的静态函数进行数据库操作</div>
 
 [Get Started](/docs/get-started)
