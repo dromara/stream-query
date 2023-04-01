@@ -933,7 +933,7 @@ public class Database {
         ENTITY_MAPPER_CLASS_CACHE.computeIfAbsent(entityClass, k -> {
             Class<?> dynamicMapper = new ByteBuddy()
                     .makeInterface(TypeDescription.Generic.Builder.parameterizedType(IMapper.class, entityClass).build())
-                    .name(String.format(PluginConst.DYNAMIC_MAPPER_PREFIX + ".%sMapper", entityClass.getSimpleName()))
+                    .name(String.format("%s.%sMapper", PluginConst.DYNAMIC_MAPPER_PREFIX, entityClass.getSimpleName()))
                     .make()
                     .load(ClassUtils.class.getClassLoader())
                     .getLoaded();

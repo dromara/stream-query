@@ -1,5 +1,7 @@
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.constant;
 
+import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
+
 /**
  * <p>PluginConst interface.</p>
  *
@@ -55,6 +57,6 @@ public interface PluginConst {
     /**
      * dynamic mapper prefix
      */
-    String DYNAMIC_MAPPER_PREFIX = "$dynamicMapper";
+    String DYNAMIC_MAPPER_PREFIX = Database.class.getPackage().getName() + ".dynamicMapper";
 
 }

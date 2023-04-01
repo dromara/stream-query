@@ -388,15 +388,13 @@ class DatabaseTest {
 
     @Test
     void testBuildMapper() {
-        UserInfo userInfo = new UserInfo() {{
-            setId(1L);
-            setName("Jon");
-        }};
+        RoleInfo roleInfo = new RoleInfo();
         Configuration configuration = TableInfoHelper.getTableInfo(UserInfo.class).getConfiguration();
-        Database.buildMapper(configuration, UserInfo.class);
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(userInfo.getClass());
+        Database.buildMapper(configuration, RoleInfo.class);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(roleInfo.getClass());
         Assertions.assertNotNull(tableInfo);
-        Assertions.assertFalse(Database.list(userInfo.getClass()).isEmpty());
+        Assertions.assertFalse(Database.list(roleInfo.getClass()).isEmpty());
+        Database.list(UserInfo.class);
     }
 
     @Test

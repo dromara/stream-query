@@ -1,3 +1,5 @@
 logging:
   level:
-    root: DEBUG
+    root: INFO
+    org.dromara.streamquery.stream.plugin.mybatisplus.mapper: DEBUG
+    org.dromara.streamquery.stream.plugin.mybatisplus.dynamicMapper.RoleInfoMapper: DEBUG
