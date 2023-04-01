@@ -394,7 +394,6 @@ class DatabaseTest {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(roleInfo.getClass());
         Assertions.assertNotNull(tableInfo);
         Assertions.assertFalse(Database.list(roleInfo.getClass()).isEmpty());
-        Database.list(UserInfo.class);
     }
 
     @Test
