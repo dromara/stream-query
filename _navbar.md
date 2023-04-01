@@ -1,6 +1,6 @@
 <!-- _navbar.md -->
 
-[![img](https://waibi.oss-cn-chengdu.aliyuncs.com/picGo/logo.png ':class=left-img  :alt=Stream-Query')](https://dromara.gitee.io/stream-query/)
+[![img](https://plus.hutool.cn/images/dromara/stream-query.png ':class=left-img  :alt=Stream-Query')](https://dromara.gitee.io/stream-query/)
 
 * [Gitee](https://gitee.com/dromara/stream-query)
 * [Github](https://github.com/dromara/stream-query)
