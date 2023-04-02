@@ -7,6 +7,6 @@
 
 * 链接
   * [阿超的博客](https://vampireachao.gitee.io/)
-  * [臧臧的博客](https://zverify.cn/)
+  * [臧臧的博客](https://eliauku.gitee.io/)
   * [阿超B站个人页](https://space.bilibili.com/34830549)
     

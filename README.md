@@ -47,7 +47,7 @@
 
 ## star 趋势
 
-[![点击进入Gitee仓库](https://zangzang.oss-cn-beijing.aliyuncs.com/img/stream-query.jpg)](https://gitee.com/dromara/stream-query)
+[![点击进入Gitee仓库](static/img/chart.svg)](https://gitee.com/dromara/stream-query)
 
 ## Dromara 组织成员项目
 
