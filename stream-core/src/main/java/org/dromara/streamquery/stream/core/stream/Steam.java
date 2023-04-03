@@ -853,6 +853,11 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
         return split(batchSize).map(Steam::toList);
     }
 
+    /**
+     * Steam Builder
+     *
+     * @param <T> the type of stream elements
+     */
     public interface Builder<T> extends Consumer<T> {
 
         /**

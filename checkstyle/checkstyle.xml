@@ -9,7 +9,7 @@
   <property name="fileExtensions" value="java"/>
 
   <module name="Header">
-    <property name="headerFile" value="checkstyle-header.txt"/>
+    <property name="headerFile" value="checkstyle/checkstyle-header.txt"/>
     <property name="fileExtensions" value="java"/>
   </module>
 
