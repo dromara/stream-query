@@ -42,16 +42,16 @@
 <!-- 已包含mybatis-plus、stream-core、不用重复引入 -->
 <!-- https://mvnrepository.com/artifact/org.dromara/stream-plugin-mybatis-plus -->
 <dependency>
-    <groupId>org.dromara.stream-query</groupId>
+   <groupId>org.dromara</groupId>
    <artifactId>stream-plugin-mybatis-plus</artifactId>
    <version>x.x.x</version>
 </dependency>
-<!-- 可单独引入 -->
-<!-- https://mvnrepository.com/artifact/org.dromara/stream-core -->
+        <!-- 可单独引入 -->
+        <!-- https://mvnrepository.com/artifact/org.dromara/stream-core -->
 <dependency>
-    <groupId>org.dromara.stream-query</groupId>
-    <artifactId>stream-core</artifactId>
-    <version>x.x.x</version>
+<groupId>org.dromara</groupId>
+<artifactId>stream-core</artifactId>
+<version>x.x.x</version>
 </dependency>
 ```
 
@@ -70,11 +70,11 @@ implementation group: 'org.dromara', name: 'stream-core', version: 'x.x.x'
 
 ```java
     @Bean
-    public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) throws Exception {
-        // 使用ClassHelper的scanClasses方法扫描对应路径下的po生成Class文件集合放入第二个参数就可以了
-        final List<Class<?>> entityClassList = ClassHelper.scanClasses("com.ruben.pojo.po");
-        return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
-    }
+public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory)throws Exception{
+// 使用ClassHelper的scanClasses方法扫描对应路径下的po生成Class文件集合放入第二个参数就可以了
+final List<Class<?>>entityClassList=ClassHelper.scanClasses("com.ruben.pojo.po");
+        return new DynamicMapperHandler(sqlSessionFactory,entityClassList);
+        }
 ```
 
 ## 📚使用
@@ -86,8 +86,8 @@ implementation group: 'org.dromara', name: 'stream-core', version: 'x.x.x'
 ```java
     // 批量保存
     Database.saveBatch(userList);
-    // 使用userIds进行in查询，得到map key为id，value为entity对象
-    Map<Long, UserInfo> idUserMap = OneToOne.of(UserInfo::getId).in(userIds).query();
+            // 使用userIds进行in查询，得到map key为id，value为entity对象
+            Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 ```
 
 [更多使用姿势-Database](https://dromara.gitee.io/stream-query/#/docs/module/plugin/mybatis-plus/database)
