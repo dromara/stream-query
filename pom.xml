@@ -273,6 +273,30 @@
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
+                    <!-- 公共checkstyle标准配置，可以在子模块中覆盖，修改自定义选项 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <configLocation>checkstyle/checkstyle.xml</configLocation>
+                            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                            <consoleOutput>true</consoleOutput>
+                            <encoding>UTF-8</encoding>
+                            <skip>false</skip>
+                            <violationSeverity>error</violationSeverity>
+                            <failsOnError>false</failsOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>validate</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>checkstyle</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

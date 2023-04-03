@@ -1,8 +1,42 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dromara.streamquery.stream.core.stream;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
+import java.util.stream.Collector;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 /**
  * {@link Stream}的包装类，用于基于一个已有的流实例进行扩展
@@ -150,9 +184,9 @@ abstract class AbstractStreamWrapper<T, I extends Stream<T>> implements Stream<T
      * <pre>{@code
      *     .of("one", "two", "three", "four")
      *         .filter(e -> e.length() > 3)
-     *         .peek(e -> System.out.println("Filtered value: " + e))
+     *         .peek(e -> log.info("Filtered value: " + e))
      *         .map(String::toUpperCase)
-     *         .peek(e -> System.out.println("Mapped value: " + e))
+     *         .peek(e -> log.info("Mapped value: " + e))
      *         .collect(Collectors.toList());
      * }</pre>
      */
