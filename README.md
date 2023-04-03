@@ -42,14 +42,14 @@
 <!-- 已包含mybatis-plus、stream-core、不用重复引入 -->
 <!-- https://mvnrepository.com/artifact/org.dromara/stream-plugin-mybatis-plus -->
 <dependency>
-    <groupId>org.dromara</groupId>
+    <groupId>org.dromara.stream-query</groupId>
    <artifactId>stream-plugin-mybatis-plus</artifactId>
    <version>x.x.x</version>
 </dependency>
 <!-- 可单独引入 -->
 <!-- https://mvnrepository.com/artifact/org.dromara/stream-core -->
 <dependency>
-    <groupId>org.dromara</groupId>
+    <groupId>org.dromara.stream-query</groupId>
     <artifactId>stream-core</artifactId>
     <version>x.x.x</version>
 </dependency>

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>stream-query</artifactId>
-        <groupId>org.dromara</groupId>
+        <groupId>org.dromara.stream-query</groupId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -19,7 +19,7 @@
     <dependencies>
         <!-- stream-core -->
         <dependency>
-            <groupId>org.dromara</groupId>
+            <groupId>org.dromara.stream-query</groupId>
             <artifactId>stream-core</artifactId>
             <version>${revision}</version>
         </dependency>
