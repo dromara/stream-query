@@ -27,8 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.stream.*;
 
 /**
  * 对Stream的封装和拓展，作者经对比了vavr、eclipse-collection、stream-ex以及其他语言的api，结合日常使用习惯，进行封装和拓展
@@ -901,4 +900,278 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     }
 
+    /**
+     * <p>
+     * 过滤元素，返回与指定断言匹配的元素组成的流
+     * 这是一个无状态中间操作
+     */
+    @Override
+    public Steam<T> filter(Predicate<? super T> predicate) {
+        return super.filter(predicate);
+    }
+
+    /**
+     * <p>
+     * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为int类型
+     * 这是一个无状态中间操作
+     */
+    @Override
+    public IntStream mapToInt(ToIntFunction<? super T> mapper) {
+        return super.mapToInt(mapper);
+    }
+
+    /**
+     * <p>
+     * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为long类型
+     * 这是一个无状态中间操作
+     */
+    @Override
+    public LongStream mapToLong(ToLongFunction<? super T> mapper) {
+        return super.mapToLong(mapper);
+    }
+
+    /**
+     * <p>
+     * 和{@link Stream#map(Function)}一样，只不过函数的返回值必须为double类型
+     * 这是一个无状态中间操作
+     */
+    @Override
+    public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
+        return super.mapToDouble(mapper);
+    }
+
+    /**
+     * <p>
+     * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
+     * 这是一个无状态中间操作
+     */
+    @Override
+    public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
+        return super.flatMapToInt(mapper);
+    }
+
+    /**
+     * <p>
+     * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
+     * 这是一个无状态中间操作
+     */
+    @Override
+    public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
+        return super.flatMapToLong(mapper);
+    }
+
+    /**
+     * <p>
+     * 扩散流操作，可能影响流元素个数，将原有流元素执行mapper操作，返回多个流所有元素组成的流
+     * 这是一个无状态中间操作
+     */
+    @Override
+    public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
+        return super.flatMapToDouble(mapper);
+    }
+
+    /**
+     * <p>
+     * 返回一个元素按指定的{@link Comparator}排序的流
+     * 如果此流的元素不是{@code Comparable} ，则在执行终端操作时可能会抛出{@code java.lang.ClassCastException}
+     * 对于顺序流，排序是稳定的。 对于无序流，没有稳定性保证。
+     * 这是一个有状态中间操作
+     */
+    @Override
+    public Steam<T> sorted(Comparator<? super T> comparator) {
+        return super.sorted(comparator);
+    }
+
+    /**
+     * <p>
+     * 返回与指定函数将元素作为参数执行后组成的流。
+     * 这是一个无状态中间操作
+     *
+     * @apiNote 该方法存在的意义主要是用来调试
+     * 当你需要查看经过操作管道某处的元素，可以执行以下操作:
+     * <pre>{@code
+     *     .of("one", "two", "three", "four")
+     *         .filter(e -> e.length() > 3)
+     *         .peek(e -> log.info("Filtered value: " + e))
+     *         .map(String::toUpperCase)
+     *         .peek(e -> log.info("Mapped value: " + e))
+     *         .collect(Collectors.toList());
+     * }</pre>
+     */
+    @Override
+    public Steam<T> peek(Consumer<? super T> action) {
+        return super.peek(action);
+    }
+
+    /**
+     * <p>
+     * 对流里面的每一个元素执行一个操作
+     * 这是一个终端操作
+     */
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        super.forEach(action);
+    }
+
+    /**
+     * <p>
+     * 对流里面的每一个元素按照顺序执行一个操作
+     * 这是一个终端操作
+     */
+    @Override
+    public void forEachOrdered(Consumer<? super T> action) {
+        super.forEachOrdered(action);
+    }
+
+    /**
+     * <p>
+     * 返回一个包含此流元素的指定的数组，例如以下代码编译正常，但运行时会抛出 {@link ArrayStoreException}
+     * <pre>{@code String[] strings = Stream.<Integer>builder().add(1).build().toArray(String[]::new); }</pre>
+     */
+    @Override
+    public <A> A[] toArray(IntFunction<A[]> generator) {
+        return super.toArray(generator);
+    }
+
+    /**
+     * <p>
+     * 对元素进行聚合，并返回聚合后的值，相当于在for循环里写sum=sum+ints[i]
+     * 这是一个终端操作<br>
+     * 求和、最小值、最大值、平均值和转换成一个String字符串均为聚合操作
+     * 例如这里对int进行求和可以写成：
+     *
+     * <pre>{@code
+     *     Integer sum = integers.reduce(0, (a, b) -> a+b);
+     * }</pre>
+     * <p>
+     * 或者写成:
+     *
+     * <pre>{@code
+     *     Integer sum = integers.reduce(0, Integer::sum);
+     * }</pre>
+     */
+    @Override
+    public T reduce(T identity, BinaryOperator<T> accumulator) {
+        return super.reduce(identity, accumulator);
+    }
+
+    /**
+     * <p>
+     * 对元素进行聚合，并返回聚合后用 {@link Optional}包裹的值，相当于在for循环里写sum=sum+ints[i]
+     * 该操作相当于：
+     * <pre>{@code
+     *     boolean foundAny = false;
+     *     T result = null;
+     *     for (T element : this stream) {
+     *         if (!foundAny) {
+     *             foundAny = true;
+     *             result = element;
+     *         }
+     *         else
+     *             result = accumulator.apply(result, element);
+     *     }
+     *     return foundAny ? Optional.of(result) : Optional.empty();
+     * }</pre>
+     * 但它不局限于顺序执行，例如并行流等情况下
+     * 这是一个终端操作<br>
+     * 例如以下场景抛出 NPE ：
+     * <pre>{@code
+     *      Optional<Integer> reduce = Stream.<Integer>builder().add(1).add(1).build().reduce((a, b) -> null);
+     * }</pre>
+     *
+     * @see #reduce(Object, BinaryOperator)
+     * @see #min(Comparator)
+     * @see #max(Comparator)
+     */
+    @Override
+    public Optional<T> reduce(BinaryOperator<T> accumulator) {
+        return super.reduce(accumulator);
+    }
+
+    /**
+     * <p>
+     * 对元素进行聚合，并返回聚合后的值，并行流时聚合拿到的初始值不稳定
+     * 这是一个终端操作
+     *
+     * @see #reduce(BinaryOperator)
+     * @see #reduce(Object, BinaryOperator)
+     */
+    @Override
+    public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+        return super.reduce(identity, accumulator, combiner);
+    }
+
+    /**
+     * <p>
+     * 对元素进行收集，并返回收集后的容器
+     * 这是一个终端操作
+     */
+    @Override
+    public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+        return super.collect(supplier, accumulator, combiner);
+    }
+
+    /**
+     * <p>
+     * 对元素进行收集，并返回收集后的元素
+     * 这是一个终端操作
+     */
+    @Override
+    public <R, A> R collect(Collector<? super T, A, R> collector) {
+        return super.collect(collector);
+    }
+
+    /**
+     * <p>
+     * 获取最小值
+     */
+    @Override
+    public Optional<T> min(Comparator<? super T> comparator) {
+        return super.min(comparator);
+    }
+
+    /**
+     * <p>
+     * 获取最大值
+     */
+    @Override
+    public Optional<T> max(Comparator<? super T> comparator) {
+        return super.max(comparator);
+    }
+
+    /**
+     * <p>
+     * 判断是否有任何一个元素满足给定断言
+     */
+    @Override
+    public boolean anyMatch(Predicate<? super T> predicate) {
+        return super.anyMatch(predicate);
+    }
+
+    /**
+     * <p>
+     * 判断是否所有元素满足给定断言
+     */
+    @Override
+    public boolean allMatch(Predicate<? super T> predicate) {
+        return super.allMatch(predicate);
+    }
+
+    /**
+     * <p>
+     * 判断是否没有元素满足给定断言
+     */
+    @Override
+    public boolean noneMatch(Predicate<? super T> predicate) {
+        return super.noneMatch(predicate);
+    }
+
+    /**
+     * <p>
+     * 在流关闭时执行操作
+     */
+    @Override
+    public Steam<T> onClose(Runnable closeHandler) {
+        return super.onClose(closeHandler);
+    }
 }
