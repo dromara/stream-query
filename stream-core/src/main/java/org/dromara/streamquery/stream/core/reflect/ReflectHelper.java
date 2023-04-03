@@ -1,11 +1,10 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -36,12 +35,11 @@ import java.util.logging.Logger;
  * 反射工具类
  *
  * @author VampireAchao Cizai_
-
  * @since 2022/6/2 17:02
  */
 public class ReflectHelper {
 
-    private static final Logger logger = Logger.getAnonymousLogger();
+    private static final Logger LOGGER = Logger.getAnonymousLogger();
 
     /**
      * Constant <code>LEFT_MIDDLE_BRACKET="["</code>
@@ -256,8 +254,8 @@ public class ReflectHelper {
                 method -> Arrays.equals(method.getParameterTypes(), parameterTypes)
         )).findFirst().map(ReflectHelper::accessible).orElseThrow(() -> new IllegalArgumentException(
                 String.format("No such method: %s args: %s",
-                        methodName
-                        , Steam.of(parameterTypes).map(Type::getTypeName).join(","))));
+                        methodName,
+                        Steam.of(parameterTypes).map(Type::getTypeName).join(","))));
     }
 
     /**
@@ -513,13 +511,13 @@ public class ReflectHelper {
      * @param obj a {@link java.lang.Object} object
      */
     public static void explain(Object obj) {
-        logger.info(() -> "obj: " + obj + " class: " + obj.getClass());
-        logger.info(() -> "fields: ");
-        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> logger.info(() -> "field " +
+        LOGGER.info(() -> "obj: " + obj + " class: " + obj.getClass());
+        LOGGER.info(() -> "fields: ");
+        Steam.of(getFields(obj.getClass())).map(Field::getName).forEach(fieldName -> LOGGER.info(() -> "field " +
                 "" + fieldName + ": " + getFieldValue(obj, fieldName)));
-        logger.info(() -> "no arg methods: ");
+        LOGGER.info(() -> "no arg methods: ");
         Steam.of(getMethods(obj.getClass())).map(Method::getName).forEach(methodName ->
-                logger.info(() -> "method " + methodName + ": " + Opp.ofTry(() ->
+                LOGGER.info(() -> "method " + methodName + ": " + Opp.ofTry(() ->
                         getMethod(obj.getClass(), methodName).invoke(obj))));
     }
 }

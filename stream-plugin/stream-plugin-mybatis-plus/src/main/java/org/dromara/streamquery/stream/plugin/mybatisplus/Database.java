@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -55,7 +71,7 @@ import java.util.stream.Stream;
  * @since 1.0
  */
 public class Database {
-    private static final Log log = LogFactory.getLog(Database.class);
+    private static final Log LOG = LogFactory.getLog(Database.class);
 
     private static final Map<Class<?>, Map<String, String>> TABLE_PROPERTY_COLUMN_CACHE = new ConcurrentHashMap<>();
     private static final Map<Class<?>, Map<String, String>> TABLE_COLUMN_PROPERTY_CACHE = new ConcurrentHashMap<>();
@@ -250,7 +266,7 @@ public class Database {
         Class<T> entityClass = getEntityClass(entityList);
         Class<?> mapperClass = getMapperClass(entityClass);
         String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.INSERT_ONE);
-        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize,
+        return SqlHelper.executeBatch(entityClass, LOG, entityList, batchSize,
                 (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
     }
 
@@ -394,7 +410,7 @@ public class Database {
         Class<?> mapperClass = getMapperClass(entityClass);
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for primary key from entity!");
-        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, log, entityList, batchSize,
+        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, LOG, entityList, batchSize,
                 (sqlSession, entity) -> {
                     Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
                     return StringUtils.checkValNull(idVal)
@@ -537,7 +553,7 @@ public class Database {
         Class<T> entityClass = getEntityClass(entityList);
         Class<?> mapperClass = getMapperClass(entityClass);
         String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.UPDATE_BY_ID);
-        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.executeBatch(entityClass, LOG, entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
             sqlSession.update(sqlStatement, param);
@@ -649,7 +665,7 @@ public class Database {
         if (throwEx) {
             return execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper));
         }
-        return execute(entityClass, baseMapper -> SqlHelper.getObject(log, baseMapper.selectList(queryWrapper)));
+        return execute(entityClass, baseMapper -> SqlHelper.getObject(LOG, baseMapper.selectList(queryWrapper)));
     }
 
     /**
@@ -689,7 +705,7 @@ public class Database {
      */
     public static <T> Map<String, Object> getMap(AbstractWrapper<T, ?, ?> queryWrapper) {
         return execute(getEntityClass(queryWrapper), baseMapper -> activeOrElse(queryWrapper,
-                w -> SqlHelper.getObject(log, baseMapper.selectMaps(w)), null));
+                w -> SqlHelper.getObject(LOG, baseMapper.selectMaps(w)), null));
     }
 
     /**

@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dromara.streamquery.stream.core.business.highlight;
 
 import org.dromara.streamquery.stream.core.optional.Opp;
@@ -13,7 +29,6 @@ import java.util.function.UnaryOperator;
  * 高亮封装
  *
  * @author VampireAchao Cizai_
-
  */
 public class HighlightHelper {
 
@@ -53,7 +68,7 @@ public class HighlightHelper {
                 // 获取要从哪里开始保留
                 int index = fondWord.getWord().indexOf(last.getWord().charAt(last.getWord().length() - 1));
                 // 这里没有判断是否找到是因为只要进入当前的if语句那么必定有重复串可以找到
-                String suffix = fondWord.getWord().substring(index+1);
+                String suffix = fondWord.getWord().substring(index + 1);
                 word = last.getWord() + suffix;
             } else {
                 // 否则根据历史下标到当前词汇下标进行查找额外部分
