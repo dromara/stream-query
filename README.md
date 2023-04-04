@@ -6,7 +6,7 @@
 	👉 <a href="https://dromara.gitee.io/stream-query/#/">stream-query</a> 👈
 </p>
 <p align="center">
-    <a target="_blank" href="https://search.maven.org/artifact/org.dromara/stream-query">
+    <a target="_blank" href="https://search.maven.org/artifact/org.dromara.stream-query/stream-query">
         <img src="https://img.shields.io/maven-central/v/org.dromara/stream-query.svg?label=Maven%20Central" />
     </a>
     <a target="_blank" href='https://www.apache.org/licenses/LICENSE-2.0.html'>
@@ -40,16 +40,16 @@
 
 ```xml
 <!-- 已包含mybatis-plus、stream-core、不用重复引入 -->
-<!-- https://mvnrepository.com/artifact/org.dromara/stream-plugin-mybatis-plus -->
+<!-- https://mvnrepository.com/artifact/org.dromara.stream-query/stream-plugin-mybatis-plus -->
 <dependency>
-   <groupId>org.dromara</groupId>
+   <groupId>org.dromara.stream-query</groupId>
    <artifactId>stream-plugin-mybatis-plus</artifactId>
    <version>x.x.x</version>
 </dependency>
         <!-- 可单独引入 -->
         <!-- https://mvnrepository.com/artifact/org.dromara/stream-core -->
 <dependency>
-<groupId>org.dromara</groupId>
+<groupId>org.dromara.stream-query</groupId>
 <artifactId>stream-core</artifactId>
 <version>x.x.x</version>
 </dependency>
@@ -60,8 +60,8 @@
 在项目的build.gradle的dependencies中加入以下内容:
 
 ```Gradle
-implementation group: 'org.dromara', name: 'stream-plugin-mybatis-plus', version: 'x.x.x'
-implementation group: 'org.dromara', name: 'stream-core', version: 'x.x.x'
+implementation group: 'org.dromara.stream-query', name: 'stream-plugin-mybatis-plus', version: 'x.x.x'
+implementation group: 'org.dromara.stream-query', name: 'stream-core', version: 'x.x.x'
 ```
 
 ## 🔧 配置
