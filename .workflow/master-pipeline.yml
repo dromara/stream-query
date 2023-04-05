@@ -23,6 +23,7 @@ stages:
           - mvn clean install
           - cd ../stream-plugin/stream-plugin-mybatis-plus
           - mvn package
+          - mkdir target
         artifacts:
           - name: BUILD_ARTIFACT
             path:
