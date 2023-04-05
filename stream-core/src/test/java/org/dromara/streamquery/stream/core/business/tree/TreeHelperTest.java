@@ -41,6 +41,8 @@ class TreeHelperTest {
     List<Student> originStudentList;
     List<Student> originStudentTree;
     TreeHelper<Student, Long> studentTreeHelper;
+    List<Student> treeByLevelOriginStudentTree;
+    List<Student> treeFromRootToLevelOriginStudentTree;
 
     @BeforeEach
     void setUp() {
@@ -74,15 +76,41 @@ class TreeHelperTest {
                                         .build()))
                         .build()
         );
+        treeByLevelOriginStudentTree = asList(
+                Student.builder().id(3L).name("hutool").parentId(1L)
+                        .children(singletonList(Student.builder().id(6L).name("looly").parentId(3L).build()))
+                        .build(),
+                Student.builder().id(4L).name("sa-token").parentId(1L)
+                        .children(singletonList(Student.builder().id(7L).name("click33").parentId(4L).build()))
+                        .build(),
+                Student.builder().id(5L).name("mybatis-plus").parentId(2L)
+                        .children(singletonList(
+                                Student.builder().id(8L).name("jobob").parentId(5L).build()
+                        ))
+                        .build()
+        );
+        treeFromRootToLevelOriginStudentTree = asList(
+                Student.builder().id(1L).name("dromara").matchParent(true)
+                        .children(asList(
+                                Student.builder().id(3L).name("hutool").parentId(1L).build(),
+                                Student.builder().id(4L).name("sa-token").parentId(1L).build()))
+                        .build(),
+                Student.builder().id(2L).name("baomidou").matchParent(true)
+                        .children(singletonList(
+                                Student.builder().id(5L).name("mybatis-plus").parentId(2L).build()))
+                        .build()
+        );
         studentTreeHelper = TreeHelper.of(Student::getId, Student::getParentId, null, Student::getChildren, Student::setChildren);
     }
 
     @Test
-    void testToTree() {
+    void testToTreeAndLevel() {
         List<Student> studentTree = studentTreeHelper.toTree(originStudentList);
         Assertions.assertEquals(originStudentTree, studentTree);
         TreeHelper<Student, Long> conditionTreeHelper = TreeHelper.ofMatch(Student::getId, Student::getParentId, s -> Boolean.TRUE.equals(s.getMatchParent()), Student::getChildren, Student::setChildren);
         Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList));
+        Assertions.assertEquals(treeByLevelOriginStudentTree, conditionTreeHelper.getTreeByLevel(originStudentList, 2));
+        Assertions.assertEquals(treeFromRootToLevelOriginStudentTree, conditionTreeHelper.toTree(originStudentList, 1));
     }
 
     @Test

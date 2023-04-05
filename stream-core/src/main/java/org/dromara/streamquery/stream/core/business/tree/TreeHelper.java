@@ -24,9 +24,12 @@ import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -126,6 +129,89 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
 
     /**
+     * <p>传入List集合通过创建树先生时所传入信息去构造树结构，并且通过level控制构建的层级</p>
+     * @param list list 需要构建树结构的集合 {@link java.util.List} object
+     * @param level 层级 {@link java.lang.Integer} Integer
+     * @return 符合树结构的集合 {@link java.util.List} object
+     */
+    public List<T> toTree(List<T> list, int level) {
+        if (level <= 0) {
+            return Collections.emptyList();
+        }else if (level > getMaxDepth(list)) {
+            return toTree(list);
+        }
+        if (Objects.isNull(parentPredicate)) {
+            final Map<R, List<T>> pIdValuesMap = Steam.of(list)
+                    .filter(e -> Objects.nonNull(idGetter.apply(e)))
+                    .group(pidGetter);
+            final List<T> parents = pIdValuesMap.getOrDefault(pidValue, new ArrayList<>());
+            for (T parent : parents) {
+                getChildrenFromMapByPidAndSet(pIdValuesMap, parent, 0, level);
+            }
+            return parents;
+        }
+        final List<T> parents = new ArrayList<>(list.size());
+        final Map<R, List<T>> pIdValuesMap = Steam.of(list)
+                .filter(e -> {
+                    if (parentPredicate.test(e)) {
+                        parents.add(e);
+                    }
+                    return Objects.nonNull(idGetter.apply(e));
+                })
+                .group(pidGetter);
+        for (T parent : parents) {
+            getChildrenFromMapByPidAndSet(pIdValuesMap, parent, 0, level);
+        }
+        return parents;
+    }
+
+    /**
+     * <p>获取树的指定层级所有节点(包含子节点)</p>
+     * @param list 树 {@link java.util.List} object
+     * @param level 层级 {@link java.lang.Integer} Integer
+     * @return 树指定层级的所有节点 {@link java.util.List} object
+     */
+    public List<T> getTreeByLevel(List<T> list, Integer level) {
+        // 如果 level 小于等于 0，则返回空列表
+        if (level <= 0) {
+            return Collections.emptyList();
+        }
+
+        List<T> tree = toTree(list);
+        // 如果 level 大于等于树的最大深度，则直接返回整棵树
+        int maxDepth = getMaxDepth(tree);
+        if (level >= maxDepth) {
+            return tree;
+        }
+
+        // 遍历树，找到第 n 层的节点及其子节点，并返回一个新的树
+        List<T> result = new ArrayList<>();
+        Queue<T> queue = new LinkedList<>(tree);
+        int depth = 1;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                T node = queue.poll();
+                if (depth == level) {
+                    result.add(node);
+                } else {
+                    List<T> children = childrenGetter.apply(node);
+                    if (children != null) {
+                        queue.addAll(children);
+                    }
+                }
+            }
+            depth++;
+            if (depth > level) {
+                break;
+            }
+        }
+        return result;
+    }
+
+
+
+    /**
      * <p>将树结构进行扁平化</p>
      *
      * @param list 要操作的树结构 {@link java.util.List} object
@@ -182,5 +268,51 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
                     }
                 });
     }
+
+    private void getChildrenFromMapByPidAndSet(Map<R, List<T>> pIdValuesMap, T parent, int currentLevel, int maxLevel) {
+        if (currentLevel >= maxLevel) {
+            childrenSetter.accept(parent, null);
+            return;
+        }
+        List<T> children = pIdValuesMap.get(idGetter.apply(parent));
+        if (children != null) {
+            for (T child : children) {
+                childrenSetter.accept(child, new ArrayList<>());
+                getChildrenFromMapByPidAndSet(pIdValuesMap, child, currentLevel + 1, maxLevel);
+            }
+        }
+    }
+
+    /**
+     * 获取树的最大深度。
+     */
+    private int getMaxDepth(List<T> tree) {
+        int maxDepth = 0;
+        for (T node : tree) {
+            int depth = getDepth(node);
+            if (depth > maxDepth) {
+                maxDepth = depth;
+            }
+        }
+        return maxDepth;
+    }
+
+    // 获取节点的最大深度
+    private int getDepth(T node) {
+        List<T> children = childrenGetter.apply(node);
+        if (children == null || children.isEmpty()) {
+            return 1;
+        }
+        int maxDepth = 0;
+        for (T child : children) {
+            int depth = getDepth(child);
+            if (depth > maxDepth) {
+                maxDepth = depth;
+            }
+        }
+        return maxDepth + 1;
+    }
+
+
 
 }
