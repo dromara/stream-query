@@ -23,13 +23,7 @@ import org.dromara.streamquery.stream.core.lambda.function.SerPred;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -137,7 +131,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     public List<T> toTree(List<T> list, int level) {
         if (level <= 0) {
             return Collections.emptyList();
-        }else if (level > getMaxDepth(list)) {
+        } else if (level > getMaxDepth(list)) {
             return toTree(list);
         }
         if (Objects.isNull(parentPredicate)) {
