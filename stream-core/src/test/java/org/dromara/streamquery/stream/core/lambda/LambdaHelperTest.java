@@ -121,19 +121,23 @@ class LambdaHelperTest {
     @Test
     void testRevert() {
         final LambdaExecutable getName = LambdaHelper.<SerFunc<LambdaExecutable, String>>resolve(LambdaExecutable::getName);
-        final SerFunc<LambdaExecutable, String> revertedGetName = LambdaHelper.revert(SerFunc.class, getName.getExecutable());
+        final SerFunc<LambdaExecutable, String> revertedGetName = LambdaHelper.revert(SerFunc.class,
+                getName.getExecutable());
         Assertions.assertEquals(revertedGetName.apply(getName), getName.getName());
 
         final LambdaExecutable constructor = LambdaHelper.<SerSupp<LambdaExecutable>>resolve(LambdaExecutable::new);
-        final SerSupp<LambdaExecutable> revertedConstructor = LambdaHelper.revert(SerSupp.class, constructor.getExecutable());
+        final SerSupp<LambdaExecutable> revertedConstructor = LambdaHelper.revert(SerSupp.class,
+                constructor.getExecutable());
         Assertions.assertEquals(LambdaExecutable.class, revertedConstructor.get().getClass());
     }
 
 
     @Test
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     void testVirtual() {
-        final MethodHandle virtual = MethodHandles.lookup().findVirtual(LambdaExecutable.class, "getName", MethodType.methodType(String.class));
+        final MethodHandle virtual = MethodHandles.lookup().findVirtual(LambdaExecutable.class,
+                "getName", MethodType.methodType(String.class));
         final SerFunc<LambdaExecutable, String> proxy = MethodHandleProxies.asInterfaceInstance(SerFunc.class, virtual);
         InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         MethodHandle methodHandle = ReflectHelper.getFieldValue(handler, "val$target");
