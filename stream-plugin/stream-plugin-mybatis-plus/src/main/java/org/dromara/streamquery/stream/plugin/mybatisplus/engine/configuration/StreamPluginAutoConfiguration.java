@@ -42,44 +42,44 @@ import java.util.List;
  */
 public class StreamPluginAutoConfiguration {
 
-    private static final String CURRENT_NAMESPACE = LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
+  private static final String CURRENT_NAMESPACE =
+      LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
 
-    /**
-     * <p>defaultSqlInjector.</p>
-     *
-     * @return a {@link com.baomidou.mybatisplus.core.injector.DefaultSqlInjector} object
-     */
-    @Bean
-    @Order
-    @ConditionalOnMissingBean(DefaultSqlInjector.class)
-    public DefaultSqlInjector defaultSqlInjector() {
-        return new DefaultSqlInjector() {
-            @Override
-            public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
-                List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
-                methodList.add(new SaveOneSql(SqlMethodEnum.SAVE_ONE_SQL.getMethod()));
-                methodList.add(new UpdateOneSql(SqlMethodEnum.UPDATE_ONE_SQL.getMethod()));
-                return methodList;
-            }
+  /**
+   * defaultSqlInjector.
+   *
+   * @return a {@link com.baomidou.mybatisplus.core.injector.DefaultSqlInjector} object
+   */
+  @Bean
+  @Order
+  @ConditionalOnMissingBean(DefaultSqlInjector.class)
+  public DefaultSqlInjector defaultSqlInjector() {
+    return new DefaultSqlInjector() {
+      @Override
+      public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+        List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
+        methodList.add(new SaveOneSql(SqlMethodEnum.SAVE_ONE_SQL.getMethod()));
+        methodList.add(new UpdateOneSql(SqlMethodEnum.UPDATE_ONE_SQL.getMethod()));
+        return methodList;
+      }
 
-            @Override
-            public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-                super.inspectInject(builderAssistant, mapperClass);
-                Class<?> modelClass = ReflectionKit.getSuperClassGenericType(mapperClass, Mapper.class, 0);
-                if (modelClass == null) {
-                    return;
-                }
-                TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
-                if (Database.isDynamicMapper(tableInfo.getCurrentNamespace()) &&
-                        !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
-                    // 降低动态mapper优先级
-                    ReflectHelper.setFieldValue(tableInfo, CURRENT_NAMESPACE, mapperClass.getName());
-                }
-                if (!Database.isDynamicMapper(mapperClass.getName())) {
-                    Database.getEntityMapperClassCache().put(modelClass, mapperClass);
-                }
-            }
-        };
-    }
-
+      @Override
+      public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+        super.inspectInject(builderAssistant, mapperClass);
+        Class<?> modelClass = ReflectionKit.getSuperClassGenericType(mapperClass, Mapper.class, 0);
+        if (modelClass == null) {
+          return;
+        }
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+        if (Database.isDynamicMapper(tableInfo.getCurrentNamespace())
+            && !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
+          // 降低动态mapper优先级
+          ReflectHelper.setFieldValue(tableInfo, CURRENT_NAMESPACE, mapperClass.getName());
+        }
+        if (!Database.isDynamicMapper(mapperClass.getName())) {
+          Database.getEntityMapperClassCache().put(modelClass, mapperClass);
+        }
+      }
+    };
+  }
 }

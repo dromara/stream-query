@@ -29,10 +29,10 @@ import java.util.List;
  */
 class ClassHelperTest {
 
-    @Test
-    void testScanClasses() {
-        List<Class<?>> classes = ClassHelper.scanClasses(ClassHelper.class.getPackage().getName());
-        Assertions.assertTrue(classes.stream().anyMatch(clazz -> clazz.getName().equals(ClassHelper.class.getName())));
-    }
-
+  @Test
+  void testScanClasses() {
+    List<Class<?>> classes = ClassHelper.scanClasses(ClassHelper.class.getPackage().getName());
+    Assertions.assertTrue(
+        classes.stream().anyMatch(clazz -> clazz.getName().equals(ClassHelper.class.getName())));
+  }
 }

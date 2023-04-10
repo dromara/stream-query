@@ -31,18 +31,20 @@ import org.junit.jupiter.api.Test;
 @MybatisPlusTest
 class OneTest {
 
-
-    @Test
-    void testQuery() {
-        UserInfo userInfo = One.of(UserInfo::getId).eq(1L).query();
-        String name = One.of(UserInfo::getId).eq(1L).value(UserInfo::getName).query();
-        String leAgeName = One.of(UserInfo::getId).eq(1L).value(UserInfo::getName)
-                .condition(w -> w.le(UserInfo::getAge, 20))
-                .query();
-        Assertions.assertNotNull(userInfo);
-        Assertions.assertNotNull(name);
-        Assertions.assertNotNull(leAgeName);
-        Assertions.assertThrows(TooManyResultsException.class, () -> One.of(UserInfo::getName).like("a").query());
-    }
-
+  @Test
+  void testQuery() {
+    UserInfo userInfo = One.of(UserInfo::getId).eq(1L).query();
+    String name = One.of(UserInfo::getId).eq(1L).value(UserInfo::getName).query();
+    String leAgeName =
+        One.of(UserInfo::getId)
+            .eq(1L)
+            .value(UserInfo::getName)
+            .condition(w -> w.le(UserInfo::getAge, 20))
+            .query();
+    Assertions.assertNotNull(userInfo);
+    Assertions.assertNotNull(name);
+    Assertions.assertNotNull(leAgeName);
+    Assertions.assertThrows(
+        TooManyResultsException.class, () -> One.of(UserInfo::getName).like("a").query());
+  }
 }

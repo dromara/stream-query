@@ -26,18 +26,15 @@ import java.util.function.Supplier;
  */
 public interface AsyncInterceptor {
 
-    default void before() {
-    }
+  default void before() {}
 
-    default <T> T execute(Supplier<T> supplier) {
-        return supplier.get();
-    }
+  default <T> T execute(Supplier<T> supplier) {
+    return supplier.get();
+  }
 
-    default void after() {
-    }
+  default void after() {}
 
-    default <T> T onError(Throwable throwable) {
-        throw new LambdaInvokeException(throwable);
-    }
-
+  default <T> T onError(Throwable throwable) {
+    throw new LambdaInvokeException(throwable);
+  }
 }

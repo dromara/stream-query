@@ -27,13 +27,13 @@ import java.util.Collections;
  */
 class SetsTest {
 
-    @Test
-    void testOf() {
-        Assertions.assertEquals("value", Sets.of("value").iterator().next());
-    }
+  @Test
+  void testOf() {
+    Assertions.assertEquals("value", Sets.of("value").iterator().next());
+  }
 
-    @Test
-    void testOfColl() {
-        Assertions.assertTrue(Sets.ofColl(Collections.emptySet()).isEmpty());
-    }
+  @Test
+  void testOfColl() {
+    Assertions.assertTrue(Sets.ofColl(Collections.emptySet()).isEmpty());
+  }
 }

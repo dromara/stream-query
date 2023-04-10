@@ -39,62 +39,85 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.enumration.SqlMe
  */
 public class SaveOneSql extends AbstractMethod implements PluginConst {
 
-    /**
-     * <p>Constructor for SaveOneSql.</p>
-     *
-     * @param methodName a {@link java.lang.String} object
-     */
-    public SaveOneSql(String methodName) {
-        super(methodName);
-    }
+  /**
+   * Constructor for SaveOneSql.
+   *
+   * @param methodName a {@link java.lang.String} object
+   */
+  public SaveOneSql(String methodName) {
+    super(methodName);
+  }
 
-    /**
-     * 注入自定义 MappedStatement
-     */
-    @Override
-    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
-        SqlMethodEnum sqlMethod = SqlMethodEnum.SAVE_ONE_SQL;
-        // column script
-        String columnScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList()).map(TableFieldInfo::getColumn)
-                        .unshift(tableInfo.getKeyColumn())
-                        .join(COMMA),
-                LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
-        // value column script in loop
-        String safeProperty = SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty()) + COMMA;
-        String propertyOrDefault = SqlScriptUtils.convertChoose(
-                String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + tableInfo.getKeyProperty()),
-                safeProperty,
-                DEFAULT + COMMA);
-        String valuesScript = SqlScriptUtils.convertTrim(Steam.of(tableInfo.getFieldList())
-                        .map(i -> SqlScriptUtils.convertChoose(
-                                MpInjectHelper.updateCondition(i, TableFieldInfo::getInsertStrategy),
-                                i.getInsertSqlProperty(ENTITY_DOT),
-                                DEFAULT + COMMA))
-                        .unshift(tableInfo.getIdType() == IdType.AUTO ? propertyOrDefault : safeProperty)
-                        .nonNull().join(NEWLINE),
-                LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
-        // value part into foreach
-        valuesScript = SqlScriptUtils.convertForeach(valuesScript, COLLECTION_PARAM_NAME, null, ENTITY, COMMA);
+  /** 注入自定义 MappedStatement */
+  @Override
+  public MappedStatement injectMappedStatement(
+      Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+    KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
+    SqlMethodEnum sqlMethod = SqlMethodEnum.SAVE_ONE_SQL;
+    // column script
+    String columnScript =
+        SqlScriptUtils.convertTrim(
+            Steam.of(tableInfo.getFieldList())
+                .map(TableFieldInfo::getColumn)
+                .unshift(tableInfo.getKeyColumn())
+                .join(COMMA),
+            LEFT_BRACKET,
+            RIGHT_BRACKET,
+            null,
+            COMMA);
+    // value column script in loop
+    String safeProperty = SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty()) + COMMA;
+    String propertyOrDefault =
+        SqlScriptUtils.convertChoose(
+            String.format(NON_NULL_CONDITION, ENTITY, ENTITY_DOT + tableInfo.getKeyProperty()),
+            safeProperty,
+            DEFAULT + COMMA);
+    String valuesScript =
+        SqlScriptUtils.convertTrim(
+            Steam.of(tableInfo.getFieldList())
+                .map(
+                    i ->
+                        SqlScriptUtils.convertChoose(
+                            MpInjectHelper.updateCondition(i, TableFieldInfo::getInsertStrategy),
+                            i.getInsertSqlProperty(ENTITY_DOT),
+                            DEFAULT + COMMA))
+                .unshift(tableInfo.getIdType() == IdType.AUTO ? propertyOrDefault : safeProperty)
+                .nonNull()
+                .join(NEWLINE),
+            LEFT_BRACKET,
+            RIGHT_BRACKET,
+            null,
+            COMMA);
+    // value part into foreach
+    valuesScript =
+        SqlScriptUtils.convertForeach(valuesScript, COLLECTION_PARAM_NAME, null, ENTITY, COMMA);
 
-        String keyProperty = null;
-        String keyColumn = null;
-        // 表包含主键处理逻辑,如果不包含主键当普通字段处理
-        if (StringUtils.isNotBlank(tableInfo.getKeyProperty())) {
-            if (tableInfo.getIdType() == IdType.AUTO) {
-                /* 自增主键 */
-                keyGenerator = Jdbc3KeyGenerator.INSTANCE;
-                keyProperty = tableInfo.getKeyProperty();
-                keyColumn = tableInfo.getKeyColumn();
-            } else if (null != tableInfo.getKeySequence()) {
-                keyGenerator = TableInfoHelper.genKeyGenerator(this.methodName, tableInfo, builderAssistant);
-                keyProperty = tableInfo.getKeyProperty();
-                keyColumn = tableInfo.getKeyColumn();
-            }
-        }
-        String sql = String.format(SCRIPT_TAGS, SqlScriptUtils.convertIf(sqlMethod.getSql(), String.format(NON_EMPTY_CONDITION, COLLECTION_PARAM_NAME, COLLECTION_PARAM_NAME), true));
-        sql = String.format(sql, tableInfo.getTableName(), columnScript, valuesScript);
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, sqlSource, keyGenerator, keyProperty, keyColumn);
+    String keyProperty = null;
+    String keyColumn = null;
+    // 表包含主键处理逻辑,如果不包含主键当普通字段处理
+    if (StringUtils.isNotBlank(tableInfo.getKeyProperty())) {
+      if (tableInfo.getIdType() == IdType.AUTO) {
+        /* 自增主键 */
+        keyGenerator = Jdbc3KeyGenerator.INSTANCE;
+        keyProperty = tableInfo.getKeyProperty();
+        keyColumn = tableInfo.getKeyColumn();
+      } else if (null != tableInfo.getKeySequence()) {
+        keyGenerator =
+            TableInfoHelper.genKeyGenerator(this.methodName, tableInfo, builderAssistant);
+        keyProperty = tableInfo.getKeyProperty();
+        keyColumn = tableInfo.getKeyColumn();
+      }
     }
+    String sql =
+        String.format(
+            SCRIPT_TAGS,
+            SqlScriptUtils.convertIf(
+                sqlMethod.getSql(),
+                String.format(NON_EMPTY_CONDITION, COLLECTION_PARAM_NAME, COLLECTION_PARAM_NAME),
+                true));
+    sql = String.format(sql, tableInfo.getTableName(), columnScript, valuesScript);
+    SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+    return this.addInsertMappedStatement(
+        mapperClass, modelClass, sqlSource, keyGenerator, keyProperty, keyColumn);
+  }
 }

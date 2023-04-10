@@ -27,42 +27,38 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of results supplied by this supplier
  * @author VampireAchao Cizai_
-
  * @see java.util.function.Supplier
  */
 @FunctionalInterface
 public interface SerSupp<T> extends Supplier<T>, Serializable {
 
-    /**
-     * Gets a result.
-     *
-     * @return a result
-     * @throws java.lang.Exception exception
-     */
-    T getting() throws Throwable;
+  /**
+   * Gets a result.
+   *
+   * @return a result
+   * @throws java.lang.Exception exception
+   */
+  T getting() throws Throwable;
 
-    /**
-     * Gets a result.
-     */
-    @Override
-    default T get() {
-        try {
-            return getting();
-        } catch (Throwable e) {
-            throw new LambdaInvokeException(e);
-        }
+  /** Gets a result. */
+  @Override
+  default T get() {
+    try {
+      return getting();
+    } catch (Throwable e) {
+      throw new LambdaInvokeException(e);
     }
+  }
 
-    /**
-     * last
-     *
-     * @param serSups lambda
-     * @param <T>     type
-     * @return lambda
-     */
-    @SafeVarargs
-    static <T> SerSupp<T> last(SerSupp<T>... serSups) {
-        return Stream.of(serSups).reduce((l, r) -> r).orElseGet(() -> () -> null);
-    }
-
+  /**
+   * last
+   *
+   * @param serSups lambda
+   * @param <T> type
+   * @return lambda
+   */
+  @SafeVarargs
+  static <T> SerSupp<T> last(SerSupp<T>... serSups) {
+    return Stream.of(serSups).reduce((l, r) -> r).orElseGet(() -> () -> null);
+  }
 }

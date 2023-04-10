@@ -27,17 +27,17 @@ import java.util.ArrayList;
  */
 class AbstractTypeReferenceTest {
 
-    @Test
-    void testGetTypeName() {
-        Assertions.assertEquals("java.lang.String", new AbstractTypeReference<String>() {
-        }.getTypeName());
-        Assertions.assertEquals("java.util.ArrayList<java.lang.String>", new AbstractTypeReference<ArrayList<String>>() {
-        }.getTypeName());
-    }
+  @Test
+  void testGetTypeName() {
+    Assertions.assertEquals(
+        "java.lang.String", new AbstractTypeReference<String>() {}.getTypeName());
+    Assertions.assertEquals(
+        "java.util.ArrayList<java.lang.String>",
+        new AbstractTypeReference<ArrayList<String>>() {}.getTypeName());
+  }
 
-    @Test
-    void testGetType() {
-        Assertions.assertEquals(String.class, new AbstractTypeReference<String>() {
-        }.getType());
-    }
+  @Test
+  void testGetType() {
+    Assertions.assertEquals(String.class, new AbstractTypeReference<String>() {}.getType());
+  }
 }

@@ -27,5 +27,4 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
  * @since 2023/2/9
  */
 @Mapper
-public interface UserInfoMapper extends IMapper<UserInfo> {
-}
+public interface UserInfoMapper extends IMapper<UserInfo> {}

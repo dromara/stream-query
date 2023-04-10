@@ -25,10 +25,11 @@ import org.junit.jupiter.api.Test;
  */
 class SerConsTest {
 
-    @Test
-    void testMulti() {
-        Assertions.assertDoesNotThrow(() -> {
-            SerCons.multi().accept(new Object());
+  @Test
+  void testMulti() {
+    Assertions.assertDoesNotThrow(
+        () -> {
+          SerCons.multi().accept(new Object());
         });
-    }
+  }
 }

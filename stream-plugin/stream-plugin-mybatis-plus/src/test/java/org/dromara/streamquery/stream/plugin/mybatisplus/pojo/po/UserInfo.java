@@ -33,14 +33,16 @@ import java.time.LocalDateTime;
 @Data
 public class UserInfo {
 
-    private static final long serialVersionUID = -7219188882388819210L;
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-    private String name;
-    private Integer age;
-    private String email;
-    @Version
-    private Integer version;
-    @TableLogic(value = "'2001-01-01 00:00:00'", delval = "NOW()")
-    private LocalDateTime gmtDeleted;
+  private static final long serialVersionUID = -7219188882388819210L;
+
+  @TableId(value = "id", type = IdType.AUTO)
+  private Long id;
+
+  private String name;
+  private Integer age;
+  private String email;
+  @Version private Integer version;
+
+  @TableLogic(value = "'2001-01-01 00:00:00'", delval = "NOW()")
+  private LocalDateTime gmtDeleted;
 }

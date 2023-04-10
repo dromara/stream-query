@@ -25,12 +25,10 @@ import java.lang.annotation.*;
  * 开启sql注入
  *
  * @author VampireAchao Cizai_
-
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Documented
 @Inherited
 @Import({StreamPluginAutoConfiguration.class})
-public @interface EnableMybatisPlusPlugin {
-}
+public @interface EnableMybatisPlusPlugin {}

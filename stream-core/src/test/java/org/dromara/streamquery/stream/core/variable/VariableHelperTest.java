@@ -25,10 +25,10 @@ import org.junit.jupiter.api.Test;
  */
 class VariableHelperTest {
 
-    @Test
-    void testFirst() {
-        Assertions.assertEquals(1, VariableHelper.first(null, () -> 1));
-        Assertions.assertEquals(1, VariableHelper.first(new Integer[]{1}, () -> null));
-        Assertions.assertEquals(1, VariableHelper.first(new Integer[]{1, 2}, () -> null));
-    }
+  @Test
+  void testFirst() {
+    Assertions.assertEquals(1, VariableHelper.first(null, () -> 1));
+    Assertions.assertEquals(1, VariableHelper.first(new Integer[] {1}, () -> null));
+    Assertions.assertEquals(1, VariableHelper.first(new Integer[] {1, 2}, () -> null));
+  }
 }

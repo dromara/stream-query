@@ -32,7 +32,8 @@ import lombok.Data;
 @KeySequence(dbType = DbType.H2)
 public class RoleInfo {
 
-    @TableId(type = IdType.ASSIGN_ID)
-    private String id;
-    private String roleName;
+  @TableId(type = IdType.ASSIGN_ID)
+  private String id;
+
+  private String roleName;
 }
