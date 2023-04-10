@@ -242,11 +242,6 @@
                             <order>javax,java,\#</order>
                         </importOrder>
                         <replaceRegex>
-                            <name>Remove wildcard imports</name>
-                            <searchRegex>import\s+(static)*\s*[^\*\s]+\*;(\r\n|\r|\n)</searchRegex>
-                            <replacement>$1</replacement>
-                        </replaceRegex>
-                        <replaceRegex>
                             <name>Block powermock</name>
                             <searchRegex>import\s+org\.powermock\.[^\*\s]*(|\*);(\r\n|\r|\n)</searchRegex>
                             <replacement>$1</replacement>
