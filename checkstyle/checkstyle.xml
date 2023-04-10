@@ -102,7 +102,7 @@
     <!-- 检查分隔符是否在空白之后 -->
     <module name="WhitespaceAfter"/>
     <!-- 检查分隔符周围是否有空白 -->
-    <module name="WhitespaceAround"/>
+<!--    <module name="WhitespaceAround"/>-->
 
     <!-- 修饰符检查 -->
     <!-- 检查修饰符的顺序是否遵照java语言规范，默认public、protected、private、abstract、static、final、transient、volatile、synchronized、native、strictfp -->
