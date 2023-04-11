@@ -75,10 +75,10 @@ public class ClassHelper {
                                     path ->
                                             path.substring(
                                                     path.lastIndexOf(File.separatorChar) + 1, path.length() - 6))
-                        .map(name -> packageName + "." + name);
+                            .map(name -> packageName + "." + name);
                   }
-                  JarURLConnection urlConnection = (JarURLConnection) url.openConnection();
-                  JarFile jarFile = urlConnection.getJarFile();
+                    JarURLConnection urlConnection = (JarURLConnection) url.openConnection();
+                    JarFile jarFile = urlConnection.getJarFile();
                     return Steam.of(Collections.list(jarFile.entries()))
                             .filter(
                                     SerPred.multiAnd(

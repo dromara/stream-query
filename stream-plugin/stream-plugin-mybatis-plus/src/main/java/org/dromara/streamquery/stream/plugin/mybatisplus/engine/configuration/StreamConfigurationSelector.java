@@ -29,13 +29,13 @@ public class StreamConfigurationSelector implements DeferredImportSelector, Orde
 
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
-        return new String[]{StreamScannerRegistrar.class.getName(),
-                StreamPluginConfiguration.class.getName()};
+        return new String[]{
+                StreamScannerRegistrar.class.getName(), StreamPluginConfiguration.class.getName()
+        };
     }
 
     @Override
     public int getOrder() {
         return HIGHEST_PRECEDENCE;
     }
-
 }

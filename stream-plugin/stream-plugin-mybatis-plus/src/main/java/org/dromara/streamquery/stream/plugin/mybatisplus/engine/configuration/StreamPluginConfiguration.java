@@ -47,10 +47,11 @@ import java.util.Set;
  */
 public class StreamPluginConfiguration {
 
-    private static final String CURRENT_NAMESPACE = LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
+    private static final String CURRENT_NAMESPACE =
+            LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
 
     /**
-     * <p>defaultSqlInjector.</p>
+     * defaultSqlInjector.
      *
      * @return a {@link com.baomidou.mybatisplus.core.injector.DefaultSqlInjector} object
      */
@@ -75,8 +76,8 @@ public class StreamPluginConfiguration {
                     return;
                 }
                 TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
-                if (Database.isDynamicMapper(tableInfo.getCurrentNamespace()) &&
-                        !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
+                if (Database.isDynamicMapper(tableInfo.getCurrentNamespace())
+                        && !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
                     // 降低动态mapper优先级
                     ReflectHelper.setFieldValue(tableInfo, CURRENT_NAMESPACE, mapperClass.getName());
                 }
@@ -89,8 +90,8 @@ public class StreamPluginConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(DynamicMapperHandler.class)
-    public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory,
-                                                     StreamScannerConfigurer streamScannerConfigurer) {
+    public DynamicMapperHandler dynamicMapperHandler(
+            SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
         /// 扫描po包下的所有类，作为entity
         Set<String> basePackages = streamScannerConfigurer.getBasePackages();
         List<Class<?>> entityClassList = new ArrayList<>();
@@ -99,5 +100,4 @@ public class StreamPluginConfiguration {
         }
         return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
     }
-
 }

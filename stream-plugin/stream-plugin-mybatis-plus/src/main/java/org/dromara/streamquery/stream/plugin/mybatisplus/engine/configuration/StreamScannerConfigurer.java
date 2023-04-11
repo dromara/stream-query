@@ -21,8 +21,7 @@ import java.util.Set;
 /**
  * stream scanner configurer
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
- * from {@link StreamScannerRegistrar}
+ * @author <a href = "kamtohung@gmail.com">KamTo Hung</a> from {@link StreamScannerRegistrar}
  */
 public class StreamScannerConfigurer {
 
@@ -38,5 +37,4 @@ public class StreamScannerConfigurer {
     public void setBasePackages(Set<String> basePackages) {
         this.basePackages = basePackages;
     }
-
 }

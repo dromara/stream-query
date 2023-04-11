@@ -37,24 +37,32 @@ import java.util.stream.Collectors;
 public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes annotationAttributes = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(EnableMybatisPlusPlugin.class.getName()));
+    public void registerBeanDefinitions(
+            AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        AnnotationAttributes annotationAttributes =
+                AnnotationAttributes.fromMap(
+                        importingClassMetadata.getAnnotationAttributes(
+                                EnableMybatisPlusPlugin.class.getName()));
         if (Objects.isNull(annotationAttributes)) {
             return;
         }
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
+        BeanDefinitionBuilder builder =
+                BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
         Set<String> basePackages = new HashSet<>();
-        basePackages.addAll(Arrays.stream(annotationAttributes.getStringArray("value"))
-                .filter(StringUtils::hasText).collect(Collectors.toList()));
-        basePackages.addAll(Arrays.stream(annotationAttributes.getStringArray("basePackages"))
-                .filter(StringUtils::hasText).collect(Collectors.toList()));
-        basePackages.addAll(Arrays.stream(annotationAttributes.getClassArray("basePackageClasses"))
-                .filter(Objects::nonNull)
-                .map(ClassUtils::getPackageName)
-                .collect(Collectors.toList())
-        );
+        basePackages.addAll(
+                Arrays.stream(annotationAttributes.getStringArray("value"))
+                        .filter(StringUtils::hasText)
+                        .collect(Collectors.toList()));
+        basePackages.addAll(
+                Arrays.stream(annotationAttributes.getStringArray("basePackages"))
+                        .filter(StringUtils::hasText)
+                        .collect(Collectors.toList()));
+        basePackages.addAll(
+                Arrays.stream(annotationAttributes.getClassArray("basePackageClasses"))
+                        .filter(Objects::nonNull)
+                        .map(ClassUtils::getPackageName)
+                        .collect(Collectors.toList()));
         builder.addPropertyValue("basePackages", basePackages);
         registry.registerBeanDefinition("streamScannerConfigurer", builder.getBeanDefinition());
     }
-
 }
