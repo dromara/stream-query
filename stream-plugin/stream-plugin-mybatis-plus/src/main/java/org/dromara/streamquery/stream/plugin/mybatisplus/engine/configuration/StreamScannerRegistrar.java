@@ -25,10 +25,10 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +43,7 @@ public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
             return;
         }
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
-        List<String> basePackages = new ArrayList<>();
+        Set<String> basePackages = new HashSet<>();
         basePackages.addAll(Arrays.stream(annotationAttributes.getStringArray("value"))
                 .filter(StringUtils::hasText).collect(Collectors.toList()));
         basePackages.addAll(Arrays.stream(annotationAttributes.getStringArray("basePackages"))

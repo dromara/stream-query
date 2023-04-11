@@ -38,6 +38,7 @@ import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * MPSql注入
@@ -91,7 +92,7 @@ public class StreamPluginConfiguration {
     public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory,
                                                      StreamScannerConfigurer streamScannerConfigurer) {
         /// 扫描po包下的所有类，作为entity
-        List<String> basePackages = streamScannerConfigurer.getBasePackages();
+        Set<String> basePackages = streamScannerConfigurer.getBasePackages();
         List<Class<?>> entityClassList = new ArrayList<>();
         for (String basePackage : basePackages) {
             entityClassList.addAll(ClassHelper.scanClasses(basePackage));

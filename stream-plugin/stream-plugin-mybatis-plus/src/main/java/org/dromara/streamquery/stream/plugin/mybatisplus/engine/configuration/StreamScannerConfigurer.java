@@ -16,7 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * stream scanner configurer
@@ -29,13 +29,13 @@ public class StreamScannerConfigurer {
     /**
      * base package
      */
-    private List<String> basePackages;
+    private Set<String> basePackages;
 
-    public List<String> getBasePackages() {
+    public Set<String> getBasePackages() {
         return basePackages;
     }
 
-    public void setBasePackages(List<String> basePackages) {
+    public void setBasePackages(Set<String> basePackages) {
         this.basePackages = basePackages;
     }
 
