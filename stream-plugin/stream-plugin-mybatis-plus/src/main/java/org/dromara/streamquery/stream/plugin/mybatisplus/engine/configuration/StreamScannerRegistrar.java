@@ -42,7 +42,7 @@ public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
         if (Objects.isNull(annotationAttributes)) {
             return;
         }
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(StreamConfigurationSelector.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
         List<String> basePackages = new ArrayList<>();
         basePackages.addAll(Arrays.stream(annotationAttributes.getStringArray("value"))
                 .filter(StringUtils::hasText).collect(Collectors.toList()));
@@ -56,10 +56,5 @@ public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
         builder.addPropertyValue("basePackages", basePackages);
         registry.registerBeanDefinition("streamScannerConfigurer", builder.getBeanDefinition());
     }
-
-//    private static String generateBaseBeanName(AnnotationMetadata importingClassMetadata, int index) {
-//        return importingClassMetadata.getClassName() + "#" + StreamScannerRegistrar.class.getSimpleName() + "#" + index;
-//    }
-
 
 }

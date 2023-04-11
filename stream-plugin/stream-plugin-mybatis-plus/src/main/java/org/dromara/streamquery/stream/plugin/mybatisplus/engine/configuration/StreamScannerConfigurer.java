@@ -22,6 +22,7 @@ import java.util.List;
  * stream scanner configurer
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * from {@link StreamScannerRegistrar}
  */
 public class StreamScannerConfigurer {
 

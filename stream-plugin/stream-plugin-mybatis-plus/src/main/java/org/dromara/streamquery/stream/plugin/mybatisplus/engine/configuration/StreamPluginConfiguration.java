@@ -92,7 +92,6 @@ public class StreamPluginConfiguration {
                                                      StreamScannerConfigurer streamScannerConfigurer) {
         /// 扫描po包下的所有类，作为entity
         List<String> basePackages = streamScannerConfigurer.getBasePackages();
-//        String entityPackagePath = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po";
         List<Class<?>> entityClassList = new ArrayList<>();
         for (String basePackage : basePackages) {
             entityClassList.addAll(ClassHelper.scanClasses(basePackage));
