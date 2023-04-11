@@ -69,21 +69,26 @@ public class ClassHelper {
                       return null;
                     }
                     return Steam.of(dir.listFiles())
-                        .map(File::getAbsolutePath)
-                        .filter(path -> path.endsWith(".class"))
-                        .map(path -> path.substring(path.lastIndexOf("\\") + 1, path.length() - 6))
+                            .map(File::getName)
+                            .filter(path -> path.endsWith(".class"))
+                            .map(
+                                    path ->
+                                            path.substring(
+                                                    path.lastIndexOf(File.separatorChar) + 1, path.length() - 6))
                         .map(name -> packageName + "." + name);
                   }
                   JarURLConnection urlConnection = (JarURLConnection) url.openConnection();
                   JarFile jarFile = urlConnection.getJarFile();
-                  return Steam.of(Collections.list(jarFile.entries()))
-                      .filter(
-                          SerPred.multiAnd(
-                              e -> e.getName().startsWith(packagePath),
-                              e -> e.getName().endsWith(".class"),
-                              e -> !e.isDirectory()))
-                      .map(ZipEntry::getName)
-                      .map(name -> name.substring(0, name.length() - 6).replace("/", "."));
+                    return Steam.of(Collections.list(jarFile.entries()))
+                            .filter(
+                                    SerPred.multiAnd(
+                                            e -> e.getName().startsWith(packagePath),
+                                            e -> e.getName().endsWith(".class"),
+                                            e -> !e.isDirectory()))
+                            .map(ZipEntry::getName)
+                            .map(
+                                    name ->
+                                            name.substring(0, name.length() - 6).replace(File.separator, "."));
                 }))
         .filter(className -> !className.contains("$"))
         .<Class<?>>map(ReflectHelper::loadClass)
