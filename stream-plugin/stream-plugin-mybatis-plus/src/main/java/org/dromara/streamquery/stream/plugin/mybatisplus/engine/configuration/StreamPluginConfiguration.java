@@ -32,11 +32,8 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.enumration.SqlMe
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.DynamicMapperHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.SaveOneSql;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.UpdateOneSql;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
@@ -89,12 +86,10 @@ public class StreamPluginConfiguration {
         };
     }
 
-    @Autowired
-    private StreamScannerConfigurer streamScannerConfigurer;
-
     @Bean
     @ConditionalOnMissingBean(DynamicMapperHandler.class)
-    public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) {
+    public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory,
+                                                     StreamScannerConfigurer streamScannerConfigurer) {
         /// 扫描po包下的所有类，作为entity
         List<String> basePackages = streamScannerConfigurer.getBasePackages();
 //        String entityPackagePath = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po";

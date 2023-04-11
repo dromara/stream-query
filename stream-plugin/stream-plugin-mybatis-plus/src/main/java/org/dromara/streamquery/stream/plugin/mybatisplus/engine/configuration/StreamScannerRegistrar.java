@@ -44,7 +44,7 @@ public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
         if (Objects.isNull(annotationAttributes)) {
             return;
         }
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(StreamConfigurationSelector.class);
         List<String> basePackages = new ArrayList<>();
         basePackages.addAll(Arrays.stream(annotationAttributes.getStringArray("value"))
                 .filter(StringUtils::hasText).collect(Collectors.toList()));
