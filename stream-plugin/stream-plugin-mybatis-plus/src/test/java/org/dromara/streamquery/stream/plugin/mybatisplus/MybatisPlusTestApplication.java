@@ -35,7 +35,7 @@ import java.util.List;
  * @author VampireAchao Cizai_
  * @since 2022/5/21
  */
-@EnableMybatisPlusPlugin
+@EnableMybatisPlusPlugin("org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po")
 @SpringBootApplication
 public class MybatisPlusTestApplication {
   /**
@@ -51,12 +51,12 @@ public class MybatisPlusTestApplication {
     return interceptor;
   }
 
-  @Bean
-  public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory)
-      throws Exception {
-    /// 扫描po包下的所有类，作为entity
-    String entityPackagePath = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po";
-    final List<Class<?>> entityClassList = ClassHelper.scanClasses(entityPackagePath);
-    return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
-  }
+//  @Bean
+//  public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory)
+//      throws Exception {
+//    /// 扫描po包下的所有类，作为entity
+//    String entityPackagePath = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po";
+//    final List<Class<?>> entityClassList = ClassHelper.scanClasses(entityPackagePath);
+//    return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
+//  }
 }

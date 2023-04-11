@@ -14,29 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.StreamConfigurationSelector;
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.*;
+import org.springframework.context.annotation.DeferredImportSelector;
+import org.springframework.core.Ordered;
+import org.springframework.core.type.AnnotationMetadata;
 
 /**
- * 开启sql注入
+ * stream plugin selector
  *
- * @author VampireAchao Cizai_
+ * @author KamToHung
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-@Documented
-@Inherited
-@Import({StreamConfigurationSelector.class})
-public @interface EnableMybatisPlusPlugin {
+public class StreamConfigurationSelector implements DeferredImportSelector, Ordered {
 
-    String[] value() default {};
+    @Override
+    public String[] selectImports(AnnotationMetadata metadata) {
+        return new String[]{StreamScannerRegistrar.class.getName(),
+                StreamPluginConfiguration.class.getName()};
+    }
 
-    String[] basePackages() default {};
-
-    Class<?>[] basePackageClasses() default {};
+    @Override
+    public int getOrder() {
+        return HIGHEST_PRECEDENCE;
+    }
 
 }
