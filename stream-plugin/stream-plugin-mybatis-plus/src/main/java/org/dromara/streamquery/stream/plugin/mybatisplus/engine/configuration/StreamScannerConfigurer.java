@@ -14,29 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.StreamConfigurationSelector;
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.*;
+import java.util.Set;
 
 /**
- * 开启sql注入
+ * stream scanner configurer
  *
- * @author VampireAchao Cizai_
+ * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * from {@link StreamScannerRegistrar}
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-@Documented
-@Inherited
-@Import({StreamConfigurationSelector.class})
-public @interface EnableMybatisPlusPlugin {
+public class StreamScannerConfigurer {
 
-    String[] value() default {};
+    /**
+     * base package
+     */
+    private Set<String> basePackages;
 
-    String[] basePackages() default {};
+    public Set<String> getBasePackages() {
+        return basePackages;
+    }
 
-    Class<?>[] basePackageClasses() default {};
+    public void setBasePackages(Set<String> basePackages) {
+        this.basePackages = basePackages;
+    }
 
 }
