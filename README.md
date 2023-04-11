@@ -7,7 +7,7 @@
 </p>
 <p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/org.dromara.stream-query/stream-query">
-        <img src="https://img.shields.io/maven-central/v/org.dromara/stream-query.svg?label=Maven%20Central" />
+        <img src="https://img.shields.io/maven-central/v/org.dromara.stream-query/stream-query.svg?label=Maven%20Central" />
     </a>
     <a target="_blank" href='https://www.apache.org/licenses/LICENSE-2.0.html'>
         <img src='https://img.shields.io/badge/license-Apache%202-4EB1BA.svg'/>
