@@ -69,7 +69,7 @@ public class ClassHelper {
                       return null;
                     }
                     return Steam.of(dir.listFiles())
-                        .map(File::getAbsolutePath)
+                        .map(File::getName)
                         .filter(path -> path.endsWith(".class"))
                         .map(path -> path.substring(path.lastIndexOf("\\") + 1, path.length() - 6))
                         .map(name -> packageName + "." + name);
