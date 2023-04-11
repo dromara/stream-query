@@ -17,8 +17,6 @@
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
-import org.mybatis.spring.annotation.MapperScannerRegistrar;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -55,7 +53,7 @@ public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
                 .map(ClassUtils::getPackageName)
                 .collect(Collectors.toList())
         );
-        builder.addPropertyValue("basePackage", String.join(",", basePackages));
+        builder.addPropertyValue("basePackages", basePackages);
         registry.registerBeanDefinition("streamScannerConfigurer", builder.getBeanDefinition());
     }
 
