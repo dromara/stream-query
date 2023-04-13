@@ -25,16 +25,14 @@ import java.util.Set;
  */
 public class StreamScannerConfigurer {
 
-    /**
-     * base package
-     */
-    private Set<String> basePackages;
+  /** base package */
+  private Set<String> basePackages;
 
-    public Set<String> getBasePackages() {
-        return basePackages;
-    }
+  public Set<String> getBasePackages() {
+    return basePackages;
+  }
 
-    public void setBasePackages(Set<String> basePackages) {
-        this.basePackages = basePackages;
-    }
+  public void setBasePackages(Set<String> basePackages) {
+    this.basePackages = basePackages;
+  }
 }

@@ -35,7 +35,7 @@ public @interface EnableMybatisPlusPlugin {
 
   String[] value() default {};
 
-    String[] basePackages() default {};
+  String[] basePackages() default {};
 
-    Class<?>[] basePackageClasses() default {};
+  Class<?>[] basePackageClasses() default {};
 }

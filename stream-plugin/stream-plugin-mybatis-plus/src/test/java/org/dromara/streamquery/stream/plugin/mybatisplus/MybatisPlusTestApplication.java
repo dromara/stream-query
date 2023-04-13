@@ -34,30 +34,30 @@ import org.springframework.context.annotation.Bean;
  * @since 2022/5/21
  */
 @EnableMybatisPlusPlugin(
-        value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
-        basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
-        basePackageClasses = {RoleInfo.class, UserInfo.class, UserRole.class})
+    value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+    basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+    basePackageClasses = {RoleInfo.class, UserInfo.class, UserRole.class})
 @SpringBootApplication
 public class MybatisPlusTestApplication {
-    /**
-     * mybatisPlusInterceptor.
-     *
-     * @return a {@link com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor} object
-     */
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
-        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
-        return interceptor;
-    }
+  /**
+   * mybatisPlusInterceptor.
+   *
+   * @return a {@link com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor} object
+   */
+  @Bean
+  public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+    interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
+    interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+    return interceptor;
+  }
 
-    //  @Bean
-    //  public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory)
-    //      throws Exception {
-    //    /// 扫描po包下的所有类，作为entity
-    //    String entityPackagePath = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po";
-    //    final List<Class<?>> entityClassList = ClassHelper.scanClasses(entityPackagePath);
-    //    return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
-    //  }
+  //  @Bean
+  //  public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory)
+  //      throws Exception {
+  //    /// 扫描po包下的所有类，作为entity
+  //    String entityPackagePath = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po";
+  //    final List<Class<?>> entityClassList = ClassHelper.scanClasses(entityPackagePath);
+  //    return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
+  //  }
 }
