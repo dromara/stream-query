@@ -3,3 +3,11 @@ logging:
     root: INFO
     org.dromara.streamquery.stream.plugin.mybatisplus.mapper: DEBUG
     org.dromara.streamquery.stream.plugin.mybatisplus.dynamicMapper: DEBUG
+
+stream-query:
+  mybatis-plus:
+    dynamic-mapper:
+      base-packages:
+        - org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po
+      entities:
+        - org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo
