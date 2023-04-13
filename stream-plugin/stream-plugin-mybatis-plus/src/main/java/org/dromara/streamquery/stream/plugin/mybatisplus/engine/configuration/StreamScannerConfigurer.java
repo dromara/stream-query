@@ -18,9 +18,11 @@ package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
 
 import org.dromara.streamquery.stream.core.clazz.ClassHelper;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -31,7 +33,7 @@ import java.util.Set;
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
-public class StreamScannerConfigurer {
+public class StreamScannerConfigurer implements InitializingBean {
 
   /**
    * base package
@@ -56,7 +58,7 @@ public class StreamScannerConfigurer {
   /**
    * entity class list
    */
-  private Collection<Class<?>> entityClassList;
+  private final Set<Class<?>> entityClassList = new HashSet<>();
 
   public void setBasePackages(Set<String> basePackages) {
     this.basePackages = basePackages;
@@ -86,12 +88,16 @@ public class StreamScannerConfigurer {
     /// 扫描po包下的所有类，作为entity
     Set<String> basePackages = this.basePackages;
     for (String basePackage : basePackages) {
-      entityClassList.addAll(ClassHelper.scanClasses(basePackage));
+      this.entityClassList.addAll(ClassHelper.scanClasses(basePackage));
     }
     // 指定类
-    entityClassList.addAll(classes);
+    this.entityClassList.addAll(this.classes);
     // TODO 注解的类
     // TODO 实现接口的类
   }
 
+  @Override
+  public void afterPropertiesSet() {
+    register();
+  }
 }

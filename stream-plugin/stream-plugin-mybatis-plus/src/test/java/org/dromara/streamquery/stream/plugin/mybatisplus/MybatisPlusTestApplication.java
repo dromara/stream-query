@@ -34,9 +34,10 @@ import org.springframework.context.annotation.Bean;
  * @since 2022/5/21
  */
 @EnableMybatisPlusPlugin(
-    value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
-    basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
-    basePackageClasses = {RoleInfo.class, UserInfo.class, UserRole.class})
+        value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+        basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+        basePackageClasses = {RoleInfo.class, UserInfo.class, UserRole.class},
+        classes = {RoleInfo.class})
 @SpringBootApplication
 public class MybatisPlusTestApplication {
   /**
