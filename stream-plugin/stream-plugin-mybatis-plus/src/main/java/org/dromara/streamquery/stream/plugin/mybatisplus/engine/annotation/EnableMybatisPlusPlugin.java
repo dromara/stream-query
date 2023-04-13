@@ -33,9 +33,46 @@ import java.lang.annotation.*;
 @Import({StreamConfigurationSelector.class})
 public @interface EnableMybatisPlusPlugin {
 
+  /**
+   * Alias for {@link #basePackages()}
+   *
+   * @return base packages
+   */
   String[] value() default {};
 
+  /**
+   * Base packages
+   *
+   * @return base packages
+   */
   String[] basePackages() default {};
 
+  /**
+   * Alias for {@link #basePackages()}. scan base package classes
+   *
+   * @return base package classes for scanning
+   */
   Class<?>[] basePackageClasses() default {};
+
+  /**
+   * Specify classes
+   *
+   * @return classes
+   */
+  Class<?>[] classes() default {};
+
+  /**
+   * Alias for {@link #basePackages()}. scan annotation classes
+   *
+   * @return annotation class for scanning
+   */
+  Class<? extends Annotation> annotation() default Annotation.class;
+
+  /**
+   * Alias for {@link #basePackages()}. scan interface classes
+   *
+   * @return interface class for scanning
+   */
+  Class<?> scanInterface() default Class.class;
+
 }

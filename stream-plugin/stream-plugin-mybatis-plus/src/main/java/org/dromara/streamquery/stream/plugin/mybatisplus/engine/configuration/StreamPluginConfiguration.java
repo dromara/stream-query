@@ -92,12 +92,6 @@ public class StreamPluginConfiguration {
   @ConditionalOnMissingBean(DynamicMapperHandler.class)
   public DynamicMapperHandler dynamicMapperHandler(
       SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
-    /// 扫描po包下的所有类，作为entity
-    Set<String> basePackages = streamScannerConfigurer.getBasePackages();
-    List<Class<?>> entityClassList = new ArrayList<>();
-    for (String basePackage : basePackages) {
-      entityClassList.addAll(ClassHelper.scanClasses(basePackage));
-    }
-    return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
+    return new DynamicMapperHandler(sqlSessionFactory, streamScannerConfigurer.getEntityClassList());
   }
 }

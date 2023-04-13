@@ -16,23 +16,82 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
+
+import org.dromara.streamquery.stream.core.clazz.ClassHelper;
+
+import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.Set;
 
 /**
+ * <pre>
  * stream scanner configurer
+ * from {@link StreamScannerRegistrar}
+ * </pre>
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a> from {@link StreamScannerRegistrar}
+ * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
 public class StreamScannerConfigurer {
 
-  /** base package */
+  /**
+   * base package
+   */
   private Set<String> basePackages;
 
-  public Set<String> getBasePackages() {
-    return basePackages;
-  }
+  /**
+   * specify classes
+   */
+  private Set<Class<?>> classes;
+
+  /**
+   * annotation
+   */
+  private Class<? extends Annotation> annotation;
+
+  /**
+   * scan interface
+   */
+  private Class<?> interfaceClass;
+
+  /**
+   * entity class list
+   */
+  private Collection<Class<?>> entityClassList;
 
   public void setBasePackages(Set<String> basePackages) {
     this.basePackages = basePackages;
   }
+
+  public Set<Class<?>> getClasses() {
+    return classes;
+  }
+
+  public void setClasses(Set<Class<?>> classes) {
+    this.classes = classes;
+  }
+
+  public void setAnnotation(Class<? extends Annotation> annotation) {
+    this.annotation = annotation;
+  }
+
+  public void setInterfaceClass(Class<?> interfaceClass) {
+    this.interfaceClass = interfaceClass;
+  }
+
+  public Collection<Class<?>> getEntityClassList() {
+    return entityClassList;
+  }
+
+  public void register() {
+    /// 扫描po包下的所有类，作为entity
+    Set<String> basePackages = this.basePackages;
+    for (String basePackage : basePackages) {
+      entityClassList.addAll(ClassHelper.scanClasses(basePackage));
+    }
+    // 指定类
+    entityClassList.addAll(classes);
+    // TODO 注解的类
+    // TODO 实现接口的类
+  }
+
 }

@@ -25,6 +25,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -50,17 +51,34 @@ public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
     basePackages.addAll(
         Arrays.stream(annotationAttributes.getStringArray("value"))
             .filter(StringUtils::hasText)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toSet()));
     basePackages.addAll(
         Arrays.stream(annotationAttributes.getStringArray("basePackages"))
             .filter(StringUtils::hasText)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toSet()));
     basePackages.addAll(
         Arrays.stream(annotationAttributes.getClassArray("basePackageClasses"))
             .filter(Objects::nonNull)
             .map(ClassUtils::getPackageName)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toSet()));
     builder.addPropertyValue("basePackages", basePackages);
+
+    Set<String> classes = Arrays.stream(annotationAttributes.getClassArray("classes"))
+            .filter(Objects::nonNull)
+            .map(ClassUtils::getPackageName)
+            .collect(Collectors.toSet());
+    builder.addPropertyValue("classes", classes);
+
+    Class<? extends Annotation> annotation = annotationAttributes.getClass("annotation");
+    if (!Annotation.class.equals(annotation)) {
+      builder.addPropertyValue("annotation", annotation);
+    }
+
+    Class<?> scanInterface = annotationAttributes.getClass("interfaceClass");
+    if (!Class.class.equals(scanInterface)) {
+      builder.addPropertyValue("interfaceClass", scanInterface);
+    }
+
     registry.registerBeanDefinition("streamScannerConfigurer", builder.getBeanDefinition());
   }
 }
