@@ -49,7 +49,7 @@ public class Sets {
    * ofColl.
    *
    * @param values a {@link java.util.Collection} object
-   * @param <T>    a T class
+   * @param <T> a T class
    * @return a {@link java.util.Set} object
    */
   public static <T> Set<T> ofColl(Collection<T> values) {
@@ -63,7 +63,7 @@ public class Sets {
    * ofSize.
    *
    * @param initialCapacity initialCapacity
-   * @param <T>             a T class
+   * @param <T> a T class
    * @return Set
    */
   public static <T> Set<T> ofSize(int initialCapacity) {

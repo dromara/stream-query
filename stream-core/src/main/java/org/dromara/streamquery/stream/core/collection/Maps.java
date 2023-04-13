@@ -49,8 +49,8 @@ public class Maps {
    * of.
    *
    * @param initialCapacity a int
-   * @param <K>             a K class
-   * @param <V>             a V class
+   * @param <K> a K class
+   * @param <V> a V class
    * @return a {@link java.util.Map} object
    */
   public static <K, V> Map<K, V> ofSize(int initialCapacity) {
@@ -60,8 +60,8 @@ public class Maps {
   /**
    * of.
    *
-   * @param k   a K object
-   * @param v   a V object
+   * @param k a K object
+   * @param v a V object
    * @param <K> a K class
    * @param <V> a V class
    * @return a {@link java.util.Map} object
@@ -75,10 +75,10 @@ public class Maps {
   /**
    * of.
    *
-   * @param k   a K object
-   * @param v   a V object
-   * @param k1  a K object
-   * @param v1  a V object
+   * @param k a K object
+   * @param v a V object
+   * @param k1 a K object
+   * @param v1 a V object
    * @param <K> a K class
    * @param <V> a V class
    * @return a {@link java.util.Map} object
@@ -93,12 +93,12 @@ public class Maps {
   /**
    * of.
    *
-   * @param k   a K object
-   * @param v   a V object
-   * @param k1  a K object
-   * @param v1  a V object
-   * @param k2  a K object
-   * @param v2  a V object
+   * @param k a K object
+   * @param v a V object
+   * @param k1 a K object
+   * @param v1 a V object
+   * @param k2 a K object
+   * @param v2 a V object
    * @param <K> a K class
    * @param <V> a V class
    * @return a {@link java.util.Map} object

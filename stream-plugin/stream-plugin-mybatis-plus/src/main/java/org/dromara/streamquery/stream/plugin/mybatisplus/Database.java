@@ -1240,7 +1240,7 @@ public class Database {
     }
     Assert.notNull(entityClass, "error: can not get entityClass from entityList");
     Assert.isFalse(
-            SimpleTypeRegistry.isSimpleType(entityClass), "error: entityClass can not be simple type");
+        SimpleTypeRegistry.isSimpleType(entityClass), "error: entityClass can not be simple type");
     return entityClass;
   }
 

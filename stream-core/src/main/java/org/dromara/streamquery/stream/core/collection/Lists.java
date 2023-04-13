@@ -50,7 +50,7 @@ public class Lists {
    * ofColl.
    *
    * @param values 集合元素
-   * @param <T>    a T class
+   * @param <T> a T class
    * @return {@link java.util.List}<{@code T}> 集合元素类型
    */
   public static <T> List<T> ofColl(Collection<T> values) {
@@ -60,12 +60,11 @@ public class Lists {
     return new ArrayList<>(values);
   }
 
-
   /**
    * ofSize.
    *
    * @param initialCapacity initialCapacity
-   * @param <T>             a T class
+   * @param <T> a T class
    * @return List
    */
   public static <T> List<T> ofSize(int initialCapacity) {
@@ -76,7 +75,7 @@ public class Lists {
    * first.
    *
    * @param values a {@link java.util.List} object
-   * @param <T>    a T class
+   * @param <T> a T class
    * @return a T object
    */
   public static <T> T first(List<T> values) {
