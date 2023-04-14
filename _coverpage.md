@@ -2,7 +2,7 @@
 
 # <small class='left-person-fencing person-fencing'>:person_fencing:</small>stream-query <small class='right-person-fencing person-fencing'>:person_fencing:</small>
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.dromara/stream-query.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.dromara/stream-query)
+[![Maven Central](https://img.shields.io/maven-central/v/org.dromara.stream-query/stream-query.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.dromara/stream-query)
 [![stars](https://gitee.com/dromara/stream-query/badge/star.svg)](https://gitee.com/dromara/stream-query)
 [![stars](https://img.shields.io/github/stars/dromara/stream-query.svg?style=social)](https://github.com/dromara/stream-query)
 
