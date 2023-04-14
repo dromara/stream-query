@@ -43,7 +43,6 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.SimpleTypeRegistry;
-import org.dromara.streamquery.stream.core.bean.BeanHelper;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
@@ -58,7 +57,6 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -80,9 +78,6 @@ public class Database {
   private static final Map<Class<?>, Class<?>> ENTITY_MAPPER_CLASS_CACHE =
       new ConcurrentHashMap<>();
 
-  private static final Map<String, SFunction<?, ?>> LAMBDA_GETTER_CACHE = new WeakHashMap<>();
-
-  /** */
   private Database() {
     /* Do not new me! */
   }
@@ -1235,7 +1230,7 @@ public class Database {
    * @param entityList 实体集合
    * @return 实体类型
    */
-  private static <T> Class<T> getEntityClass(Collection<T> entityList) {
+  protected static <T> Class<T> getEntityClass(Collection<T> entityList) {
     Class<T> entityClass = null;
     for (T entity : entityList) {
       if (entity != null && entity.getClass() != null) {
@@ -1255,7 +1250,7 @@ public class Database {
    * @param queryWrapper 条件构造器
    * @return 实体类型
    */
-  private static <T> Class<T> getEntityClass(AbstractWrapper<T, ?, ?> queryWrapper) {
+  protected static <T> Class<T> getEntityClass(AbstractWrapper<T, ?, ?> queryWrapper) {
     Class<T> entityClass = queryWrapper.getEntityClass();
     if (entityClass == null) {
       T entity = queryWrapper.getEntity();
@@ -1279,52 +1274,6 @@ public class Database {
             () ->
                 ExceptionUtils.mpe(
                     "error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
-  }
-
-  /**
-   * in查询
-   *
-   * @param wrapper 条件构造器
-   * @param dataList 数据
-   * @param <T> 类型
-   * @return 条件构造器
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> LambdaQueryWrapper<T> inList(LambdaQueryWrapper<T> wrapper, List<T> dataList) {
-    if (Lists.isEmpty(dataList)) {
-      return wrapper;
-    }
-    final Class<T> entityClass = getEntityClass(dataList);
-    final List<TableFieldInfo> fieldList = TableInfoHelper.getTableInfo(entityClass).getFieldList();
-    wrapper.nested(
-        w ->
-            Steam.of(fieldList)
-                .forEachIdx(
-                    (tableField, idx) -> {
-                      SFunction<T, ?> getterFunction =
-                          (SFunction<T, ?>)
-                              LAMBDA_GETTER_CACHE.computeIfAbsent(
-                                  entityClass + StringPool.AT + tableField.getProperty(),
-                                  property -> {
-                                    Method getter =
-                                        ReflectHelper.getMethod(
-                                            entityClass,
-                                            BeanHelper.GETTER_PREFIX
-                                                + tableField
-                                                    .getProperty()
-                                                    .substring(0, 1)
-                                                    .toUpperCase(Locale.ROOT)
-                                                + tableField.getProperty().substring(1));
-                                    return LambdaHelper.revert(SFunction.class, getter);
-                                  });
-                      final List<?> list =
-                          Steam.of(dataList).map(getterFunction).nonNull().toList();
-                      if (idx != 0) {
-                        w.or();
-                      }
-                      w.in(Lists.isNotEmpty(list), getterFunction, list);
-                    }));
-    return wrapper;
   }
 
   /**

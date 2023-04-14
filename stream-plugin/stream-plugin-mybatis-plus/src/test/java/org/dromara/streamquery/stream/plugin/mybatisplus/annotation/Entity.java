@@ -14,36 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
+package org.dromara.streamquery.stream.plugin.mybatisplus.annotation;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.Version;
-import lombok.Data;
-
-import java.time.LocalDateTime;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * UserInfo
- *
- * @author VampireAchao Cizai_
- * @since 2022/5/21
+ * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
-@Data
-public class UserInfo implements ParentScan {
-
-  private static final long serialVersionUID = -7219188882388819210L;
-
-  @TableId(value = "id", type = IdType.AUTO)
-  private Long id;
-
-  private String name;
-  private Integer age;
-  private String email;
-  @Version
-  private Integer version;
-
-  @TableLogic(value = "'2001-01-01 00:00:00'", delval = "NOW()")
-  private LocalDateTime gmtDeleted;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Documented
+@Inherited
+public @interface Entity {
 }

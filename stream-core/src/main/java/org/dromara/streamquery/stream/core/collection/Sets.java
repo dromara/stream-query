@@ -60,6 +60,17 @@ public class Sets {
   }
 
   /**
+   * ofSize.
+   *
+   * @param initialCapacity initialCapacity
+   * @param <T> a T class
+   * @return Set
+   */
+  public static <T> Set<T> ofSize(int initialCapacity) {
+    return new HashSet<>(initialCapacity);
+  }
+
+  /**
    * 获取一个空的Set
    *
    * @param <T> 元素类型

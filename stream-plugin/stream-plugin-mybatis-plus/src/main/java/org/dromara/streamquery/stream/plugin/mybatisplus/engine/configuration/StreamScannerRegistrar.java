@@ -25,42 +25,64 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** @author <a href = "kamtohung@gmail.com">KamTo Hung</a> */
+/**
+ * Bean definition registrar for {@link StreamScannerConfigurer}.
+ *
+ * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ */
 public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
 
   @Override
   public void registerBeanDefinitions(
-      AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+          AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
     AnnotationAttributes annotationAttributes =
-        AnnotationAttributes.fromMap(
-            importingClassMetadata.getAnnotationAttributes(
-                EnableMybatisPlusPlugin.class.getName()));
+            AnnotationAttributes.fromMap(
+                    importingClassMetadata.getAnnotationAttributes(
+                            EnableMybatisPlusPlugin.class.getName()));
     if (Objects.isNull(annotationAttributes)) {
       return;
     }
     BeanDefinitionBuilder builder =
-        BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
+            BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
     Set<String> basePackages = new HashSet<>();
     basePackages.addAll(
-        Arrays.stream(annotationAttributes.getStringArray("value"))
-            .filter(StringUtils::hasText)
-            .collect(Collectors.toList()));
+            Arrays.stream(annotationAttributes.getStringArray("value"))
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toSet()));
     basePackages.addAll(
-        Arrays.stream(annotationAttributes.getStringArray("basePackages"))
-            .filter(StringUtils::hasText)
-            .collect(Collectors.toList()));
+            Arrays.stream(annotationAttributes.getStringArray("basePackages"))
+                    .filter(StringUtils::hasText)
+                    .collect(Collectors.toSet()));
     basePackages.addAll(
-        Arrays.stream(annotationAttributes.getClassArray("basePackageClasses"))
-            .filter(Objects::nonNull)
-            .map(ClassUtils::getPackageName)
-            .collect(Collectors.toList()));
+            Arrays.stream(annotationAttributes.getClassArray("basePackageClasses"))
+                    .filter(Objects::nonNull)
+                    .map(ClassUtils::getPackageName)
+                    .collect(Collectors.toSet()));
     builder.addPropertyValue("basePackages", basePackages);
+
+    Set<Class<?>> classes = Arrays.stream(annotationAttributes.getClassArray("classes"))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+    builder.addPropertyValue("classes", classes);
+
+    Class<? extends Annotation> annotation = annotationAttributes.getClass("annotation");
+    if (!Annotation.class.equals(annotation)) {
+      builder.addPropertyValue("annotation", annotation);
+    }
+
+    Class<?> scanInterface = annotationAttributes.getClass("interfaceClass");
+    if (!Class.class.equals(scanInterface)) {
+      builder.addPropertyValue("interfaceClass", scanInterface);
+    }
+
     registry.registerBeanDefinition("streamScannerConfigurer", builder.getBeanDefinition());
   }
+
 }

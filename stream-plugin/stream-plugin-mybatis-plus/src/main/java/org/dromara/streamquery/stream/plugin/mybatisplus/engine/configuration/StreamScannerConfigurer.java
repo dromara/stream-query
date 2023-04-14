@@ -16,23 +16,89 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.util.CollectionUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * <pre>
  * stream scanner configurer
+ * from {@link StreamScannerRegistrar}
+ * </pre>
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a> from {@link StreamScannerRegistrar}
+ * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
-public class StreamScannerConfigurer {
+public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
-  /** base package */
+  /**
+   * base package
+   */
   private Set<String> basePackages;
 
-  public Set<String> getBasePackages() {
-    return basePackages;
-  }
+  /**
+   * specify classes
+   */
+  private Set<Class<?>> classes;
+
+  /**
+   * annotation
+   */
+  private Class<? extends Annotation> annotation;
+
+  /**
+   * scan interface
+   */
+  private Class<?> interfaceClass;
+
+
+  /**
+   * entity class list
+   */
+  private final Set<Class<?>> entityClassList = new HashSet<>();
 
   public void setBasePackages(Set<String> basePackages) {
     this.basePackages = basePackages;
   }
+
+  public void setClasses(Set<Class<?>> classes) {
+    this.classes = classes;
+  }
+
+  public void setAnnotation(Class<? extends Annotation> annotation) {
+    this.annotation = annotation;
+  }
+
+  public void setInterfaceClass(Class<?> interfaceClass) {
+    this.interfaceClass = interfaceClass;
+  }
+
+  private void registerEntityClasses(Collection<Class<?>> entityClasses) {
+    if (!CollectionUtils.isEmpty(entityClasses)) {
+      this.entityClassList.addAll(entityClasses);
+    }
+  }
+
+  public Collection<Class<?>> getEntityClasses() {
+    return entityClassList;
+  }
+
+  @Override
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    // 指定类
+    registerEntityClasses(this.classes);
+    StreamClassPathScanner scanner = new StreamClassPathScanner(false);
+    scanner.setAnnotation(this.annotation);
+    scanner.setInterfaceClass(this.interfaceClass);
+    scanner.registerFilters();
+    Set<Class<?>> classSet = scanner.scan(this.basePackages);
+    registerEntityClasses(classSet);
+  }
+
 }

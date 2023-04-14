@@ -27,6 +27,7 @@
         <junit.version>5.9.0</junit.version>
         <jmh.version>1.35</jmh.version>
         <ttl.version>2.14.1</ttl.version>
+        <reflections.version>0.10.2</reflections.version>
     </properties>
 
     <name>stream-query</name>
