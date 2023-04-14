@@ -36,8 +36,8 @@ import org.springframework.context.annotation.Bean;
  * @since 2022/5/21
  */
 @EnableMybatisPlusPlugin(
-        value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
-        basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+//        value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+        basePackages = "org.dromara.streamquery.stream.plugin.*.pojo.po",
         basePackageClasses = {RoleInfo.class, UserInfo.class, UserRole.class},
         annotation = Entity.class,
         interfaceClass = ParentScan.class,
