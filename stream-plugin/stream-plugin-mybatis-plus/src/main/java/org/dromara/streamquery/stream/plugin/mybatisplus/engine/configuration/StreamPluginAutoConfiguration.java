@@ -29,6 +29,7 @@ import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.JsonPostInitTableInfoHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.DynamicMapperHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.SaveOneSql;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.UpdateOneSql;
@@ -45,10 +46,10 @@ import java.util.Set;
  *
  * @author VampireAchao Cizai_
  */
-public class StreamPluginConfiguration {
+public class StreamPluginAutoConfiguration {
 
   private static final String CURRENT_NAMESPACE =
-      LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
+          LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
 
   /**
    * defaultSqlInjector.
@@ -91,7 +92,7 @@ public class StreamPluginConfiguration {
   @Bean
   @ConditionalOnMissingBean(DynamicMapperHandler.class)
   public DynamicMapperHandler dynamicMapperHandler(
-      SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
+          SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
     /// 扫描po包下的所有类，作为entity
     Set<String> basePackages = streamScannerConfigurer.getBasePackages();
     List<Class<?>> entityClassList = new ArrayList<>();
@@ -99,5 +100,11 @@ public class StreamPluginConfiguration {
       entityClassList.addAll(ClassHelper.scanClasses(basePackage));
     }
     return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(JsonPostInitTableInfoHandler.class)
+  public JsonPostInitTableInfoHandler jsonPostInitTableInfoHandler() {
+    return new JsonPostInitTableInfoHandler();
   }
 }
