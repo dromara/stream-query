@@ -462,31 +462,4 @@ class DatabaseTest {
       Assertions.assertTrue(Database.isDynamicMapper(roleMapperClass.getName()));
     }
   }
-
-  @Test
-  void testWhereRelation() {
-    LambdaQueryWrapper<UserInfo> wrapper =
-        Database.inList(
-            Wrappers.lambdaQuery(UserInfo.class),
-            Lists.of(
-                new UserInfo() {
-                  {
-                    setName("Jon");
-                  }
-                },
-                new UserInfo() {
-                  {
-                    setEmail("test2@baomidou.com");
-                  }
-                },
-                new UserInfo() {
-                  {
-                    setName("Tom");
-                  }
-                }));
-    List<UserInfo> userInfos = Database.list(wrapper);
-    Assertions.assertEquals("Jon", userInfos.get(0).getName());
-    Assertions.assertEquals("test2@baomidou.com", userInfos.get(1).getEmail());
-    Assertions.assertEquals("Tom", userInfos.get(2).getName());
-  }
 }

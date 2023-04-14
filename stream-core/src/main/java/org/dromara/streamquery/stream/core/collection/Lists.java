@@ -61,6 +61,17 @@ public class Lists {
   }
 
   /**
+   * ofSize.
+   *
+   * @param initialCapacity initialCapacity
+   * @param <T> a T class
+   * @return List
+   */
+  public static <T> List<T> ofSize(int initialCapacity) {
+    return new ArrayList<>(initialCapacity);
+  }
+
+  /**
    * first.
    *
    * @param values a {@link java.util.List} object
