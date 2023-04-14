@@ -17,8 +17,10 @@
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
 
-import org.dromara.streamquery.stream.core.clazz.ClassHelper;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -33,7 +35,7 @@ import java.util.Set;
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
-public class StreamScannerConfigurer implements InitializingBean {
+public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
   /**
    * base package
@@ -55,6 +57,7 @@ public class StreamScannerConfigurer implements InitializingBean {
    */
   private Class<?> interfaceClass;
 
+
   /**
    * entity class list
    */
@@ -62,10 +65,6 @@ public class StreamScannerConfigurer implements InitializingBean {
 
   public void setBasePackages(Set<String> basePackages) {
     this.basePackages = basePackages;
-  }
-
-  public Set<Class<?>> getClasses() {
-    return classes;
   }
 
   public void setClasses(Set<Class<?>> classes) {
@@ -80,24 +79,26 @@ public class StreamScannerConfigurer implements InitializingBean {
     this.interfaceClass = interfaceClass;
   }
 
-  public Collection<Class<?>> getEntityClassList() {
+  private void registerEntityClasses(Collection<Class<?>> entityClasses) {
+    if (!CollectionUtils.isEmpty(entityClasses)) {
+      this.entityClassList.addAll(entityClasses);
+    }
+  }
+
+  public Collection<Class<?>> getEntityClasses() {
     return entityClassList;
   }
 
-  public void register() {
-    /// 扫描po包下的所有类，作为entity
-    Set<String> basePackages = this.basePackages;
-    for (String basePackage : basePackages) {
-      this.entityClassList.addAll(ClassHelper.scanClasses(basePackage));
-    }
+  @Override
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
     // 指定类
-    this.entityClassList.addAll(this.classes);
-    // TODO 注解的类
-    // TODO 实现接口的类
+    registerEntityClasses(this.classes);
+    StreamClassPathScanner scanner = new StreamClassPathScanner(false);
+    scanner.setAnnotation(this.annotation);
+    scanner.setInterfaceClass(this.interfaceClass);
+    scanner.registerFilters();
+    Set<Class<?>> classSet = scanner.scan(this.basePackages);
+    registerEntityClasses(classSet);
   }
 
-  @Override
-  public void afterPropertiesSet() {
-    register();
-  }
 }

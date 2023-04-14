@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.dromara.streamquery.stream.core.clazz.ClassHelper;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
@@ -36,9 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * MPSql注入
@@ -92,6 +89,6 @@ public class StreamPluginConfiguration {
   @ConditionalOnMissingBean(DynamicMapperHandler.class)
   public DynamicMapperHandler dynamicMapperHandler(
       SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
-    return new DynamicMapperHandler(sqlSessionFactory, streamScannerConfigurer.getEntityClassList());
+    return new DynamicMapperHandler(sqlSessionFactory, streamScannerConfigurer.getEntityClasses());
   }
 }

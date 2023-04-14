@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
+import org.dromara.streamquery.stream.plugin.mybatisplus.annotation.Entity;
+import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.ParentScan;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserRole;
@@ -37,6 +39,8 @@ import org.springframework.context.annotation.Bean;
         value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
         basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
         basePackageClasses = {RoleInfo.class, UserInfo.class, UserRole.class},
+        annotation = Entity.class,
+        interfaceClass = ParentScan.class,
         classes = {RoleInfo.class})
 @SpringBootApplication
 public class MybatisPlusTestApplication {

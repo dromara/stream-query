@@ -62,14 +62,14 @@ public @interface EnableMybatisPlusPlugin {
   Class<?>[] classes() default {};
 
   /**
-   * Alias for {@link #basePackages()}. scan annotation classes
+   * Base on {@link #basePackages()}. scan annotation classes
    *
    * @return annotation class for scanning
    */
   Class<? extends Annotation> annotation() default Annotation.class;
 
   /**
-   * Alias for {@link #basePackages()}. scan interface classes
+   * Base on {@link #basePackages()}. scan interface classes
    *
    * @return interface class for scanning
    */
