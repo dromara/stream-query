@@ -24,7 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Generate Mapper Annotation
+ * {@link EnableMybatisPlusPlugin#annotation}
+ * Include entity when it has {@link GenerateMapper} annotation in basePackages.
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */

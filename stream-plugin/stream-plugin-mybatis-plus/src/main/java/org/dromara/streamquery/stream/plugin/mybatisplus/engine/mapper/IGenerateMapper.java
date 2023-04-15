@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper;
+
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 
 /**
- * Generate Mapper Interface
+ * {@link EnableMybatisPlusPlugin#interfaceClass()}
+ * Include entity when it has {@link IGenerateMapper} interface in basePackages.
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */

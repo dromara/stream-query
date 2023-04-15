@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.IGenerateMapper;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
 
 import java.time.LocalDateTime;
 
