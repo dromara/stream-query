@@ -14,10 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * {@link EnableMybatisPlusPlugin#annotation}
+ * Include entity when it has {@link GenerateMapper} annotation in basePackages.
+ *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
-public interface ParentScan {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Documented
+@Inherited
+public @interface GenerateMapper {
 }

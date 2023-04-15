@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +32,7 @@ import java.time.LocalDateTime;
  * @since 2022/5/21
  */
 @Data
-public class UserInfo implements ParentScan {
+public class UserInfo implements IGenerateMapper {
 
   private static final long serialVersionUID = -7219188882388819210L;
 
