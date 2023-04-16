@@ -13,7 +13,7 @@ features: # 可选的
   - title: 查询后Stream处理封装
     details: 一对一、一对多等，轻松完成多次单表所需数据查询
   - title: 简化Stream操作
-    details: 提供一个Steam类，Steam等于Stream减去r(Repeat)，减少Stream重复代码
+    details: 提供一个Steam类，Steam等于Stream减去R(Repeat)，减少Stream重复代码
 
 # 文章列表显示方式: detailed 默认，显示详细版文章列表（包括作者、分类、标签、摘要、分页等）| simple => 显示简约版文章列表（仅标题和日期）| none 不显示文章列表
 postList: none
@@ -31,99 +31,207 @@ postList: none
   box-sizing: border-box;
   border: 1px solid #11a8cd;
 }
+.repo-link::before {
+    content: 'Gitee';
+    font-size: initial;
+}
+.repo-link{
+    font-size: 0;
+}
+.repo-link>span{
+    position: relative;
+    bottom: 4px;
+}
 </style>
 
 <br/>
 <p align="center">
-  <a href="https://www.npmjs.com/package/vuepress-theme-vdoing" target="_blank"><img src="https://img.shields.io/npm/v/vuepress-theme-vdoing" alt="npm" class="no-zoom"></a>
-  <a href="https://www.npmjs.com/package/vuepress-theme-vdoing" target="_blank"><img src="https://img.shields.io/npm/dt/vuepress-theme-vdoing" alt="npm" class="no-zoom"></a>
-  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank"><img src='https://img.shields.io/github/stars/xugaoyi/vuepress-theme-vdoing' alt='GitHub stars' class="no-zoom"></a>
-  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank"><img src='https://img.shields.io/github/forks/xugaoyi/vuepress-theme-vdoing' alt='GitHub forks' class="no-zoom"></a>
+  <a href="https://search.maven.org/artifact/org.dromara/stream-query" target="_blank"><img src="https://img.shields.io/maven-central/v/org.dromara.stream-query/stream-query.svg?label=Maven%20Central" alt="maven" class="no-zoom"></a>
+  <a href="https://gitee.com/dromara/stream-query" target="_blank"><img src='https://gitee.com/dromara/stream-query/badge/star.svg' alt='Gitee stars' class="no-zoom"></a>
+  <a href="https://gitee.com/dromara/stream-query" target="_blank"><img src='https://img.shields.io/github/stars/dromara/stream-query.svg?style=social' alt='GitHub stars' class="no-zoom"></a>
 </p>
 
 <br/>
 <p align="center" style="color: #999;">
-  赞助商 (进入注册为主题作者充电)
+  赞助商（招募中）
 </p>
 <p align="center">
-  <a href="http://apifox.cn/a103xugaoyi" target="_blank"><img src="https://cdn.staticaly.com/gh/xugaoyi/blog-gitalk-comment@master/img/441669861566_.2bedplbm21hc.jpg" alt="npm" class="no-zoom" style="width: 300px;border-radius: 2px;"></a>
+  <a href="#" target="_blank"><img :src="$withBase('/img/gif/洛琪希哭唧唧.gif')" alt="sponsor" class="no-zoom" style="height: 150px;border-radius: 2px;"></a>
 </p>
 
-## 🎖特别用户
+## ⛄开发团队成员
 ::: cardList 3
 ```yaml
-# - name: OpenHarmony
-#   desc: 开放原子开源基金会
-#   link: https://docs.openharmony.cn/pages/000000/
-#   bgColor: '#f1f1f1'
-#   textColor: '#2A3344'
-- name: MyBatis-Plus官网
-  desc: 🚀为简化开发而生
-  link: https://baomidou.com/
-  bgColor: '#f1f1f1'
-  textColor: '#2A3344'
-- name: Deepin 社区
-  desc: Deepin 应用开发技术分享、DTK开发经验等
-  link: https://docs.deepin.org
-  bgColor: '#f1f1f1'
-  textColor: '#2A3344'
-- name: VForm官网
-  desc: 低代码表单优选方案，拖拽式设计，一键生成源码
-  link: http://www.vform666.com
-  bgColor: '#f1f1f1'
-  textColor: '#2A3344'
+- name: 阿超
+  desc: '- 实现动态Mapper<br>- 编写Steam类'
+  avatar: /img/commiter/VampireAchao.jpg # 头像，可选
+  link: https://gitee.com/VampireAchao # 链接，可选
+  bgColor: '#32040d' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
+  textColor: '#d7dadc' # 文本色，可选，默认var(--textColor)
+- name: Eliauk
+  desc: '- 完善HighlightHelper<br>- 完善TreeHelper<br>- 文档编写与维护'
+  avatar: /img/commiter/Eliauk.jpeg # 头像，可选
+  link: https://gitee.com/EliaukU # 链接，可选
+  bgColor: '#35171b' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
+  textColor: '#edcac4' # 文本色，可选，默认var(--textColor)
+- name: KamToHung
+  desc: '- spring配置方式优化'
+  avatar: /img/commiter/KamToHung.png # 头像，可选
+  link: https://gitee.com/KamToHung # 链接，可选
+  bgColor: '#cb4b41' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
+  textColor: '#f4f4fc' # 文本色，可选，默认var(--textColor)
+```
+:::
+
+## 🎖[Dromara](https://dromara.org/)组织项目
+::: cardList 4
+```yaml
+#- name: 名称
+#  desc: 描述
+#  avatar: https://xxx.jpg # 头像，可选
+#  link: https://xxx/ # 链接，可选
+#  bgColor: '#CBEAFA' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
+#  textColor: '#6854A1' # 文本色，可选，默认var(--textColor)
+- name: koalas-rpc
+  desc: 企业生产级百亿日PV高可用可拓展的RPC框架。
+  link: https://dromara.org
+- name: sureness
+  desc: 面向REST API的高性能认证鉴权框架。
+  link: https://usthe.com/sureness
+- name: Sa-Token
+  desc: 一个轻量级 java 权限认证框架，让鉴权变得简单、优雅！
+  link: https://sa-token.cc
+- name: Jpom
+  desc: 一款简而轻的低侵入式在线构建、自动部署、日常运维、项目监控软件。
+  link: https://jpom.top
+- name: cubic
+  desc: 无侵入分布式监控，致力于应用级监控，帮助开发人员快速定位问题。
+  link: https://cubic.jiagoujishu.com
+- name: MaxKey
+  desc: 业界领先的IAM身份管理和认证产品。
+  link: https://www.maxkey.top
+- name: hutool
+  desc: 一个使Java保持甜美的工具类库。
+  link: https://hutool.cn
+- name: Forest
+  desc: 高层的、极简的轻量级HTTP调用API框架。
+  link: https://forest.dtflyx.com
+- name: TLog
+  desc: 轻量级的分布式日志标记追踪神器。
+  link: https://tlog.yomahub.com
+- name: LiteFlow
+  desc: 一个轻量，快速的组件式流程引擎框架。
+  link: https://liteflow.yomahub.com
+- name: Myth
+  desc: 可靠消息分布式事务解决方案。
+  link: https://dromara.org
+- name: Raincat
+  desc: 强一致性分布式事务解决方案。
+  link: https://dromara.org
+- name: Hmily
+  desc: 高性能一站式分布式事务解决方案。
+  link: https://dromara.org
+- name: stream-query
+  desc: 允许完全摆脱Mapper的mybatis-plus体验！
+  link: https://dromara.gitee.io/stream-query/
+- name: J2EEFAST
+  desc: J2eeFAST 是一个 Java EE 企业级快速开发平台。
+  link: https://www.j2eefast.com/
+- name: data-compare
+  desc: 数据库比对工具：hive 表数据比对，mysql、Doris 数据比对。
+  link: https://github.com/dromara/dataCompare
+- name: payment-spring-boot
+  desc: 最全最好用的微信支付V3 Spring Boot 组件。
+  link: https://felord.gitee.io/payment-spring-boot/
+- name: zyplayer-doc
+  desc: 一款适合团队和个人私有化部署使用的知识库、笔记、WIKI文档管理工具。
+  link: http://doc.zyplayer.com/
+- name: ChatGPT
+  desc: 支持ChatGPT在JetBrains系列IDE上运行的一款插件。
+  link: https://chatgpt.cn.obiscr.com/
+- name: Neutrino-Proxy
+  desc: 一个基于netty的、开源的java内网穿透项目。
+  link: https://gitee.com/dromara/neutrino-proxy
+- name: EasyTrans
+  desc: 一个注解搞定数据翻译,减少30%SQL代码量。
+  link: http://easy-trans.fhs-opensource.top/
+- name: open-capacity-platform
+  desc: 基于Spring Cloud的企业级微服务框架。
+  link: https://dromara.org
+- name: electron-egg
+  desc: 一个入门简单、跨平台、企业级桌面软件开发框架。
+  link: https://www.yuque.com/u34495/mivcfg
+- name: RedisFront
+  desc: 一款开源免费的跨平台 Redis 桌面客户端工具
+  link: https://www.redisfront.com/
+- name: lamp-cloud
+  desc: 基于Jdk11 + SpringCloud + SpringBoot 的微服务快速开发平台，其中的可配置的SaaS功能尤其闪耀
+  link: https://tangyh.top
+- name: go-view
+  desc: GoView 是一个高效的拖拽式低代码数据可视化开发平台。
+  link: https://www.mtruning.club/#/
+- name: dante-cloud
+  desc: 企业级技术中台微服务架构与服务能力开发平台
+  link: https://www.herodotus.cn
+- name: x-easypdf
+  desc: 一个用搭积木的方式构建pdf的框架（基于pdfbox）
+  link: http://www.x-easypdf.cn/
+- name: gobrs-async
+  desc: 一款功能强大、配置灵活、带有全链路异常回调、内存优化、异常状态管理于一身的高性能异步编排框架
+  link: https://async.sizegang.cn
+- name: mendmix
+  desc: java企业级应用开发套件，定位是一站式分布式开发架构开源解决方案及云原生架构技术底座
+  link: https://www.jeesuite.com
+- name: dynamic-tp
+  desc: 轻量级，基于配置中心实现对运行中线程池参数的动态修改，以及实时监控线程池
+  link: https://dynamictp.cn
+- name: easy-es
+  desc: 一款简化ElasticSearch搜索引擎操作的开源框架,简化CRUD操作,可以更好的帮助开发者减轻开发负担。
+  link: https://easy-es.cn
+- name: hertzbeat
+  desc: 一个拥有强大自定义监控能力，无需Agent的实时监控系统。
+  link: https://hertzbeat.com
+- name: open-giteye-api
+  desc: 专为开源作者设计的数据图表服务工具类站点，提供了包括Star趋势图、贡献者列表、Gitee指数等数据图表服务。
+  link: https://giteye.net
+- name: fast-request
+  desc: IDEA httpClient插件。
+  link: https://dromara.gitee.io/fast-request
+- name: northstar
+  desc: 可替代付费商业软件的一站式量化交易平台。
+  link: https://www.quantit.tech
+- name: image-combiner
+  desc: 专门用于图片合成的工具。
+  link: https://dromara.org
 ```
 :::
 
 <br/>
 
 ## 🎉上新推荐
-* `v1.12.x`
-  - 新增配置项`pageStyle`，用于切换页面的风格样式，可选`卡片`、 `线条`风格。[详情](/pages/a20ce8/#pagestyle)
-  - 新增配置项`bodyBgImgInterval`，用于在设置了多张背景大图时修改大图切换的时间间隔。[详情](/pages/a20ce8/#bodybgimginterval)
-  - 新增配置项`defaultMode`，用于修改默认外观模式(v1.12.3)。[详情](/pages/a20ce8/#defaultmode)
-* `v1.11.x`：新增配置项`extendFrontmatter`，用于扩展自动生成front matter。[详情](/pages/a20ce8/#extendfrontmatter)
-* `v1.10.x`：新增右侧目录栏对h2~h6标题的适配，并优化了UI，[详情](/pages/8dfab5/)。
-* `v1.9.x`：新增配置文件对TypeScript的支持，参考[config.ts](https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/docs/.vuepress/config.ts)。新增[标题标记](/pages/3216b0/#titletag)。
-* `v1.8.x`：新增 Markdown中使用的组件：[代码块选项卡](/pages/197691/#代码块选项卡) 。
-* `v1.7.x`：新增 [自定义html模块](/pages/a20ce8/#自定义html模块) 配置，可用于插入广告模块。
-* `v1.6.x`：支持[`四级目录`](/pages/33d574/#级别说明)，提高[站点结构](/pages/33d574/#级别说明)可塑性。
-* `v1.5.x`：新增[`笔记`容器](/pages/d0d7eb/)，轻松插入笔记框。
-* `v1.4.x`：新增了文章内容区块的 [背景底纹配置](/pages/a20ce8/#文章内容块的背景底纹)，让你的文章看起来像笔记本的风格~
-* `v1.2.x`：这个版本对整体的UI细节做了很多优化，比如标签栏和分类栏等
-* `v1.1.x`：从这个版本开始主题新增`超好用`、`高颜值`的Markdown容器，快去 [体验](/pages/d0d7eb/) 吧~
+* `v1.5.0-alpha`
+  - 支持了几种配置动态mapper的方式如配置文件、注解硬编码等[pulls/304](https://gitee.com/dromara/stream-query/pulls/304) [pulls/305](https://gitee.com/dromara/stream-query/pulls/305)
+  - 新增JsonFieldHandler，封装typeHandler，使其在序列化/反序列化时可以拿到字段信息
+  - 新增了几个Sets/Lists/Maps等类的函数
 
-更多上新请查阅：[**更新日志**](https://github.com/xugaoyi/vuepress-theme-vdoing/releases)
+更多上新请查阅：[**更新日志**](https://gitee.com/dromara/stream-query/releases)
 
 <br/>
 
 <!-- ## ⚡️未来...
 
 ::: tip
-期待 [VuePress v2.0](https://github.com/vuepress/vuepress-next) 以及 [VitePress](https://github.com/vuejs/vitepress) 的正式发布...
+期待 [支持JDK17](https://gitee.com/dromara/stream-query/issues/I6SE3B)
+期待 [支持MongoDB](https://gitee.com/dromara/stream-query/issues/I6OSE5)
 
-届时，VuePress 1.x 编译慢的缺点将得到极大的改善。我将会视情况把主题升级至 VuePress v2.0 或 VitePress。还希望大家多多 [:sparkling_heart:支持](/pages/1b12ed/) 哟，持续关注吧~
+一起来完善这个项目吧~
 ::: -->
 
 <br/>
 
-<!-- ## 💎 公众号
-`有趣研究社`是本人对各种有趣的、好玩的、沙雕的创意和想法以在线小网站或者文章的形式表达出来，比如：
-- [小霸王游戏机](https://game.xugaoyi.com)
-- [爱国头像生成器](https://avatar.xugaoyi.com/)
-- [到账语音生成器](https://zfb.xugaoyi.com/)
-
-还有更多好玩的等你去探索吧~
-
-::: center
-<img src="https://fastly.jsdelivr.net/gh/xugaoyi/image_store@master/blog/qrcode.zdqv9mlfc0g.jpg"  style="width:190px;" />
-:::
-
-<br/> -->
-
 ## ⚡ 反馈与交流
 
-在使用过程中有任何问题和想法，请给我提 [Issue](https://github.com/xugaoyi/vuepress-theme-vdoing/issues)。
+在使用过程中有任何问题和想法，请给我提 [Issue](https://gitee.com/dromara/stream-query/issues)。
 你也可以在Issue查看别人提的问题和给出解决方案。
 
 或者加入我们的交流群：
@@ -132,17 +240,23 @@ postList: none
   <tbody>
     <tr>
       <td align="center" valign="middle">
-        <img src="https://cdn.staticaly.com/gh/xugaoyi/blog-gitalk-comment@master/img/0.4pp7r95mdai0.jpeg" class="no-zoom" style="width:120px;margin: 10px;">
-        <p>vdoing微信群(添加我微信备注"进群")</p>
+        <img :src="$withBase('/img/qrcode/rubenachao.jpg')" alt="微信" class="no-zoom" style="width:300px;margin: 10px;">
+        <p>Stream-Query微信群(添加我微信备注"进群")</p>
       </td>
       <td align="center" valign="middle">
-        <img :src="$withBase('/img/qrcode/qqq.webp')" alt="群号: 694387113" class="no-zoom" style="width:120px;margin: 10px;">
-        <p>vdoing QQ群: 694387113</p>
+        <img :src="$withBase('/img/qrcode/knowledge-planet.jpg')" alt="知识星球" class="no-zoom" style="width:300px;margin: 10px;">
+        <p>Dromara知识星球</p>
       </td>
     </tr>
   </tbody>
 </table>
 
+## 其他
+
+* 文档采取[vuepress-theme-vdoing](https://doc.xugaoyi.com/)搭建
+* 致谢[JetBrains](https://www.jetbrains.com/?from=stream-query)提供的免费开源许可证
+* 致谢[Github Copilot](https://copilot.github.com/)提供的免费开源许可证
+* 本项目遵循[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.html)协议
 
 <!-- AD -->
 <div class="wwads-cn wwads-horizontal page-wwads" data-id="136"></div>
