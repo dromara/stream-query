@@ -39,14 +39,10 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
 
   private static final Log LOG = LogFactory.getLog(StreamClassPathScanner.class);
 
-  /**
-   * annotation
-   */
+    /** annotation */
   private Class<? extends Annotation> annotation;
 
-  /**
-   * scan interface
-   */
+    /** scan interface */
   private Class<?> interfaceClass;
 
   public StreamClassPathScanner(boolean useDefaultFilters) {
@@ -56,7 +52,6 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
   public void setAnnotation(Class<? extends Annotation> annotation) {
     this.annotation = annotation;
   }
-
 
   public void setInterfaceClass(Class<?> interfaceClass) {
     this.interfaceClass = interfaceClass;
@@ -71,26 +66,28 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
     }
 
     if (this.interfaceClass != null) {
-      addIncludeFilter(new AssignableTypeFilter(this.interfaceClass) {
-        // remove parent entity
-        @Override
-        protected boolean matchClassName(String className) {
-          return false;
-        }
-      });
-      acceptAllInterfaces = false;
+        addIncludeFilter(
+                new AssignableTypeFilter(this.interfaceClass) {
+                    // remove parent entity
+                    @Override
+                    protected boolean matchClassName(String className) {
+                        return false;
+                    }
+                });
+        acceptAllInterfaces = false;
     }
 
-    if (acceptAllInterfaces) {
-      // default include filter that accepts all classes
-      addIncludeFilter((metadataReader, metadataReaderFactory) -> true);
-    }
+      if (acceptAllInterfaces) {
+          // default include filter that accepts all classes
+          addIncludeFilter((metadataReader, metadataReaderFactory) -> true);
+      }
 
-    // exclude package-info.java
-    addExcludeFilter((metadataReader, metadataReaderFactory) -> {
-      String className = metadataReader.getClassMetadata().getClassName();
-      return className.endsWith("package-info");
-    });
+      // exclude package-info.java
+      addExcludeFilter(
+              (metadataReader, metadataReaderFactory) -> {
+                  String className = metadataReader.getClassMetadata().getClassName();
+                  return className.endsWith("package-info");
+              });
   }
 
   public Set<Class<?>> scan(Set<String> basePackages) {
@@ -98,13 +95,12 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
       LOG.warn("basePackages is empty");
       return Collections.emptySet();
     }
-    return basePackages.stream()
-            .map(this::findCandidateComponents)
-            .flatMap(Collection::stream)
-            .map(BeanDefinition::getBeanClassName)
-            .filter(Objects::nonNull)
-            .map(ReflectHelper::forClassName)
-            .collect(Collectors.toSet());
+      return basePackages.stream()
+              .map(this::findCandidateComponents)
+              .flatMap(Collection::stream)
+              .map(BeanDefinition::getBeanClassName)
+              .filter(Objects::nonNull)
+              .map(ReflectHelper::forClassName)
+              .collect(Collectors.toSet());
   }
-
 }

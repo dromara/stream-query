@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -24,54 +40,60 @@ import org.springframework.beans.factory.annotation.Autowired;
 @MybatisPlusTest
 class JsonFieldHandlerTest {
 
-    public static class JsonFieldHandler extends AbstractJsonFieldHandler {
+  @BeforeEach
+  void init(@Autowired SqlSessionFactory sqlSessionFactory) {
+    Database.buildMapper(sqlSessionFactory.getConfiguration(), UserInfoWithJsonName.class);
+  }
 
-        ObjectMapper objectMapper = new ObjectMapper();
+  @Test
+  void test() {
+    val user =
+            new UserInfoWithJsonName() {
+              {
+                setName(
+                        new Name() {
+                          {
+                            setUsername("VampireAchao");
+                            setNickname("阿超");
+                          }
+                        });
+              }
+            };
+    Database.save(user);
+    val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
+    Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());
+    Assertions.assertEquals("阿超", dbUser.getName().getNickname());
+  }
 
-        @Override
-        protected Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
-            Class<?> fieldType = fieldInfo.getField().getType();
-            return ((SerSupp<Object>) (() -> objectMapper.readValue(json, fieldType))).get();
-        }
+  public static class JsonFieldHandler extends AbstractJsonFieldHandler {
 
-        @Override
-        @SneakyThrows
-        protected String toJson(Object obj, TableInfo tableInfo, TableFieldInfo fieldInfo) {
-            return objectMapper.writeValueAsString(obj);
-        }
+    ObjectMapper objectMapper = new ObjectMapper();
 
+    @Override
+    protected Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
+      Class<?> fieldType = fieldInfo.getField().getType();
+      return ((SerSupp<Object>) (() -> objectMapper.readValue(json, fieldType))).get();
     }
 
-    @Data
-    @TableName(value = "user_info", autoResultMap = true)
-    static class UserInfoWithJsonName {
-        private Long id;
-        @TableField(typeHandler = JsonFieldHandler.class)
-        private Name name;
+    @Override
+    @SneakyThrows
+    protected String toJson(Object obj, TableInfo tableInfo, TableFieldInfo fieldInfo) {
+      return objectMapper.writeValueAsString(obj);
     }
+  }
 
-    @Data
-    static class Name {
-        private String username;
-        private String nickname;
-    }
+  @Data
+  @TableName(value = "user_info", autoResultMap = true)
+  static class UserInfoWithJsonName {
+    private Long id;
 
-    @BeforeEach
-    void init(@Autowired SqlSessionFactory sqlSessionFactory) {
-        Database.buildMapper(sqlSessionFactory.getConfiguration(), UserInfoWithJsonName.class);
-    }
+    @TableField(typeHandler = JsonFieldHandler.class)
+    private Name name;
+  }
 
-    @Test
-    void test() {
-        val user = new UserInfoWithJsonName() {{
-            setName(new Name() {{
-                setUsername("VampireAchao");
-                setNickname("阿超");
-            }});
-        }};
-        Database.save(user);
-        val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
-        Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());
-        Assertions.assertEquals("阿超", dbUser.getName().getNickname());
-    }
+  @Data
+  static class Name {
+    private String username;
+    private String nickname;
+  }
 }

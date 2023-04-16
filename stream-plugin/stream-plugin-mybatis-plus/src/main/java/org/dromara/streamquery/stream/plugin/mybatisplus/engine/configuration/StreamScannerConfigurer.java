@@ -16,7 +16,6 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -37,31 +36,16 @@ import java.util.Set;
  */
 public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
-  /**
-   * base package
-   */
-  private Set<String> basePackages;
-
-  /**
-   * specify classes
-   */
-  private Set<Class<?>> classes;
-
-  /**
-   * annotation
-   */
-  private Class<? extends Annotation> annotation;
-
-  /**
-   * scan interface
-   */
-  private Class<?> interfaceClass;
-
-
-  /**
-   * entity class list
-   */
+  /** entity class list */
   private final Set<Class<?>> entityClassList = new HashSet<>();
+  /** base package */
+  private Set<String> basePackages;
+  /** specify classes */
+  private Set<Class<?>> classes;
+  /** annotation */
+  private Class<? extends Annotation> annotation;
+  /** scan interface */
+  private Class<?> interfaceClass;
 
   public void setBasePackages(Set<String> basePackages) {
     this.basePackages = basePackages;
@@ -90,15 +74,15 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
   }
 
   @Override
-  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-    // 指定类
-    registerEntityClasses(this.classes);
-    StreamClassPathScanner scanner = new StreamClassPathScanner(false);
-    scanner.setAnnotation(this.annotation);
-    scanner.setInterfaceClass(this.interfaceClass);
-    scanner.registerFilters();
-    Set<Class<?>> classSet = scanner.scan(this.basePackages);
-    registerEntityClasses(classSet);
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+          throws BeansException {
+      // 指定类
+      registerEntityClasses(this.classes);
+      StreamClassPathScanner scanner = new StreamClassPathScanner(false);
+      scanner.setAnnotation(this.annotation);
+      scanner.setInterfaceClass(this.interfaceClass);
+      scanner.registerFilters();
+      Set<Class<?>> classSet = scanner.scan(this.basePackages);
+      registerEntityClasses(classSet);
   }
-
 }

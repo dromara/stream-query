@@ -74,5 +74,4 @@ public @interface EnableMybatisPlusPlugin {
    * @return interface class for scanning
    */
   Class<?> interfaceClass() default Class.class;
-
 }

@@ -20,8 +20,8 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import org.dromara.streamquery.stream.plugin.mybatisplus.annotation.Entity;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.MyEntityInterface;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Bean;
  * @since 2022/5/21
  */
 @EnableMybatisPlusPlugin(
-//        value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+        //        value = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
         basePackages = "org.dromara.streamquery.stream.plugin.*.pojo.po",
         basePackageClasses = {RoleInfo.class, UserInfo.class, UserRole.class},
         annotation = Entity.class,
