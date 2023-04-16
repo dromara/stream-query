@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author VampireAchao Cizai_
  */
-public class StreamPluginConfiguration {
+public class StreamPluginAutoConfiguration {
 
   private static final String CURRENT_NAMESPACE =
           LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);

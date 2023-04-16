@@ -42,8 +42,8 @@ public class UserInfo implements IGenerateMapper {
   private String name;
   private Integer age;
   private String email;
-  @Version
-  private Integer version;
+    @Version
+    private Integer version;
 
   @TableLogic(value = "'2001-01-01 00:00:00'", delval = "NOW()")
   private LocalDateTime gmtDeleted;
