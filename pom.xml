@@ -231,6 +231,9 @@
                 <version>2.27.2</version>
                 <configuration>
                     <java>
+                        <licenseHeader>
+                            <file>checkstyle/license-header.txt</file>
+                        </licenseHeader>
                         <includes>
                             <include>src/main/java/**/*.java</include>
                             <include>src/test/java/**/*.java</include>
