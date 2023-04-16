@@ -17,3 +17,33 @@ urls.txt
 
 # mac
 .DS_Store
+/.idea/checkstyleidea-libs/readme.txt
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/sonarlint/issuestore/0/2/022291ca9c8ef3c51c91754aa1cfcba6a244068d
+/.idea/sonarlint/issuestore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302
+/.idea/sonarlint/issuestore/c/c/cc3bc1a247ce5822adbe350dbf26f538c1b441d2
+/.idea/sonarlint/issuestore/d/4/d4d7d910140ed02668c46f36e31a5b9b19d9f3a5
+/.idea/sonarlint/issuestore/e/6/e65c7957072453c47bdcabdb0e5035a64bb0ff96
+/.idea/sonarlint/issuestore/index.pb
+/.idea/sonarlint/securityhotspotstore/0/2/022291ca9c8ef3c51c91754aa1cfcba6a244068d
+/.idea/sonarlint/securityhotspotstore/a/5/a5cc2925ca8258af241be7e5b0381edf30266302
+/.idea/sonarlint/securityhotspotstore/c/c/cc3bc1a247ce5822adbe350dbf26f538c1b441d2
+/.idea/sonarlint/securityhotspotstore/d/4/d4d7d910140ed02668c46f36e31a5b9b19d9f3a5
+/.idea/sonarlint/securityhotspotstore/e/6/e65c7957072453c47bdcabdb0e5035a64bb0ff96
+/.idea/sonarlint/securityhotspotstore/index.pb
+/.idea/$PROJECT_FILE$
+/.idea/.gitignore
+/.idea/checkstyle-idea.xml
+/.idea/compiler.xml
+/.idea/encodings.xml
+/.idea/fastRequestCollection.xml
+/.idea/git_toolbox_prj.xml
+/.idea/jarRepositories.xml
+/.idea/misc.xml
+/.idea/qaplug_profiles.xml
+/.idea/stream-query.iml
+/.idea/uiDesigner.xml
+/.idea/vcs.xml
+/stream-plugin/stream-plugin-mybatis-plus/stream-plugin-mybatis-plus.iml
