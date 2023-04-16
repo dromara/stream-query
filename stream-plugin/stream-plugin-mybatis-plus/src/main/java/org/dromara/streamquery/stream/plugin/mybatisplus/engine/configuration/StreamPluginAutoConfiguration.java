@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.dromara.streamquery.stream.core.clazz.ClassHelper;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
@@ -37,16 +36,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * MPSql注入
  *
  * @author VampireAchao Cizai_
  */
-public class StreamPluginAutoConfiguration {
+public class StreamPluginConfiguration {
 
   private static final String CURRENT_NAMESPACE =
           LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
@@ -78,7 +75,7 @@ public class StreamPluginAutoConfiguration {
         }
         TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
         if (Database.isDynamicMapper(tableInfo.getCurrentNamespace())
-            && !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
+                && !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
           // 降低动态mapper优先级
           ReflectHelper.setFieldValue(tableInfo, CURRENT_NAMESPACE, mapperClass.getName());
         }
@@ -93,13 +90,7 @@ public class StreamPluginAutoConfiguration {
   @ConditionalOnMissingBean(DynamicMapperHandler.class)
   public DynamicMapperHandler dynamicMapperHandler(
           SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
-    /// 扫描po包下的所有类，作为entity
-    Set<String> basePackages = streamScannerConfigurer.getBasePackages();
-    List<Class<?>> entityClassList = new ArrayList<>();
-    for (String basePackage : basePackages) {
-      entityClassList.addAll(ClassHelper.scanClasses(basePackage));
-    }
-    return new DynamicMapperHandler(sqlSessionFactory, entityClassList);
+    return new DynamicMapperHandler(sqlSessionFactory, streamScannerConfigurer.getEntityClasses());
   }
 
   @Bean

@@ -14,29 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
+package org.dromara.streamquery.stream.plugin.mybatisplus.annotation;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Data;
-import org.dromara.streamquery.stream.plugin.mybatisplus.annotation.Entity;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.GenerateMapper;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * RoleInfo
- *
- * @author VampireAchao Cizai_
- * @since 2022/5/23
+ * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
-@Data
-@GenerateMapper
-@KeySequence(dbType = DbType.H2)
-public class RoleInfo {
-
-  @TableId(type = IdType.ASSIGN_ID)
-  private String id;
-
-  private String roleName;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Documented
+@Inherited
+public @interface Entity {
 }
