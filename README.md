@@ -69,25 +69,25 @@ implementation group: 'org.dromara.stream-query', name: 'stream-core', version: 
 注入动态`Mapper`处理器
 
 ```java
-    @Bean
-public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory)throws Exception{
-// 使用ClassHelper的scanClasses方法扫描对应路径下的po生成Class文件集合放入第二个参数就可以了
-final List<Class<?>>entityClassList=ClassHelper.scanClasses("com.ruben.pojo.po");
-        return new DynamicMapperHandler(sqlSessionFactory,entityClassList);
-        }
+@Bean
+public DynamicMapperHandler dynamicMapperHandler(SqlSessionFactory sqlSessionFactory) throws Exception {
+    // 使用ClassHelper的scanClasses方法扫描对应路径下的po生成Class文件集合放入第二个参数就可以了
+    final List<Class<?>>entityClassList=ClassHelper.scanClasses("com.ruben.pojo.po");
+    return new DynamicMapperHandler(sqlSessionFactory,entityClassList);
+}
 ```
 
 ## 📚使用
 
 ```java
-    Database.saveBatch(userList);
+Database.saveBatch(userList);
 ```
 
 ```java
-    // 批量保存
-    Database.saveBatch(userList);
-            // 使用userIds进行in查询，得到map key为id，value为entity对象
-            Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
+// 批量保存
+Database.saveBatch(userList);
+// 使用userIds进行in查询，得到map key为id，value为entity对象
+Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 ```
 
 [更多使用姿势-Database](https://dromara.gitee.io/stream-query/#/docs/module/plugin/mybatis-plus/database)
