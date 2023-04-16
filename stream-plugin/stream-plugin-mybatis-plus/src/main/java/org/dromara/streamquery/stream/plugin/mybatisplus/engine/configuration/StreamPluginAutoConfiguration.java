@@ -46,7 +46,7 @@ import java.util.List;
 public class StreamPluginAutoConfiguration {
 
   private static final String CURRENT_NAMESPACE =
-          LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
+      LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
 
   /**
    * defaultSqlInjector.
@@ -75,7 +75,7 @@ public class StreamPluginAutoConfiguration {
         }
         TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
         if (Database.isDynamicMapper(tableInfo.getCurrentNamespace())
-                && !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
+            && !mapperClass.getName().equals(tableInfo.getCurrentNamespace())) {
           // 降低动态mapper优先级
           ReflectHelper.setFieldValue(tableInfo, CURRENT_NAMESPACE, mapperClass.getName());
         }
@@ -89,7 +89,7 @@ public class StreamPluginAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(DynamicMapperHandler.class)
   public DynamicMapperHandler dynamicMapperHandler(
-          SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
+      SqlSessionFactory sqlSessionFactory, StreamScannerConfigurer streamScannerConfigurer) {
     return new DynamicMapperHandler(sqlSessionFactory, streamScannerConfigurer.getEntityClasses());
   }
 

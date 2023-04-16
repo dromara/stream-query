@@ -27,12 +27,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ *
+ *
  * <pre>
  * stream scanner configurer
  * from {@link StreamScannerRegistrar}
  * </pre>
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * @author KamToHung
+ * @since 1.5.0
  */
 public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
@@ -75,14 +78,14 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
-          throws BeansException {
-      // 指定类
-      registerEntityClasses(this.classes);
-      StreamClassPathScanner scanner = new StreamClassPathScanner(false);
-      scanner.setAnnotation(this.annotation);
-      scanner.setInterfaceClass(this.interfaceClass);
-      scanner.registerFilters();
-      Set<Class<?>> classSet = scanner.scan(this.basePackages);
-      registerEntityClasses(classSet);
+      throws BeansException {
+    // 指定类
+    registerEntityClasses(this.classes);
+    StreamClassPathScanner scanner = new StreamClassPathScanner(false);
+    scanner.setAnnotation(this.annotation);
+    scanner.setInterfaceClass(this.interfaceClass);
+    scanner.registerFilters();
+    Set<Class<?>> classSet = scanner.scan(this.basePackages);
+    registerEntityClasses(classSet);
   }
 }

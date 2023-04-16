@@ -6,7 +6,9 @@ import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.GenerateMapper;
 
 /**
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * AddressInfo
+ *
+ * @author KamToHung
  */
 @Data
 @GenerateMapper

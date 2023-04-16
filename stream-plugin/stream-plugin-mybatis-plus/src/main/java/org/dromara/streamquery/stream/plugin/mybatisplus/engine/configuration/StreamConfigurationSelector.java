@@ -24,6 +24,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * stream plugin selector
  *
  * @author KamToHung
+ * @since 1.5.0
  */
 public class StreamConfigurationSelector implements DeferredImportSelector, Ordered {
 
