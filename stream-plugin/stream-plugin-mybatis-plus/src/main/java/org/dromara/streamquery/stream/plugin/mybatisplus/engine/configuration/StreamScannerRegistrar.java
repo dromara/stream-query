@@ -35,50 +35,51 @@ import java.util.stream.Collectors;
 /**
  * Bean definition registrar for {@link StreamScannerConfigurer}.
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * @author KamToHung
+ * @since 1.5.0
  */
 public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
 
   @Override
   public void registerBeanDefinitions(
-          AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-      AnnotationAttributes annotationAttributes =
-              AnnotationAttributes.fromMap(
-                      importingClassMetadata.getAnnotationAttributes(
-                              EnableMybatisPlusPlugin.class.getName()));
-      if (Objects.isNull(annotationAttributes)) {
-          return;
-      }
-      BeanDefinitionBuilder builder =
-              BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
-      Set<String> basePackages = new HashSet<>();
-      basePackages.addAll(
-              Arrays.stream(annotationAttributes.getStringArray("value"))
-                      .filter(StringUtils::hasText)
-                      .collect(Collectors.toSet()));
-      basePackages.addAll(
-              Arrays.stream(annotationAttributes.getStringArray("basePackages"))
-                      .filter(StringUtils::hasText)
-                      .collect(Collectors.toSet()));
-      basePackages.addAll(
-              Arrays.stream(annotationAttributes.getClassArray("basePackageClasses"))
-                      .filter(Objects::nonNull)
-                      .map(ClassUtils::getPackageName)
-                      .collect(Collectors.toSet()));
-      builder.addPropertyValue("basePackages", basePackages);
+      AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    AnnotationAttributes annotationAttributes =
+        AnnotationAttributes.fromMap(
+            importingClassMetadata.getAnnotationAttributes(
+                EnableMybatisPlusPlugin.class.getName()));
+    if (Objects.isNull(annotationAttributes)) {
+      return;
+    }
+    BeanDefinitionBuilder builder =
+        BeanDefinitionBuilder.genericBeanDefinition(StreamScannerConfigurer.class);
+    Set<String> basePackages = new HashSet<>();
+    basePackages.addAll(
+        Arrays.stream(annotationAttributes.getStringArray("value"))
+            .filter(StringUtils::hasText)
+            .collect(Collectors.toSet()));
+    basePackages.addAll(
+        Arrays.stream(annotationAttributes.getStringArray("basePackages"))
+            .filter(StringUtils::hasText)
+            .collect(Collectors.toSet()));
+    basePackages.addAll(
+        Arrays.stream(annotationAttributes.getClassArray("basePackageClasses"))
+            .filter(Objects::nonNull)
+            .map(ClassUtils::getPackageName)
+            .collect(Collectors.toSet()));
+    builder.addPropertyValue("basePackages", basePackages);
 
-      Set<Class<?>> classes =
-              Arrays.stream(annotationAttributes.getClassArray("classes"))
-                      .filter(Objects::nonNull)
-                      .collect(Collectors.toSet());
-      builder.addPropertyValue("classes", classes);
+    Set<Class<?>> classes =
+        Arrays.stream(annotationAttributes.getClassArray("classes"))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+    builder.addPropertyValue("classes", classes);
 
-      Class<? extends Annotation> annotation = annotationAttributes.getClass("annotation");
-      if (!Annotation.class.equals(annotation)) {
-          builder.addPropertyValue("annotation", annotation);
-      }
+    Class<? extends Annotation> annotation = annotationAttributes.getClass("annotation");
+    if (!Annotation.class.equals(annotation)) {
+      builder.addPropertyValue("annotation", annotation);
+    }
 
-      Class<?> scanInterface = annotationAttributes.getClass("interfaceClass");
+    Class<?> scanInterface = annotationAttributes.getClass("interfaceClass");
     if (!Class.class.equals(scanInterface)) {
       builder.addPropertyValue("interfaceClass", scanInterface);
     }

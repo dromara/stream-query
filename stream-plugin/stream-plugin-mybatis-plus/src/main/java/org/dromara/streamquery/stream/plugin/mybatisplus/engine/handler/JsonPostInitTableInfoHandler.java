@@ -33,7 +33,7 @@ public class JsonPostInitTableInfoHandler implements PostInitTableInfoHandler {
   /**
    * 参与 TableInfo 初始化
    *
-   * @param tableInfo     TableInfo
+   * @param tableInfo TableInfo
    * @param configuration Configuration
    */
   @Override

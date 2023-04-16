@@ -22,7 +22,6 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.Enabl
  * {@link EnableMybatisPlusPlugin#interfaceClass()} Include entity when it has {@link
  * IGenerateMapper} interface in basePackages.
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * @author KamToHung
  */
-public interface IGenerateMapper {
-}
+public interface IGenerateMapper {}
