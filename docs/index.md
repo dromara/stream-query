@@ -1,19 +1,19 @@
 ---
 home: true
 heroImage: https://plus.hutool.cn/images/dromara/stream-query.png
-heroText: 
+heroText:
 tagline: 允许完全摆脱Mapper的mybatis-plus🌽体验！可以使用类似“工具类”🔧这样的静态函数进行数据库操作
 actionText: 开始使用 →
 actionLink: /pages/a2f161/
 bannerBg: none # auto => 网格纹背景(有bodyBgImg时无背景)，默认 | none => 无 | '大图地址' | background: 自定义背景样式       提示：如发现文本颜色不适应你的背景时可以到palette.styl修改$bannerTextColor变量
 
 features: # 可选的
-  - title: 动态Mapper
-    details: 允许完全摆脱Mapper的Mybatis-Plus体验！使用Byte-Buddy运行时生成Mapper
-  - title: 查询后Stream处理封装
-    details: 一对一、一对多等，轻松完成多次单表所需数据查询
-  - title: 简化Stream操作
-    details: 提供一个Steam类，Steam等于Stream减去r(Repeat)，减少Stream重复代码
+- title: 动态Mapper
+  details: 允许完全摆脱Mapper的Mybatis-Plus体验！使用Byte-Buddy运行时生成Mapper
+- title: 查询后Stream处理封装
+  details: 一对一、一对多等，轻松完成多次单表所需数据查询
+- title: 简化Stream操作
+  details: 提供一个Steam类，Steam等于Stream减去r(Repeat)，减少Stream重复代码
 
 # 文章列表显示方式: detailed 默认，显示详细版文章列表（包括作者、分类、标签、摘要、分页等）| simple => 显示简约版文章列表（仅标题和日期）| none 不显示文章列表
 postList: none
@@ -35,10 +35,10 @@ postList: none
 
 <br/>
 <p align="center">
-  <a href="https://www.npmjs.com/package/vuepress-theme-vdoing" target="_blank"><img src="https://img.shields.io/npm/v/vuepress-theme-vdoing" alt="npm" class="no-zoom"></a>
-  <a href="https://www.npmjs.com/package/vuepress-theme-vdoing" target="_blank"><img src="https://img.shields.io/npm/dt/vuepress-theme-vdoing" alt="npm" class="no-zoom"></a>
-  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank"><img src='https://img.shields.io/github/stars/xugaoyi/vuepress-theme-vdoing' alt='GitHub stars' class="no-zoom"></a>
-  <a href="https://github.com/xugaoyi/vuepress-theme-vdoing" target="_blank"><img src='https://img.shields.io/github/forks/xugaoyi/vuepress-theme-vdoing' alt='GitHub forks' class="no-zoom"></a>
+  <a href="https://gitee.com/dromara/stream-query" target="_blank"><img src='https://gitee.com/dromara/stream-query/badge/star.svg' alt='GitHub stars' class="no-zoom"></a>
+  <a href="https://search.maven.org/artifact/org.dromara.stream-query/stream-query" target="_blank"><img src='https://img.shields.io/maven-central/v/org.dromara.stream-query/stream-query.svg?label=Maven%20Central' alt='GitHub stars' class="no-zoom"></a>
+  <a href="https://github.com/dromara/stream-query/blob/master/LICENSE" target="_blank"><img src='https://img.shields.io/badge/license-Apache%202-blue' alt='GitHub stars' class="no-zoom"></a>
+  <a href="https://github.com/dromara/stream-query" target="_blank"><img src='https://img.shields.io/github/stars/dromara/stream-query.svg?style=social' alt='GitHub forks' class="no-zoom"></a>
 </p>
 
 <br/>
@@ -49,26 +49,26 @@ postList: none
   <a href="http://apifox.cn/a103xugaoyi" target="_blank"><img src="https://cdn.staticaly.com/gh/xugaoyi/blog-gitalk-comment@master/img/441669861566_.2bedplbm21hc.jpg" alt="npm" class="no-zoom" style="width: 300px;border-radius: 2px;"></a>
 </p>
 
-## 🎖特别用户
+## 🎖维护团队
 ::: cardList 3
 ```yaml
-# - name: OpenHarmony
+# - name: VampireAchao
 #   desc: 开放原子开源基金会
 #   link: https://docs.openharmony.cn/pages/000000/
 #   bgColor: '#f1f1f1'
 #   textColor: '#2A3344'
-- name: MyBatis-Plus官网
-  desc: 🚀为简化开发而生
-  link: https://baomidou.com/
+- name: 阿超
+  desc:
+  link: https://vampireachao.gitee.io/
   bgColor: '#f1f1f1'
   textColor: '#2A3344'
-- name: Deepin 社区
-  desc: Deepin 应用开发技术分享、DTK开发经验等
-  link: https://docs.deepin.org
+- name: 臧臧
+  desc: 
+  link: https://eliauku.gitee.io/
   bgColor: '#f1f1f1'
   textColor: '#2A3344'
-- name: VForm官网
-  desc: 低代码表单优选方案，拖拽式设计，一键生成源码
+- name: KamToHung
+  desc: 
   link: http://www.vform666.com
   bgColor: '#f1f1f1'
   textColor: '#2A3344'
@@ -79,9 +79,9 @@ postList: none
 
 ## 🎉上新推荐
 * `v1.12.x`
-  - 新增配置项`pageStyle`，用于切换页面的风格样式，可选`卡片`、 `线条`风格。[详情](/pages/a20ce8/#pagestyle)
-  - 新增配置项`bodyBgImgInterval`，用于在设置了多张背景大图时修改大图切换的时间间隔。[详情](/pages/a20ce8/#bodybgimginterval)
-  - 新增配置项`defaultMode`，用于修改默认外观模式(v1.12.3)。[详情](/pages/a20ce8/#defaultmode)
+    - 新增配置项`pageStyle`，用于切换页面的风格样式，可选`卡片`、 `线条`风格。[详情](/pages/a20ce8/#pagestyle)
+    - 新增配置项`bodyBgImgInterval`，用于在设置了多张背景大图时修改大图切换的时间间隔。[详情](/pages/a20ce8/#bodybgimginterval)
+    - 新增配置项`defaultMode`，用于修改默认外观模式(v1.12.3)。[详情](/pages/a20ce8/#defaultmode)
 * `v1.11.x`：新增配置项`extendFrontmatter`，用于扩展自动生成front matter。[详情](/pages/a20ce8/#extendfrontmatter)
 * `v1.10.x`：新增右侧目录栏对h2~h6标题的适配，并优化了UI，[详情](/pages/8dfab5/)。
 * `v1.9.x`：新增配置文件对TypeScript的支持，参考[config.ts](https://github.com/xugaoyi/vuepress-theme-vdoing/blob/master/docs/.vuepress/config.ts)。新增[标题标记](/pages/3216b0/#titletag)。
