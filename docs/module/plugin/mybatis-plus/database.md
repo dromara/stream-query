@@ -19,7 +19,7 @@
 Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.insertOneSql(list));
 ```
 
-### insertFewSql
+### saveFewSql
 
 > (批量插入)以几条sql方式插入（批量）需要实现IMapper
 >
@@ -32,11 +32,11 @@ Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.insertOneSql(list));
 ```java
 // list ==> 模拟实体对象集合
 
-Database.insertFewSql(list);
+Database.saveFewSql(list);
 // 此时的批量插入执行的是
 INSERT INTO user_info ( id,name,age,email,version,gmt_deleted ) VALUES ( default, ?, default, default, default, default ) , ( default, ?, ?, ?, default, default )
 
-Database.insertFewSql(list, 1);// 当有一个值的时候就对其进行分批插入，而不是一次全插入    
+Database.saveFewSql(list, 1);// 当有一个值的时候就对其进行分批插入，而不是一次全插入    
 // 此时的sql为    
 INSERT INTO user_info ( id,name,age,email,version,gmt_deleted ) VALUES ( default, ?, default, default, default, default )
 
