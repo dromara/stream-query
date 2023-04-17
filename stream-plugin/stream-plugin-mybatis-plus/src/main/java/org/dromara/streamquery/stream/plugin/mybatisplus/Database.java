@@ -526,8 +526,7 @@ public class Database {
     if (Objects.isNull(entity) || ArrayUtils.isEmpty(updateKeys)) {
       return updateById(entity);
     }
-    @SuppressWarnings("unchecked")
-    Class<T> entityClass = (Class<T>) entity.getClass();
+    Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
     TableInfo tableInfo = getTableInfo(entityClass);
     T bean = ClassUtils.newInstance(entityClass);
     String keyProperty = tableInfo.getKeyProperty();
