@@ -14,20 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
+package org.dromara.streamquery.stream.plugin.mybatisplus.annotation;
 
-import lombok.Data;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- * UserRole
+ * MybatisPlusTestApplication less Create Retrieve Update Delete
  *
  * @author VampireAchao Cizai_
- * @since 2022/5/23
+ * @since 2022/5/21
  */
-@Data
-public class UserRole {
+@ExtendWith(SpringExtension.class)
+public abstract class AbstractMybatisPlusTestApplication {
 
-  private Long id;
-  private Long userId;
-  private String roleId;
+  protected ConfigurableApplicationContext context;
+
+  @BeforeEach
+  void before() {
+    context = SpringApplication.run(this.getClass());
+  }
+
+  @AfterEach
+  void after() {
+    context.close();
+  }
 }

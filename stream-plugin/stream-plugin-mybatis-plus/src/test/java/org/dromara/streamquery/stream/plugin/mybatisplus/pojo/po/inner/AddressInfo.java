@@ -34,4 +34,9 @@ public class AddressInfo {
   private String id;
 
   private String address;
+
+  @Data
+  public static class InnerAddressInfo {
+    private String id;
+  }
 }
