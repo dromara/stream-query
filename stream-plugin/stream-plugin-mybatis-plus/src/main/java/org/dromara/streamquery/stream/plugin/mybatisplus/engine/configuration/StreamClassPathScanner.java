@@ -21,6 +21,7 @@ import org.apache.ibatis.logging.LogFactory;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.CollectionUtils;
@@ -88,8 +89,10 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
     // exclude package-info.java
     addExcludeFilter(
         (metadataReader, metadataReaderFactory) -> {
-          String className = metadataReader.getClassMetadata().getClassName();
-          return className.endsWith("package-info");
+          ClassMetadata classMetadata = metadataReader.getClassMetadata();
+          return classMetadata.getClassName().endsWith("package-info")
+              || classMetadata.isInterface()
+              || classMetadata.isAbstract();
         });
   }
 
@@ -104,6 +107,7 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
         .map(BeanDefinition::getBeanClassName)
         .filter(Objects::nonNull)
         .map(ReflectHelper::forClassName)
+        .filter(o -> !(o.isMemberClass() || o.isAnonymousClass() || o.isLocalClass()))
         .collect(Collectors.toSet());
   }
 }

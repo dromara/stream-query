@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -25,9 +26,14 @@ import lombok.Data;
  * @since 2022/5/23
  */
 @Data
+@Builder
 public class UserRole {
 
   private Long id;
   private Long userId;
   private String roleId;
+
+  interface UserRoleInnerInterface {}
+
+  public class UserRoleInnerClass {}
 }
