@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.business.tree;
 
+import java.util.ArrayList;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
@@ -183,10 +184,23 @@ class TreeHelperTest {
             Student::setChildren);
   }
 
+  
   @Test
   void testToTreeAndLevel() {
     List<Student> studentTree = studentTreeHelper.toTree(originStudentList, null);
     Assertions.assertEquals(originStudentTree, studentTree);
+  }
+  
+  @Test
+  void testToTreeAndLevelWithLeveLimit() {
+    Assertions.assertEquals(new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1));
+    Assertions.assertEquals(treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 1));
+    Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2));
+    Assertions.assertNotEquals(treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 2));
+  }
+  
+  @Test
+  void testToTreeAndLevelWithCondition() {
     TreeHelper<Student, Long> conditionTreeHelper =
         TreeHelper.ofMatch(
             Student::getId,
@@ -196,7 +210,6 @@ class TreeHelperTest {
             s -> Boolean.TRUE.equals(s.getMatchParent()),
             Student::getChildren,
             Student::setChildren);
-    Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2));
     Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList, null));
   }
 
