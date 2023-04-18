@@ -39,5 +39,4 @@ public class AddressInfo {
   public static class InnerAddressInfo {
     private String id;
   }
-
 }

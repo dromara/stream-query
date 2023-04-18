@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dromara.streamquery.stream.plugin.mybatisplus.annotation;
 
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
@@ -16,22 +32,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * EnableMybatisPlusPluginByClassesTest
+ *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
 @EnableAutoConfiguration
-@EnableMybatisPlusPlugin(basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po", annotation = GenerateMapper.class)
+@EnableMybatisPlusPlugin(
+    basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
+    annotation = GenerateMapper.class)
 public class EnableMybatisPlusPluginByAnnotationTest extends AbstractMybatisPlusTestApplication {
 
-    @Test
-    void testScanByValue() {
-        StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
-        assertNotNull(bean);
-        assertNotNull(bean.getEntityClasses());
-        assertTrue(bean.getEntityClasses().contains(RoleInfo.class));
-        assertFalse(bean.getEntityClasses().contains(UserInfo.class));
-        assertFalse(bean.getEntityClasses().contains(UserRole.class));
-        assertTrue(bean.getEntityClasses().contains(AddressInfo.class));
-        assertFalse(bean.getEntityClasses().contains(AddressInfo.InnerAddressInfo.class));
-    }
-
+  @Test
+  void testScanByValue() {
+    StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
+    assertNotNull(bean);
+    assertNotNull(bean.getEntityClasses());
+    assertTrue(bean.getEntityClasses().contains(RoleInfo.class));
+    assertFalse(bean.getEntityClasses().contains(UserInfo.class));
+    assertFalse(bean.getEntityClasses().contains(UserRole.class));
+    assertTrue(bean.getEntityClasses().contains(AddressInfo.class));
+    assertFalse(bean.getEntityClasses().contains(AddressInfo.InnerAddressInfo.class));
+  }
 }

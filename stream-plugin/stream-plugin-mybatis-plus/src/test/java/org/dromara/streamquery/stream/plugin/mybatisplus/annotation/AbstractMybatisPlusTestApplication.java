@@ -16,9 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.annotation;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.SpringApplication;
@@ -34,16 +32,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 public abstract class AbstractMybatisPlusTestApplication {
 
-    protected ConfigurableApplicationContext context;
+  protected ConfigurableApplicationContext context;
 
-    @BeforeEach
-    void before() {
-        context = SpringApplication.run(this.getClass());
-    }
+  @BeforeEach
+  void before() {
+    context = SpringApplication.run(this.getClass());
+  }
 
-    @AfterEach
-    void after() {
-        context.close();
-    }
-
+  @AfterEach
+  void after() {
+    context.close();
+  }
 }
