@@ -16,9 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Tolerate;
 
 /**
  * UserRole
@@ -27,19 +25,10 @@ import lombok.experimental.Tolerate;
  * @since 2022/5/23
  */
 @Data
-@Builder
 public class UserRole {
-
-  @Tolerate
-  public UserRole() {
-    // this is an accessible parameterless constructor.
-  }
 
   private Long id;
   private Long userId;
   private String roleId;
 
-  interface UserRoleInnerInterface {}
-
-  public class UserRoleInnerClass {}
 }
