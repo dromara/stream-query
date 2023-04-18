@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -48,101 +47,140 @@ class TreeHelperTest {
   @BeforeEach
   void setUp() {
     originStudentList =
-            Steam.of(
-                            Student.builder().id(1L).level(0).name("dromara").matchParent(true).build(),
-                            Student.builder().id(2L).level(0).name("baomidou").matchParent(true).build(),
-                            Student.builder().id(3L).level(1).name("hutool").parentId(1L).build(),
-                            Student.builder().id(4L).level(1).name("sa-token").parentId(1L).build(),
-                            Student.builder().id(5L).level(1).name("mybatis-plus").parentId(2L).build(),
-                            Student.builder().id(6L).level(2).name("looly").parentId(3L).build(),
-                            Student.builder().id(7L).level(2).name("click33").parentId(4L).build(),
-                            Student.builder().id(8L).level(2).name("jobob").parentId(5L).build())
-                    .toList();
+        Steam.of(
+                Student.builder().id(1L).level(0).name("dromara").matchParent(true).build(),
+                Student.builder().id(2L).level(0).name("baomidou").matchParent(true).build(),
+                Student.builder().id(3L).level(1).name("hutool").parentId(1L).build(),
+                Student.builder().id(4L).level(1).name("sa-token").parentId(1L).build(),
+                Student.builder().id(5L).level(1).name("mybatis-plus").parentId(2L).build(),
+                Student.builder().id(6L).level(2).name("looly").parentId(3L).build(),
+                Student.builder().id(7L).level(2).name("click33").parentId(4L).build(),
+                Student.builder().id(8L).level(2).name("jobob").parentId(5L).build())
+            .toList();
     originStudentTree =
-            asList(
-                    Student.builder()
-                            .id(1L).level(0)
-                            .name("dromara")
-                            .matchParent(true)
-                            .children(
-                                    asList(
-                                            Student.builder()
-                                                    .id(3L).level(1)
-                                                    .name("hutool")
-                                                    .parentId(1L)
-                                                    .children(
-                                                            singletonList(
-                                                                    Student.builder().id(6L).level(2).name("looly").parentId(3L).build()))
-                                                    .build(),
-                                            Student.builder()
-                                                    .id(4L).level(1)
-                                                    .name("sa-token")
-                                                    .parentId(1L)
-                                                    .children(
-                                                            singletonList(
-                                                                    Student.builder().id(7L).level(2).name("click33").parentId(4L).build()))
-                                                    .build()))
-                            .build(),
-                    Student.builder()
-                            .id(2L).level(0)
-                            .name("baomidou")
-                            .matchParent(true)
-                            .children(
-                                    singletonList(
-                                            Student.builder()
-                                                    .id(5L).level(1)
-                                                    .name("mybatis-plus")
-                                                    .parentId(2L)
-                                                    .children(
-                                                            singletonList(
-                                                                    Student.builder().id(8L).level(2).name("jobob").parentId(5L).build()))
-                                                    .build()))
-                            .build());
-    treeByLevelOriginStudentTree =
-            asList(
-                    Student.builder()
-                            .id(3L).level(0)
+        asList(
+            Student.builder()
+                .id(1L)
+                .level(0)
+                .name("dromara")
+                .matchParent(true)
+                .children(
+                    asList(
+                        Student.builder()
+                            .id(3L)
+                            .level(1)
                             .name("hutool")
                             .parentId(1L)
                             .children(
-                                    singletonList(Student.builder().id(6L).level(1).name("looly").parentId(3L).build()))
+                                singletonList(
+                                    Student.builder()
+                                        .id(6L)
+                                        .level(2)
+                                        .name("looly")
+                                        .parentId(3L)
+                                        .build()))
                             .build(),
-                    Student.builder()
-                            .id(4L).level(0)
+                        Student.builder()
+                            .id(4L)
+                            .level(1)
                             .name("sa-token")
                             .parentId(1L)
                             .children(
-                                    singletonList(Student.builder().id(7L).level(1).name("click33").parentId(4L).build()))
-                            .build(),
-                    Student.builder()
-                            .id(5L).level(0)
+                                singletonList(
+                                    Student.builder()
+                                        .id(7L)
+                                        .level(2)
+                                        .name("click33")
+                                        .parentId(4L)
+                                        .build()))
+                            .build()))
+                .build(),
+            Student.builder()
+                .id(2L)
+                .level(0)
+                .name("baomidou")
+                .matchParent(true)
+                .children(
+                    singletonList(
+                        Student.builder()
+                            .id(5L)
+                            .level(1)
                             .name("mybatis-plus")
                             .parentId(2L)
                             .children(
-                                    singletonList(Student.builder().id(8L).level(1).name("jobob").parentId(5L).build()))
-                            .build());
+                                singletonList(
+                                    Student.builder()
+                                        .id(8L)
+                                        .level(2)
+                                        .name("jobob")
+                                        .parentId(5L)
+                                        .build()))
+                            .build()))
+                .build());
+    treeByLevelOriginStudentTree =
+        asList(
+            Student.builder()
+                .id(3L)
+                .level(0)
+                .name("hutool")
+                .parentId(1L)
+                .children(
+                    singletonList(
+                        Student.builder().id(6L).level(1).name("looly").parentId(3L).build()))
+                .build(),
+            Student.builder()
+                .id(4L)
+                .level(0)
+                .name("sa-token")
+                .parentId(1L)
+                .children(
+                    singletonList(
+                        Student.builder().id(7L).level(1).name("click33").parentId(4L).build()))
+                .build(),
+            Student.builder()
+                .id(5L)
+                .level(0)
+                .name("mybatis-plus")
+                .parentId(2L)
+                .children(
+                    singletonList(
+                        Student.builder().id(8L).level(1).name("jobob").parentId(5L).build()))
+                .build());
     treeFromRootToLevelOriginStudentTree =
-            asList(
-                    Student.builder()
-                            .id(1L).level(0)
-                            .name("dromara")
-                            .matchParent(true)
-                            .children(
-                                    asList(
-                                            Student.builder().id(3L).level(1).name("hutool").parentId(1L).build(),
-                                            Student.builder().id(4L).level(1).name("sa-token").parentId(1L).build()))
-                            .build(),
-                    Student.builder()
-                            .id(2L).level(0)
-                            .name("baomidou")
-                            .matchParent(true)
-                            .children(
-                                    singletonList(
-                                            Student.builder().id(5L).level(1).name("mybatis-plus").parentId(2L).build()))
-                            .build());
+        asList(
+            Student.builder()
+                .id(1L)
+                .level(0)
+                .name("dromara")
+                .matchParent(true)
+                .children(
+                    asList(
+                        Student.builder().id(3L).level(1).name("hutool").parentId(1L).build(),
+                        Student.builder().id(4L).level(1).name("sa-token").parentId(1L).build()))
+                .build(),
+            Student.builder()
+                .id(2L)
+                .level(0)
+                .name("baomidou")
+                .matchParent(true)
+                .children(
+                    singletonList(
+                        Student.builder()
+                            .id(5L)
+                            .level(1)
+                            .name("mybatis-plus")
+                            .parentId(2L)
+                            .build()))
+                .build());
     studentTreeHelper =
-            TreeHelper.of(
-                    Student::getId, Student::getParentId,Student::setLevel, Student::getLevel , null, Student::getChildren, Student::setChildren);
+        TreeHelper.of(
+            Student::getId,
+            Student::getParentId,
+            Student::setLevel,
+            Student::getLevel,
+            null,
+            Student::getChildren,
+            Student::setChildren);
   }
 
   @Test
@@ -150,14 +188,14 @@ class TreeHelperTest {
     List<Student> studentTree = studentTreeHelper.toTree(originStudentList, null);
     Assertions.assertEquals(originStudentTree, studentTree);
     TreeHelper<Student, Long> conditionTreeHelper =
-            TreeHelper.ofMatch(
-                    Student::getId,
-                    Student::getParentId,
-                    Student::setLevel,
-                    Student::getLevel,
-                    s -> Boolean.TRUE.equals(s.getMatchParent()),
-                    Student::getChildren,
-                    Student::setChildren);
+        TreeHelper.ofMatch(
+            Student::getId,
+            Student::getParentId,
+            Student::setLevel,
+            Student::getLevel,
+            s -> Boolean.TRUE.equals(s.getMatchParent()),
+            Student::getChildren,
+            Student::setChildren);
     Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2));
     Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList, null));
   }
@@ -172,84 +210,99 @@ class TreeHelperTest {
   @Test
   void testFilter() {
     List<Student> studentTree =
-            studentTreeHelper.filter(originStudentTree, s -> "looly".equals(s.getName()));
+        studentTreeHelper.filter(originStudentTree, s -> "looly".equals(s.getName()));
     Assertions.assertEquals(
-            singletonList(
-                    Student.builder()
-                            .id(1L).level(0)
-                            .name("dromara")
-                            .matchParent(true)
+        singletonList(
+            Student.builder()
+                .id(1L)
+                .level(0)
+                .name("dromara")
+                .matchParent(true)
+                .children(
+                    singletonList(
+                        Student.builder()
+                            .id(3L)
+                            .level(1)
+                            .name("hutool")
+                            .parentId(1L)
                             .children(
-                                    singletonList(
-                                            Student.builder()
-                                                    .id(3L).level(1)
-                                                    .name("hutool")
-                                                    .parentId(1L)
-                                                    .children(
-                                                            singletonList(
-                                                                    Student.builder().id(6L).level(2).name("looly").parentId(3L).build()))
-                                                    .build()))
-                            .build()),
-            studentTree);
+                                singletonList(
+                                    Student.builder()
+                                        .id(6L)
+                                        .level(2)
+                                        .name("looly")
+                                        .parentId(3L)
+                                        .build()))
+                            .build()))
+                .build()),
+        studentTree);
   }
 
   @Test
   void testForeach() {
     List<Student> studentList =
-            studentTreeHelper.forEach(originStudentTree, s -> s.setName("【open source】" + s.getName()));
+        studentTreeHelper.forEach(originStudentTree, s -> s.setName("【open source】" + s.getName()));
     Assertions.assertEquals(
-            asList(
-                    Student.builder()
-                            .id(1L).level(0)
-                            .name("【open source】dromara")
-                            .matchParent(true)
+        asList(
+            Student.builder()
+                .id(1L)
+                .level(0)
+                .name("【open source】dromara")
+                .matchParent(true)
+                .children(
+                    asList(
+                        Student.builder()
+                            .id(3L)
+                            .level(1)
+                            .name("【open source】hutool")
+                            .parentId(1L)
                             .children(
-                                    asList(
-                                            Student.builder()
-                                                    .id(3L).level(1)
-                                                    .name("【open source】hutool")
-                                                    .parentId(1L)
-                                                    .children(
-                                                            singletonList(
-                                                                    Student.builder()
-                                                                            .id(6L).level(2)
-                                                                            .name("【open source】looly")
-                                                                            .parentId(3L)
-                                                                            .build()))
-                                                    .build(),
-                                            Student.builder()
-                                                    .id(4L).level(1)
-                                                    .name("【open source】sa-token")
-                                                    .parentId(1L)
-                                                    .children(
-                                                            singletonList(
-                                                                    Student.builder()
-                                                                            .id(7L).level(2)
-                                                                            .name("【open source】click33")
-                                                                            .parentId(4L)
-                                                                            .build()))
-                                                    .build()))
+                                singletonList(
+                                    Student.builder()
+                                        .id(6L)
+                                        .level(2)
+                                        .name("【open source】looly")
+                                        .parentId(3L)
+                                        .build()))
                             .build(),
-                    Student.builder()
-                            .id(2L).level(0)
-                            .name("【open source】baomidou")
-                            .matchParent(true)
+                        Student.builder()
+                            .id(4L)
+                            .level(1)
+                            .name("【open source】sa-token")
+                            .parentId(1L)
                             .children(
-                                    singletonList(
-                                            Student.builder()
-                                                    .id(5L).level(1)
-                                                    .name("【open source】mybatis-plus")
-                                                    .parentId(2L)
-                                                    .children(
-                                                            singletonList(
-                                                                    Student.builder()
-                                                                            .id(8L).level(2)
-                                                                            .name("【open source】jobob")
-                                                                            .parentId(5L)
-                                                                            .build()))
-                                                    .build()))
-                            .build()),
-            studentList);
+                                singletonList(
+                                    Student.builder()
+                                        .id(7L)
+                                        .level(2)
+                                        .name("【open source】click33")
+                                        .parentId(4L)
+                                        .build()))
+                            .build()))
+                .build(),
+            Student.builder()
+                .id(2L)
+                .level(0)
+                .name("【open source】baomidou")
+                .matchParent(true)
+                .children(
+                    singletonList(
+                        Student.builder()
+                            .id(5L)
+                            .level(1)
+                            .name("【open source】mybatis-plus")
+                            .parentId(2L)
+                            .children(
+                                singletonList(
+                                    Student.builder()
+                                        .id(8L)
+                                        .level(2)
+                                        .name("【open source】jobob")
+                                        .parentId(5L)
+                                        .build()))
+                            .build()))
+                .build()),
+        studentList);
   }
 
   @Data

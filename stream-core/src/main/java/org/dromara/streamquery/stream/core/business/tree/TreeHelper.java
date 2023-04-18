@@ -47,12 +47,14 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   private final SerBiCons<T, List<T>> childrenSetter;
 
   private TreeHelper(
-          SerFunc<T, R> idGetter,
-          SerFunc<T, R> pidGetter,
-          SerBiCons<T, Integer> levelSetter, SerFunc<T, Integer> levelGetter, R pidValue,
-          SerPred<T> parentPredicate,
-          SerFunc<T, List<T>> childrenGetter,
-          SerBiCons<T, List<T>> childrenSetter) {
+      SerFunc<T, R> idGetter,
+      SerFunc<T, R> pidGetter,
+      SerBiCons<T, Integer> levelSetter,
+      SerFunc<T, Integer> levelGetter,
+      R pidValue,
+      SerPred<T> parentPredicate,
+      SerFunc<T, List<T>> childrenGetter,
+      SerBiCons<T, List<T>> childrenSetter) {
     this.idGetter = idGetter;
     this.pidGetter = pidGetter;
     this.levelSetter = levelSetter;
@@ -77,14 +79,22 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    * @return a {@link TreeHelper} object
    */
   public static <T, R extends Comparable<? super R>> TreeHelper<T, R> of(
-          SerFunc<T, R> idGetter,
-          SerFunc<T, R> pidGetter,
-          SerBiCons<T, Integer> levelSetter,
-          SerFunc<T, Integer> levelGetter,
-          R pidValue,
-          SerFunc<T, List<T>> childrenGetter,
-          SerBiCons<T, List<T>> childrenSetter) {
-    return new TreeHelper<>(idGetter, pidGetter, levelSetter, levelGetter, pidValue, null, childrenGetter, childrenSetter);
+      SerFunc<T, R> idGetter,
+      SerFunc<T, R> pidGetter,
+      SerBiCons<T, Integer> levelSetter,
+      SerFunc<T, Integer> levelGetter,
+      R pidValue,
+      SerFunc<T, List<T>> childrenGetter,
+      SerBiCons<T, List<T>> childrenSetter) {
+    return new TreeHelper<>(
+        idGetter,
+        pidGetter,
+        levelSetter,
+        levelGetter,
+        pidValue,
+        null,
+        childrenGetter,
+        childrenSetter);
   }
 
   /**
@@ -102,15 +112,22 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    * @return a {@link TreeHelper} object
    */
   public static <T, R extends Comparable<? super R>> TreeHelper<T, R> ofMatch(
-          SerFunc<T, R> idGetter,
-          SerFunc<T, R> pidGetter,
-          SerBiCons<T, Integer> levelSetter,
-          SerFunc<T, Integer> levelGetter,
-          SerPred<T> parentPredicate,
-          SerFunc<T, List<T>> childrenGetter,
-          SerBiCons<T, List<T>> childrenSetter) {
+      SerFunc<T, R> idGetter,
+      SerFunc<T, R> pidGetter,
+      SerBiCons<T, Integer> levelSetter,
+      SerFunc<T, Integer> levelGetter,
+      SerPred<T> parentPredicate,
+      SerFunc<T, List<T>> childrenGetter,
+      SerBiCons<T, List<T>> childrenSetter) {
     return new TreeHelper<>(
-            idGetter, pidGetter, levelSetter, levelGetter, null, parentPredicate, childrenGetter, childrenSetter);
+        idGetter,
+        pidGetter,
+        levelSetter,
+        levelGetter,
+        null,
+        parentPredicate,
+        childrenGetter,
+        childrenSetter);
   }
 
   /**
@@ -122,19 +139,21 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    */
   public List<T> toTree(List<T> list, Integer level) {
     if (Objects.isNull(parentPredicate)) {
-      final Map<R, List<T>> pIdValuesMap = Steam.of(list).filter(e -> Objects.nonNull(idGetter.apply(e))).group(pidGetter);
+      final Map<R, List<T>> pIdValuesMap =
+          Steam.of(list).filter(e -> Objects.nonNull(idGetter.apply(e))).group(pidGetter);
       final List<T> parents = pIdValuesMap.getOrDefault(pidValue, new ArrayList<>());
       return getTreeSet(level, pIdValuesMap, parents);
     }
     final List<T> parents = new ArrayList<>(list.size());
-    final Map<R, List<T>> pIdValuesMap = Steam.of(list)
+    final Map<R, List<T>> pIdValuesMap =
+        Steam.of(list)
             .filter(
-                    e -> {
-                      if (parentPredicate.test(e)) {
-                        parents.add(e);
-                      }
-                      return Objects.nonNull(idGetter.apply(e));
-                    })
+                e -> {
+                  if (parentPredicate.test(e)) {
+                    parents.add(e);
+                  }
+                  return Objects.nonNull(idGetter.apply(e));
+                })
             .group(pidGetter);
     return getTreeSet(level, pIdValuesMap, parents);
   }
@@ -151,7 +170,8 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     return parents;
   }
 
-  private void getChildrenFromMapByPidAndSet(Map<R, List<T>> pIdValuesMap, T parent, Integer currentLevel) {
+  private void getChildrenFromMapByPidAndSet(
+      Map<R, List<T>> pIdValuesMap, T parent, Integer currentLevel) {
     if (currentLevel != null && currentLevel < 0) {
       childrenSetter.accept(parent, Collections.emptyList());
       return;
@@ -174,7 +194,8 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     for (T child : children) {
       childrenSetter.accept(parent, children);
       levelSetter.accept(child, currentLevel == null ? 1 : currentLevel + 1);
-      getChildrenFromMapByPidAndSet(pIdValuesMap, child, currentLevel == null ? null : currentLevel + 1);
+      getChildrenFromMapByPidAndSet(
+          pIdValuesMap, child, currentLevel == null ? null : currentLevel + 1);
     }
   }
 
@@ -187,7 +208,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   public List<T> flat(List<T> list) {
     AtomicReference<Function<T, Steam<T>>> recursiveRef = new AtomicReference<>();
     Function<T, Steam<T>> recursive =
-            e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
+        e -> Steam.of(childrenGetter.apply(e)).flat(recursiveRef.get()).unshift(e);
     recursiveRef.set(recursive);
     return Steam.of(list).flat(recursive).peek(e -> childrenSetter.accept(e, null)).toList();
   }
@@ -202,13 +223,13 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   public List<T> filter(List<T> list, SerPred<T> condition) {
     AtomicReference<Predicate<T>> recursiveRef = new AtomicReference<>();
     Predicate<T> recursive =
-            SerPred.multiOr(
-                    condition::test,
-                    e ->
-                            Opp.ofColl(childrenGetter.apply(e))
-                                    .map(children -> Steam.of(children).filter(recursiveRef.get()).toList())
-                                    .peek(children -> childrenSetter.accept(e, children))
-                                    .is(s -> !s.isEmpty()));
+        SerPred.multiOr(
+            condition::test,
+            e ->
+                Opp.ofColl(childrenGetter.apply(e))
+                    .map(children -> Steam.of(children).filter(recursiveRef.get()).toList())
+                    .peek(children -> childrenSetter.accept(e, children))
+                    .is(s -> !s.isEmpty()));
     recursiveRef.set(recursive);
     return Steam.of(list).filter(recursive).toList();
   }
@@ -223,11 +244,11 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   public List<T> forEach(List<T> list, SerCons<T> action) {
     AtomicReference<Consumer<T>> recursiveRef = new AtomicReference<>();
     Consumer<T> recursive =
-            SerCons.multi(
-                    action::accept,
-                    e ->
-                            Opp.ofColl(childrenGetter.apply(e))
-                                    .peek(children -> Steam.of(children).forEach(recursiveRef.get())));
+        SerCons.multi(
+            action::accept,
+            e ->
+                Opp.ofColl(childrenGetter.apply(e))
+                    .peek(children -> Steam.of(children).forEach(recursiveRef.get())));
     recursiveRef.set(recursive);
     Steam.of(list).forEach(recursive);
     return list;
