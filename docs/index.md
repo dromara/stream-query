@@ -68,8 +68,8 @@ postList: none
   link: https://gitee.com/VampireAchao # 链接，可选
   bgColor: '#32040d' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
   textColor: '#d7dadc' # 文本色，可选，默认var(--textColor)
-- name: Eliauk
-  desc: '- 完善HighlightHelper<br>- 完善TreeHelper<br>- 文档编写与维护'
+- name: 臧臧
+  desc: '- 维护Core模块<br>- 文档编写'
   avatar: /img/commiter/Eliauk.jpeg # 头像，可选
   link: https://gitee.com/EliaukU # 链接，可选
   bgColor: '#35171b' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
