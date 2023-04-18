@@ -191,8 +191,8 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
       return;
     }
 
+    childrenSetter.accept(parent, children);
     for (T child : children) {
-      childrenSetter.accept(parent, children);
       levelSetter.accept(child, currentLevel == null ? 1 : currentLevel + 1);
       getChildrenFromMapByPidAndSet(
           pIdValuesMap, child, currentLevel == null ? null : currentLevel + 1);
