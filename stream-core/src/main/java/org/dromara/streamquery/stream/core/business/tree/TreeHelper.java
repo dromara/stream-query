@@ -138,6 +138,9 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    * @return 符合树结构的集合 {@link java.util.List} object
    */
   public List<T> toTree(List<T> list, Integer level) {
+    if (level != null && level < 0) {
+      return new ArrayList<>();
+    }
     if (Objects.isNull(parentPredicate)) {
       final Map<R, List<T>> pIdValuesMap =
           Steam.of(list).filter(e -> Objects.nonNull(idGetter.apply(e))).group(pidGetter);
@@ -161,41 +164,27 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   private List<T> getTreeSet(Integer level, Map<R, List<T>> pIdValuesMap, List<T> parents) {
     for (T parent : parents) {
       levelSetter.accept(parent, 0);
-      if (level == null || level > 0) {
-        getChildrenFromMapByPidAndSet(pIdValuesMap, parent, level == null ? null : 0);
-      } else {
-        childrenSetter.accept(parent, Collections.emptyList());
-      }
+      getChildrenFromMapByPidAndSet(pIdValuesMap, parent, level == null ? Integer.MAX_VALUE : level, 0);
     }
     return parents;
   }
 
   private void getChildrenFromMapByPidAndSet(
-      Map<R, List<T>> pIdValuesMap, T parent, Integer currentLevel) {
-    if (currentLevel != null && currentLevel < 0) {
-      childrenSetter.accept(parent, Collections.emptyList());
+      Map<R, List<T>> pIdValuesMap, T parent, Integer level, Integer currentLevel) {
+    if (currentLevel >= level) {
       return;
     }
 
     List<T> children = pIdValuesMap.get(idGetter.apply(parent));
     if (Opp.ofColl(children).isEmpty()) {
-      if (currentLevel == null) {
-        Integer parentLevel = levelGetter.apply(parent);
-        if (parentLevel != null) {
-          currentLevel = parentLevel + 1;
-        } else {
-          currentLevel = 1;
-        }
-      }
-      levelSetter.accept(parent, currentLevel);
       return;
     }
 
+    childrenSetter.accept(parent, children);
     for (T child : children) {
-      childrenSetter.accept(parent, children);
-      levelSetter.accept(child, currentLevel == null ? 1 : currentLevel + 1);
+      levelSetter.accept(child, currentLevel + 1);
       getChildrenFromMapByPidAndSet(
-          pIdValuesMap, child, currentLevel == null ? null : currentLevel + 1);
+          pIdValuesMap, child, level, currentLevel + 1);
     }
   }
 
