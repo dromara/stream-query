@@ -92,8 +92,7 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
           ClassMetadata classMetadata = metadataReader.getClassMetadata();
           return classMetadata.getClassName().endsWith("package-info")
               || classMetadata.isInterface()
-              || classMetadata.isAbstract()
-              || classMetadata.isFinal();
+              || classMetadata.isAbstract();
         });
   }
 
