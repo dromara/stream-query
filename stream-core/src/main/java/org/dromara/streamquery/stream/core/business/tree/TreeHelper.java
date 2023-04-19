@@ -132,6 +132,16 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
 
   /**
    * 传入List集合通过创建树先生时所传入信息去构造树结构
+   * 
+   * @param list list 需要构建树结构的集合 {@link java.util.List} object
+   * @return 符合树结构的集合 {@link java.util.List} object
+   */
+  public List<T> toTree(List<T> list) {
+    return toTree(list, null);
+  }
+
+  /**
+   * 传入List集合通过创建树先生时所传入信息去构造树结构
    *
    * @param list list 需要构建树结构的集合 {@link java.util.List} object
    * @param level {@link Integer} object 要生成节点的层数 null则为生成到最后一层

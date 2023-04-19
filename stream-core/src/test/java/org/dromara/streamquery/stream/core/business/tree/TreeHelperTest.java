@@ -184,6 +184,26 @@ class TreeHelperTest {
             Student::setChildren);
   }
 
+  @Test
+  void testToTree() {
+    List<Student> studentTree = studentTreeHelper.toTree(originStudentList);
+    Assertions.assertEquals(originStudentTree, studentTree);
+  }
+
+  @Test
+  void testToTreeWithCondition() {
+    TreeHelper<Student, Long> conditionTreeHelper =
+        TreeHelper.ofMatch(
+            Student::getId,
+            Student::getParentId,
+            Student::setLevel,
+            Student::getLevel,
+            s -> Boolean.TRUE.equals(s.getMatchParent()),
+            Student::getChildren,
+            Student::setChildren);
+    Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList));
+  }
+
   
   @Test
   void testToTreeAndLevel() {
