@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <revision>1.5.1-alpha.beta</revision>
+        <revision>1.6.0-alpha</revision>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <byte-buddy.version>1.12.21</byte-buddy.version>
         <lombok.version>1.18.24</lombok.version>
