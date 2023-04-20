@@ -57,7 +57,7 @@ class WrapperHelperTest {
                     setName("Tom");
                   }
                 }));
-    // ==>  Preparing: SELECT id,name,age,email,version,gmt_deleted FROM user_info WHERE
+    // ==>  Preparing: SELECT id,name,age,email,gmt_deleted FROM user_info WHERE
     // gmt_deleted='2001-01-01 00:00:00' AND ((name IN (?,?) OR email IN (?)))
     // ==> Parameters: Jon(String), Tom(String), test2@baomidou.com(String)
     List<UserInfo> userInfos = Database.list(wrapper);
@@ -98,8 +98,9 @@ class WrapperHelperTest {
                               UserInfo::getName,
                               data.getName()));
             });
-    // ==>  Preparing: SELECT id,name,age,email,version,gmt_deleted FROM user_info WHERE
-    // gmt_deleted='2001-01-01 00:00:00' AND ((name = ? OR email = ? OR name = ?))
+    // ==>  Preparing: SELECT id,name,age,email,gmt_deleted FROM user_info WHERE
+    // gmt_deleted='2001-01-01 00:00:00'
+    // AND (((name = ?) OR (email = ?) OR (name = ?)))
     // ==> Parameters: Jon(String), test2@baomidou.com(String), Tom(String)
     List<UserInfo> userInfos = Database.list(wrapper);
     Assertions.assertEquals("Jon", userInfos.get(0).getName());
