@@ -101,6 +101,6 @@ public class WrapperHelper {
     if (Lists.isEmpty(dataList)) {
       return Database.notActive(wrapper);
     }
-    return wrapper.nested(wrap -> dataList.forEach(data -> wrap.or(w -> biConsumer.accept(w, data))));
+    return wrapper.nested(w -> dataList.forEach(data -> biConsumer.accept(w.or(), data)));
   }
 }
