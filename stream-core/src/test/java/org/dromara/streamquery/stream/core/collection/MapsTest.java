@@ -46,9 +46,9 @@ class MapsTest {
 
   @Test
   void testOneToManyToOne() {
-    final Map<String, List<String>> map =
+    final Map<String, Collection<String>> map =
         Maps.oneToManyToOne(
-                new HashMap<String, List<String>>() {
+                new HashMap<String, Collection<String>>() {
                   {
                     put("key", Arrays.asList("value", null));
                   }
@@ -61,7 +61,7 @@ class MapsTest {
                 Steam::nonNull)
             .collect(Collective.entryToMap());
     Assertions.assertEquals(1, map.get("key").size());
-    Assertions.assertEquals("Good", map.get("key").get(0));
+    Assertions.assertEquals("Good", map.get("key").stream().findFirst().get());
   }
 
   @Test
