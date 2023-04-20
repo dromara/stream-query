@@ -46,7 +46,7 @@ class MapsTest {
 
   @Test
   void testOneToManyToOne() {
-    final Map<String, Collection<String>> map =
+    final Map<String, List<String>> map =
         Maps.oneToManyToOne(
                 new HashMap<String, Collection<String>>() {
                   {
