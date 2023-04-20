@@ -206,6 +206,8 @@ postList: none
 ```
 :::
 
+<!-- <object type="image/svg+xml" data="/img/projects.svg"></object> -->
+
 <br/>
 
 ## 🎉上新推荐
