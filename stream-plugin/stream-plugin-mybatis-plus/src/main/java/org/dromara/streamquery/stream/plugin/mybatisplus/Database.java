@@ -805,7 +805,7 @@ public class Database {
    * @param <T> a T class
    * @return {@code java.util.List<T>}
    */
-  public static <T> Collection<T> list(AbstractWrapper<T, ?, ?> queryWrapper) {
+  public static <T> List<T> list(AbstractWrapper<T, ?, ?> queryWrapper) {
     return execute(
         getEntityClass(queryWrapper),
         baseMapper -> activeOrElse(queryWrapper, baseMapper::selectList, new ArrayList<>()));

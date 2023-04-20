@@ -243,8 +243,8 @@ public class OneToManyToOne<
    * @param <R> a R class
    * @return a R object
    */
-  public <R> R query(BiFunction<Map<K, Collection<V>>, Map<V, A>, R> mapper) {
-    Map<K, Collection<V>> middleKeyValuesMap =
+  public <R> R query(BiFunction<Map<K, List<V>>, Map<V, A>, R> mapper) {
+    Map<K, List<V>> middleKeyValuesMap =
         Steam.of(Database.list(middleWrapper))
             .parallel(isParallel)
             .peek(middlePeek)
@@ -252,11 +252,11 @@ public class OneToManyToOne<
                 middleKey,
                 Collective.mapping(
                     Sf.of(middleValue).orGet(() -> SerFunc.<T, V>cast()::apply),
-                    Collective.toCollection(TreeSet::new)));
+                    Collective.toList()));
     if (Objects.isNull(attachKey)) {
       return mapper.apply(middleKeyValuesMap, new HashMap<>(middleKeyValuesMap.size()));
     }
-    Collection<V> relationDataList =
+    List<V> relationDataList =
         Steam.of(middleKeyValuesMap.values()).flat(Function.identity()).toList();
     Map<V, A> attachKeyValue =
         OneToOne.of(attachKey)
@@ -274,7 +274,7 @@ public class OneToManyToOne<
    *
    * @return a {@link java.util.Map} object
    */
-  public Map<K, Collection<A>> query() {
+  public Map<K, List<A>> query() {
     return query(
         (middleKeyValuesMap, attachKeyValue) ->
             Maps.oneToManyToOne(middleKeyValuesMap, attachKeyValue, Steam::nonNull)
