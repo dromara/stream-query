@@ -136,8 +136,8 @@ public class Maps {
    * @return a {@link Steam} object
    */
   @SafeVarargs
-  public static <K, A, V> Steam<Map.Entry<K, List<V>>> oneToManyToOne(
-      Map<K, List<A>> middleMap, Map<A, V> attachMap, UnaryOperator<Steam<V>>... unaryOperator) {
+  public static <K, A, V> Steam<Map.Entry<K, Collection<V>>> oneToManyToOne(
+      Map<K, Collection<A>> middleMap, Map<A, V> attachMap, UnaryOperator<Steam<V>>... unaryOperator) {
     return Steam.of(middleMap.entrySet())
         .map(
             e ->
