@@ -67,7 +67,7 @@ class WrapperHelperTest {
   }
 
   @Test
-  void testMultiOr() {
+  void testMulti() {
     val dataList =
         Lists.of(
             new UserInfo() {
@@ -86,12 +86,17 @@ class WrapperHelperTest {
               }
             });
     val wrapper =
-        WrapperHelper.multiOr(
+        WrapperHelper.multi(
             Wrappers.lambdaQuery(UserInfo.class),
             dataList,
-            (w, data) -> {
-              w.eq(Objects.nonNull(data.getEmail()), UserInfo::getEmail, data.getEmail())
-                  .eq(StringUtils.isNotBlank(data.getName()), UserInfo::getName, data.getName());
+            (wrap, data) -> {
+              wrap.or(
+                  w ->
+                      w.eq(Objects.nonNull(data.getEmail()), UserInfo::getEmail, data.getEmail())
+                          .eq(
+                              StringUtils.isNotBlank(data.getName()),
+                              UserInfo::getName,
+                              data.getName()));
             });
     // ==>  Preparing: SELECT id,name,age,email,version,gmt_deleted FROM user_info WHERE
     // gmt_deleted='2001-01-01 00:00:00' AND ((name = ? OR email = ? OR name = ?))

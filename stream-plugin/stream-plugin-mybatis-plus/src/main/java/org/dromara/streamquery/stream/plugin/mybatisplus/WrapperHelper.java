@@ -59,7 +59,7 @@ public class WrapperHelper {
     }
     final Class<T> entityClass = Database.getEntityClass(dataList);
     final List<TableFieldInfo> fieldList = TableInfoHelper.getTableInfo(entityClass).getFieldList();
-    multiOr(
+    multi(
         wrapper,
         fieldList,
         (w, tableField) -> {
@@ -80,13 +80,31 @@ public class WrapperHelper {
                         return LambdaHelper.revert(SFunction.class, getter);
                       });
           final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
-          w.in(Lists.isNotEmpty(list), getterFunction, list);
+          w.or().in(Lists.isNotEmpty(list), getterFunction, list);
         });
     return wrapper;
   }
 
   /**
-   * or 查询
+   * or 查询 只会拼接第一个条件
+   *
+   * @param wrapper 条件构造器
+   * @param dataList 数据
+   * @param biConsumer 逻辑处理
+   * @param <W> 条件构造器
+   * @param <T> 实体类型
+   * @param <R> 数据类型
+   * @return 条件构造器
+   * @deprecated 请使用 {@link #multi(AbstractWrapper, Collection, BiConsumer)},该API将在v2.0废弃
+   */
+  @Deprecated
+  public static <W extends AbstractWrapper<T, ?, W>, T, R> W multiOr(
+      W wrapper, Collection<R> dataList, BiConsumer<W, R> biConsumer) {
+    return multi(wrapper, dataList, (w, data) -> biConsumer.accept(w.or(), data));
+  }
+
+  /**
+   * 多个条件查询
    *
    * @param wrapper 条件构造器
    * @param dataList 数据
@@ -96,11 +114,11 @@ public class WrapperHelper {
    * @param <R> 数据类型
    * @return 条件构造器
    */
-  public static <W extends AbstractWrapper<T, ?, W>, T, R> W multiOr(
+  public static <W extends AbstractWrapper<T, ?, W>, T, R> W multi(
       W wrapper, Collection<R> dataList, BiConsumer<W, R> biConsumer) {
     if (Lists.isEmpty(dataList)) {
       return Database.notActive(wrapper);
     }
-    return wrapper.nested(w -> dataList.forEach(data -> biConsumer.accept(w.or(), data)));
+    return wrapper.nested(w -> dataList.forEach(data -> biConsumer.accept(w, data)));
   }
 }
