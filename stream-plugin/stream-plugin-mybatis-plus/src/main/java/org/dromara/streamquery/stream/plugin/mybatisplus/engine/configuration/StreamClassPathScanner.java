@@ -70,13 +70,13 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
 
     if (this.interfaceClass != null) {
       addIncludeFilter(
-              new AssignableTypeFilter(this.interfaceClass) {
-                // remove parent entity
-                @Override
-                protected boolean matchClassName(String className) {
-                  return false;
-                }
-              });
+          new AssignableTypeFilter(this.interfaceClass) {
+            // remove parent entity
+            @Override
+            protected boolean matchClassName(String className) {
+              return false;
+            }
+          });
       acceptAllInterfaces = false;
     }
 
@@ -87,12 +87,12 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
 
     // exclude package-info.java
     addExcludeFilter(
-            (metadataReader, metadataReaderFactory) -> {
-              ClassMetadata classMetadata = metadataReader.getClassMetadata();
-              return classMetadata.getClassName().endsWith("package-info")
-                      || classMetadata.isInterface()
-                      || classMetadata.isAbstract();
-            });
+        (metadataReader, metadataReaderFactory) -> {
+          ClassMetadata classMetadata = metadataReader.getClassMetadata();
+          return classMetadata.getClassName().endsWith("package-info")
+              || classMetadata.isInterface()
+              || classMetadata.isAbstract();
+        });
   }
 
   public Set<Class<?>> scan(Set<String> basePackages) {
@@ -101,11 +101,14 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
       return Collections.emptySet();
     }
     return Steam.of(basePackages)
-            .flat(this::findCandidateComponents)
-            .map(BeanDefinition::getBeanClassName)
-            .nonNull()
-            .<Class<?>>map(ReflectHelper::forClassName)
-            .filter(SerPred.<Class<?>>multiOr(Class::isMemberClass, Class::isAnonymousClass, Class::isLocalClass).negate())
-            .toSet();
+        .flat(this::findCandidateComponents)
+        .map(BeanDefinition::getBeanClassName)
+        .nonNull()
+        .<Class<?>>map(ReflectHelper::forClassName)
+        .filter(
+            SerPred.<Class<?>>multiOr(
+                    Class::isMemberClass, Class::isAnonymousClass, Class::isLocalClass)
+                .negate())
+        .toSet();
   }
 }
