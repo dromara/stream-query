@@ -132,7 +132,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
 
   /**
    * 传入List集合通过创建树先生时所传入信息去构造树结构
-   * 
+   *
    * @param list list 需要构建树结构的集合 {@link java.util.List} object
    * @return 符合树结构的集合 {@link java.util.List} object
    */
@@ -174,7 +174,8 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   private List<T> getTreeSet(Integer level, Map<R, List<T>> pIdValuesMap, List<T> parents) {
     for (T parent : parents) {
       levelSetter.accept(parent, 0);
-      getChildrenFromMapByPidAndSet(pIdValuesMap, parent, level == null ? Integer.MAX_VALUE : level, 0);
+      getChildrenFromMapByPidAndSet(
+          pIdValuesMap, parent, level == null ? Integer.MAX_VALUE : level, 0);
     }
     return parents;
   }
@@ -193,8 +194,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     childrenSetter.accept(parent, children);
     for (T child : children) {
       levelSetter.accept(child, currentLevel + 1);
-      getChildrenFromMapByPidAndSet(
-          pIdValuesMap, child, level, currentLevel + 1);
+      getChildrenFromMapByPidAndSet(pIdValuesMap, child, level, currentLevel + 1);
     }
   }
 

@@ -16,7 +16,6 @@
  */
 package org.dromara.streamquery.stream.core.business.tree;
 
-import java.util.ArrayList;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -204,21 +204,22 @@ class TreeHelperTest {
     Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList));
   }
 
-  
   @Test
   void testToTreeAndLevel() {
     List<Student> studentTree = studentTreeHelper.toTree(originStudentList, null);
     Assertions.assertEquals(originStudentTree, studentTree);
   }
-  
+
   @Test
   void testToTreeAndLevelWithLeveLimit() {
     Assertions.assertEquals(new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1));
-    Assertions.assertEquals(treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 1));
+    Assertions.assertEquals(
+        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 1));
     Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2));
-    Assertions.assertNotEquals(treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 2));
+    Assertions.assertNotEquals(
+        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 2));
   }
-  
+
   @Test
   void testToTreeAndLevelWithCondition() {
     TreeHelper<Student, Long> conditionTreeHelper =
