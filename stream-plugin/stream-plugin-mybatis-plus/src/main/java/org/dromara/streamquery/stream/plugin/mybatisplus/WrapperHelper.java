@@ -20,19 +20,13 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import org.dromara.streamquery.stream.core.bean.BeanHelper;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
-import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 
 /**
@@ -40,8 +34,6 @@ import java.util.function.BiConsumer;
  * @since 2023/4/13 17:54
  */
 public class WrapperHelper {
-
-  private static final Map<String, SFunction<?, ?>> LAMBDA_GETTER_CACHE = new WeakHashMap<>();
 
   private WrapperHelper() {
     /* Do not new me! */
@@ -67,14 +59,7 @@ public class WrapperHelper {
         fieldList,
         (w, tableField) -> {
           SFunction<T, ?> getterFunction =
-              (SFunction<T, ?>)
-                  LAMBDA_GETTER_CACHE.computeIfAbsent(
-                      entityClass + StringPool.AT + tableField.getProperty(),
-                      property -> {
-                          Method getter = ReflectHelper.getMethod(entityClass,
-                                  BeanHelper.getGetterName(tableField.getProperty()));
-                          return LambdaHelper.revert(SFunction.class, getter);
-                      });
+              LambdaHelper.getGetter(entityClass, tableField.getProperty(), SFunction.class);
           final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
           w.or().in(Lists.isNotEmpty(list), getterFunction, list);
         });
