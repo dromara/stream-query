@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * EnableMybatisPlusPluginByClassesTest
+ * EnableMybatisPlusPluginByInterfaceClassTest
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
@@ -43,7 +43,7 @@ public class EnableMybatisPlusPluginByInterfaceClassTest
     extends AbstractMybatisPlusTestApplication {
 
   @Test
-  void testScanByValue() {
+  void testScanByInterfaceClass() {
     StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
     assertNotNull(bean);
     assertNotNull(bean.getEntityClasses());

@@ -31,18 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * EnableMybatisPlusPluginByClassesTest
+ * EnableMybatisPlusPluginByAnnotationTest
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
 @EnableAutoConfiguration
-@EnableMybatisPlusPlugin(
-    basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
-    annotation = GenerateMapper.class)
+@EnableMybatisPlusPlugin(annotation = GenerateMapper.class)
 public class EnableMybatisPlusPluginByAnnotationTest extends AbstractMybatisPlusTestApplication {
 
   @Test
-  void testScanByValue() {
+  void testScanByAnnotation() {
     StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
     assertNotNull(bean);
     assertNotNull(bean.getEntityClasses());

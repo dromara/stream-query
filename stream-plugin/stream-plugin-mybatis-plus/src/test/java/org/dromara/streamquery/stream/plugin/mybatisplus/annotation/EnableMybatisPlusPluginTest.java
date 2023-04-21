@@ -30,22 +30,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * EnableMybatisPlusPluginByClassesTest
+ * EnableMybatisPlusPluginTest
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
 @EnableAutoConfiguration
-@EnableMybatisPlusPlugin(classes = {UserInfo.class})
-public class EnableMybatisPlusPluginByClassesTest extends AbstractMybatisPlusTestApplication {
+@EnableMybatisPlusPlugin
+public class EnableMybatisPlusPluginTest extends AbstractMybatisPlusTestApplication {
 
   @Test
-  void testScanByClasses() {
+  void testScan() {
     StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
     assertNotNull(bean);
     assertNotNull(bean.getEntityClasses());
-    assertFalse(bean.getEntityClasses().contains(RoleInfo.class));
+    assertTrue(bean.getEntityClasses().contains(RoleInfo.class));
     assertTrue(bean.getEntityClasses().contains(UserInfo.class));
-    assertFalse(bean.getEntityClasses().contains(UserRole.class));
+    assertTrue(bean.getEntityClasses().contains(UserRole.class));
     assertFalse(bean.getEntityClasses().contains(AddressInfo.class));
     assertFalse(bean.getEntityClasses().contains(AddressInfo.InnerAddressInfo.class));
   }
