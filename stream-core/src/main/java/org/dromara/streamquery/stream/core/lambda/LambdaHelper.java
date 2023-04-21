@@ -178,4 +178,33 @@ public class LambdaHelper {
         .map(BeanHelper::getPropertyName)
         .get();
   }
+
+  /**
+   * 获取getter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param <T> 类型
+   * @param <R> getter返回值
+   * @return 返回getter对应的lambda
+   */
+  public static <T, R> SerFunc<T, R> getGetter(Class<T> clazz, String propertyName) {
+    return SerFunc.<SerFunc<?, ?>, SerFunc<T, R>>cast()
+        .apply(getGetter(clazz, propertyName, SerFunc.class));
+  }
+
+  /**
+   * 获取getter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param lambdaType lambda类型
+   * @param <T> 类型
+   * @param <F> lambda类型
+   * @return 返回getter对应的lambda
+   */
+  public static <T, F> F getGetter(Class<T> clazz, String propertyName, Class<F> lambdaType) {
+    return revert(
+        lambdaType, ReflectHelper.getMethod(clazz, BeanHelper.getGetterName(propertyName)));
+  }
 }
