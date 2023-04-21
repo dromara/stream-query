@@ -235,6 +235,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
 
   /**
    * 获取以给定节点为根的树的深度
+   * 
    * @param node 要获取深度的节点
    * @return 以该节点为根的树的深度
    */
