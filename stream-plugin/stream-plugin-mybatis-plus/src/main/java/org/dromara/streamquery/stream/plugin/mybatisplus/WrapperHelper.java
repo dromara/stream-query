@@ -29,7 +29,10 @@ import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 
 /**
@@ -68,16 +71,9 @@ public class WrapperHelper {
                   LAMBDA_GETTER_CACHE.computeIfAbsent(
                       entityClass + StringPool.AT + tableField.getProperty(),
                       property -> {
-                        Method getter =
-                            ReflectHelper.getMethod(
-                                entityClass,
-                                BeanHelper.GETTER_PREFIX
-                                    + tableField
-                                        .getProperty()
-                                        .substring(0, 1)
-                                        .toUpperCase(Locale.ROOT)
-                                    + tableField.getProperty().substring(1));
-                        return LambdaHelper.revert(SFunction.class, getter);
+                          Method getter = ReflectHelper.getMethod(entityClass,
+                                  BeanHelper.getGetterName(tableField.getProperty()));
+                          return LambdaHelper.revert(SFunction.class, getter);
                       });
           final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
           w.or().in(Lists.isNotEmpty(list), getterFunction, list);
