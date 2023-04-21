@@ -40,7 +40,7 @@ public class EnableMybatisPlusPluginByBasePackageClassesTest
     extends AbstractMybatisPlusTestApplication {
 
   @Test
-  void testScanByValue() {
+  void testScanByBasePackageClasses() {
     StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
     assertNotNull(bean);
     assertNotNull(bean.getEntityClasses());
