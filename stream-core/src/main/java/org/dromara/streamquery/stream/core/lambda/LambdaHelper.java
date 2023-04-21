@@ -17,6 +17,7 @@
 package org.dromara.streamquery.stream.core.lambda;
 
 import org.dromara.streamquery.stream.core.bean.BeanHelper;
+import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
@@ -87,16 +88,19 @@ public class LambdaHelper {
     if (lambda instanceof Proxy) {
       return LambdaExecutable.initProxy((Proxy) lambda);
     }
-    return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(
-        lambda.getClass().getName(), key -> new LambdaExecutable(serialize(lambda)));
+    return Maps.computeIfAbsent(
+        SERIALIZED_LAMBDA_EXECUTABLE_CACHE,
+        lambda.getClass().getName(),
+        key -> new LambdaExecutable(serialize(lambda)));
   }
 
   @SuppressWarnings("unchecked")
   public static <T> T revert(Class<? super T> clazz, Executable executable) {
     WeakHashMap<Executable, Object> lambdaCache =
-        LAMBDA_REVERT_CACHE.computeIfAbsent(clazz, key -> new WeakHashMap<>());
+        Maps.computeIfAbsent(LAMBDA_REVERT_CACHE, clazz, key -> new WeakHashMap<>());
     return (T)
-        lambdaCache.computeIfAbsent(
+        Maps.computeIfAbsent(
+            lambdaCache,
             executable,
             key -> {
               final Method funcMethod =

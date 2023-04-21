@@ -16,10 +16,13 @@
  */
 package org.dromara.streamquery.stream.core.collection;
 
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.core.variable.VariableHelper;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
@@ -206,5 +209,23 @@ public class Maps {
    */
   public static <K, V> Map<K, V> empty() {
     return Collections.emptyMap();
+  }
+
+  /**
+   * computeIfAbsent.
+   *
+   * @param map a {@link java.util.Map} object
+   * @param key a K object
+   * @param mappingFunction a {@link java.util.function.Function} object
+   * @param <K> a K class
+   * @param <V> a V class
+   * @return a V object
+   */
+  public static <K, V> V computeIfAbsent(
+      Map<K, V> map, K key, Function<? super K, ? extends V> mappingFunction) {
+    if (map instanceof ConcurrentHashMap) {
+      return Opp.of(map.get(key)).orElseGet(() -> map.put(key, mappingFunction.apply(key)));
+    }
+    return map.computeIfAbsent(key, mappingFunction);
   }
 }

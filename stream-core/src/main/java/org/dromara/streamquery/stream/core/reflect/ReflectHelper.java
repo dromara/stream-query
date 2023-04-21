@@ -205,7 +205,8 @@ public class ReflectHelper {
    * @return a {@link java.util.List} object
    */
   public static List<Field> getFields(Class<?> clazz) {
-    return CLASS_FIELDS_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        CLASS_FIELDS_CACHE,
         clazz,
         k -> {
           Steam.Builder<Field> fieldsBuilder = Steam.builder();
@@ -267,7 +268,8 @@ public class ReflectHelper {
    * @return An array of all declared methods of the class.
    */
   public static List<Method> getMethods(Class<?> clazz) {
-    return CLASS_METHODS_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        CLASS_METHODS_CACHE,
         clazz,
         k ->
             Steam.<Class<?>>iterate(clazz, Objects::nonNull, Class::getSuperclass)
