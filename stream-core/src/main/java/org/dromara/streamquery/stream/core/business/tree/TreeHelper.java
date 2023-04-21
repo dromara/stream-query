@@ -244,18 +244,23 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     return list;
   }
 
-  // 获取节点的最大深度
-  private int getDepth(T node) {
+  /**
+   * 获取以给定节点为根的树的深度
+   * 
+   * @param node 要获取深度的节点
+   * @return 以该节点为根的树的深度
+   */
+  public int getDepth(T node) {
+    if (Objects.isNull(node)) {
+      return 0;
+    }
     List<T> children = childrenGetter.apply(node);
     if (children == null || children.isEmpty()) {
       return 1;
     }
     int maxDepth = 0;
     for (T child : children) {
-      int depth = getDepth(child);
-      if (depth > maxDepth) {
-        maxDepth = depth;
-      }
+      maxDepth = Math.max(maxDepth, getDepth(child));
     }
     return maxDepth + 1;
   }
