@@ -177,8 +177,6 @@ class TreeHelperTest {
         TreeHelper.of(
             Student::getId,
             Student::getParentId,
-            Student::setLevel,
-            Student::getLevel,
             null,
             Student::getChildren,
             Student::setChildren);
@@ -196,8 +194,6 @@ class TreeHelperTest {
         TreeHelper.ofMatch(
             Student::getId,
             Student::getParentId,
-            Student::setLevel,
-            Student::getLevel,
             s -> Boolean.TRUE.equals(s.getMatchParent()),
             Student::getChildren,
             Student::setChildren);
@@ -206,18 +202,18 @@ class TreeHelperTest {
 
   @Test
   void testToTreeAndLevel() {
-    List<Student> studentTree = studentTreeHelper.toTree(originStudentList, null);
+    List<Student> studentTree = studentTreeHelper.toTree(originStudentList, null,Student::setLevel);
     Assertions.assertEquals(originStudentTree, studentTree);
   }
 
   @Test
   void testToTreeAndLevelWithLeveLimit() {
-    Assertions.assertEquals(new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1));
+    Assertions.assertEquals(new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1,Student::setLevel));
     Assertions.assertEquals(
-        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 1));
-    Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2));
+        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 1,Student::setLevel));
+    Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2,Student::setLevel));
     Assertions.assertNotEquals(
-        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 2));
+        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 2,Student::setLevel));
   }
 
   @Test
@@ -226,8 +222,6 @@ class TreeHelperTest {
         TreeHelper.ofMatch(
             Student::getId,
             Student::getParentId,
-            Student::setLevel,
-            Student::getLevel,
             s -> Boolean.TRUE.equals(s.getMatchParent()),
             Student::getChildren,
             Student::setChildren);
