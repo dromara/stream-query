@@ -168,6 +168,15 @@ class TreeHelperTest {
     studentList.sort(Comparator.comparing(Student::getId));
     Assertions.assertEquals(originStudentList, studentList);
   }
+  
+  @Test
+  void testGetDepth() {
+    studentTreeHelper.toTree(originStudentList);
+    Assertions.assertEquals(3, studentTreeHelper.getDepth(originStudentList.get(0)));
+    Assertions.assertEquals(2, studentTreeHelper.getDepth(originStudentList.get(2)));
+    Assertions.assertEquals(1, studentTreeHelper.getDepth(originStudentList.get(5)));
+    Assertions.assertEquals(0, studentTreeHelper.getDepth(null));
+  }
 
   @Test
   void testFilter() {
