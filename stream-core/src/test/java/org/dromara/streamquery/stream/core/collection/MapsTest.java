@@ -31,10 +31,10 @@ class MapsTest {
 
   @Test
   void testOf() {
-    Assertions.assertEquals("value", Maps.ofSize("key", "value").get("key"));
-    Assertions.assertEquals("value1", Maps.ofSize("key", "value", "key1", "value1").get("key1"));
+    Assertions.assertEquals("value", Maps.of("key", "value").get("key"));
+    Assertions.assertEquals("value1", Maps.of("key", "value", "key1", "value1").get("key1"));
     Assertions.assertEquals(
-        "value2", Maps.ofSize("key", "value", "key1", "value1", "key2", "value2").get("key2"));
+        "value2", Maps.of("key", "value", "key1", "value1", "key2", "value2").get("key2"));
   }
 
   @Test
@@ -48,7 +48,7 @@ class MapsTest {
   void testOneToManyToOne() {
     final Map<String, List<String>> map =
         Maps.oneToManyToOne(
-                new HashMap<String, List<String>>() {
+                new HashMap<String, Collection<String>>() {
                   {
                     put("key", Arrays.asList("value", null));
                   }
@@ -61,7 +61,7 @@ class MapsTest {
                 Steam::nonNull)
             .collect(Collective.entryToMap());
     Assertions.assertEquals(1, map.get("key").size());
-    Assertions.assertEquals("Good", map.get("key").get(0));
+    Assertions.assertEquals("Good", map.get("key").stream().findFirst().get());
   }
 
   @Test

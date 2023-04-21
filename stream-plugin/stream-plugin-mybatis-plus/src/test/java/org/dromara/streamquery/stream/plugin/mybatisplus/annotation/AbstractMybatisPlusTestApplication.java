@@ -16,19 +16,31 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * MybatisPlusTestApplication less Create Retrieve Update Delete
+ *
+ * @author VampireAchao Cizai_
+ * @since 2022/5/21
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-@Documented
-@Inherited
-public @interface Entity {
+@ExtendWith(SpringExtension.class)
+public abstract class AbstractMybatisPlusTestApplication {
+
+  protected ConfigurableApplicationContext context;
+
+  @BeforeEach
+  void before() {
+    context = SpringApplication.run(this.getClass());
+  }
+
+  @AfterEach
+  void after() {
+    context.close();
+  }
 }

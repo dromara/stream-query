@@ -17,6 +17,7 @@
 package org.dromara.streamquery.stream.core.lambda;
 
 import lombok.SneakyThrows;
+import lombok.val;
 import org.dromara.streamquery.stream.core.lambda.function.SerArgsFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
@@ -41,7 +42,7 @@ import java.util.function.Function;
  * LambdaHelper测试
  *
  * @author VampireAchao Cizai_
- * @since 2022/5/31 19:51
+ * @since 2022/5/31
  */
 class LambdaHelperTest {
 
@@ -210,5 +211,24 @@ class LambdaHelperTest {
     executable.setName("test");
     Assertions.assertEquals("test", invoke.apply(executable));
     Assertions.assertEquals("getName", LambdaHelper.resolve(invoke).getName());
+  }
+
+  @Test
+  void testGetGetter() {
+    SerFunc<LambdaExecutable, String> nameGetter =
+        LambdaHelper.getGetter(LambdaExecutable.class, "name");
+    String name = nameGetter.apply(LambdaHelper.resolve(nameGetter));
+    Assertions.assertEquals("getName", name);
+    val lambda = LambdaHelper.getGetter(LambdaExecutable.class, "clazz", Function.class);
+    Function<LambdaExecutable, Class<?>> clazzGetter =
+        SerFunc.<Function<?, ?>, Function<LambdaExecutable, Class<?>>>cast().apply(lambda);
+    Class<?> clazz =
+        clazzGetter.apply(
+            new LambdaExecutable() {
+              {
+                setClazz(String.class);
+              }
+            });
+    Assertions.assertEquals(String.class, clazz);
   }
 }

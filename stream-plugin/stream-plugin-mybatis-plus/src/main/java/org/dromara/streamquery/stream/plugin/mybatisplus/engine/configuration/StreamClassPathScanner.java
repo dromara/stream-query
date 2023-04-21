@@ -18,31 +18,34 @@ package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.dromara.streamquery.stream.core.lambda.function.SerPred;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
+import org.dromara.streamquery.stream.core.stream.Steam;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * stream class path scanner
+ *
+ * @author KamToHung
+ * @since 1.5.0
  */
 public class StreamClassPathScanner extends ClassPathScanningCandidateComponentProvider {
 
   private static final Log LOG = LogFactory.getLog(StreamClassPathScanner.class);
 
-    /** annotation */
+  /** annotation */
   private Class<? extends Annotation> annotation;
 
-    /** scan interface */
+  /** scan interface */
   private Class<?> interfaceClass;
 
   public StreamClassPathScanner(boolean useDefaultFilters) {
@@ -66,28 +69,30 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
     }
 
     if (this.interfaceClass != null) {
-        addIncludeFilter(
-                new AssignableTypeFilter(this.interfaceClass) {
-                    // remove parent entity
-                    @Override
-                    protected boolean matchClassName(String className) {
-                        return false;
-                    }
-                });
-        acceptAllInterfaces = false;
+      addIncludeFilter(
+          new AssignableTypeFilter(this.interfaceClass) {
+            // remove parent entity
+            @Override
+            protected boolean matchClassName(String className) {
+              return false;
+            }
+          });
+      acceptAllInterfaces = false;
     }
 
-      if (acceptAllInterfaces) {
-          // default include filter that accepts all classes
-          addIncludeFilter((metadataReader, metadataReaderFactory) -> true);
-      }
+    if (acceptAllInterfaces) {
+      // default include filter that accepts all classes
+      addIncludeFilter((metadataReader, metadataReaderFactory) -> true);
+    }
 
-      // exclude package-info.java
-      addExcludeFilter(
-              (metadataReader, metadataReaderFactory) -> {
-                  String className = metadataReader.getClassMetadata().getClassName();
-                  return className.endsWith("package-info");
-              });
+    // exclude package-info.java
+    addExcludeFilter(
+        (metadataReader, metadataReaderFactory) -> {
+          ClassMetadata classMetadata = metadataReader.getClassMetadata();
+          return classMetadata.getClassName().endsWith("package-info")
+              || classMetadata.isInterface()
+              || classMetadata.isAbstract();
+        });
   }
 
   public Set<Class<?>> scan(Set<String> basePackages) {
@@ -95,12 +100,15 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
       LOG.warn("basePackages is empty");
       return Collections.emptySet();
     }
-      return basePackages.stream()
-              .map(this::findCandidateComponents)
-              .flatMap(Collection::stream)
-              .map(BeanDefinition::getBeanClassName)
-              .filter(Objects::nonNull)
-              .map(ReflectHelper::forClassName)
-              .collect(Collectors.toSet());
+    return Steam.of(basePackages)
+        .flat(this::findCandidateComponents)
+        .map(BeanDefinition::getBeanClassName)
+        .nonNull()
+        .<Class<?>>map(ReflectHelper::forClassName)
+        .filter(
+            SerPred.<Class<?>>multiOr(
+                    Class::isMemberClass, Class::isAnonymousClass, Class::isLocalClass)
+                .negate())
+        .toSet();
   }
 }

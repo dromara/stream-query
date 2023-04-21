@@ -20,16 +20,13 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import org.dromara.streamquery.stream.core.bean.BeanHelper;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
-import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -37,8 +34,6 @@ import java.util.function.BiConsumer;
  * @since 2023/4/13 17:54
  */
 public class WrapperHelper {
-
-  private static final Map<String, SFunction<?, ?>> LAMBDA_GETTER_CACHE = new WeakHashMap<>();
 
   private WrapperHelper() {
     /* Do not new me! */
@@ -59,34 +54,38 @@ public class WrapperHelper {
     }
     final Class<T> entityClass = Database.getEntityClass(dataList);
     final List<TableFieldInfo> fieldList = TableInfoHelper.getTableInfo(entityClass).getFieldList();
-    multiOr(
+    multi(
         wrapper,
         fieldList,
         (w, tableField) -> {
           SFunction<T, ?> getterFunction =
-              (SFunction<T, ?>)
-                  LAMBDA_GETTER_CACHE.computeIfAbsent(
-                      entityClass + StringPool.AT + tableField.getProperty(),
-                      property -> {
-                        Method getter =
-                            ReflectHelper.getMethod(
-                                entityClass,
-                                BeanHelper.GETTER_PREFIX
-                                    + tableField
-                                        .getProperty()
-                                        .substring(0, 1)
-                                        .toUpperCase(Locale.ROOT)
-                                    + tableField.getProperty().substring(1));
-                        return LambdaHelper.revert(SFunction.class, getter);
-                      });
+              LambdaHelper.getGetter(entityClass, tableField.getProperty(), SFunction.class);
           final List<?> list = Steam.of(dataList).map(getterFunction).nonNull().toList();
-          w.in(Lists.isNotEmpty(list), getterFunction, list);
+          w.or().in(Lists.isNotEmpty(list), getterFunction, list);
         });
     return wrapper;
   }
 
   /**
-   * or 查询
+   * or 查询 只会拼接第一个条件
+   *
+   * @param wrapper 条件构造器
+   * @param dataList 数据
+   * @param biConsumer 逻辑处理
+   * @param <W> 条件构造器
+   * @param <T> 实体类型
+   * @param <R> 数据类型
+   * @return 条件构造器
+   * @deprecated 请使用 {@link #multi(AbstractWrapper, Collection, BiConsumer)},该API将在v2.0废弃
+   */
+  @Deprecated
+  public static <W extends AbstractWrapper<T, ?, W>, T, R> W multiOr(
+      W wrapper, Collection<R> dataList, BiConsumer<W, R> biConsumer) {
+    return multi(wrapper, dataList, (w, data) -> biConsumer.accept(w.or(), data));
+  }
+
+  /**
+   * 多个条件查询
    *
    * @param wrapper 条件构造器
    * @param dataList 数据
@@ -96,11 +95,11 @@ public class WrapperHelper {
    * @param <R> 数据类型
    * @return 条件构造器
    */
-  public static <W extends AbstractWrapper<T, ?, W>, T, R> W multiOr(
+  public static <W extends AbstractWrapper<T, ?, W>, T, R> W multi(
       W wrapper, Collection<R> dataList, BiConsumer<W, R> biConsumer) {
     if (Lists.isEmpty(dataList)) {
       return Database.notActive(wrapper);
     }
-    return wrapper.nested(w -> dataList.forEach(data -> biConsumer.accept(w.or(), data)));
+    return wrapper.nested(w -> dataList.forEach(data -> biConsumer.accept(w, data)));
   }
 }

@@ -48,17 +48,17 @@ class JsonFieldHandlerTest {
   @Test
   void test() {
     val user =
-            new UserInfoWithJsonName() {
-              {
-                setName(
-                        new Name() {
-                          {
-                            setUsername("VampireAchao");
-                            setNickname("阿超");
-                          }
-                        });
-              }
-            };
+        new UserInfoWithJsonName() {
+          {
+            setName(
+                new Name() {
+                  {
+                    setUsername("VampireAchao");
+                    setNickname("阿超");
+                  }
+                });
+          }
+        };
     Database.save(user);
     val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
     Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());

@@ -22,11 +22,10 @@ import java.lang.annotation.*;
  * {@link EnableMybatisPlusPlugin#annotation} Include entity when it has {@link GenerateMapper}
  * annotation in basePackages.
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * @author KamToHung
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Documented
 @Inherited
-public @interface GenerateMapper {
-}
+public @interface GenerateMapper {}

@@ -42,7 +42,7 @@ public class Maps {
    * @return a {@link java.util.Map} object
    */
   public static <K, V> Map<K, V> of() {
-    return new HashMap<>();
+    return new HashMap<>(1 << 4);
   }
 
   /**
@@ -66,7 +66,7 @@ public class Maps {
    * @param <V> a V class
    * @return a {@link java.util.Map} object
    */
-  public static <K, V> Map<K, V> ofSize(K k, V v) {
+  public static <K, V> Map<K, V> of(K k, V v) {
     final Map<K, V> map = ofSize(1);
     map.put(k, v);
     return map;
@@ -83,7 +83,7 @@ public class Maps {
    * @param <V> a V class
    * @return a {@link java.util.Map} object
    */
-  public static <K, V> Map<K, V> ofSize(K k, V v, K k1, V v1) {
+  public static <K, V> Map<K, V> of(K k, V v, K k1, V v1) {
     final Map<K, V> map = ofSize(1 << 1);
     map.put(k, v);
     map.put(k1, v1);
@@ -103,7 +103,7 @@ public class Maps {
    * @param <V> a V class
    * @return a {@link java.util.Map} object
    */
-  public static <K, V> Map<K, V> ofSize(K k, V v, K k1, V v1, K k2, V v2) {
+  public static <K, V> Map<K, V> of(K k, V v, K k1, V v1, K k2, V v2) {
     final Map<K, V> map = ofSize(1 << 2);
     map.put(k, v);
     map.put(k1, v1);
@@ -136,8 +136,8 @@ public class Maps {
    * @return a {@link Steam} object
    */
   @SafeVarargs
-  public static <K, A, V> Steam<Map.Entry<K, List<V>>> oneToManyToOne(
-      Map<K, List<A>> middleMap, Map<A, V> attachMap, UnaryOperator<Steam<V>>... unaryOperator) {
+  public static <K, A, V, C extends Collection<A>> Steam<Map.Entry<K, List<V>>> oneToManyToOne(
+      Map<K, C> middleMap, Map<A, V> attachMap, UnaryOperator<Steam<V>>... unaryOperator) {
     return Steam.of(middleMap.entrySet())
         .map(
             e ->

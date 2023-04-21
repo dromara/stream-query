@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -27,12 +28,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ *
+ *
  * <pre>
  * stream scanner configurer
  * from {@link StreamScannerRegistrar}
  * </pre>
  *
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * @author KamToHung
+ * @since 1.5.0
  */
 public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
@@ -75,14 +79,29 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
-          throws BeansException {
-      // 指定类
-      registerEntityClasses(this.classes);
-      StreamClassPathScanner scanner = new StreamClassPathScanner(false);
-      scanner.setAnnotation(this.annotation);
-      scanner.setInterfaceClass(this.interfaceClass);
-      scanner.registerFilters();
-      Set<Class<?>> classSet = scanner.scan(this.basePackages);
-      registerEntityClasses(classSet);
+      throws BeansException {
+    defaultScanConfig();
+    // 指定类
+    registerEntityClasses(this.classes);
+    StreamClassPathScanner scanner = new StreamClassPathScanner(false);
+    scanner.setAnnotation(this.annotation);
+    scanner.setInterfaceClass(this.interfaceClass);
+    scanner.registerFilters();
+    Set<Class<?>> classSet = scanner.scan(this.basePackages);
+    registerEntityClasses(classSet);
+  }
+
+  private void defaultScanConfig() {
+    // default scan @TableName
+    if (CollectionUtils.isEmpty(basePackages)
+        && CollectionUtils.isEmpty(classes)
+        && annotation == null
+        && interfaceClass == null) {
+      annotation = TableName.class;
+    }
+    // if no base package specified, scan project package
+    if (CollectionUtils.isEmpty(basePackages)) {
+      basePackages.add("");
+    }
   }
 }

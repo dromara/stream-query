@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -41,7 +57,7 @@ class WrapperHelperTest {
                     setName("Tom");
                   }
                 }));
-    // ==>  Preparing: SELECT id,name,age,email,version,gmt_deleted FROM user_info WHERE
+    // ==>  Preparing: SELECT id,name,age,email,gmt_deleted FROM user_info WHERE
     // gmt_deleted='2001-01-01 00:00:00' AND ((name IN (?,?) OR email IN (?)))
     // ==> Parameters: Jon(String), Tom(String), test2@baomidou.com(String)
     List<UserInfo> userInfos = Database.list(wrapper);
@@ -51,7 +67,7 @@ class WrapperHelperTest {
   }
 
   @Test
-  void testMultiOr() {
+  void testMulti() {
     val dataList =
         Lists.of(
             new UserInfo() {
@@ -70,15 +86,21 @@ class WrapperHelperTest {
               }
             });
     val wrapper =
-        WrapperHelper.multiOr(
+        WrapperHelper.multi(
             Wrappers.lambdaQuery(UserInfo.class),
             dataList,
-            (w, data) -> {
-              w.eq(Objects.nonNull(data.getEmail()), UserInfo::getEmail, data.getEmail())
-                  .eq(StringUtils.isNotBlank(data.getName()), UserInfo::getName, data.getName());
+            (wrap, data) -> {
+              wrap.or(
+                  w ->
+                      w.eq(Objects.nonNull(data.getEmail()), UserInfo::getEmail, data.getEmail())
+                          .eq(
+                              StringUtils.isNotBlank(data.getName()),
+                              UserInfo::getName,
+                              data.getName()));
             });
-    // ==>  Preparing: SELECT id,name,age,email,version,gmt_deleted FROM user_info WHERE
-    // gmt_deleted='2001-01-01 00:00:00' AND ((name = ? OR email = ? OR name = ?))
+    // ==>  Preparing: SELECT id,name,age,email,gmt_deleted FROM user_info WHERE
+    // gmt_deleted='2001-01-01 00:00:00'
+    // AND (((name = ?) OR (email = ?) OR (name = ?)))
     // ==> Parameters: Jon(String), test2@baomidou.com(String), Tom(String)
     List<UserInfo> userInfos = Database.list(wrapper);
     Assertions.assertEquals("Jon", userInfos.get(0).getName());
