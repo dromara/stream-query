@@ -18,10 +18,7 @@ package org.dromara.streamquery.stream.core.lambda;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.dromara.streamquery.stream.core.lambda.function.SerArgsFunc;
-import org.dromara.streamquery.stream.core.lambda.function.SerCons;
-import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
-import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
+import org.dromara.streamquery.stream.core.lambda.function.*;
 import org.dromara.streamquery.stream.core.reflect.AbstractTypeReference;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
@@ -230,5 +227,19 @@ class LambdaHelperTest {
               }
             });
     Assertions.assertEquals(String.class, clazz);
+  }
+
+  @Test
+  void testGetSetter() {
+    SerBiCons<LambdaExecutable, String> nameSetter =
+        LambdaHelper.getSetter(LambdaExecutable.class, "name");
+    LambdaExecutable executable = new LambdaExecutable();
+    nameSetter.accept(executable, "test");
+    Assertions.assertEquals("test", executable.getName());
+    val lambda = LambdaHelper.getSetter(LambdaExecutable.class, "clazz", BiConsumer.class);
+    BiConsumer<LambdaExecutable, Class<?>> clazzSetter =
+        SerFunc.<BiConsumer<?, ?>, BiConsumer<LambdaExecutable, Class<?>>>cast().apply(lambda);
+    clazzSetter.accept(executable, String.class);
+    Assertions.assertEquals(String.class, executable.getClazz());
   }
 }

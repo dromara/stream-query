@@ -17,6 +17,7 @@
 package org.dromara.streamquery.stream.core.lambda;
 
 import org.dromara.streamquery.stream.core.bean.BeanHelper;
+import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.core.optional.Opp;
@@ -206,5 +207,38 @@ public class LambdaHelper {
   public static <T, F> F getGetter(Class<T> clazz, String propertyName, Class<F> lambdaType) {
     return revert(
         lambdaType, ReflectHelper.getMethod(clazz, BeanHelper.getGetterName(propertyName)));
+  }
+
+  /**
+   * 获取setter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param <T> 类型
+   * @param <U> setter参数类型
+   * @return 返回setter对应的lambda
+   */
+  public static <T, U> SerBiCons<T, U> getSetter(Class<T> clazz, String propertyName) {
+    return SerFunc.<SerBiCons<?, ?>, SerBiCons<T, U>>cast()
+        .apply(getSetter(clazz, propertyName, SerBiCons.class));
+  }
+
+  /**
+   * 获取setter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param lambdaType lambda类型
+   * @param <T> 类型
+   * @param <F> lambda类型
+   * @return 返回setter对应的lambda
+   */
+  public static <T, F> F getSetter(Class<T> clazz, String propertyName, Class<F> lambdaType) {
+    return revert(
+        lambdaType,
+        ReflectHelper.getMethod(
+            clazz,
+            BeanHelper.getSetterName(propertyName),
+            ReflectHelper.getField(clazz, propertyName).getType()));
   }
 }
