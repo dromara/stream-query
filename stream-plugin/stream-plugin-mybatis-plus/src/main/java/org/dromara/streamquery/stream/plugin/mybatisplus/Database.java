@@ -44,6 +44,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.dromara.streamquery.stream.core.collection.Lists;
+import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
@@ -1030,7 +1031,8 @@ public class Database {
     if (!(configuration instanceof MybatisConfiguration)) {
       throw new IllegalArgumentException("configuration must be MybatisConfiguration");
     }
-    ENTITY_MAPPER_CLASS_CACHE.computeIfAbsent(
+    Maps.computeIfAbsent(
+        ENTITY_MAPPER_CLASS_CACHE,
         entityClass,
         k -> {
           Class<?> dynamicMapper =
@@ -1130,7 +1132,8 @@ public class Database {
    * @return {@link java.util.Map}<{@link java.lang.String}, {@link java.lang.String}>
    */
   public static Map<String, String> getPropertyColumnMap(Class<?> entityClass) {
-    return TABLE_PROPERTY_COLUMN_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        TABLE_PROPERTY_COLUMN_CACHE,
         entityClass,
         clazz -> {
           TableInfo tableInfo = getTableInfo(clazz);
@@ -1149,7 +1152,8 @@ public class Database {
    * @return {@link java.util.Map}<{@link java.lang.String}, {@link java.lang.String}>
    */
   public static Map<String, String> getColumnPropertyMap(Class<?> entityClass) {
-    return TABLE_COLUMN_PROPERTY_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        TABLE_COLUMN_PROPERTY_CACHE,
         entityClass,
         clazz -> {
           TableInfo tableInfo = getTableInfo(clazz);
