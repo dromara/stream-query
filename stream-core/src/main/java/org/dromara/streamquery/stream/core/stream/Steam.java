@@ -441,26 +441,18 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   public <F> Steam<T> distinct(Function<? super T, F> keyExtractor) {
     Objects.requireNonNull(keyExtractor);
     if (isParallel()) {
-      ConcurrentHashMap<F, Boolean> exists = new ConcurrentHashMap<>(32);
+      Set<F> seenKeys = ConcurrentHashMap.newKeySet();
       // 标记是否出现过null值，用于保留第一个出现的null
       // 由于ConcurrentHashMap的key不能为null，所以用此变量来标记
       AtomicBoolean hasNull = new AtomicBoolean(false);
-      return of(stream.filter(
-              e -> {
-                F key = keyExtractor.apply(e);
-                if (key == null) {
-                  // 已经出现过null值，跳过该值
-                  if (hasNull.get()) {
-                    return false;
-                  }
-                  hasNull.set(Boolean.TRUE);
-                  return true;
-                } else {
-                  // 第一次出现的key返回true
-                  return null == exists.putIfAbsent(key, Boolean.TRUE);
-                }
-              }))
-          .parallel();
+      return of(stream.filter(e -> {
+        F key = keyExtractor.apply(e);
+        if (key == null) {
+          return !hasNull.getAndSet(true);
+        } else {
+          return seenKeys.add(key);
+        }
+      })).parallel();
     } else {
       Set<F> exists = new HashSet<>();
       return of(stream.filter(e -> exists.add(keyExtractor.apply(e))));
