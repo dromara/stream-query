@@ -317,8 +317,12 @@ public class Maps {
    */
   public static <K, V> Map<K, List<V>> mergeMaps(List<Map<K, V>> maps) {
     return Steam.of(maps)
-            .flatMap(map -> Steam.of(map.entrySet()))
-            .collect(Collective.groupingBy(Map.Entry::getKey,
-                    Collective.mapping(Map.Entry::getValue, Collective.toList())));
+              .flatMap(map ->
+                    Steam.of(map.entrySet()))
+                          .collect(
+                                Collective.groupingBy(
+                                      Map.Entry::getKey,
+                                      Collective.mapping(Map.Entry::getValue,
+                                                         Collective.toList())));
   }
 }
