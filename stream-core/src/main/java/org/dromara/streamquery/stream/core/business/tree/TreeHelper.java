@@ -251,48 +251,17 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
      * @return 以该节点为根的树的深度
      */
     public int getDepth(T node) {
-        Deque<NodeDepthPair> stack = new ArrayDeque<>();
-        stack.push(new NodeDepthPair(node, 0));
+        Queue<T> queue = new LinkedList<>();
+        queue.offer(node);
         int maxDepth = 0;
-
-        while (!stack.isEmpty()) {
-
-            NodeDepthPair pair = stack.pop();
-            T currentNode = pair.getNode();
-            int currentDepth = pair.getDepth();
-
-            if (Objects.isNull(currentNode)) {
-                continue;
+        while (!Opp.ofColl(queue).isEmpty()) {
+            // 每层节点的数量
+            for (int i = 0; i < queue.size(); i++) {
+                Steam.of(childrenGetter.apply(queue.poll())).forEach(queue::offer);
             }
-
-            List<T> children = childrenGetter.apply(currentNode);
-            if (children == null || children.isEmpty()) {
-                maxDepth = Math.max(maxDepth, currentDepth + 1);
-            } else {
-                for (T child : children) {
-                    stack.push(new NodeDepthPair(child, currentDepth + 1));
-                }
-            }
+            // 当前层的节点已经全部出队，深度加一
+            maxDepth++;
         }
-
         return maxDepth;
-    }
-
-    private class NodeDepthPair {
-        private final T node;
-        private final int depth;
-
-        NodeDepthPair(T node, int depth) {
-            this.node = node;
-            this.depth = depth;
-        }
-
-        public T getNode() {
-            return node;
-        }
-
-        public int getDepth() {
-            return depth;
-        }
     }
 }
