@@ -239,10 +239,20 @@ public class LambdaHelper {
    */
   public static <T, F> F getSetter(Class<T> clazz, String propertyName, Class<F> lambdaType) {
     return revert(
-        lambdaType,
-        ReflectHelper.getMethod(
-            clazz,
-            BeanHelper.getSetterName(propertyName),
-            ReflectHelper.getField(clazz, propertyName).getType()));
+            lambdaType,
+            ReflectHelper.getMethod(
+                    clazz,
+                    BeanHelper.getSetterName(propertyName),
+                    ReflectHelper.getField(clazz, propertyName).getType()));
   }
+
+  public static <T, R> SerBiCons<T, R> getSetter(SerFunc<T, R> getter) {
+    return SerFunc.<SerBiCons<?, ?>, SerBiCons<T, R>>cast().apply(getSetter(getter, SerBiCons.class));
+  }
+
+  public static <F> F getSetter(Serializable getter, Class<F> lambdaType) {
+    LambdaExecutable executable = LambdaHelper.resolve(getter);
+    return getSetter(executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
+  }
+
 }
