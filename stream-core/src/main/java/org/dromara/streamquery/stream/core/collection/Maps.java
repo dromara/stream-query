@@ -215,24 +215,6 @@ public class Maps {
     }
 
     /**
-     * computeIfAbsent.
-     *
-     * @param map             a {@link java.util.Map} object
-     * @param key             a K object
-     * @param mappingFunction a {@link java.util.function.Function} object
-     * @param <K>             a K class
-     * @param <V>             a V class
-     * @return a V object
-     */
-    public static <K, V> V computeIfAbsent(
-            Map<K, V> map, K key, Function<? super K, ? extends V> mappingFunction) {
-        if (map instanceof ConcurrentHashMap) {
-            return Opp.of(map.get(key)).orElseGet(() -> map.put(key, mappingFunction.apply(key)));
-        }
-        return map.computeIfAbsent(key, mappingFunction);
-    }
-
-    /**
      * merge 合并两个Map得到一个新的Map，如果key相同，使用mergeFunction处理value
      *
      * @param m1            map1
