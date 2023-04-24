@@ -239,19 +239,19 @@ public class LambdaHelper {
    */
   public static <T, F> F getSetter(Class<T> clazz, String propertyName, Class<F> lambdaType) {
     return revert(
-            lambdaType,
-            ReflectHelper.getMethod(
-                    clazz,
-                    BeanHelper.getSetterName(propertyName),
-                    ReflectHelper.getField(clazz, propertyName).getType()));
+        lambdaType,
+        ReflectHelper.getMethod(
+            clazz,
+            BeanHelper.getSetterName(propertyName),
+            ReflectHelper.getField(clazz, propertyName).getType()));
   }
 
   /**
    * 通过getter获取setter
    *
    * @param getter getter对应的lambda
-   * @param <T>    getter参数类型
-   * @param <R>    property类型
+   * @param <T> getter参数类型
+   * @param <R> property类型
    * @return 返回setter对应的lambda
    */
   public static <T, R> SerBiCons<T, R> getSetter(SerFunc<T, R> getter) {
@@ -261,16 +261,17 @@ public class LambdaHelper {
   /**
    * 通过getter获取setter
    *
-   * @param getter     getter对应的lambda
+   * @param getter getter对应的lambda
    * @param lambdaType setter对应的lambda类型
-   * @param <F>        getter对应的lambda类型
-   * @param <C>        setter对应的lambda类型
+   * @param <F> getter对应的lambda类型
+   * @param <C> setter对应的lambda类型
    * @return 返回setter对应的lambda
    */
   public static <F extends Serializable, C> C getSetter(F getter, Class<? super C> lambdaType) {
     LambdaExecutable executable = LambdaHelper.resolve(getter);
-    Object setter = getSetter(executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
+    Object setter =
+        getSetter(
+            executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
     return SerFunc.<Object, C>cast().apply(setter);
   }
-
 }
