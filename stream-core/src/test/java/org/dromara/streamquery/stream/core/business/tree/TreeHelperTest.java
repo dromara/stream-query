@@ -175,11 +175,7 @@ class TreeHelperTest {
                 .build());
     studentTreeHelper =
         TreeHelper.of(
-            Student::getId,
-            Student::getParentId,
-            null,
-            Student::getChildren,
-            Student::setChildren);
+            Student::getId, Student::getParentId, null, Student::getChildren, Student::setChildren);
   }
 
   @Test
@@ -202,18 +198,23 @@ class TreeHelperTest {
 
   @Test
   void testToTreeAndLevel() {
-    List<Student> studentTree = studentTreeHelper.toTree(originStudentList, null,Student::setLevel);
+    List<Student> studentTree =
+        studentTreeHelper.toTree(originStudentList, null, Student::setLevel);
     Assertions.assertEquals(originStudentTree, studentTree);
   }
 
   @Test
   void testToTreeAndLevelWithLeveLimit() {
-    Assertions.assertEquals(new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1,Student::setLevel));
     Assertions.assertEquals(
-        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 1,Student::setLevel));
-    Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2,Student::setLevel));
+        new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1, Student::setLevel));
+    Assertions.assertEquals(
+        treeFromRootToLevelOriginStudentTree,
+        studentTreeHelper.toTree(originStudentList, 1, Student::setLevel));
+    Assertions.assertEquals(
+        originStudentTree, studentTreeHelper.toTree(originStudentList, 2, Student::setLevel));
     Assertions.assertNotEquals(
-        treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 2,Student::setLevel));
+        treeFromRootToLevelOriginStudentTree,
+        studentTreeHelper.toTree(originStudentList, 2, Student::setLevel));
   }
 
   @Test
@@ -234,7 +235,7 @@ class TreeHelperTest {
     studentList.sort(Comparator.comparing(Student::getId));
     Assertions.assertEquals(originStudentList, studentList);
   }
-  
+
   @Test
   void testGetDepth() {
     studentTreeHelper.toTree(originStudentList);

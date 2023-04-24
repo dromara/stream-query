@@ -445,14 +445,16 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
       // 标记是否出现过null值，用于保留第一个出现的null
       // 由于ConcurrentHashMap的key不能为null，所以用此变量来标记
       AtomicBoolean hasNull = new AtomicBoolean(false);
-      return of(stream.filter(e -> {
-        F key = keyExtractor.apply(e);
-        if (key == null) {
-          return !hasNull.getAndSet(true);
-        } else {
-          return seenKeys.add(key);
-        }
-      })).parallel();
+      return of(stream.filter(
+              e -> {
+                F key = keyExtractor.apply(e);
+                if (key == null) {
+                  return !hasNull.getAndSet(true);
+                } else {
+                  return seenKeys.add(key);
+                }
+              }))
+          .parallel();
     } else {
       Set<F> exists = new HashSet<>();
       return of(stream.filter(e -> exists.add(keyExtractor.apply(e))));
