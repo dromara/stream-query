@@ -19,6 +19,7 @@ package org.dromara.streamquery.stream.core.collection;
 import org.dromara.streamquery.stream.core.enums.JreEnum;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
+import org.dromara.streamquery.stream.core.stream.collector.Collective;
 import org.dromara.streamquery.stream.core.variable.VariableHelper;
 
 import java.util.*;
@@ -27,6 +28,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * Maps class.
@@ -303,5 +305,20 @@ public class Maps {
       return Opp.of(map.get(key)).orElseGet(() -> map.put(key, mappingFunction.apply(key)));
     }
     return map.computeIfAbsent(key, mappingFunction);
+  }
+
+  /**
+   * 合并多个Map，当key重复时，将重复的value值以List的形式存储。
+   *
+   * @param maps 要合并的Map列表
+   * @param <K>  key的类型
+   * @param <V>  value的类型
+   * @return 合并后的Map，重复的value值以List的形式存储
+   */
+  public static <K, V> Map<K, List<V>> mergeMaps(List<Map<K, V>> maps) {
+    return Steam.of(maps)
+            .flatMap(map -> Steam.of(map.entrySet()))
+            .collect(Collective.groupingBy(Map.Entry::getKey,
+                    Collective.mapping(Map.Entry::getValue, Collective.toList())));
   }
 }

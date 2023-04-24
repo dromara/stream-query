@@ -153,4 +153,32 @@ class MapsTest {
     final Map<String, Integer> flatten = Maps.flatten(nestedMap, "_");
     Assertions.assertEquals(flatten, Maps.of("key1_a", 1, "key1_b", 2, "key2_c", 3));
   }
+
+  @Test
+  public void testMergeMaps() {
+    Map<String, Integer> map1 = new HashMap<>();
+    map1.put("a", 1);
+    map1.put("b", 2);
+
+    Map<String, Integer> map2 = new HashMap<>();
+    map2.put("b", 3);
+    map2.put("c", 4);
+
+    Map<String, Integer> map3 = new HashMap<>();
+    map3.put("c", 5);
+    map3.put("d", 6);
+
+    List<Map<String, Integer>> mapList = Arrays.asList(map1, map2, map3);
+    Map<String, List<Integer>> mergedMap = Maps.mergeMaps(mapList);
+    final HashMap<String, List<Integer>> hashMap = new HashMap<String, List<Integer>>() {
+      private static final long serialVersionUID = 237587093605410403L;
+      {
+        put("a", Collections.singletonList(1));
+        put("b", Arrays.asList(2, 3));
+        put("c", Arrays.asList(4, 5));
+        put("d", Collections.singletonList(6));
+      }
+    };
+    Assertions.assertEquals(mergedMap, hashMap);
+  }
 }
