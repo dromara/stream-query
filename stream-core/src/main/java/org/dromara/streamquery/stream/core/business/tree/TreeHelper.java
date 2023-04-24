@@ -39,8 +39,6 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
 
   private final SerFunc<T, R> idGetter;
   private final SerFunc<T, R> pidGetter;
-  private final SerBiCons<T, Integer> levelSetter;
-  private final SerFunc<T, Integer> levelGetter;
   private final R pidValue;
   private final SerPred<T> parentPredicate;
   private final SerFunc<T, List<T>> childrenGetter;
@@ -49,16 +47,12 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   private TreeHelper(
       SerFunc<T, R> idGetter,
       SerFunc<T, R> pidGetter,
-      SerBiCons<T, Integer> levelSetter,
-      SerFunc<T, Integer> levelGetter,
       R pidValue,
       SerPred<T> parentPredicate,
       SerFunc<T, List<T>> childrenGetter,
       SerBiCons<T, List<T>> childrenSetter) {
     this.idGetter = idGetter;
     this.pidGetter = pidGetter;
-    this.levelSetter = levelSetter;
-    this.levelGetter = levelGetter;
     this.pidValue = pidValue;
     this.parentPredicate = parentPredicate;
     this.childrenGetter = childrenGetter;
@@ -70,7 +64,6 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    *
    * @param idGetter 获取节点id操作 {@link SerFunc} object
    * @param pidGetter 获取父节点id操作 {@link SerFunc} object
-   * @param levelSetter 保存当前节点的所在层级 {@link SerBiCons} Integer
    * @param pidValue 父节点值
    * @param childrenGetter 获取子节点操作 {@link SerFunc} object
    * @param childrenSetter 操作子节点 {@link SerBiCons} object
@@ -81,20 +74,10 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   public static <T, R extends Comparable<? super R>> TreeHelper<T, R> of(
       SerFunc<T, R> idGetter,
       SerFunc<T, R> pidGetter,
-      SerBiCons<T, Integer> levelSetter,
-      SerFunc<T, Integer> levelGetter,
       R pidValue,
       SerFunc<T, List<T>> childrenGetter,
       SerBiCons<T, List<T>> childrenSetter) {
-    return new TreeHelper<>(
-        idGetter,
-        pidGetter,
-        levelSetter,
-        levelGetter,
-        pidValue,
-        null,
-        childrenGetter,
-        childrenSetter);
+    return new TreeHelper<>(idGetter, pidGetter, pidValue, null, childrenGetter, childrenSetter);
   }
 
   /**
@@ -102,8 +85,6 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    *
    * @param idGetter 获取节点id操作 {@link SerFunc} object
    * @param pidGetter 获取父节点id操作 {@link SerFunc} object
-   * @param levelSetter 保存当前节点的所在层级 {@link SerBiCons} Integer
-   * @param levelGetter 拿到当前节点所在的层级 {@link SerPred} object
    * @param parentPredicate 是否是祖宗节点断言操作 {@link SerPred} object
    * @param childrenGetter 获取子节点操作 { {@link SerFunc} object
    * @param childrenSetter 操作子节点 {@link SerBiCons} object
@@ -114,20 +95,11 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   public static <T, R extends Comparable<? super R>> TreeHelper<T, R> ofMatch(
       SerFunc<T, R> idGetter,
       SerFunc<T, R> pidGetter,
-      SerBiCons<T, Integer> levelSetter,
-      SerFunc<T, Integer> levelGetter,
       SerPred<T> parentPredicate,
       SerFunc<T, List<T>> childrenGetter,
       SerBiCons<T, List<T>> childrenSetter) {
     return new TreeHelper<>(
-        idGetter,
-        pidGetter,
-        levelSetter,
-        levelGetter,
-        null,
-        parentPredicate,
-        childrenGetter,
-        childrenSetter);
+        idGetter, pidGetter, null, parentPredicate, childrenGetter, childrenSetter);
   }
 
   /**
@@ -137,7 +109,11 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    * @return 符合树结构的集合 {@link java.util.List} object
    */
   public List<T> toTree(List<T> list) {
-    return toTree(list, null);
+    return toTree(list, null, null);
+  }
+
+  public List<T> toTree(List<T> list, SerBiCons<T, Integer> levelSetter) {
+    return toTree(list, null, levelSetter);
   }
 
   /**
@@ -147,7 +123,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    * @param level {@link Integer} object 要生成节点的层数 null则为生成到最后一层
    * @return 符合树结构的集合 {@link java.util.List} object
    */
-  public List<T> toTree(List<T> list, Integer level) {
+  public List<T> toTree(List<T> list, Integer level, SerBiCons<T, Integer> levelSetter) {
     if (level != null && level < 0) {
       return new ArrayList<>();
     }
@@ -155,7 +131,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
       final Map<R, List<T>> pIdValuesMap =
           Steam.of(list).filter(e -> Objects.nonNull(idGetter.apply(e))).group(pidGetter);
       final List<T> parents = pIdValuesMap.getOrDefault(pidValue, new ArrayList<>());
-      return getTreeSet(level, pIdValuesMap, parents);
+      return getTreeSet(level, pIdValuesMap, parents, levelSetter);
     }
     final List<T> parents = new ArrayList<>(list.size());
     final Map<R, List<T>> pIdValuesMap =
@@ -168,20 +144,30 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
                   return Objects.nonNull(idGetter.apply(e));
                 })
             .group(pidGetter);
-    return getTreeSet(level, pIdValuesMap, parents);
+    return getTreeSet(level, pIdValuesMap, parents, levelSetter);
   }
 
-  private List<T> getTreeSet(Integer level, Map<R, List<T>> pIdValuesMap, List<T> parents) {
+  private List<T> getTreeSet(
+      Integer level,
+      Map<R, List<T>> pIdValuesMap,
+      List<T> parents,
+      SerBiCons<T, Integer> levelSetter) {
     for (T parent : parents) {
-      levelSetter.accept(parent, 0);
+      if (null != levelSetter) {
+        levelSetter.accept(parent, 0);
+      }
       getChildrenFromMapByPidAndSet(
-          pIdValuesMap, parent, level == null ? Integer.MAX_VALUE : level, 0);
+          pIdValuesMap, parent, level == null ? Integer.MAX_VALUE : level, 0, levelSetter);
     }
     return parents;
   }
 
   private void getChildrenFromMapByPidAndSet(
-      Map<R, List<T>> pIdValuesMap, T parent, Integer level, Integer currentLevel) {
+      Map<R, List<T>> pIdValuesMap,
+      T parent,
+      Integer level,
+      Integer currentLevel,
+      SerBiCons<T, Integer> levelSetter) {
     if (currentLevel >= level) {
       return;
     }
@@ -193,8 +179,10 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
 
     childrenSetter.accept(parent, children);
     for (T child : children) {
-      levelSetter.accept(child, currentLevel + 1);
-      getChildrenFromMapByPidAndSet(pIdValuesMap, child, level, currentLevel + 1);
+      if (null != levelSetter) {
+        levelSetter.accept(child, currentLevel + 1);
+      }
+      getChildrenFromMapByPidAndSet(pIdValuesMap, child, level, currentLevel + 1, levelSetter);
     }
   }
 
@@ -253,19 +241,24 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     return list;
   }
 
-  // 获取节点的最大深度
-  private int getDepth(T node) {
-    List<T> children = childrenGetter.apply(node);
-    if (children == null || children.isEmpty()) {
-      return 1;
-    }
+  /**
+   * 获取以给定节点为根的树的深度
+   *
+   * @param node 要获取深度的节点
+   * @return 以该节点为根的树的深度
+   */
+  public int getDepth(T node) {
+    Queue<T> queue = new LinkedList<>();
+    queue.offer(node);
     int maxDepth = 0;
-    for (T child : children) {
-      int depth = getDepth(child);
-      if (depth > maxDepth) {
-        maxDepth = depth;
+    while (!Opp.ofColl(queue).isEmpty()) {
+      // 每层节点的数量
+      for (int i = 0; i < queue.size(); i++) {
+        Steam.of(childrenGetter.apply(queue.poll())).forEach(queue::offer);
       }
+      // 当前层的节点已经全部出队，深度加一
+      maxDepth++;
     }
-    return maxDepth + 1;
+    return maxDepth;
   }
 }

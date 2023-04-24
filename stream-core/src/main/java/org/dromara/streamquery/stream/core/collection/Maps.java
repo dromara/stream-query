@@ -23,7 +23,9 @@ import org.dromara.streamquery.stream.core.variable.VariableHelper;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
@@ -210,6 +212,79 @@ public class Maps {
    */
   public static <K, V> Map<K, V> empty() {
     return Collections.emptyMap();
+  }
+
+  /**
+   * merge 合并两个Map得到一个新的Map，如果key相同，使用mergeFunction处理value
+   *
+   * @param m1 map1
+   * @param m2 map2
+   * @param mergeFunction 合并操作
+   * @param <K> a K object
+   * @param <V> a V object
+   * @return 合并后的map
+   */
+  public static <K, V> Map<K, V> merge(
+      Map<K, V> m1, Map<K, V> m2, BiFunction<V, V, V> mergeFunction) {
+    Map<K, V> result = new HashMap<>(m1);
+    m2.forEach((key, value) -> result.merge(key, value, mergeFunction));
+    return result;
+  }
+
+  /**
+   * 适应于value为List的情况 反向过滤，根据value是否符合条件过滤出符合条件的key
+   *
+   * @param map map
+   * @param predicate 条件操作
+   * @return 过滤后的map
+   * @param <K> a K object
+   * @param <V> a V object
+   */
+  public static <K, V> Map<K, List<V>> filterByListValue(
+      Map<K, List<V>> map, Predicate<List<V>> predicate) {
+    map.entrySet().removeIf(entry -> !predicate.test(entry.getValue()));
+
+    // 将符合条件的entry重新放入新的Map中返回
+    return Steam.of(map.entrySet())
+        .filter(entry -> !entry.getValue().isEmpty())
+        .toMap(Map.Entry::getKey, Map.Entry::getValue);
+  }
+
+  /**
+   * 适应于value为基本数据类型的情况 根据value是否符合条件过滤出符合条件的key
+   *
+   * @param map map
+   * @param predicate 条件操作
+   * @return 过滤后的map
+   * @param <K> a K object
+   * @param <V> a V object
+   */
+  public static <K, V> Map<K, V> filterByValue(Map<K, V> map, Predicate<V> predicate) {
+    return Steam.of(map.entrySet())
+        .filter(entry -> predicate.test(entry.getValue()))
+        .toMap(Map.Entry::getKey, Map.Entry::getValue);
+  }
+
+  /**
+   * 将具有多个级别的嵌套 {@link java.util.Map} 平展为单级 {@link java.util.Map} 使用指定分隔符从原始键值连接。
+   *
+   * @param nestedMap a {@link java.util.Map} object
+   * @param delimiter a {@link java.lang.String} object
+   * @return a {@link java.util.Map} object
+   * @param <K> a K object
+   * @param <V> a V object
+   */
+  public static <K, V> Map<String, V> flatten(Map<K, Map<K, V>> nestedMap, String delimiter) {
+    return Steam.of(nestedMap.entrySet())
+        .flatMap(
+            entry ->
+                Steam.of(entry.getValue().entrySet())
+                    .map(
+                        innerEntry ->
+                            new AbstractMap.SimpleEntry<>(
+                                entry.getKey() + delimiter + innerEntry.getKey(),
+                                innerEntry.getValue())))
+        .toMap(Map.Entry::getKey, Map.Entry::getValue);
   }
 
   /**
