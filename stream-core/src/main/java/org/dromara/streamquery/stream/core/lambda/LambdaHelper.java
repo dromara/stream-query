@@ -255,7 +255,7 @@ public class LambdaHelper {
    * @return 返回setter对应的lambda
    */
   public static <T, R> SerBiCons<T, R> getSetter(SerFunc<T, R> getter) {
-    return SerFunc.<SerBiCons<?, ?>, SerBiCons<T, R>>cast().apply(getSetter(getter, SerBiCons.class));
+    return getSetter(getter, SerBiCons.class);
   }
 
   /**
@@ -263,12 +263,14 @@ public class LambdaHelper {
    *
    * @param getter     getter对应的lambda
    * @param lambdaType setter对应的lambda类型
-   * @param <F>        setter对应的lambda类型
+   * @param <F>        getter对应的lambda类型
+   * @param <C>        setter对应的lambda类型
    * @return 返回setter对应的lambda
    */
-  public static <F> F getSetter(Serializable getter, Class<F> lambdaType) {
+  public static <F extends Serializable, C> C getSetter(F getter, Class<? super C> lambdaType) {
     LambdaExecutable executable = LambdaHelper.resolve(getter);
-    return getSetter(executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
+    Object setter = getSetter(executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
+    return SerFunc.<Object, C>cast().apply(setter);
   }
 
 }
