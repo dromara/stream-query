@@ -22,15 +22,14 @@
     </properties>
 
     <dependencyManagement>
-
         <dependencies>
-
             <!-- mybatis-plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+
             <!-- byte-buddy -->
             <dependency>
                 <groupId>net.bytebuddy</groupId>
@@ -43,11 +42,13 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-json</artifactId>
@@ -103,7 +104,6 @@
                 <scope>test</scope>
             </dependency>
         </dependencies>
-
     </dependencyManagement>
 
 </project>
