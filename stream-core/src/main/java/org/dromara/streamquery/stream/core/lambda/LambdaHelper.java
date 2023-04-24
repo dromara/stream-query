@@ -246,10 +246,26 @@ public class LambdaHelper {
                     ReflectHelper.getField(clazz, propertyName).getType()));
   }
 
+  /**
+   * 通过getter获取setter
+   *
+   * @param getter getter对应的lambda
+   * @param <T>    getter参数类型
+   * @param <R>    property类型
+   * @return 返回setter对应的lambda
+   */
   public static <T, R> SerBiCons<T, R> getSetter(SerFunc<T, R> getter) {
     return SerFunc.<SerBiCons<?, ?>, SerBiCons<T, R>>cast().apply(getSetter(getter, SerBiCons.class));
   }
 
+  /**
+   * 通过getter获取setter
+   *
+   * @param getter     getter对应的lambda
+   * @param lambdaType setter对应的lambda类型
+   * @param <F>        setter对应的lambda类型
+   * @return 返回setter对应的lambda
+   */
   public static <F> F getSetter(Serializable getter, Class<F> lambdaType) {
     LambdaExecutable executable = LambdaHelper.resolve(getter);
     return getSetter(executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
