@@ -231,20 +231,23 @@ class LambdaHelperTest {
 
   @Test
   void testGetSetter() {
-    SerBiCons<LambdaExecutable, String> nameSetter = LambdaHelper.getSetter(LambdaExecutable.class, "name");
+    SerBiCons<LambdaExecutable, String> nameSetter =
+        LambdaHelper.getSetter(LambdaExecutable.class, "name");
     LambdaExecutable executable = new LambdaExecutable();
     nameSetter.accept(executable, "kubernetes");
     Assertions.assertEquals("kubernetes", executable.getName());
     val lambda = LambdaHelper.getSetter(LambdaExecutable.class, "clazz", BiConsumer.class);
-    BiConsumer<LambdaExecutable, Class<?>> clazzSetter = SerFunc.<BiConsumer<?, ?>, BiConsumer<LambdaExecutable, Class<?>>>cast().apply(lambda);
+    BiConsumer<LambdaExecutable, Class<?>> clazzSetter =
+        SerFunc.<BiConsumer<?, ?>, BiConsumer<LambdaExecutable, Class<?>>>cast().apply(lambda);
     clazzSetter.accept(executable, String.class);
     Assertions.assertEquals(String.class, executable.getClazz());
     clazzSetter = LambdaHelper.getSetter(LambdaExecutable::getClazz);
     clazzSetter.accept(executable, Object.class);
     Assertions.assertEquals(Object.class, executable.getClazz());
-    SerBiCons<LambdaExecutable, String> nameSerSetter = LambdaHelper
-            .<SerFunc<LambdaExecutable, String>, SerBiCons<LambdaExecutable, String>>
-                    getSetter(LambdaExecutable::getName, SerBiCons.class);
+    SerBiCons<LambdaExecutable, String> nameSerSetter =
+        LambdaHelper
+            .<SerFunc<LambdaExecutable, String>, SerBiCons<LambdaExecutable, String>>getSetter(
+                LambdaExecutable::getName, SerBiCons.class);
     nameSerSetter.accept(executable, "serializable");
     Assertions.assertEquals("serializable", executable.getName());
   }
