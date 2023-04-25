@@ -43,11 +43,12 @@ class ReflectHelperTest {
     Assertions.assertEquals("Ljava/lang/Boolean;", ReflectHelper.getDescriptor(Boolean.class));
   }
 
+  private static class StringArrayList extends ArrayList<String> {
+    private static final long serialVersionUID = 5735314375293577082L;
+  }
+
   @Test
   void testGetGenericTypes() {
-    class StringArrayList extends ArrayList<String> {
-      private static final long serialVersionUID = 5735314375293577082L;
-    }
     Type[] stringType =
         ReflectHelper.getGenericTypes(new AbstractTypeReference<String>() {}.getClass());
     Assertions.assertEquals(String.class, stringType[0]);
