@@ -1072,7 +1072,9 @@ public class Database {
   @SuppressWarnings("unchecked")
   public static <T, M extends BaseMapper<T>> M getMapper(
       Class<T> entityClass, SqlSession sqlSession) {
-    Assert.notNull(entityClass, "entityClass can't be null!");
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("entityClass can't be null!");
+    }
     TableInfo tableInfo =
         Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass))
             .orElseThrow(
