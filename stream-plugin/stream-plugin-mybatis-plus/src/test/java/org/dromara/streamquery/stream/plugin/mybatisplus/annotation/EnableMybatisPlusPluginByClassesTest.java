@@ -43,9 +43,9 @@ public class EnableMybatisPlusPluginByClassesTest extends AbstractMybatisPlusTes
     StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
     assertNotNull(bean);
     assertNotNull(bean.getEntityClasses());
-    assertFalse(bean.getEntityClasses().contains(RoleInfo.class));
+    assertTrue(bean.getEntityClasses().contains(RoleInfo.class));
     assertTrue(bean.getEntityClasses().contains(UserInfo.class));
-    assertFalse(bean.getEntityClasses().contains(UserRole.class));
+    assertTrue(bean.getEntityClasses().contains(UserRole.class));
     assertFalse(bean.getEntityClasses().contains(AddressInfo.class));
     assertFalse(bean.getEntityClasses().contains(AddressInfo.InnerAddressInfo.class));
   }
