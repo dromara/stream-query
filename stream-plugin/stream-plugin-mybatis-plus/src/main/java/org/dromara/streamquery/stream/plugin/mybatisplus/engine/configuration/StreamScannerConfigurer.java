@@ -94,7 +94,6 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
   private void defaultScanConfig() {
     // default scan @TableName
     if (CollectionUtils.isEmpty(basePackages)
-        && CollectionUtils.isEmpty(classes)
         && annotation == null
         && interfaceClass == null) {
       annotation = TableName.class;
