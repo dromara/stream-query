@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import org.apache.ibatis.util.MapUtil;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.core.stream.collector.Collective;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.RoleInfo;
@@ -41,6 +42,9 @@ import java.util.Set;
  */
 @MybatisPlusTest
 class OneToManyToOneTest {
+
+  private static final Long NULL_LONG_VALUE = Opp.<Long>empty().get();
+  private static final List<Long> NULL_LONG_LIST_VALUE = Opp.<List<Long>>empty().get();
 
   @Test
   void testQuery() {
@@ -117,26 +121,27 @@ class OneToManyToOneTest {
 
   @Test
   void testNoQuery() {
-    Assertions.assertTrue(OneToManyToOne.of(UserRole::getUserId).eq(null).query().isEmpty());
+    Assertions.assertTrue(
+        OneToManyToOne.of(UserRole::getUserId).eq(NULL_LONG_VALUE).query().isEmpty());
     Assertions.assertTrue(
         OneToManyToOne.of(UserRole::getUserId).condition(w -> null).query().isEmpty());
     Assertions.assertTrue(
         OneToManyToOne.of(UserRole::getUserId)
             .value(UserRole::getRoleId)
-            .in(null)
+            .in(NULL_LONG_LIST_VALUE)
             .query()
             .isEmpty());
     Assertions.assertTrue(
         OneToManyToOne.of(UserRole::getUserId)
             .value(UserRole::getRoleId)
-            .in(null)
+            .in(NULL_LONG_LIST_VALUE)
             .attachKey(RoleInfo::getId)
             .query()
             .isEmpty());
     Assertions.assertTrue(
         OneToManyToOne.of(UserRole::getUserId)
             .value(UserRole::getRoleId)
-            .in(null)
+            .in(NULL_LONG_LIST_VALUE)
             .attachKey(RoleInfo::getId)
             .attachValue(RoleInfo::getRoleName)
             .query()
