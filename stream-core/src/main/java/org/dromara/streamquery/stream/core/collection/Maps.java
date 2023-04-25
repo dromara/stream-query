@@ -300,7 +300,13 @@ public class Maps {
   public static <K, V> V computeIfAbsent(
       Map<K, V> map, K key, Function<? super K, ? extends V> mappingFunction) {
     if (JreEnum.JAVA_8.isCurrentVersion() && map instanceof ConcurrentHashMap) {
-      return Opp.of(map.get(key)).orElseGet(() -> map.put(key, mappingFunction.apply(key)));
+      return Opp.of(map.get(key))
+          .orElseGet(
+              () -> {
+                V value = mappingFunction.apply(key);
+                map.put(key, value);
+                return value;
+              });
     }
     return map.computeIfAbsent(key, mappingFunction);
   }

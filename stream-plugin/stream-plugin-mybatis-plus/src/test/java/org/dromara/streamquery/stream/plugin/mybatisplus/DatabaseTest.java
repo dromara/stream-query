@@ -57,7 +57,7 @@ class DatabaseTest {
     UserInfo entity = new UserInfo();
     entity.setName("cat");
     entity.setAge(20);
-    entity.setEmail("achao1441470436@gmail.com");
+    entity.setEmail("myEmail");
     UserInfo userInfo = new UserInfo();
     userInfo.setName("ruben");
     List<UserInfo> list = Arrays.asList(userInfo, entity);
@@ -74,7 +74,7 @@ class DatabaseTest {
     UserInfo entity = new UserInfo();
     entity.setName("cat");
     entity.setAge(20);
-    entity.setEmail("achao1441470436@gmail.com");
+    entity.setEmail("myEmail");
     UserInfo userInfo = new UserInfo();
     userInfo.setName("ruben");
     List<UserInfo> list = Arrays.asList(userInfo, entity);
@@ -107,7 +107,7 @@ class DatabaseTest {
     entity.setId(1L);
     entity.setName("cat");
     entity.setAge(20);
-    entity.setEmail("achao1441470436@gmail.com");
+    entity.setEmail("myEmail");
     UserInfo userInfo = new UserInfo();
     userInfo.setName("ruben");
     List<UserInfo> list = Arrays.asList(userInfo, entity);
@@ -151,7 +151,7 @@ class DatabaseTest {
     UserInfo entity = new UserInfo();
     entity.setName("cat");
     entity.setAge(20);
-    entity.setEmail("achao1441470436@gmail.com");
+    entity.setEmail("myEmail");
     UserInfo userInfo = new UserInfo();
     userInfo.setName("ruben");
     List<UserInfo> list = Arrays.asList(userInfo, entity);
@@ -168,7 +168,7 @@ class DatabaseTest {
     entity.setId(1L);
     entity.setName("cat");
     entity.setAge(20);
-    entity.setEmail("achao1441470436@gmail.com");
+    entity.setEmail("myEmail");
     UserInfo userInfo = new UserInfo();
     userInfo.setName("ruben");
     List<UserInfo> list = Arrays.asList(userInfo, entity);
