@@ -125,17 +125,13 @@ class MapsTest {
     map1.put("b", 2);
     map1.put("c", 3);
     Map<String, Integer> result = Maps.filterByValue(map1, value -> value > 2);
+    Assertions.assertEquals(Maps.of("c", 3), result);
 
-    Assertions.assertEquals(1, result.size());
-  }
-
-  @Test
-  public void filterByListValue() {
     Map<String, List<Integer>> map2 = new HashMap<>();
     map2.put("a", Arrays.asList(1, 2, 3));
     map2.put("b", Arrays.asList(4, 5, 6));
     map2.put("c", Arrays.asList(7, 8, 9));
-    Map<String, List<Integer>> result2 = Maps.filterByListValue(map2, data -> data.contains(3));
+    Map<String, List<Integer>> result2 = Maps.filterByValue(map2, data -> data.contains(3));
     Assertions.assertEquals(result2, Maps.of("a", Lists.of(1, 2, 3)));
   }
 
