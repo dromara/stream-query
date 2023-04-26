@@ -232,26 +232,7 @@ public class Maps {
   }
 
   /**
-   * 适应于value为List的情况 反向过滤，根据value是否符合条件过滤出符合条件的key
-   *
-   * @param map map
-   * @param predicate 条件操作
-   * @return 过滤后的map
-   * @param <K> a K object
-   * @param <V> a V object
-   */
-  public static <K, V> Map<K, List<V>> filterByListValue(
-      Map<K, List<V>> map, Predicate<List<V>> predicate) {
-    map.entrySet().removeIf(entry -> !predicate.test(entry.getValue()));
-
-    // 将符合条件的entry重新放入新的Map中返回
-    return Steam.of(map.entrySet())
-        .filter(entry -> !entry.getValue().isEmpty())
-        .toMap(Map.Entry::getKey, Map.Entry::getValue);
-  }
-
-  /**
-   * 适应于value为基本数据类型的情况 根据value是否符合条件过滤出符合条件的key
+   * 根据value是否符合条件过滤出符合条件的key
    *
    * @param map map
    * @param predicate 条件操作
