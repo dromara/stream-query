@@ -17,16 +17,15 @@
 package org.dromara.streamquery.stream.core.collection;
 
 import org.dromara.streamquery.stream.core.enums.JreEnum;
+import org.dromara.streamquery.stream.core.lambda.function.SerThiFunc;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
+import org.dromara.streamquery.stream.core.stream.collector.Collective;
 import org.dromara.streamquery.stream.core.variable.VariableHelper;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 
 /**
  * Maps class.
@@ -225,9 +224,10 @@ public class Maps {
    * @return 合并后的map
    */
   public static <K, V> Map<K, V> merge(
-      Map<K, V> m1, Map<K, V> m2, BiFunction<V, V, V> mergeFunction) {
+      Map<K, V> m1, Map<K, V> m2, SerThiFunc<K, V, V, V> mergeFunction) {
     Map<K, V> result = new HashMap<>(m1);
-    m2.forEach((key, value) -> result.merge(key, value, mergeFunction));
+    m2.forEach(
+        (key, value) -> result.merge(key, value, (v1, v2) -> mergeFunction.apply(key, v1, v2)));
     return result;
   }
 
@@ -235,15 +235,15 @@ public class Maps {
    * 根据value是否符合条件过滤出符合条件的key
    *
    * @param map map
-   * @param predicate 条件操作
-   * @return 过滤后的map
+   * @param biPredicate 条件操作
    * @param <K> a K object
    * @param <V> a V object
+   * @return 过滤后的map
    */
-  public static <K, V> Map<K, V> filterByValue(Map<K, V> map, Predicate<V> predicate) {
+  public static <K, V> Map<K, V> filter(Map<K, V> map, BiPredicate<K, V> biPredicate) {
     return Steam.of(map.entrySet())
-        .filter(entry -> predicate.test(entry.getValue()))
-        .toMap(Map.Entry::getKey, Map.Entry::getValue);
+        .filter(e -> biPredicate.test(e.getKey(), e.getValue()))
+        .collect(Collective.entryToMap());
   }
 
   /**
@@ -251,21 +251,22 @@ public class Maps {
    *
    * @param nestedMap a {@link java.util.Map} object
    * @param delimiter a {@link java.lang.String} object
-   * @return a {@link java.util.Map} object
    * @param <K> a K object
    * @param <V> a V object
+   * @return a {@link java.util.Map} object
    */
-  public static <K, V> Map<String, V> flatten(Map<K, Map<K, V>> nestedMap, String delimiter) {
+  public static <K, V> Map<String, V> flatten(
+      Map<String, Map<String, V>> nestedMap, String delimiter) {
     return Steam.of(nestedMap.entrySet())
-        .flatMap(
+        .flat(
             entry ->
                 Steam.of(entry.getValue().entrySet())
                     .map(
                         innerEntry ->
-                            new AbstractMap.SimpleEntry<>(
+                            Maps.entry(
                                 entry.getKey() + delimiter + innerEntry.getKey(),
                                 innerEntry.getValue())))
-        .toMap(Map.Entry::getKey, Map.Entry::getValue);
+        .collect(Collective.entryToMap());
   }
 
   /**
