@@ -174,8 +174,7 @@ class TreeHelperTest {
                             .build()))
                 .build());
     studentTreeHelper =
-        TreeHelper.of(
-            Student::getId, Student::getParentId, null, Student::getChildren, Student::setChildren);
+        TreeHelper.of(Student::getId, Student::getParentId, null, Student::getChildren);
   }
 
   @Test
@@ -191,8 +190,7 @@ class TreeHelperTest {
             Student::getId,
             Student::getParentId,
             s -> Boolean.TRUE.equals(s.getMatchParent()),
-            Student::getChildren,
-            Student::setChildren);
+            Student::getChildren);
     Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList));
   }
 
@@ -224,8 +222,7 @@ class TreeHelperTest {
             Student::getId,
             Student::getParentId,
             s -> Boolean.TRUE.equals(s.getMatchParent()),
-            Student::getChildren,
-            Student::setChildren);
+            Student::getChildren);
     Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList, null));
   }
 
@@ -345,7 +342,7 @@ class TreeHelperTest {
 
   @Data
   @Builder
-  private static class Student {
+  public static class Student {
     private String name;
     private Integer age;
     private Long id;
