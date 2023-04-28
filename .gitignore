@@ -9,3 +9,4 @@
 *.ipr
 /.fleet/
 *.flattened-pom.xml
+/.fastRequest/

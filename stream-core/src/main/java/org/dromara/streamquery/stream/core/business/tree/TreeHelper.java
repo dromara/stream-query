@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.business.tree;
 
+import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
@@ -32,7 +33,7 @@ import java.util.function.Predicate;
 /**
  * 树先生
  *
- * @author VampireAchao Cizai_
+ * @author VampireAchao Cizai_ lmr
  * @since 2022/11/26
  */
 public class TreeHelper<T, R extends Comparable<? super R>> {
@@ -42,7 +43,15 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   private final R pidValue;
   private final SerPred<T> parentPredicate;
   private final SerFunc<T, List<T>> childrenGetter;
-  private final SerBiCons<T, List<T>> childrenSetter;
+  private SerBiCons<T, List<T>> childrenSetter;
+
+  public SerBiCons<T, List<T>> getChildrenSetter() {
+    return childrenSetter;
+  }
+
+  public void setChildrenSetter(SerBiCons<T, List<T>> childrenSetter) {
+    this.childrenSetter = childrenSetter;
+  }
 
   private TreeHelper(
       SerFunc<T, R> idGetter,
@@ -56,7 +65,8 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     this.pidValue = pidValue;
     this.parentPredicate = parentPredicate;
     this.childrenGetter = childrenGetter;
-    this.childrenSetter = childrenSetter;
+    this.childrenSetter =
+        Opp.of(childrenSetter).orElseGet(() -> LambdaHelper.getSetter(childrenGetter));
   }
 
   /**
@@ -70,7 +80,9 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    * @param <T> 树节点类型
    * @param <R> 父id类型
    * @return a {@link TreeHelper} object
+   * @deprecated {@link TreeHelper#of(SerFunc, SerFunc, Comparable, SerFunc)}
    */
+  @Deprecated
   public static <T, R extends Comparable<? super R>> TreeHelper<T, R> of(
       SerFunc<T, R> idGetter,
       SerFunc<T, R> pidGetter,
@@ -78,6 +90,25 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
       SerFunc<T, List<T>> childrenGetter,
       SerBiCons<T, List<T>> childrenSetter) {
     return new TreeHelper<>(idGetter, pidGetter, pidValue, null, childrenGetter, childrenSetter);
+  }
+
+  /**
+   * 通过提供节点信息构造树先生，此方法用于根节点为Null时
+   *
+   * @param idGetter 获取节点id操作 {@link SerFunc} object
+   * @param pidGetter 获取父节点id操作 {@link SerFunc} object
+   * @param pidValue 父节点值
+   * @param childrenGetter 获取子节点操作 {@link SerFunc} object
+   * @param <T> 树节点类型
+   * @param <R> 父id类型
+   * @return a {@link TreeHelper} object
+   */
+  public static <T, R extends Comparable<? super R>> TreeHelper<T, R> of(
+      SerFunc<T, R> idGetter,
+      SerFunc<T, R> pidGetter,
+      R pidValue,
+      SerFunc<T, List<T>> childrenGetter) {
+    return new TreeHelper<>(idGetter, pidGetter, pidValue, null, childrenGetter, null);
   }
 
   /**
@@ -91,7 +122,9 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
    * @param <T> 树节点类型 T class
    * @param <R> 父id类型 R class
    * @return a {@link TreeHelper} object
+   * @deprecated {@link TreeHelper#ofMatch(SerFunc, SerFunc, SerPred, SerFunc)}
    */
+  @Deprecated
   public static <T, R extends Comparable<? super R>> TreeHelper<T, R> ofMatch(
       SerFunc<T, R> idGetter,
       SerFunc<T, R> pidGetter,
@@ -100,6 +133,25 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
       SerBiCons<T, List<T>> childrenSetter) {
     return new TreeHelper<>(
         idGetter, pidGetter, null, parentPredicate, childrenGetter, childrenSetter);
+  }
+
+  /**
+   * 通过提供节点信息构造树先生,此方法用于自定义(通过第三个参数判断返回True则为祖宗节点)根节点的值
+   *
+   * @param idGetter 获取节点id操作 {@link SerFunc} object
+   * @param pidGetter 获取父节点id操作 {@link SerFunc} object
+   * @param parentPredicate 是否是祖宗节点断言操作 {@link SerPred} object
+   * @param childrenGetter 获取子节点操作 { {@link SerFunc} object
+   * @param <T> 树节点类型 T class
+   * @param <R> 父id类型 R class
+   * @return a {@link TreeHelper} object
+   */
+  public static <T, R extends Comparable<? super R>> TreeHelper<T, R> ofMatch(
+      SerFunc<T, R> idGetter,
+      SerFunc<T, R> pidGetter,
+      SerPred<T> parentPredicate,
+      SerFunc<T, List<T>> childrenGetter) {
+    return new TreeHelper<>(idGetter, pidGetter, null, parentPredicate, childrenGetter, null);
   }
 
   /**

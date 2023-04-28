@@ -17,6 +17,7 @@
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,8 @@ import java.util.List;
  */
 @MybatisPlusTest
 class ManyTest {
+
+  private static final Long NULL_LONG_VALUE = Opp.<Long>empty().get();
 
   @Test
   void testQuery() {
@@ -59,7 +62,7 @@ class ManyTest {
   @Test
   void testNoQuery() {
     UserInfo[] eqNullUserArray =
-        Many.of(UserInfo::getId).eq(null).query(s -> s.toArray(UserInfo[]::new));
+        Many.of(UserInfo::getId).eq(NULL_LONG_VALUE).query(s -> s.toArray(UserInfo[]::new));
     Assertions.assertArrayEquals(new UserInfo[0], eqNullUserArray);
 
     List<String> inEmptyNameList =

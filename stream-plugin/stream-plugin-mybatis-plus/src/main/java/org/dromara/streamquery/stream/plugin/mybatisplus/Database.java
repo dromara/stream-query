@@ -667,8 +667,10 @@ public class Database {
     }
     Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
     TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-    Assert.notNull(
-        tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+    if (tableInfo == null) {
+      throw ExceptionUtils.mpe(
+          "error: can not execute. because can not find cache of TableInfo for entity!");
+    }
     String keyProperty = tableInfo.getKeyProperty();
     Assert.notEmpty(
         keyProperty, "error: can not execute. because can not find column for id from entity!");
@@ -1072,7 +1074,9 @@ public class Database {
   @SuppressWarnings("unchecked")
   public static <T, M extends BaseMapper<T>> M getMapper(
       Class<T> entityClass, SqlSession sqlSession) {
-    Assert.notNull(entityClass, "entityClass can't be null!");
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("entityClass can't be null!");
+    }
     TableInfo tableInfo =
         Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass))
             .orElseThrow(
@@ -1241,7 +1245,9 @@ public class Database {
         break;
       }
     }
-    Assert.notNull(entityClass, "error: can not get entityClass from entityList");
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("error: can not get entityClass from entityList");
+    }
     Assert.isFalse(
         SimpleTypeRegistry.isSimpleType(entityClass), "error: entityClass can not be simple type");
     return entityClass;
@@ -1261,7 +1267,9 @@ public class Database {
         entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
       }
     }
-    Assert.notNull(entityClass, "error: can not get entityClass from wrapper");
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("error: can not get entityClass from wrapper");
+    }
     return entityClass;
   }
 

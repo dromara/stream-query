@@ -8,9 +8,11 @@
     <artifactId>stream-query</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
+
     <modules>
         <module>stream-core</module>
         <module>stream-plugin</module>
+        <module>stream-dependencies</module>
     </modules>
 
 
@@ -27,7 +29,6 @@
         <junit.version>5.9.0</junit.version>
         <jmh.version>1.35</jmh.version>
         <ttl.version>2.14.1</ttl.version>
-        <reflections.version>0.10.2</reflections.version>
     </properties>
 
     <name>stream-query</name>
@@ -75,23 +76,6 @@
             </roles>
         </developer>
     </developers>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-core</artifactId>
-                <version>${jmh.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-generator-annprocess</artifactId>
-                <version>${jmh.version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>

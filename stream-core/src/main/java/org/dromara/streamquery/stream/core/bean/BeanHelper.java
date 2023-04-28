@@ -18,8 +18,6 @@ package org.dromara.streamquery.stream.core.bean;
 
 import org.dromara.streamquery.stream.core.optional.Opp;
 
-import java.util.Objects;
-
 /**
  * BeanHelper class.
  *
@@ -53,7 +51,7 @@ public class BeanHelper {
     } else if (isSetter(getterOrSetter)) {
       originProperty = getterOrSetter.replaceFirst(SETTER_PREFIX, "");
     }
-    if (Objects.isNull(originProperty)) {
+    if (originProperty == null) {
       throw new UnsupportedOperationException(getterOrSetter + " is not getter or setter");
     }
     return originProperty.substring(0, 1).toLowerCase() + originProperty.substring(1);
