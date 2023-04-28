@@ -23,7 +23,6 @@
         <revision>1.6.0-alpha</revision>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <byte-buddy.version>1.12.21</byte-buddy.version>
-        <lombok.version>1.18.24</lombok.version>
         <spring-boot.version>2.7.0</spring-boot.version>
         <h2.version>2.1.214</h2.version>
         <junit.version>5.9.0</junit.version>
@@ -34,6 +33,19 @@
     <name>stream-query</name>
     <description>允许完全摆脱Mapper的mybatis-plus体验！可以使用类似“工具类”这样的静态函数进行数据库操作</description>
     <url>https://github.com/dromara/stream-query</url>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.dromara.stream-query</groupId>
+                <artifactId>stream-dependencies</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <issueManagement>
         <system>Github Issue</system>
