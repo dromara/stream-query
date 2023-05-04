@@ -1,6 +1,6 @@
 ---
 title: 自动生成front matter
-date: 2020-05-12 11:46:37
+date: 2023-05-12 11:46:37
 permalink: /pages/088c16
 article: false
 ---
@@ -14,7 +14,7 @@ article: false
 ```yaml
 ---
 title: 《JavaScript教程》笔记
-date: 2020-01-12 11:51:53
+date: 2023-01-12 11:51:53
 permalink: /pages/d8cae9
 categories:
   - 前端
