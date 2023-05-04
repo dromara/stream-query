@@ -12,6 +12,9 @@
 
     <artifactId>stream-plugin</artifactId>
     <packaging>pom</packaging>
+    <name>Stream Plugin</name>
+    <description>Stream Plugin</description>
+
     <modules>
         <module>stream-plugin-mybatis-plus</module>
     </modules>

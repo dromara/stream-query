@@ -24,7 +24,7 @@
         <revision>1.6.0-alpha</revision>
     </properties>
 
-    <name>stream-query</name>
+    <name>Stream Query</name>
     <description>允许完全摆脱Mapper的mybatis-plus体验！可以使用类似“工具类”这样的静态函数进行数据库操作</description>
     <url>https://github.com/dromara/stream-query</url>
 
