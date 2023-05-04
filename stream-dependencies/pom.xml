@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <name>Stream Dependencies</name>
     <description>Stream Dependencies</description>
+    <url>https://github.com/dromara/stream-query</url>
 
     <licenses>
         <license>
