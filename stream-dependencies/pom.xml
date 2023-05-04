@@ -80,6 +80,8 @@
                 <version>${revision}</version>
             </dependency>
 
+
+            <!-- Third Party -->
             <!-- mybatis-plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
