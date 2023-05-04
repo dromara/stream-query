@@ -6,6 +6,7 @@
         <groupId>org.dromara.stream-query</groupId>
         <artifactId>stream-query</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>stream-dependencies</artifactId>
@@ -54,7 +55,6 @@
     </developers>
 
     <properties>
-        <revision>1.7.0-alpha</revision>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <byte-buddy.version>1.12.21</byte-buddy.version>
         <lombok.version>1.18.24</lombok.version>
