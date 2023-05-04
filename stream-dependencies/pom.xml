@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <revision>1.6.0-alpha</revision>
+        <revision>1.7.0-alpha</revision>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <byte-buddy.version>1.12.21</byte-buddy.version>
         <lombok.version>1.18.24</lombok.version>
