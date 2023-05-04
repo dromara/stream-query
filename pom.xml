@@ -13,6 +13,7 @@
         <module>stream-core</module>
         <module>stream-plugin</module>
         <module>stream-dependencies</module>
+        <module>stream-parent</module>
     </modules>
 
 
@@ -21,25 +22,11 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <revision>1.6.0-alpha</revision>
-        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
     </properties>
 
     <name>stream-query</name>
     <description>允许完全摆脱Mapper的mybatis-plus体验！可以使用类似“工具类”这样的静态函数进行数据库操作</description>
     <url>https://github.com/dromara/stream-query</url>
-
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.dromara.stream-query</groupId>
-                <artifactId>stream-dependencies</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <issueManagement>
         <system>Github Issue</system>
@@ -78,7 +65,15 @@
             <email>2556450572@qq.com</email>
             <organization>dromara.org</organization>
             <roles>
-                <role>commiter</role>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>KamTo Hung</name>
+            <email>kamtohung@gmail.com</email>
+            <organization>dromara.org</organization>
+            <roles>
+                <role>committer</role>
             </roles>
         </developer>
     </developers>

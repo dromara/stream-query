@@ -4,13 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.dromara.stream-query</groupId>
-        <artifactId>stream-query</artifactId>
+        <artifactId>stream-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../stream-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>stream-core</artifactId>
+    <name>Stream Core</name>
+    <description>Stream Core</description>
 
     <dependencies>
         <dependency>

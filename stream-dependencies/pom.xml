@@ -2,13 +2,58 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.dromara.stream-query</groupId>
+    <parent>
+        <groupId>org.dromara.stream-query</groupId>
+        <artifactId>stream-query</artifactId>
+        <version>${revision}</version>
+    </parent>
+
     <artifactId>stream-dependencies</artifactId>
-    <version>${revision}</version>
     <packaging>pom</packaging>
+    <name>Stream Dependencies</name>
+    <description>Stream Dependencies</description>
+
+    <licenses>
+        <license>
+            <name>Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git@github.com:dromara/stream-query.git</connection>
+        <developerConnection>scm:git@github.com:dromara/stream-query.git</developerConnection>
+        <url>git@github.com:dromara/stream-query.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>VampireAchao</name>
+            <email>vampireachao@dromara.org</email>
+            <organization>dromara.org</organization>
+            <roles>
+                <role>author</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Cizai_</name>
+            <email>2556450572@qq.com</email>
+            <organization>dromara.org</organization>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>KamTo Hung</name>
+            <email>kamtohung@gmail.com</email>
+            <organization>dromara.org</organization>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+    </developers>
 
     <properties>
-        <revision>1.6.0-alpha</revision>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <byte-buddy.version>1.12.21</byte-buddy.version>
         <lombok.version>1.18.24</lombok.version>
@@ -21,6 +66,20 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- stream-core -->
+            <dependency>
+                <groupId>org.dromara.stream-query</groupId>
+                <artifactId>stream-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- stream-plugin-mybatis-plus -->
+            <dependency>
+                <groupId>org.dromara.stream-query</groupId>
+                <artifactId>stream-plugin-mybatis-plus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!-- mybatis-plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -51,20 +110,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-json</artifactId>
                 <version>${spring-boot.version}</version>
-            </dependency>
-
-            <!-- stream-core -->
-            <dependency>
-                <groupId>org.dromara.stream-query</groupId>
-                <artifactId>stream-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- stream-plugin-mybatis-plus -->
-            <dependency>
-                <groupId>org.dromara.stream-query</groupId>
-                <artifactId>stream-plugin-mybatis-plus</artifactId>
-                <version>${revision}</version>
             </dependency>
 
             <!-- 测试依赖 -->
