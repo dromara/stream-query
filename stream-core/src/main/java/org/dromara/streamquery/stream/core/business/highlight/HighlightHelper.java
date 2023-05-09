@@ -56,8 +56,8 @@ public class HighlightHelper {
         Steam.of(foundWords)
             .sorted(
                 Comparator.comparing(FoundWord::getEndIndex)
-                    .thenComparingInt(FoundWord::getStartIndex))
-            .map(foundWord -> new int[] {foundWord.getStartIndex(), foundWord.getEndIndex()})
+                    .thenComparingInt(FoundWord::getIndex))
+            .map(foundWord -> new int[] {foundWord.getIndex(), foundWord.getEndIndex()})
             .toList();
     // 合并区间
     Deque<int[]> mergeDeque = new ArrayDeque<>();

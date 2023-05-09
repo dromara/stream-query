@@ -28,7 +28,7 @@ public class FoundWord {
   /** ignore */
   private String wordAfterHighlight;
   /** 起始下标 */
-  private Integer startIndex;
+  private Integer index;
   /** 结束下标 */
   private Integer endIndex;
 
@@ -41,8 +41,8 @@ public class FoundWord {
   public FoundWord(String word, Integer index) {
     setWord(word);
     setWordAfterHighlight(word);
-    setStartIndex(index);
-    setEndIndex(startIndex + word.length() - 1);
+    setIndex(index);
+    setEndIndex(this.index + word.length() - 1);
   }
 
   /**
@@ -50,31 +50,31 @@ public class FoundWord {
    *
    * @param word a {@link java.lang.String} object
    * @param wordAfterHighlight a {@link java.lang.String} object
-   * @param startIndex a {@link java.lang.Integer} object
+   * @param index a {@link java.lang.Integer} object
    */
-  public FoundWord(String word, String wordAfterHighlight, Integer startIndex) {
+  public FoundWord(String word, String wordAfterHighlight, Integer index) {
     this.word = word;
     this.wordAfterHighlight = wordAfterHighlight;
-    this.startIndex = startIndex;
-    this.endIndex = startIndex + word.length() - 1;
+    this.index = index;
+    this.endIndex = index + word.length() - 1;
   }
 
   /**
-   * Getter for the field <code>startIndex</code>.
+   * Getter for the field <code>index</code>.
    *
    * @return a {@link java.lang.Integer} object
    */
-  public Integer getStartIndex() {
-    return startIndex;
+  public Integer getIndex() {
+    return index;
   }
 
   /**
-   * Setter for the field <code>startIndex</code>.
+   * Setter for the field <code>index</code>.
    *
-   * @param startIndex a {@link java.lang.Integer} object
+   * @param index a {@link java.lang.Integer} object
    */
-  public void setStartIndex(Integer startIndex) {
-    this.startIndex = startIndex;
+  public void setIndex(Integer index) {
+    this.index = index;
   }
 
   /**
