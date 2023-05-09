@@ -27,8 +27,10 @@ public class FoundWord {
   private String word;
   /** ignore */
   private String wordAfterHighlight;
-  /** 下标 */
-  private Integer index;
+  /** 起始下标 */
+  private Integer startIndex;
+  /** 结束下标 */
+  private Integer endIndex;
 
   /**
    * Constructor for FoundWord.
@@ -39,7 +41,8 @@ public class FoundWord {
   public FoundWord(String word, Integer index) {
     setWord(word);
     setWordAfterHighlight(word);
-    setIndex(index);
+    setStartIndex(index);
+    setEndIndex(startIndex + word.length() - 1);
   }
 
   /**
@@ -47,30 +50,31 @@ public class FoundWord {
    *
    * @param word a {@link java.lang.String} object
    * @param wordAfterHighlight a {@link java.lang.String} object
-   * @param index a {@link java.lang.Integer} object
+   * @param startIndex a {@link java.lang.Integer} object
    */
-  public FoundWord(String word, String wordAfterHighlight, Integer index) {
+  public FoundWord(String word, String wordAfterHighlight, Integer startIndex) {
     this.word = word;
     this.wordAfterHighlight = wordAfterHighlight;
-    this.index = index;
+    this.startIndex = startIndex;
+    this.endIndex = startIndex + word.length() - 1;
   }
 
   /**
-   * Getter for the field <code>index</code>.
+   * Getter for the field <code>startIndex</code>.
    *
    * @return a {@link java.lang.Integer} object
    */
-  public Integer getIndex() {
-    return index;
+  public Integer getStartIndex() {
+    return startIndex;
   }
 
   /**
-   * Setter for the field <code>index</code>.
+   * Setter for the field <code>startIndex</code>.
    *
-   * @param index a {@link java.lang.Integer} object
+   * @param startIndex a {@link java.lang.Integer} object
    */
-  public void setIndex(Integer index) {
-    this.index = index;
+  public void setStartIndex(Integer startIndex) {
+    this.startIndex = startIndex;
   }
 
   /**
@@ -107,5 +111,23 @@ public class FoundWord {
    */
   public void setWordAfterHighlight(String wordAfterHighlight) {
     this.wordAfterHighlight = wordAfterHighlight;
+  }
+
+  /**
+   * Getter for the field <code>endIndex</code>.
+   *
+   * @return a {@link java.lang.Integer} object
+   */
+  public Integer getEndIndex() {
+    return endIndex;
+  }
+
+  /**
+   * Setter for the field <code>endIndex</code>.
+   *
+   * @param endIndex a {@link java.lang.Integer} object
+   */
+  public void setEndIndex(Integer endIndex) {
+    this.endIndex = endIndex;
   }
 }
