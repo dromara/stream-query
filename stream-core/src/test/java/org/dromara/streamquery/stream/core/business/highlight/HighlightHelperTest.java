@@ -62,7 +62,7 @@ class HighlightHelperTest {
     String highlight = HighlightHelper.highlight(
         text, 
         s -> "<span style='color:red'>" + s + "</span>", 
-        "刚出锅", "土豆", "出锅", "大土豆呀", "出锅的");
+        Lists.of("刚出锅", "土豆", "出锅", "大土豆呀", "出锅的"));
     Assertions.assertEquals(
         "我有一颗<span style='color:red'>大土豆呀</span>，大<span style='color:red'>土豆</span>，<span style='color:red'>刚出锅的</span>，<span style='color:red'>刚出锅</span>", 
         highlight);

@@ -21,6 +21,7 @@ import org.dromara.streamquery.stream.core.stream.Steam;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
@@ -99,8 +100,8 @@ public class HighlightHelper {
    * @return 高亮封装后的字符串
    */
   public static String highlight(
-      String text, UnaryOperator<String> highlightOperator, String... words) {
-    if (words.length == 0 || Opp.ofStr(text).isEmpty()) {
+      String text, UnaryOperator<String> highlightOperator, Collection<String> words) {
+    if (Opp.ofColl(words).isEmpty() || Opp.ofStr(text).isEmpty()) {
       return text;
     }
     List<FoundWord> foundWords = new ArrayList<>();
