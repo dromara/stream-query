@@ -61,19 +61,17 @@ public class HighlightHelper {
             .toList();
     // 合并区间
     Deque<int[]> mergeDeque = new ArrayDeque<>();
-    // 添加左边界区间
-    mergeDeque.offerLast(new int[] {-1, -1});
     for (int[] section : sectionList) {
-      int[] prev = mergeDeque.peekLast();
-      // 如果当前区间的左端点索引大于前面合并区间的右端点索引就不能合并
-      if (section[0] > prev[1]) {
-        mergeDeque.offerLast(section);
-      } else {
-        prev[1] = section[1];
-        prev[0] = Math.min(prev[0], section[0]);
+      int[] temp = {section[0], section[1]};
+      // 从队尾弹出可以合并的区间
+      while (!mergeDeque.isEmpty() && temp[0] <= mergeDeque.peekLast()[1] + 1) {
+        int[] prev = mergeDeque.pollLast();
+        temp[0] = Math.min(temp[0], prev[0]);
       }
+      mergeDeque.offerLast(temp);
     }
-    // 添加右边界区间
+    // 添加边界区间
+    mergeDeque.offerFirst(new int[] {-1, -1});
     mergeDeque.offerLast(new int[] {text.length(), text.length() - 1});
     List<FoundWord> list = new ArrayList<>();
     int[] prev = mergeDeque.pollFirst();
