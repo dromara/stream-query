@@ -51,24 +51,22 @@ public class HighlightHelper {
     if (Opp.ofColl(foundWords).isEmpty() || Opp.ofStr(text).isEmpty()) {
       return text;
     }
-    // 对区间先进行右端点排序后在进行左端点排序
+    // 对区间进行左端点的排序
     List<int[]> sectionList =
         Steam.of(foundWords)
             .sorted(
-                Comparator.comparing(FoundWord::getEndIndex)
-                    .thenComparingInt(FoundWord::getIndex))
+                Comparator.comparing(FoundWord::getIndex))
             .map(foundWord -> new int[] {foundWord.getIndex(), foundWord.getEndIndex()})
             .toList();
     // 合并区间
     Deque<int[]> mergeDeque = new ArrayDeque<>();
     for (int[] section : sectionList) {
-      int[] temp = {section[0], section[1]};
-      // 从队尾弹出可以合并的区间
-      while (!mergeDeque.isEmpty() && temp[0] <= mergeDeque.peekLast()[1] + 1) {
-        int[] prev = mergeDeque.pollLast();
-        temp[0] = Math.min(temp[0], prev[0]);
+      // 如果区间没有交集也没有相邻则直接加入队尾
+      if (mergeDeque.isEmpty() || mergeDeque.peekLast()[1] < section[0] - 1) {
+        mergeDeque.offerLast(section);
+      } else {
+        mergeDeque.peekLast()[1] = Math.max(mergeDeque.peekLast()[1], section[1]);
       }
-      mergeDeque.offerLast(temp);
     }
     // 添加边界区间
     mergeDeque.offerFirst(new int[] {-1, -1});
