@@ -27,8 +27,10 @@ public class FoundWord {
   private String word;
   /** ignore */
   private String wordAfterHighlight;
-  /** 下标 */
+  /** 起始下标 */
   private Integer index;
+  /** 结束下标 */
+  private Integer endIndex;
 
   /**
    * Constructor for FoundWord.
@@ -40,6 +42,7 @@ public class FoundWord {
     setWord(word);
     setWordAfterHighlight(word);
     setIndex(index);
+    setEndIndex(this.index + word.length() - 1);
   }
 
   /**
@@ -53,6 +56,7 @@ public class FoundWord {
     this.word = word;
     this.wordAfterHighlight = wordAfterHighlight;
     this.index = index;
+    this.endIndex = index + word.length() - 1;
   }
 
   /**
@@ -107,5 +111,23 @@ public class FoundWord {
    */
   public void setWordAfterHighlight(String wordAfterHighlight) {
     this.wordAfterHighlight = wordAfterHighlight;
+  }
+
+  /**
+   * Getter for the field <code>endIndex</code>.
+   *
+   * @return a {@link java.lang.Integer} object
+   */
+  public Integer getEndIndex() {
+    return endIndex;
+  }
+
+  /**
+   * Setter for the field <code>endIndex</code>.
+   *
+   * @param endIndex a {@link java.lang.Integer} object
+   */
+  public void setEndIndex(Integer endIndex) {
+    this.endIndex = endIndex;
   }
 }
