@@ -59,12 +59,13 @@ class HighlightHelperTest {
   @Test
   void highlightStr() {
     String text = "我有一颗大土豆呀，大土豆，刚出锅的，刚出锅";
-    String highlight = HighlightHelper.highlight(
-        text, 
-        s -> "<span style='color:red'>" + s + "</span>", 
-        Lists.of("刚出锅", "土豆", "出锅", "大土豆呀", "出锅的"));
+    String highlight =
+        HighlightHelper.highlight(
+            text,
+            s -> "<span style='color:red'>" + s + "</span>",
+            Lists.of("刚出锅", "土豆", "出锅", "大土豆呀", "出锅的"));
     Assertions.assertEquals(
-        "我有一颗<span style='color:red'>大土豆呀</span>，大<span style='color:red'>土豆</span>，<span style='color:red'>刚出锅的</span>，<span style='color:red'>刚出锅</span>", 
+        "我有一颗<span style='color:red'>大土豆呀</span>，大<span style='color:red'>土豆</span>，<span style='color:red'>刚出锅的</span>，<span style='color:red'>刚出锅</span>",
         highlight);
   }
 }

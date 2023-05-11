@@ -19,12 +19,7 @@ package org.dromara.streamquery.stream.core.business.highlight;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 import java.util.function.UnaryOperator;
 
 /**
@@ -46,7 +41,6 @@ public class HighlightHelper {
    * @param highlightOperator a {@link java.util.function.UnaryOperator} object
    * @return a {@link java.lang.String} object
    */
-  @SuppressWarnings("all")
   public static String highlight(
       String text, List<FoundWord> foundWords, UnaryOperator<String> highlightOperator) {
     if (Opp.ofColl(foundWords).isEmpty() || Opp.ofStr(text).isEmpty()) {
@@ -55,8 +49,7 @@ public class HighlightHelper {
     // 对区间进行左端点的排序
     List<int[]> sectionList =
         Steam.of(foundWords)
-            .sorted(
-                Comparator.comparing(FoundWord::getIndex))
+            .sorted(Comparator.comparing(FoundWord::getIndex))
             .map(foundWord -> new int[] {foundWord.getIndex(), foundWord.getEndIndex()})
             .toList();
     // 合并区间
@@ -73,7 +66,7 @@ public class HighlightHelper {
     mergeDeque.offerFirst(new int[] {-1, -1});
     mergeDeque.offerLast(new int[] {text.length(), text.length() - 1});
     List<FoundWord> list = new ArrayList<>();
-    int[] prev = mergeDeque.pollFirst();
+    int[] prev = Opp.of(mergeDeque.pollFirst()).get();
     while (!mergeDeque.isEmpty()) {
       int[] cur = mergeDeque.pollFirst();
       String gapWord = text.substring(prev[1] + 1, cur[0]);
@@ -93,10 +86,10 @@ public class HighlightHelper {
 
   /**
    * 将给定的字符串text中的给定单词words进行高亮显示
-   * 
-   * @param text              需要高亮封装的字符串
+   *
+   * @param text 需要高亮封装的字符串
    * @param highlightOperator 高亮转换函数
-   * @param words             需要高亮显示的单词
+   * @param words 需要高亮显示的单词
    * @return 高亮封装后的字符串
    */
   public static String highlight(
