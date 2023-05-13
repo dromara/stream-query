@@ -25,7 +25,9 @@ import org.dromara.streamquery.stream.core.variable.VariableHelper;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.*;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * Maps class.
@@ -291,5 +293,27 @@ public class Maps {
               });
     }
     return map.computeIfAbsent(key, mappingFunction);
+  }
+
+  /**
+   * isEmpty.
+   *
+   * @param map a {@link java.util.Map} object
+   * @param <K> a K class
+   * @param <V> a V class
+   */
+  public static <K, V> boolean isEmpty(Map<K, V> map) {
+    return map == null || map.isEmpty();
+  }
+
+  /**
+   * isNotEmpty.
+   *
+   * @param map a {@link java.util.Map} object
+   * @param <K> a K class
+   * @param <V> a V class
+   */
+  public static <K, V> boolean isNotEmpty(Map<K, V> map) {
+    return !isEmpty(map);
   }
 }

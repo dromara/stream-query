@@ -121,6 +121,18 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   }
 
   /**
+   * 返回包含指定元素的串行流
+   *
+   * @param map 指定元素
+   * @param <K> key类型
+   * @param <V> value类型
+   * @return 包含指定元素的串行流 从一个安全数组中创建流
+   */
+  public static <K, V> Steam<Map.Entry<K, V>> of(Map<K, V> map) {
+    return Maps.isEmpty(map) ? empty() : Steam.of(map.entrySet());
+  }
+
+  /**
    * 返回无限有序流 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
    *
    * <p>例如 {@code Steam.iterate(0, i -> i + 1)} 就可以创建从0开始，每次+1的无限流，使用{@link

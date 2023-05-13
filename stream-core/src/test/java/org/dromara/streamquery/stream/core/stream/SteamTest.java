@@ -19,6 +19,7 @@ package org.dromara.streamquery.stream.core.stream;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
+import org.dromara.streamquery.stream.core.collection.Maps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,6 +50,7 @@ class SteamTest {
     Assertions.assertEquals(3, Steam.of(asList(1, 2, 3), true).count());
     Assertions.assertEquals(3, Steam.of(1, 2, 3).count());
     Assertions.assertEquals(3, Steam.of(Stream.builder().add(1).add(2).add(3).build()).count());
+    Assertions.assertEquals(3, Steam.of(Maps.of()).count());
   }
 
   @Test
