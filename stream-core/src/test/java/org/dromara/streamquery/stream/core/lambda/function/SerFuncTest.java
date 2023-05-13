@@ -16,8 +16,26 @@
  */
 package org.dromara.streamquery.stream.core.lambda.function;
 
+import lombok.val;
+import org.dromara.streamquery.stream.core.collection.Maps;
+import org.dromara.streamquery.stream.core.stream.Steam;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 /**
+ * SerBiFuncTest
+ *
  * @author VampireAchao
- * @since 2023/1/30 10:50
+ * @since 2023/5/13
  */
-class SerConsTest {}
+class SerFuncTest {
+  @Test
+  void entryFuncTest() {
+    val first =
+        Steam.of(Maps.of("foo", "bar"))
+            .map(SerFunc.entryFunc((key, value) -> key + value))
+            .findFirst();
+    Assertions.assertTrue(first.isPresent());
+    Assertions.assertEquals("foobar", first.get());
+  }
+}

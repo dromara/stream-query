@@ -19,7 +19,9 @@ package org.dromara.streamquery.stream.core.lambda.function;
 import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -91,5 +93,17 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
    */
   static <T> SerCons<T> nothing() {
     return t -> {};
+  }
+
+  /**
+   * toConsumer
+   *
+   * @param biCons biCons
+   * @return Consumer
+   * @param <K> a K class
+   * @param <V> a V class
+   */
+  static <K, V> Consumer<Map.Entry<K, V>> entryCons(BiConsumer<K, V> biCons) {
+    return entry -> biCons.accept(entry.getKey(), entry.getValue());
   }
 }

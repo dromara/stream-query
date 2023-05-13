@@ -19,6 +19,8 @@ package org.dromara.streamquery.stream.core.lambda.function;
 import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -72,5 +74,22 @@ public interface SerFunc<T, R> extends Function<T, R>, Serializable {
   @SuppressWarnings("unchecked")
   static <T, R> Function<T, R> cast() {
     return t -> (R) t;
+  }
+
+  /**
+   * entryFunc
+   *
+   * @param biFunc biFunc
+   * @param <K> key
+   * @param <V> value
+   * @param <R> result
+   * @return Function
+   * @apiNote eg
+   *     <pre>{@code
+   * Steam.of(map).map(SerFunc.entryFunc((key, value) -> key + value))
+   * }</pre>
+   */
+  static <K, V, R> Function<Map.Entry<K, V>, R> entryFunc(BiFunction<K, V, R> biFunc) {
+    return entry -> biFunc.apply(entry.getKey(), entry.getValue());
   }
 }
