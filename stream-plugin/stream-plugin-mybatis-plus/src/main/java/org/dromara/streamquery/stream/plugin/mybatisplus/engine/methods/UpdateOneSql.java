@@ -44,6 +44,11 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
     super(methodName);
   }
 
+  /** Constructor for UpdateOneSql. */
+  public UpdateOneSql() {
+    super(SqlMethodEnum.UPDATE_ONE_SQL.getMethod());
+  }
+
   /** 注入自定义 MappedStatement */
   @Override
   public MappedStatement injectMappedStatement(
