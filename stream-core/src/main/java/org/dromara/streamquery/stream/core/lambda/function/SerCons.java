@@ -96,12 +96,16 @@ public interface SerCons<T> extends Consumer<T>, Serializable {
   }
 
   /**
-   * toConsumer
+   * entryCons
    *
    * @param biCons biCons
    * @return Consumer
    * @param <K> a K class
    * @param <V> a V class
+   * @apiNote eg
+   *     <pre>{@code
+   * Steam.of(map).forEach(SerCons.entryCons((key, value) -> list.add(key + value)))
+   * }</pre>
    */
   static <K, V> Consumer<Map.Entry<K, V>> entryCons(BiConsumer<K, V> biCons) {
     return entry -> biCons.accept(entry.getKey(), entry.getValue());

@@ -19,7 +19,9 @@ package org.dromara.streamquery.stream.core.lambda.function;
 import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -128,5 +130,21 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
   default SerPred<T> or(SerPred<? super T> other) {
     Objects.requireNonNull(other);
     return t -> test(t) || other.test(t);
+  }
+
+  /**
+   * entryPred
+   *
+   * @param biPred biPred
+   * @return predicate
+   * @param <K> key
+   * @param <V> value
+   * @apiNote eg
+   *     <pre>{@code
+   * Steam.of(map).findFirst(SerPred.entryPred((key, value) -> key.equals("foo") && value.equals("bar")));
+   * }</pre>
+   */
+  static <K, V> Predicate<Map.Entry<K, V>> entryPred(BiPredicate<K, V> biPred) {
+    return entry -> biPred.test(entry.getKey(), entry.getValue());
   }
 }

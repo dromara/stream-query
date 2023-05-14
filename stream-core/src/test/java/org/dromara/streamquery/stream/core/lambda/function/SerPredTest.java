@@ -17,7 +17,6 @@
 package org.dromara.streamquery.stream.core.lambda.function;
 
 import lombok.val;
-import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
@@ -25,14 +24,15 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author VampireAchao
- * @since 2023/1/30 10:50
+ * @since 2023/5/14 13:03
  */
-class SerConsTest {
+class SerPredTest {
+
   @Test
-  void entryConsTest() {
-    val list = Lists.of();
-    Steam.of(Maps.of("foo", "bar"))
-        .forEach(SerCons.entryCons((key, value) -> list.add(key + value)));
-    Assertions.assertEquals("foobar", list.get(0));
+  void entryPredTest() {
+    val first =
+        Steam.of(Maps.of("foo", "bar"))
+            .findFirst(SerPred.entryPred((key, value) -> key.equals("foo") && value.equals("bar")));
+    Assertions.assertTrue(first.isPresent());
   }
 }
