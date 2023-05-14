@@ -21,13 +21,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
+import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 /**
  * @author VampireAchao
@@ -101,5 +105,46 @@ public class WrapperHelper {
       return Database.notActive(wrapper);
     }
     return wrapper.nested(w -> dataList.forEach(data -> biConsumer.accept(w, data)));
+  }
+
+  /**
+   * select.
+   *
+   * @param wrapper a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper}
+   *     object
+   * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+   * @param <T> a T class
+   * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   */
+  @SafeVarargs
+  public static <T> LambdaQueryWrapper<T> select(
+      LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
+    return select(wrapper, LambdaQueryWrapper::select, columns);
+  }
+
+  /**
+   * select.
+   *
+   * @param wrapper a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper}
+   *     object
+   * @param whenAllMatchColumn a {@link SerBiCons} object
+   * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+   * @param <T> a T class
+   * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   */
+  @SafeVarargs
+  public static <T> LambdaQueryWrapper<T> select(
+      LambdaQueryWrapper<T> wrapper,
+      SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn,
+      SFunction<T, ?>... columns) {
+    if (Stream.of(columns)
+        .allMatch(
+            func ->
+                Objects.nonNull(func)
+                    && PropertyNamer.isGetter(
+                        LambdaHelper.resolve(func).getLambda().getImplMethodName()))) {
+      whenAllMatchColumn.accept(wrapper, columns);
+    }
+    return wrapper;
   }
 }

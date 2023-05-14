@@ -45,7 +45,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
-import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
@@ -204,7 +203,9 @@ public class Database {
    * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
    * @param <T> a T class
    * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SFunction[])}
    */
+  @Deprecated
   @SafeVarargs
   public static <T> LambdaQueryWrapper<T> select(
       LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
@@ -220,21 +221,15 @@ public class Database {
    * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
    * @param <T> a T class
    * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SerBiCons, SFunction[])}
    */
+  @Deprecated
   @SafeVarargs
   public static <T> LambdaQueryWrapper<T> select(
       LambdaQueryWrapper<T> wrapper,
       SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn,
       SFunction<T, ?>... columns) {
-    if (Stream.of(columns)
-        .allMatch(
-            func ->
-                Objects.nonNull(func)
-                    && PropertyNamer.isGetter(
-                        LambdaHelper.resolve(func).getLambda().getImplMethodName()))) {
-      whenAllMatchColumn.accept(wrapper, columns);
-    }
-    return wrapper;
+    return WrapperHelper.select(wrapper, whenAllMatchColumn, columns);
   }
 
   /**

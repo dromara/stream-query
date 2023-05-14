@@ -131,7 +131,7 @@ public class OneToManyToOne<
       SFunction<T, VV> middleValue) {
     this.middleValue = (SFunction<T, V>) middleValue;
     if (Objects.nonNull(middleWrapper)) {
-      Database.select(middleWrapper, middleKey, middleValue);
+      WrapperHelper.select(middleWrapper, middleKey, middleValue);
     }
     return (OneToManyToOne<T, K, VV, U, VV>) this;
   }
