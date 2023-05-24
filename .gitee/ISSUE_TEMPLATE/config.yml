@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: stream-query文档中心
+    url: https://dromara.gitee.io/stream-query/
+    about: 允许完全摆脱Mapper的mybatis-plus体验！
