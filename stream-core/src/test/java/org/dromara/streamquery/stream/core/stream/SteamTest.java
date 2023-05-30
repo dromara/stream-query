@@ -50,7 +50,7 @@ class SteamTest {
     Assertions.assertEquals(3, Steam.of(asList(1, 2, 3), true).count());
     Assertions.assertEquals(3, Steam.of(1, 2, 3).count());
     Assertions.assertEquals(3, Steam.of(Stream.builder().add(1).add(2).add(3).build()).count());
-    Assertions.assertEquals(3, Steam.of(Maps.of()).count());
+    Assertions.assertEquals(0, Steam.of(Maps.of()).count());
   }
 
   @Test
