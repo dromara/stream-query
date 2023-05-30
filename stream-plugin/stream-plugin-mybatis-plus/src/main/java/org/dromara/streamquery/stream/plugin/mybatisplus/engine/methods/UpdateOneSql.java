@@ -95,7 +95,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
                                 String.format(
                                     WHEN_THEN,
                                     safeKeyProperty,
-                                    SqlScriptUtils.safeParam(ENTITY_DOT + i.getProperty())),
+                                    SqlScriptUtils.safeParam(ENTITY_DOT + i.getEl())),
                                 String.format(WHEN_THEN, safeKeyProperty, i.getColumn())),
                             COLLECTION_PARAM_NAME,
                             null,

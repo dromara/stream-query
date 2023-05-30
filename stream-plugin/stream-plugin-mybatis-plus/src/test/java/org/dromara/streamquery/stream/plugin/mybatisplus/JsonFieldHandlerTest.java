@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 import org.junit.jupiter.api.Assertions;
@@ -59,7 +60,8 @@ class JsonFieldHandlerTest {
                 });
           }
         };
-    Database.save(user);
+    Database.saveFewSql(Lists.of(user));
+    Database.updateFewSql(Lists.of(user));
     val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
     Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());
     Assertions.assertEquals("阿超", dbUser.getName().getNickname());
