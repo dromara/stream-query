@@ -25,42 +25,88 @@ module.exports = {
       { text: '首页', link: '/' },
       {
         text: '指南', link: '/pages/a2f161/', items: [
-          { text: '项目初衷与诞生', link: '/pages/52d5c3/' },
-          { text: '介绍', link: '/pages/a2f161/' },
-          { text: '快速上手', link: '/pages/793dcb/' },
-          { text: '目录结构', link: '/pages/2f674a/' },
-          { text: '核心配置和约定', link: '/pages/33d574/' },
-          { text: '自动生成front matter', link: '/pages/088c16/' },
-          { text: 'Markdown 容器', link: '/pages/d0d7eb/' },
-          { text: 'Markdown 中使用组件', link: '/pages/197691/' },
+          {text: '项目初衷与诞生', link: '/pages/52d5c3/'},
+          {text: '介绍', link: '/pages/a2f161/'},
+          {text: '快速上手', link: '/pages/793dcb/'},
+          {text: '目录结构', link: '/pages/2f674a/'},
           {
-            text: '相关文章', items: [
-              { text: '使目录栏支持h2~h6标题', link: '/pages/8dfab5/' },
-              { text: '如何让笔记更有表现力', link: '/pages/dd027d/' },
-              { text: '批量操作front matter工具', link: '/pages/2b8e22/' },
-              { text: '部署', link: '/pages/0fc1d2/' },
-              { text: '关于写文章和H1标题', link: '/pages/9ae0bd/' },
-              { text: '关于博客搭建与管理', link: '/pages/26997d/' },
-              { text: '在线编辑和新增文章的方法', link: '/pages/c5a54d/' },
+            text: 'core模块', link: '',
+            items: [
+              {text: 'Steam', link: ''},
+              {text: 'TreeHelper', link: ''},
+              {text: 'HighlightHelper', link: ''},
             ]
-          }
+          },
+          {
+            text: 'plugin模块', link: '',
+            items: [
+              {text: 'Database', link: ''},
+              {text: 'One', link: ''},
+              {text: 'Many', link: ''},
+              {text: 'OneToOne', link: ''},
+              {text: 'OneToMany', link: ''},
+            ]
+          },
+          {text: '版本日志', link: ''},
         ]
       },
       {
-        text: '配置', link: '/pages/a20ce8/', items: [
-          { text: '主题配置', link: '/pages/a20ce8/' },
-          { text: '首页配置', link: '/pages/f14bdb/' },
-          { text: 'front matter配置', link: '/pages/3216b0/' },
-          { text: '目录页配置', link: '/pages/54651a/' },
-          { text: '添加摘要', link: '/pages/1cc523/' },
-          { text: '修改主题颜色和样式', link: '/pages/f51918/' },
-          { text: '评论栏', link: '/pages/ce175c/' },
+        text: '配置', link: '/pages/a20ce8/',
+        items: [
+          {
+            text: '安装', link: '/pages/a20ce8/',
+            items: [
+              {text: '通过Maven安装', link: ''},
+              {text: '通过Gradle安装', link: ''},
+              {text: '下载jar安装', link: ''},
+              {text: '通过源码编译', link: ''},
+            ]
+          },
+          {
+            text: '动态mapper', link: '',
+            items: [
+              {text: '指定package', link: ''},
+              {text: '指定注解', link: ''},
+              {text: '指定接口', link: ''},
+              {text: '指定实体类', link: ''},
+            ]
+          },
         ]
       },
-      { text: '资源', link: '/pages/db78e2/' },
-      { text: '案例', link: '/pages/5d571c/' },
-      { text: '问答', link: '/pages/9cc27d/' },
-      { text: '赞助', link: '/pages/1b12ed/' },
+      {
+        text: '社区', link: '',
+        items: [
+          {text: '团队成员', link: ''},
+          {text: 'dromara', link: ''},
+          {text: '相关文章', link: ''},
+          {text: '社区周边', link: ''},
+          {text: '成为开发成员', link: ''},
+        ]
+      },
+      {
+        text: '问答', link: '',
+        items: [
+          {
+            text: '项目问题', link: '',
+            items: [
+              {text: '最新版本依赖下载失败', link: ''},
+              {text: '项目编译报错', link: ''},
+              {text: '如何贡献代码', link: ''},
+              {text: '如何贡献文档', link: ''},
+              {text: '使用本项目需要的前置知识', link: ''},
+            ]
+          },
+          {
+            text: '其他问题', link: '',
+            items: [
+              {text: '作者是在全职维护开源吗', link: ''},
+              {text: '你们这是个什么团队啊', link: ''},
+              {text: '和其他类似的开源项目有什么区别', link: ''},
+            ]
+          },
+        ]
+      },
+      {text: '赞助', link: '/pages/1b12ed/'},
     ],
     sidebarDepth: 2, // 侧边栏显示深度，默认1，最大2（显示到h3标题）
     logo: 'https://plus.hutool.cn/images/dromara/dromara-logo.png', // 导航栏logo
