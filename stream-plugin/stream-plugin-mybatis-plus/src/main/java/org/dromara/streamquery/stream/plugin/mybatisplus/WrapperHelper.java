@@ -20,14 +20,20 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -146,5 +152,43 @@ public class WrapperHelper {
       whenAllMatchColumn.accept(wrapper, columns);
     }
     return wrapper;
+  }
+
+  /**
+   * lambdaQuery.
+   *
+   * @param data a E object
+   * @param condition a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+   * @param <T> a T class
+   * @param <E> a E class
+   * @return a {@link Opp} object
+   */
+  public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
+      E data, SFunction<T, E> condition) {
+    return Opp.of(data)
+        .map(
+            value ->
+                Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition)))
+                    .eq(condition, value))
+        .filter(Database::isActive);
+  }
+
+  /**
+   * lambdaQuery.
+   *
+   * @param dataList a {@link java.util.Collection} object
+   * @param condition a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+   * @param <T> a T class
+   * @param <E> a E class
+   * @return a {@link Opp} object
+   */
+  public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
+      Collection<E> dataList, SFunction<T, E> condition) {
+    return Opp.ofColl(dataList)
+        .map(
+            value ->
+                Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition)))
+                    .in(condition, new HashSet<>(value)))
+        .filter(Database::isActive);
   }
 }

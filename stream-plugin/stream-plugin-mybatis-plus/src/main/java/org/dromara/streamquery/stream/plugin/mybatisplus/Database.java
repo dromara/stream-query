@@ -153,7 +153,9 @@ public class Database {
    * @param <T> a T class
    * @param <E> a E class
    * @return a {@link Opp} object
+   * @deprecated use {@link WrapperHelper#lambdaQuery(Serializable, SFunction)} instead
    */
+  @Deprecated
   public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
       E data, SFunction<T, E> condition) {
     return Opp.of(data)
@@ -172,7 +174,9 @@ public class Database {
    * @param <T> a T class
    * @param <E> a E class
    * @return a {@link Opp} object
+   * @deprecated use {@link WrapperHelper#lambdaQuery(Collection, SFunction)} instead
    */
+  @Deprecated
   public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
       Collection<E> dataList, SFunction<T, E> condition) {
     return Opp.ofColl(dataList)
