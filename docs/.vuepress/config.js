@@ -32,18 +32,18 @@ module.exports = {
           {
             text: 'core模块', link: '',
             items: [
-              {text: 'Steam', link: ''},
-              {text: 'TreeHelper', link: ''},
-              {text: 'HighlightHelper', link: ''},
+              {text: 'Steam', link: '/pages/b45451/'},
+              {text: 'TreeHelper', link: '/pages/c62c28/'},
+              {text: 'HighlightHelper', link: '/pages/ca3c2c/'},
             ]
           },
           {
             text: 'plugin模块', link: '',
             items: [
-              {text: 'Database', link: ''},
-              {text: 'One', link: ''},
-              {text: 'Many', link: ''},
-              {text: 'OneToOne', link: ''},
+              {text: 'Database', link: '/pages/454a9b/'},
+              {text: 'One', link: '/pages/4f06cd/'},
+              {text: 'Many', link: '/pages/26d89d/'},
+              {text: 'OneToOne', link: '/pages/227618/'},
               {text: 'OneToMany', link: ''},
             ]
           },
