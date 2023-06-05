@@ -50,6 +50,8 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
   private Class<? extends Annotation> annotation;
   /** scan interface */
   private Class<?> interfaceClass;
+  /** if basePackages is empty. */
+  private boolean emptyBasePackages;
 
   public void setBasePackages(Set<String> basePackages) {
     this.basePackages = basePackages;
@@ -65,6 +67,10 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
   public void setInterfaceClass(Class<?> interfaceClass) {
     this.interfaceClass = interfaceClass;
+  }
+  
+  public void setEmptyBasePackages(boolean emptyBasePackages) {
+    this.emptyBasePackages = emptyBasePackages;
   }
 
   private void registerEntityClasses(Collection<Class<?>> entityClasses) {
@@ -93,12 +99,8 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
 
   private void defaultScanConfig() {
     // default scan @TableName
-    if (CollectionUtils.isEmpty(basePackages) && annotation == null && interfaceClass == null) {
+    if (emptyBasePackages && annotation == null && interfaceClass == null) {
       annotation = TableName.class;
-    }
-    // if no base package specified, scan project package
-    if (CollectionUtils.isEmpty(basePackages)) {
-      basePackages.add("");
     }
   }
 }

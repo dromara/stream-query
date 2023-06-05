@@ -66,6 +66,10 @@ public class StreamScannerRegistrar implements ImportBeanDefinitionRegistrar {
             .filter(Objects::nonNull)
             .map(ClassUtils::getPackageName)
             .collect(Collectors.toSet()));
+    if (basePackages.isEmpty()) {
+      basePackages.add(ClassUtils.getPackageName(importingClassMetadata.getClassName()));
+      builder.addPropertyValue("emptyBasePackages", true);
+    }
     builder.addPropertyValue("basePackages", basePackages);
 
     Set<Class<?>> classes =
