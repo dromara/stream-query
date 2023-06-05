@@ -44,7 +44,7 @@ module.exports = {
               {text: 'One', link: '/pages/4f06cd/'},
               {text: 'Many', link: '/pages/26d89d/'},
               {text: 'OneToOne', link: '/pages/227618/'},
-              {text: 'OneToMany', link: ''},
+              {text: 'OneToMany', link: '/pages/2889b0/'},
             ]
           },
           {text: '版本日志', link: ''},
@@ -56,8 +56,8 @@ module.exports = {
           {
             text: '安装', link: '/pages/a20ce8/',
             items: [
-              {text: '通过Maven安装', link: ''},
-              {text: '通过Gradle安装', link: ''},
+              {text: '通过Maven安装', link: '/pages/793dcb/#核心依赖-可单独作为工具包使用'},
+              {text: '通过Gradle安装', link: '/pages/793dcb/#核心依赖-可单独作为工具包使用'},
               {text: '下载jar安装', link: ''},
               {text: '通过源码编译', link: ''},
             ]
@@ -91,7 +91,7 @@ module.exports = {
             items: [
               {text: '最新版本依赖下载失败', link: ''},
               {text: '项目编译报错', link: ''},
-              {text: '如何贡献代码', link: ''},
+              {text: '如何贡献代码', link: '/pages/953ddf/'},
               {text: '如何贡献文档', link: ''},
               {text: '使用本项目需要的前置知识', link: ''},
             ]
