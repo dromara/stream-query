@@ -32,9 +32,13 @@ module.exports = {
           {
             text: 'core模块', link: '',
             items: [
+              {text: 'Opp', link: '/pages/53b6d6/'},
+              {text: 'Sf', link: '/pages/f814bd/'},
+              {text: 'Map', link: '/pages/8cc794/'},
               {text: 'Steam', link: '/pages/b45451/'},
               {text: 'TreeHelper', link: '/pages/c62c28/'},
               {text: 'HighlightHelper', link: '/pages/ca3c2c/'},
+              {text: 'ReflectHelper', link: '/pages/affd4f/'},
             ]
           },
           {
@@ -44,10 +48,9 @@ module.exports = {
               {text: 'One', link: '/pages/4f06cd/'},
               {text: 'Many', link: '/pages/26d89d/'},
               {text: 'OneToOne', link: '/pages/227618/'},
-              {text: 'OneToMany', link: '/pages/2889b0/'},
+              {text: 'OneToMany', link: '/pages/6df48f/'},
             ]
           },
-          {text: '版本日志', link: ''},
         ]
       },
       {
@@ -107,6 +110,14 @@ module.exports = {
         ]
       },
       {text: '赞助', link: '/pages/1b12ed/'},
+      {text: '版本日志', link: '',
+        items: [
+          {text: '1-5-0-alpha', link: '/pages/ca8d6e/#v1-5-0-alpha'},
+          {text: '1-6-0-alpha', link: '/pages/ca8d6e/#v1-6-0-alpha'},
+          {text: '1-7-0-alpha', link: '/pages/ca8d6e/#v1-7-0-alpha'},
+          {text: '1-8-0', link: '/pages/ca8d6e/#v1-8-0'},
+        ]
+      },
     ],
     sidebarDepth: 2, // 侧边栏显示深度，默认1，最大2（显示到h3标题）
     logo: 'https://plus.hutool.cn/images/dromara/dromara-logo.png', // 导航栏logo
