@@ -79,11 +79,10 @@ module.exports = {
       {
         text: '社区', link: '',
         items: [
-          {text: '团队成员', link: ''},
-          {text: 'dromara', link: ''},
-          {text: '相关文章', link: ''},
+          {text: '团队成员', link: '/pages/8637d9/'},
+          {text: 'dromara', link: '/pages/1cbc0e/'},
           {text: '社区周边', link: ''},
-          {text: '成为开发成员', link: ''},
+          {text: '成为开发成员', link: '/pages/ae0ad1/'},
         ]
       },
       {
@@ -92,19 +91,19 @@ module.exports = {
           {
             text: '项目问题', link: '',
             items: [
-              {text: '最新版本依赖下载失败', link: ''},
-              {text: '项目编译报错', link: ''},
+              {text: '最新版本依赖下载失败', link: '/pages/0cad5f/'},
+              {text: '项目编译报错', link: '/pages/c90d91/'},
               {text: '如何贡献代码', link: '/pages/953ddf/'},
-              {text: '如何贡献文档', link: ''},
-              {text: '使用本项目需要的前置知识', link: ''},
+              {text: '如何贡献文档', link: '/pages/d70418/'},
+              {text: '使用本项目需要的前置知识', link: '/pages/e09d28/'},
             ]
           },
           {
             text: '其他问题', link: '',
             items: [
-              {text: '作者是在全职维护开源吗', link: ''},
-              {text: '你们这是个什么团队啊', link: ''},
-              {text: '和其他类似的开源项目有什么区别', link: ''},
+              {text: '作者是在全职维护开源吗', link: '/pages/e9976a/'},
+              {text: '你们这是个什么团队啊', link: '/pages/ddc5b8/'},
+              {text: '和其他类似的开源项目有什么区别', link: '/pages/c5ba3c/'},
             ]
           },
         ]
