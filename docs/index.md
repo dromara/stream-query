@@ -52,12 +52,16 @@ postList: none
 </p>
 
 <br/>
-<p align="center" style="color: #999;">
+<!-- <p align="center" style="color: #999;">
   赞助商（招募中）
 </p>
 <p align="center">
   <a href="#" target="_blank"><img :src="$withBase('/img/gif/洛琪希哭唧唧.gif')" alt="sponsor" class="no-zoom" style="height: 150px;border-radius: 2px;"></a>
 </p>
+-->
+<a target="_blank" href="https://www.xiaonuo.vip/?from=hutool">
+  <img src="https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg" />
+</a>
 
 ## ⛄开发团队成员
 ::: cardList 3
