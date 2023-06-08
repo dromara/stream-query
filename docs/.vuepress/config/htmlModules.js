@@ -48,7 +48,9 @@ module.exports = {
   // 赞助商广告
   sidebarT: `
   <a target="_blank" href="https://www.xiaonuo.vip/?from=hutool">
-  <img src="https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg" />
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <img src="https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg" style="max-width: 100%; max-height: 100%;" alt="">
+  </div>
 </a>`,
 
 
