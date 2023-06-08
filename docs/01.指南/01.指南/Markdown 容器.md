@@ -241,19 +241,19 @@ console.log('这是一个详情块')
 ::: cardImgList
 ```yaml
 - img: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200529162253.jpg
-  link: https://xugaoyi.com/
+  link: http://stream-query.dromara.org/
   name: 标题
   desc: 描述内容描述内容描述内容描述内容描述内容描述内容描述内容描述内容 # 描述，可选
   author: Evan Xu # 作者，可选
   avatar: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200103123203.jpg # 头像，可选
 - img: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200530100256.jpg
-  link: https://xugaoyi.com/
+  link: http://stream-query.dromara.org/
   name: 标题
   desc: 描述内容描述内容描述内容描述内容描述内容描述内容描述内容描述内容
   author: Evan Xu
   avatar: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200103123203.jpg
 - img: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200530100257.jpg
-  link: https://xugaoyi.com/
+  link: http://stream-query.dromara.org/
   name: 标题
   desc: 描述内容描述内容描述内容描述内容描述内容描述内容描述内容描述内容
   author: Evan Xu
@@ -266,19 +266,19 @@ console.log('这是一个详情块')
 ::: cardImgList
 ```yaml
 - img: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200529162253.jpg
-  link: https://xugaoyi.com/
+  link: http://stream-query.dromara.org/
   name: 标题
   desc: 描述内容描述内容描述内容描述内容描述内容描述内容描述内容描述内容 # 描述，可选
   author: Evan Xu # 作者，可选
   avatar: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200103123203.jpg # 头像，可选
 - img: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200530100256.jpg
-  link: https://xugaoyi.com/
+  link: http://stream-query.dromara.org/
   name: 标题
   desc: 描述内容描述内容描述内容描述内容描述内容描述内容描述内容描述内容
   author: Evan Xu
   avatar: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200103123203.jpg
 - img: https://fastly.jsdelivr.net/gh/xugaoyi/image_store/blog/20200530100257.jpg
-  link: https://xugaoyi.com/
+  link: http://stream-query.dromara.org/
   name: 标题
   desc: 描述内容描述内容描述内容描述内容描述内容描述内容描述内容描述内容
   author: Evan Xu
@@ -363,7 +363,7 @@ config:
 
 data:
   - img: https://xxx.jpg
-    link: https://xugaoyi.com/
+    link: http://stream-query.dromara.org/
     name: 标题
     desc: 描述内容
     author: Evan Xu

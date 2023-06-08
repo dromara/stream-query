@@ -259,7 +259,7 @@ postList: none
 
 ## 其他
 
-* 文档采取[vuepress-theme-vdoing](https://doc.xugaoyi.com/)搭建
+* 文档采取[vuepress-theme-vdoing](http://stream-query.dromara.org/)搭建
 * 致谢[JetBrains](https://www.jetbrains.com/?from=stream-query)提供的免费开源许可证
 * 致谢[Github Copilot](https://copilot.github.com/)提供的免费开源许可证
 * 本项目遵循[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.html)协议
