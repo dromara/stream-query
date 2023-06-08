@@ -17,13 +17,25 @@
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeHandler;
+import org.dromara.streamquery.stream.core.bean.BeanHelper;
+import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
+import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.optional.Opp;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * QueryCondition class.
@@ -80,7 +92,38 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    * @return a {@link QueryCondition} object
    */
   public <R extends Comparable<? super R>> QueryCondition<T> eq(SFunction<T, R> column, R data) {
-    super.eq(Objects.nonNull(data), column, data);
+    if (Objects.isNull(data)) {
+      return this;
+    }
+    LambdaExecutable executable = LambdaHelper.resolve(column);
+    String name = BeanHelper.getPropertyName(executable.getName());
+    TableInfo tableInfo = TableInfoHelper.getTableInfo(executable.getClazz());
+    Configuration configuration = tableInfo.getConfiguration();
+    ResultMap resultMap =configuration.getResultMap(tableInfo.getResultMap());
+
+    Optional<TableFieldInfo> fieldInfo = tableInfo.getFieldList().stream().filter(field -> field.getProperty().equals(name)).findFirst();
+    Optional<String> optionalJson = fieldInfo.flatMap(field -> {
+      Optional<ResultMapping> resultMappingOpt = resultMap.getResultMappings().stream()
+              .filter(resultMapping -> field.getProperty().equals(resultMapping.getProperty()))
+              .findFirst();
+
+      return resultMappingOpt.flatMap(resultMapping -> {
+        TypeHandler<?> typeHandler = resultMapping.getTypeHandler();
+        if (typeHandler instanceof AbstractJsonFieldHandler) {
+          AbstractJsonFieldHandler<R> handler = (AbstractJsonFieldHandler<R>) typeHandler;
+          return Optional.of(handler.toJson(data, tableInfo, field));
+        }
+        return Optional.empty();
+      });
+    });
+    if (optionalJson.isPresent()) {
+      String json = optionalJson.get();
+      super.eq(column, json);
+
+    } else {
+      super.eq(column,data);
+    }
+
     return this;
   }
 

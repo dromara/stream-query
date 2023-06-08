@@ -47,16 +47,16 @@ public abstract class AbstractJsonFieldHandler<T> extends AbstractJsonTypeHandle
   }
 
   @Override
-  protected T parse(String json) {
+  public T parse(String json) {
     return parse(json, tableInfo, fieldInfo);
   }
 
   @Override
-  protected String toJson(T obj) {
+  public String toJson(T obj) {
     return toJson(obj, tableInfo, fieldInfo);
   }
 
-  protected abstract T parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo);
+  public abstract T parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo);
 
-  protected abstract String toJson(T obj, TableInfo tableInfo, TableFieldInfo fieldInfo);
+  public abstract String toJson(T obj, TableInfo tableInfo, TableFieldInfo fieldInfo);
 }
