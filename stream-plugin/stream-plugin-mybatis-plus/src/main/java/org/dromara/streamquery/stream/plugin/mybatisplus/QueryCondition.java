@@ -31,10 +31,13 @@ import org.dromara.streamquery.stream.core.bean.BeanHelper;
 import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.optional.Opp;
+import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+
 import java.util.Optional;
 
 /**
@@ -95,34 +98,17 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
     if (Objects.isNull(data)) {
       return this;
     }
-    LambdaExecutable executable = LambdaHelper.resolve(column);
-    String name = BeanHelper.getPropertyName(executable.getName());
-    TableInfo tableInfo = TableInfoHelper.getTableInfo(executable.getClazz());
-    Configuration configuration = tableInfo.getConfiguration();
-    ResultMap resultMap =configuration.getResultMap(tableInfo.getResultMap());
 
-    Optional<TableFieldInfo> fieldInfo = tableInfo.getFieldList().stream().filter(field -> field.getProperty().equals(name)).findFirst();
-    Optional<String> optionalJson = fieldInfo.flatMap(field -> {
-      Optional<ResultMapping> resultMappingOpt = resultMap.getResultMappings().stream()
-              .filter(resultMapping -> field.getProperty().equals(resultMapping.getProperty()))
-              .findFirst();
-
-      return resultMappingOpt.flatMap(resultMapping -> {
-        TypeHandler<?> typeHandler = resultMapping.getTypeHandler();
-        if (typeHandler instanceof AbstractJsonFieldHandler) {
-          AbstractJsonFieldHandler<R> handler = (AbstractJsonFieldHandler<R>) typeHandler;
-          return Optional.of(handler.toJson(data, tableInfo, field));
-        }
-        return Optional.empty();
-      });
-    });
-    if (optionalJson.isPresent()) {
-      String json = optionalJson.get();
-      super.eq(column, json);
-
-    } else {
-      super.eq(column,data);
-    }
+//    Optional<String> optionalJson = convertIfNeed(column, data);
+//    if (optionalJson.isPresent()) {
+//      String json = optionalJson.get();
+//      super.eq(column, json);
+//    } else {
+//      super.eq(column,data);
+//    }
+    Opp.of(convertIfNeed(column, data))
+            .ifPresent( v -> super.eq(column, v))
+            .orElseRun(()->super.eq(column, data));
 
     return this;
   }
@@ -149,7 +135,15 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    */
   public <R extends Comparable<? super R>> QueryCondition<T> in(
       SFunction<T, R> column, Collection<R> dataList) {
-    super.in(CollectionUtils.isNotEmpty(dataList), column, dataList);
+
+    if (CollectionUtils.isEmpty(dataList)) {
+      super.in(false, column, dataList);
+    }
+    Collection<String> jsonList = new ArrayList<>();
+    dataList.forEach(v -> convertIfNeed(column, v).ifPresent(jsonList::add));
+    Opp.of(jsonList).
+            ifPresent(list -> super.in( column, list))
+            .orElseRun(() ->super.in( column, dataList));
     return this;
   }
 
@@ -175,8 +169,13 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    */
   public <R extends Comparable<? super R>> QueryCondition<T> activeEq(
       SFunction<T, R> column, R data) {
-    Opp.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
+    Opp.of(data)
+            .map(v ->     Opp.of(convertIfNeed(column, data))
+                    .ifPresent( json -> super.eq(column, json))
+                    .orElseRun(()->super.eq(column, data)))
+            .orElseRun(() -> Database.notActive(this));
     return this;
+
   }
 
   /**
@@ -201,7 +200,36 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    */
   public <R extends Comparable<? super R>> QueryCondition<T> activeIn(
       SFunction<T, R> column, Collection<R> dataList) {
-    Opp.ofColl(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
+    Opp.ofColl(dataList).map(list -> {
+      Collection<String> jsonList = new ArrayList<>();
+      dataList.forEach(v -> convertIfNeed(column, v).ifPresent(jsonList::add));
+      return Opp.of(jsonList)
+              .ifPresent(vList -> super.in( column, vList))
+              .orElseRun(() -> super.in( column, dataList));
+    }).orElseRun(() -> Database.notActive(this));
     return this;
+  }
+
+  private <R extends Comparable<? super R>> Optional<String> convertIfNeed(SFunction<T, R> column, R data) {
+    LambdaExecutable executable = LambdaHelper.resolve(column);
+    String name = BeanHelper.getPropertyName(executable.getName());
+    TableInfo tableInfo = TableInfoHelper.getTableInfo(executable.getClazz());
+    Configuration configuration = tableInfo.getConfiguration();
+    ResultMap resultMap =configuration.getResultMap(tableInfo.getResultMap());
+
+    Optional<TableFieldInfo> fieldInfo = Steam.of(tableInfo.getFieldList()).findFirst(field -> field.getProperty().equals(name));
+    return fieldInfo.flatMap(field -> {
+      Optional<ResultMapping> resultMappingOpt = Steam.of(resultMap.getResultMappings())
+              .findFirst(resultMapping -> field.getProperty().equals(resultMapping.getProperty()));
+
+      return resultMappingOpt.flatMap(resultMapping -> {
+        TypeHandler<?> typeHandler = resultMapping.getTypeHandler();
+        if (typeHandler instanceof AbstractJsonFieldHandler) {
+          AbstractJsonFieldHandler<R> handler = (AbstractJsonFieldHandler<R>) typeHandler;
+          return Optional.of(handler.toJson(data, tableInfo, field));
+        }
+        return Optional.empty();
+      });
+    });
   }
 }
