@@ -68,7 +68,7 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
   public void setInterfaceClass(Class<?> interfaceClass) {
     this.interfaceClass = interfaceClass;
   }
-  
+
   public void setEmptyBasePackages(boolean emptyBasePackages) {
     this.emptyBasePackages = emptyBasePackages;
   }
