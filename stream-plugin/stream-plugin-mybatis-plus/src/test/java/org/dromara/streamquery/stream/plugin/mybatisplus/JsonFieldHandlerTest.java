@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author VampireAchao
- * @since 2023/4/14 13:57
+ * @since 2023/4/14
  */
 @MybatisPlusTest
 class JsonFieldHandlerTest {
