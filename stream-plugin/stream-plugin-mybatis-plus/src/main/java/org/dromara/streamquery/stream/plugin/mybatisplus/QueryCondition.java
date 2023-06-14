@@ -16,29 +16,30 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.enums.WrapperKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.TypeHandler;
 import org.dromara.streamquery.stream.core.bean.BeanHelper;
 import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
-
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * QueryCondition class.
@@ -48,6 +49,30 @@ import java.util.Optional;
  */
 public class QueryCondition<T> extends LambdaQueryWrapper<T> {
 
+  String mapping;
+
+  QueryCondition(
+      T entity,
+      Class<T> entityClass,
+      AtomicInteger paramNameSeq,
+      Map<String, Object> paramNameValuePairs,
+      MergeSegments mergeSegments,
+      SharedString paramAlias,
+      SharedString lastSql,
+      SharedString sqlComment,
+      SharedString sqlFirst) {
+    super.setEntity(entity);
+    super.setEntityClass(entityClass);
+    this.paramNameSeq = paramNameSeq;
+    this.paramNameValuePairs = paramNameValuePairs;
+    this.expression = mergeSegments;
+    this.paramAlias = paramAlias;
+    this.lastSql = lastSql;
+    this.sqlComment = sqlComment;
+    this.sqlFirst = sqlFirst;
+  }
+
+  QueryCondition() {}
   /**
    * query.
    *
@@ -64,7 +89,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   /**
    * query.
    *
-   * @param entityClass a {@link java.lang.Class} object
+   * @param entityClass a {@link Class} object
    * @param <T> a T class
    * @return a {@link QueryCondition} object
    */
@@ -77,8 +102,8 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   /**
    * eq.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param data a {@link java.lang.String} object
+   * @param column a {@link SFunction} object
+   * @param data a {@link String} object
    * @return a {@link QueryCondition} object
    */
   public QueryCondition<T> eq(SFunction<T, String> column, String data) {
@@ -89,35 +114,21 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   /**
    * eq.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+   * @param column a {@link SFunction} object
    * @param data a R object
    * @param <R> a R class
    * @return a {@link QueryCondition} object
    */
   public <R extends Comparable<? super R>> QueryCondition<T> eq(SFunction<T, R> column, R data) {
-    if (Objects.isNull(data)) {
-      return this;
-    }
-
-//    Optional<String> optionalJson = convertIfNeed(column, data);
-//    if (optionalJson.isPresent()) {
-//      String json = optionalJson.get();
-//      super.eq(column, json);
-//    } else {
-//      super.eq(column,data);
-//    }
-    Opp.of(convertIfNeed(column, data))
-            .ifPresent( v -> super.eq(column, v))
-            .orElseRun(()->super.eq(column, data));
-
+    super.eq(Objects.nonNull(data), column, data);
     return this;
   }
 
   /**
    * like.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param data a {@link java.lang.String} object
+   * @param column a {@link SFunction} object
+   * @param data a {@link String} object
    * @return a {@link QueryCondition} object
    */
   public QueryCondition<T> like(SFunction<T, String> column, String data) {
@@ -128,30 +139,23 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   /**
    * in.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param dataList a {@link java.util.Collection} object
+   * @param column a {@link SFunction} object
+   * @param dataList a {@link Collection} object
    * @param <R> a R class
    * @return a {@link QueryCondition} object
    */
   public <R extends Comparable<? super R>> QueryCondition<T> in(
       SFunction<T, R> column, Collection<R> dataList) {
-
-    if (CollectionUtils.isEmpty(dataList)) {
-      super.in(false, column, dataList);
-    }
-    Collection<String> jsonList = new ArrayList<>();
-    dataList.forEach(v -> convertIfNeed(column, v).ifPresent(jsonList::add));
-    Opp.of(jsonList).
-            ifPresent(list -> super.in( column, list))
-            .orElseRun(() ->super.in( column, dataList));
+    this.mapping = getMapping(column);
+    super.in(CollectionUtils.isNotEmpty(dataList), column, dataList);
     return this;
   }
 
   /**
    * activeEq.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param data a {@link java.lang.String} object
+   * @param column a {@link SFunction} object
+   * @param data a {@link String} object
    * @return a {@link QueryCondition} object
    */
   public QueryCondition<T> activeEq(SFunction<T, String> column, String data) {
@@ -162,27 +166,22 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   /**
    * activeEq.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
+   * @param column a {@link SFunction} object
    * @param data a R object
    * @param <R> a R class
    * @return a {@link QueryCondition} object
    */
   public <R extends Comparable<? super R>> QueryCondition<T> activeEq(
       SFunction<T, R> column, R data) {
-    Opp.of(data)
-            .map(v ->     Opp.of(convertIfNeed(column, data))
-                    .ifPresent( json -> super.eq(column, json))
-                    .orElseRun(()->super.eq(column, data)))
-            .orElseRun(() -> Database.notActive(this));
+    Opp.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
     return this;
-
   }
 
   /**
    * activeLike.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param data a {@link java.lang.String} object
+   * @param column a {@link SFunction} object
+   * @param data a {@link String} object
    * @return a {@link QueryCondition} object
    */
   public QueryCondition<T> activeLike(SFunction<T, String> column, String data) {
@@ -193,43 +192,88 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   /**
    * activeIn.
    *
-   * @param column a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param dataList a {@link java.util.Collection} object
+   * @param column a {@link SFunction} object
+   * @param dataList a {@link Collection} object
    * @param <R> a R class
    * @return a {@link QueryCondition} object
    */
   public <R extends Comparable<? super R>> QueryCondition<T> activeIn(
       SFunction<T, R> column, Collection<R> dataList) {
-    Opp.ofColl(dataList).map(list -> {
-      Collection<String> jsonList = new ArrayList<>();
-      dataList.forEach(v -> convertIfNeed(column, v).ifPresent(jsonList::add));
-      return Opp.of(jsonList)
-              .ifPresent(vList -> super.in( column, vList))
-              .orElseRun(() -> super.in( column, dataList));
-    }).orElseRun(() -> Database.notActive(this));
+    this.mapping = getMapping(column);
+    Opp.ofColl(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
     return this;
   }
 
-  private <R extends Comparable<? super R>> Optional<String> convertIfNeed(SFunction<T, R> column, R data) {
+  @Override
+  protected LambdaQueryWrapper<T> addCondition(
+      boolean condition, SFunction<T, ?> column, SqlKeyword sqlKeyword, Object val) {
+
+    this.mapping = getMapping(column);
+    return this.maybeDo(
+        condition,
+        () -> {
+          this.appendSqlSegments(
+              this.columnToSqlSegment(column),
+              sqlKeyword,
+              () -> {
+                return this.formatParam(this.mapping, val);
+              });
+        });
+  }
+
+  private String getMapping(SFunction<T, ?> column) {
     LambdaExecutable executable = LambdaHelper.resolve(column);
     String name = BeanHelper.getPropertyName(executable.getName());
     TableInfo tableInfo = TableInfoHelper.getTableInfo(executable.getClazz());
-    Configuration configuration = tableInfo.getConfiguration();
-    ResultMap resultMap =configuration.getResultMap(tableInfo.getResultMap());
 
-    Optional<TableFieldInfo> fieldInfo = Steam.of(tableInfo.getFieldList()).findFirst(field -> field.getProperty().equals(name));
-    return fieldInfo.flatMap(field -> {
-      Optional<ResultMapping> resultMappingOpt = Steam.of(resultMap.getResultMappings())
-              .findFirst(resultMapping -> field.getProperty().equals(resultMapping.getProperty()));
+    return Opp.of(
+            Steam.of(tableInfo.getFieldList())
+                .findFirst(field -> field.getProperty().equals(name))
+                .flatMap(field -> Optional.ofNullable(field.getTypeHandler())))
+        .map(v -> "typeHandler = " + v.getName())
+        .orElse(null);
+  }
 
-      return resultMappingOpt.flatMap(resultMapping -> {
-        TypeHandler<?> typeHandler = resultMapping.getTypeHandler();
-        if (typeHandler instanceof AbstractJsonFieldHandler) {
-          AbstractJsonFieldHandler<R> handler = (AbstractJsonFieldHandler<R>) typeHandler;
-          return Optional.of(handler.toJson(data, tableInfo, field));
+  @Override
+  protected ISqlSegment inExpression(Collection<?> value) {
+    return CollectionUtils.isEmpty(value)
+        ? () -> {
+          return "()";
         }
-        return Optional.empty();
-      });
-    });
+        : () -> {
+          return (String)
+              value.stream()
+                  .map(
+                      (i) -> {
+                        return this.formatParam(this.mapping, i);
+                      })
+                  .collect(Collectors.joining(",", "(", ")"));
+        };
+  }
+
+  @Override
+  protected LambdaQueryWrapper<T> addNestedCondition(
+      boolean condition, Consumer<LambdaQueryWrapper<T>> consumer) {
+    return this.maybeDo(
+        condition,
+        () -> {
+          QueryCondition<T> instance = this.instance();
+          consumer.accept(instance);
+          this.appendSqlSegments(WrapperKeyword.APPLY, instance);
+        });
+  }
+
+  @Override
+  protected QueryCondition<T> instance() {
+    return new QueryCondition<>(
+        this.getEntity(),
+        this.getEntityClass(),
+        this.paramNameSeq,
+        this.paramNameValuePairs,
+        new MergeSegments(),
+        this.paramAlias,
+        SharedString.emptyString(),
+        SharedString.emptyString(),
+        SharedString.emptyString());
   }
 }

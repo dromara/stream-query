@@ -35,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
 @EnableAutoConfiguration
-@EnableMybatisPlusPlugin(basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.*.pojo.po")
+@EnableMybatisPlusPlugin(
+    basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.*.pojo.po")
 public class EnableMybatisPlusPluginByBasePackagesGeneralTest
     extends AbstractMybatisPlusTestApplication {
 

@@ -16,9 +16,8 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.annotation.pojo.po;
 
-import lombok.Data;
-
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 /**
  * UserRole
