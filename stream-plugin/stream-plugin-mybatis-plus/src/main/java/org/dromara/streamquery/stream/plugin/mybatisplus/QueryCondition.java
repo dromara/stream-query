@@ -211,14 +211,11 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
     this.mapping = getMapping(column);
     return this.maybeDo(
         condition,
-        () -> {
-          this.appendSqlSegments(
-              this.columnToSqlSegment(column),
-              sqlKeyword,
-              () -> {
-                return this.formatParam(this.mapping, val);
-              });
-        });
+        () ->
+            this.appendSqlSegments(
+                this.columnToSqlSegment(column),
+                sqlKeyword,
+                () -> this.formatParam(this.mapping, val)));
   }
 
   private String getMapping(SFunction<T, ?> column) {
@@ -237,18 +234,11 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   @Override
   protected ISqlSegment inExpression(Collection<?> value) {
     return CollectionUtils.isEmpty(value)
-        ? () -> {
-          return "()";
-        }
-        : () -> {
-          return (String)
-              value.stream()
-                  .map(
-                      (i) -> {
-                        return this.formatParam(this.mapping, i);
-                      })
-                  .collect(Collectors.joining(",", "(", ")"));
-        };
+        ? () -> "()"
+        : () ->
+            value.stream()
+                .map(i -> this.formatParam(this.mapping, i))
+                .collect(Collectors.joining(",", "(", ")"));
   }
 
   @Override

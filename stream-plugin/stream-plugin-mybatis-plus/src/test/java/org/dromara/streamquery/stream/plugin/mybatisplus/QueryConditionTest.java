@@ -171,8 +171,8 @@ public class QueryConditionTest {
     Database.saveFewSql(Lists.of(user1, user2, user3));
 
     QueryCondition<UserInfoWithJsonName> wrapper =
-            QueryCondition.query(UserInfoWithJsonName.class)
-                    .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
+        QueryCondition.query(UserInfoWithJsonName.class)
+            .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
 
     val list = Database.list(wrapper);
 
@@ -255,6 +255,13 @@ public class QueryConditionTest {
             .select(UserInfoWithJsonName::getName)
             .eq(UserInfoWithJsonName::getName, name);
     val list = Database.list(wrapper);
+    assertEquals(1, list.size(), "Query should return exactly one result");
+
+    UserInfoWithJsonName dbUser = list.get(0);
+    assertEquals(
+        user.getName().getUsername(), dbUser.getName().getUsername(), "Username should match");
+    assertEquals(
+        user.getName().getNickname(), dbUser.getName().getNickname(), "Nickname should match");
   }
 
   public static class JsonFieldHandler extends AbstractJsonFieldHandler {
