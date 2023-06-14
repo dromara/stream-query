@@ -72,14 +72,14 @@ class JsonFieldHandlerTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
+    public Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
       Class<?> fieldType = fieldInfo.getField().getType();
       return ((SerSupp<Object>) (() -> objectMapper.readValue(json, fieldType))).get();
     }
 
     @Override
     @SneakyThrows
-    protected String toJson(Object obj, TableInfo tableInfo, TableFieldInfo fieldInfo) {
+    public String toJson(Object obj, TableInfo tableInfo, TableFieldInfo fieldInfo) {
       return objectMapper.writeValueAsString(obj);
     }
   }
