@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Table(value = "user_info")
-public class UserInfo implements IGenerateMapper {
+public class UserInfoWithTableAnnotation implements IGenerateMapper {
   private static final long serialVersionUID = -7219188882388819210L;
 
   @TableId(value = "id", type = IdType.AUTO)

@@ -40,8 +40,6 @@ import java.util.Map;
  */
 public class JsonPostInitTableInfoHandler implements PostInitTableInfoHandler {
 
-  private Annotation annotation;
-
   /**
    * 参与 TableInfo 初始化
    *
