@@ -37,9 +37,7 @@ public class FoundWord {
    * @param index a {@link java.lang.Integer} object
    */
   public FoundWord(String word, Integer index) {
-    setWord(word);
-    setWordAfterHighlight(word);
-    setIndex(index);
+    this(word, word, index);
   }
 
   /**

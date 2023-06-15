@@ -19,6 +19,7 @@ package org.dromara.streamquery.stream.core.clazz;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerPred;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
@@ -31,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Function;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 

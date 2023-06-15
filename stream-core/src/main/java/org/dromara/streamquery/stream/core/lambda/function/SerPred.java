@@ -21,6 +21,7 @@ import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -75,6 +76,18 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
   @SafeVarargs
   static <T> SerPred<T> multiOr(SerPred<T>... predicates) {
     return Stream.of(predicates).reduce(SerPred::or).orElseGet(() -> o -> false);
+  }
+  
+  static <T, R> SerPred<T> test(SerFunc<T, R> fun, Predicate<R> predicate) {
+    return t -> predicate.test(fun.apply(t));
+  }
+  
+  static <T, X, Y> SerPred<T> test(SerFunc<T, X> fun1, SerFunc<X, Y> fun2, Predicate<Y> predicate) {
+    return t -> predicate.test(fun2.apply(fun1.apply(t)));
+  }
+  
+  static <T, X, Y, Z> SerPred<T> test(SerFunc<T, X> fun1, SerFunc<X, Y> fun2, SerFunc<Y, Z> fun3, Predicate<Z> predicate) {
+    return t -> predicate.test(fun3.apply(fun2.apply(fun1.apply(t))));
   }
 
   /**

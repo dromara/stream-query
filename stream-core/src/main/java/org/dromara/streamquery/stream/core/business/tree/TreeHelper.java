@@ -132,7 +132,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
 
   /**
    * 传入List集合通过创建树先生时所传入信息去构造树结构
-   * 
+   *
    * @param list list 需要构建树结构的集合 {@link java.util.List} object
    * @return 符合树结构的集合 {@link java.util.List} object
    */
@@ -153,7 +153,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
     if (Objects.isNull(parentPredicate)) {
       final Map<R, List<T>> pIdValuesMap =
-          Steam.of(list).filter(e -> Objects.nonNull(idGetter.apply(e))).group(pidGetter);
+          Steam.of(list).filter(SerPred.test(idGetter::apply, Objects::nonNull)).group(pidGetter);
       final List<T> parents = pIdValuesMap.getOrDefault(pidValue, new ArrayList<>());
       return getTreeSet(level, pIdValuesMap, parents);
     }
