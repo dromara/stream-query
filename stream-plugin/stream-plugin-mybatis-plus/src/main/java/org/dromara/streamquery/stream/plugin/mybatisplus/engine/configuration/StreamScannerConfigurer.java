@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -49,6 +50,8 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
   private Class<? extends Annotation> annotation;
   /** scan interface */
   private Class<?> interfaceClass;
+  /** if basePackages is empty. */
+  private boolean emptyBasePackages;
 
   public void setBasePackages(Set<String> basePackages) {
     this.basePackages = basePackages;
@@ -66,6 +69,10 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
     this.interfaceClass = interfaceClass;
   }
 
+  public void setEmptyBasePackages(boolean emptyBasePackages) {
+    this.emptyBasePackages = emptyBasePackages;
+  }
+
   private void registerEntityClasses(Collection<Class<?>> entityClasses) {
     if (!CollectionUtils.isEmpty(entityClasses)) {
       this.entityClassList.addAll(entityClasses);
@@ -79,6 +86,7 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
   @Override
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
       throws BeansException {
+    defaultScanConfig();
     // 指定类
     registerEntityClasses(this.classes);
     StreamClassPathScanner scanner = new StreamClassPathScanner(false);
@@ -87,5 +95,12 @@ public class StreamScannerConfigurer implements BeanFactoryPostProcessor {
     scanner.registerFilters();
     Set<Class<?>> classSet = scanner.scan(this.basePackages);
     registerEntityClasses(classSet);
+  }
+
+  private void defaultScanConfig() {
+    // default scan @TableName
+    if (emptyBasePackages && annotation == null && interfaceClass == null) {
+      annotation = TableName.class;
+    }
   }
 }

@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 import org.junit.jupiter.api.Assertions;
@@ -35,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author VampireAchao
- * @since 2023/4/14 13:57
+ * @since 2023/4/14
  */
 @MybatisPlusTest
 class JsonFieldHandlerTest {
@@ -59,7 +60,8 @@ class JsonFieldHandlerTest {
                 });
           }
         };
-    Database.save(user);
+    Database.saveFewSql(Lists.of(user));
+    Database.updateFewSql(Lists.of(user));
     val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
     Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());
     Assertions.assertEquals("阿超", dbUser.getName().getNickname());
@@ -70,14 +72,14 @@ class JsonFieldHandlerTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
+    public Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
       Class<?> fieldType = fieldInfo.getField().getType();
       return ((SerSupp<Object>) (() -> objectMapper.readValue(json, fieldType))).get();
     }
 
     @Override
     @SneakyThrows
-    protected String toJson(Object obj, TableInfo tableInfo, TableFieldInfo fieldInfo) {
+    public String toJson(Object obj, TableInfo tableInfo, TableFieldInfo fieldInfo) {
       return objectMapper.writeValueAsString(obj);
     }
   }

@@ -16,6 +16,10 @@
  */
 package org.dromara.streamquery.stream.core.lambda.function;
 
+import lombok.val;
+import org.dromara.streamquery.stream.core.collection.Lists;
+import org.dromara.streamquery.stream.core.collection.Maps;
+import org.dromara.streamquery.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,12 +28,11 @@ import org.junit.jupiter.api.Test;
  * @since 2023/1/30 10:50
  */
 class SerConsTest {
-
   @Test
-  void testMulti() {
-    Assertions.assertDoesNotThrow(
-        () -> {
-          SerCons.multi().accept(new Object());
-        });
+  void entryConsTest() {
+    val list = Lists.of();
+    Steam.of(Maps.of("foo", "bar"))
+        .forEach(SerCons.entryCons((key, value) -> list.add(key + value)));
+    Assertions.assertEquals("foobar", list.get(0));
   }
 }

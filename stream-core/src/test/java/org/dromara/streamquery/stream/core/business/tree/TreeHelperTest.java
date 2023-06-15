@@ -16,7 +16,6 @@
  */
 package org.dromara.streamquery.stream.core.business.tree;
 
-import java.util.ArrayList;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -174,14 +174,7 @@ class TreeHelperTest {
                             .build()))
                 .build());
     studentTreeHelper =
-        TreeHelper.of(
-            Student::getId,
-            Student::getParentId,
-            Student::setLevel,
-            Student::getLevel,
-            null,
-            Student::getChildren,
-            Student::setChildren);
+        TreeHelper.of(Student::getId, Student::getParentId, null, Student::getChildren);
   }
 
   @Test
@@ -196,40 +189,40 @@ class TreeHelperTest {
         TreeHelper.ofMatch(
             Student::getId,
             Student::getParentId,
-            Student::setLevel,
-            Student::getLevel,
             s -> Boolean.TRUE.equals(s.getMatchParent()),
-            Student::getChildren,
-            Student::setChildren);
+            Student::getChildren);
     Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList));
   }
 
-  
   @Test
   void testToTreeAndLevel() {
-    List<Student> studentTree = studentTreeHelper.toTree(originStudentList, null);
+    List<Student> studentTree =
+        studentTreeHelper.toTree(originStudentList, null, Student::setLevel);
     Assertions.assertEquals(originStudentTree, studentTree);
   }
-  
+
   @Test
   void testToTreeAndLevelWithLeveLimit() {
-    Assertions.assertEquals(new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1));
-    Assertions.assertEquals(treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 1));
-    Assertions.assertEquals(originStudentTree, studentTreeHelper.toTree(originStudentList, 2));
-    Assertions.assertNotEquals(treeFromRootToLevelOriginStudentTree, studentTreeHelper.toTree(originStudentList, 2));
+    Assertions.assertEquals(
+        new ArrayList<>(), studentTreeHelper.toTree(originStudentList, -1, Student::setLevel));
+    Assertions.assertEquals(
+        treeFromRootToLevelOriginStudentTree,
+        studentTreeHelper.toTree(originStudentList, 1, Student::setLevel));
+    Assertions.assertEquals(
+        originStudentTree, studentTreeHelper.toTree(originStudentList, 2, Student::setLevel));
+    Assertions.assertNotEquals(
+        treeFromRootToLevelOriginStudentTree,
+        studentTreeHelper.toTree(originStudentList, 2, Student::setLevel));
   }
-  
+
   @Test
   void testToTreeAndLevelWithCondition() {
     TreeHelper<Student, Long> conditionTreeHelper =
         TreeHelper.ofMatch(
             Student::getId,
             Student::getParentId,
-            Student::setLevel,
-            Student::getLevel,
             s -> Boolean.TRUE.equals(s.getMatchParent()),
-            Student::getChildren,
-            Student::setChildren);
+            Student::getChildren);
     Assertions.assertEquals(originStudentTree, conditionTreeHelper.toTree(originStudentList, null));
   }
 
@@ -238,6 +231,15 @@ class TreeHelperTest {
     List<Student> studentList = studentTreeHelper.flat(originStudentTree);
     studentList.sort(Comparator.comparing(Student::getId));
     Assertions.assertEquals(originStudentList, studentList);
+  }
+
+  @Test
+  void testGetDepth() {
+    studentTreeHelper.toTree(originStudentList);
+    Assertions.assertEquals(3, studentTreeHelper.getDepth(originStudentList.get(0)));
+    Assertions.assertEquals(2, studentTreeHelper.getDepth(originStudentList.get(2)));
+    Assertions.assertEquals(1, studentTreeHelper.getDepth(originStudentList.get(5)));
+    Assertions.assertEquals(0, studentTreeHelper.getDepth(null));
   }
 
   @Test
@@ -340,7 +342,7 @@ class TreeHelperTest {
 
   @Data
   @Builder
-  private static class Student {
+  public static class Student {
     private String name;
     private Integer age;
     private Long id;

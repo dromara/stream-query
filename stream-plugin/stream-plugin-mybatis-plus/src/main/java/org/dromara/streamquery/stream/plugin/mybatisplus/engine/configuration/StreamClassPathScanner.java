@@ -18,7 +18,9 @@ package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.dromara.streamquery.stream.core.lambda.function.SerPred;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
+import org.dromara.streamquery.stream.core.stream.Steam;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.ClassMetadata;
@@ -27,11 +29,8 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * stream class path scanner
@@ -101,13 +100,15 @@ public class StreamClassPathScanner extends ClassPathScanningCandidateComponentP
       LOG.warn("basePackages is empty");
       return Collections.emptySet();
     }
-    return basePackages.stream()
-        .map(this::findCandidateComponents)
-        .flatMap(Collection::stream)
+    return Steam.of(basePackages)
+        .flat(this::findCandidateComponents)
         .map(BeanDefinition::getBeanClassName)
-        .filter(Objects::nonNull)
-        .map(ReflectHelper::forClassName)
-        .filter(o -> !(o.isMemberClass() || o.isAnonymousClass() || o.isLocalClass()))
-        .collect(Collectors.toSet());
+        .nonNull()
+        .<Class<?>>map(ReflectHelper::forClassName)
+        .filter(
+            SerPred.<Class<?>>multiOr(
+                    Class::isMemberClass, Class::isAnonymousClass, Class::isLocalClass)
+                .negate())
+        .toSet();
   }
 }

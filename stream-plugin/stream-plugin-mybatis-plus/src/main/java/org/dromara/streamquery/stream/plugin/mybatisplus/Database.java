@@ -44,7 +44,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.dromara.streamquery.stream.core.collection.Lists;
-import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
+import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
@@ -153,7 +153,9 @@ public class Database {
    * @param <T> a T class
    * @param <E> a E class
    * @return a {@link Opp} object
+   * @deprecated use {@link WrapperHelper#lambdaQuery(Serializable, SFunction)} instead
    */
+  @Deprecated
   public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
       E data, SFunction<T, E> condition) {
     return Opp.of(data)
@@ -172,7 +174,9 @@ public class Database {
    * @param <T> a T class
    * @param <E> a E class
    * @return a {@link Opp} object
+   * @deprecated use {@link WrapperHelper#lambdaQuery(Collection, SFunction)} instead
    */
+  @Deprecated
   public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
       Collection<E> dataList, SFunction<T, E> condition) {
     return Opp.ofColl(dataList)
@@ -203,7 +207,9 @@ public class Database {
    * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
    * @param <T> a T class
    * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SFunction[])}
    */
+  @Deprecated
   @SafeVarargs
   public static <T> LambdaQueryWrapper<T> select(
       LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
@@ -219,21 +225,15 @@ public class Database {
    * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
    * @param <T> a T class
    * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SerBiCons, SFunction[])}
    */
+  @Deprecated
   @SafeVarargs
   public static <T> LambdaQueryWrapper<T> select(
       LambdaQueryWrapper<T> wrapper,
       SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn,
       SFunction<T, ?>... columns) {
-    if (Stream.of(columns)
-        .allMatch(
-            func ->
-                Objects.nonNull(func)
-                    && PropertyNamer.isGetter(
-                        LambdaHelper.resolve(func).getLambda().getImplMethodName()))) {
-      whenAllMatchColumn.accept(wrapper, columns);
-    }
-    return wrapper;
+    return WrapperHelper.select(wrapper, whenAllMatchColumn, columns);
   }
 
   /**
@@ -666,8 +666,10 @@ public class Database {
     }
     Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
     TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-    Assert.notNull(
-        tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+    if (tableInfo == null) {
+      throw ExceptionUtils.mpe(
+          "error: can not execute. because can not find cache of TableInfo for entity!");
+    }
     String keyProperty = tableInfo.getKeyProperty();
     Assert.notEmpty(
         keyProperty, "error: can not execute. because can not find column for id from entity!");
@@ -1030,7 +1032,8 @@ public class Database {
     if (!(configuration instanceof MybatisConfiguration)) {
       throw new IllegalArgumentException("configuration must be MybatisConfiguration");
     }
-    ENTITY_MAPPER_CLASS_CACHE.computeIfAbsent(
+    Maps.computeIfAbsent(
+        ENTITY_MAPPER_CLASS_CACHE,
         entityClass,
         k -> {
           Class<?> dynamicMapper =
@@ -1070,7 +1073,9 @@ public class Database {
   @SuppressWarnings("unchecked")
   public static <T, M extends BaseMapper<T>> M getMapper(
       Class<T> entityClass, SqlSession sqlSession) {
-    Assert.notNull(entityClass, "entityClass can't be null!");
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("entityClass can't be null!");
+    }
     TableInfo tableInfo =
         Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass))
             .orElseThrow(
@@ -1130,7 +1135,8 @@ public class Database {
    * @return {@link java.util.Map}<{@link java.lang.String}, {@link java.lang.String}>
    */
   public static Map<String, String> getPropertyColumnMap(Class<?> entityClass) {
-    return TABLE_PROPERTY_COLUMN_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        TABLE_PROPERTY_COLUMN_CACHE,
         entityClass,
         clazz -> {
           TableInfo tableInfo = getTableInfo(clazz);
@@ -1149,7 +1155,8 @@ public class Database {
    * @return {@link java.util.Map}<{@link java.lang.String}, {@link java.lang.String}>
    */
   public static Map<String, String> getColumnPropertyMap(Class<?> entityClass) {
-    return TABLE_COLUMN_PROPERTY_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        TABLE_COLUMN_PROPERTY_CACHE,
         entityClass,
         clazz -> {
           TableInfo tableInfo = getTableInfo(clazz);
@@ -1237,7 +1244,9 @@ public class Database {
         break;
       }
     }
-    Assert.notNull(entityClass, "error: can not get entityClass from entityList");
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("error: can not get entityClass from entityList");
+    }
     Assert.isFalse(
         SimpleTypeRegistry.isSimpleType(entityClass), "error: entityClass can not be simple type");
     return entityClass;
@@ -1257,7 +1266,9 @@ public class Database {
         entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
       }
     }
-    Assert.notNull(entityClass, "error: can not get entityClass from wrapper");
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("error: can not get entityClass from wrapper");
+    }
     return entityClass;
   }
 

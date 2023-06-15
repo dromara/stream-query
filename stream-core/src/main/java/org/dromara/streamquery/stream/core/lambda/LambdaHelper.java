@@ -17,6 +17,8 @@
 package org.dromara.streamquery.stream.core.lambda;
 
 import org.dromara.streamquery.stream.core.bean.BeanHelper;
+import org.dromara.streamquery.stream.core.collection.Maps;
+import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.core.optional.Opp;
@@ -86,16 +88,19 @@ public class LambdaHelper {
     if (lambda instanceof Proxy) {
       return LambdaExecutable.initProxy((Proxy) lambda);
     }
-    return SERIALIZED_LAMBDA_EXECUTABLE_CACHE.computeIfAbsent(
-        lambda.getClass().getName(), key -> new LambdaExecutable(serialize(lambda)));
+    return Maps.computeIfAbsent(
+        SERIALIZED_LAMBDA_EXECUTABLE_CACHE,
+        lambda.getClass().getName(),
+        key -> new LambdaExecutable(serialize(lambda)));
   }
 
   @SuppressWarnings("unchecked")
   public static <T> T revert(Class<? super T> clazz, Executable executable) {
     WeakHashMap<Executable, Object> lambdaCache =
-        LAMBDA_REVERT_CACHE.computeIfAbsent(clazz, key -> new WeakHashMap<>());
+        Maps.computeIfAbsent(LAMBDA_REVERT_CACHE, clazz, key -> new WeakHashMap<>());
     return (T)
-        lambdaCache.computeIfAbsent(
+        Maps.computeIfAbsent(
+            lambdaCache,
             executable,
             key -> {
               final Method funcMethod =
@@ -177,5 +182,96 @@ public class LambdaHelper {
         .map(LambdaExecutable::getName)
         .map(BeanHelper::getPropertyName)
         .get();
+  }
+
+  /**
+   * 获取getter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param <T> 类型
+   * @param <R> getter返回值
+   * @return 返回getter对应的lambda
+   */
+  public static <T, R> SerFunc<T, R> getGetter(Class<T> clazz, String propertyName) {
+    return SerFunc.<SerFunc<?, ?>, SerFunc<T, R>>cast()
+        .apply(getGetter(clazz, propertyName, SerFunc.class));
+  }
+
+  /**
+   * 获取getter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param lambdaType lambda类型
+   * @param <T> 类型
+   * @param <F> lambda类型
+   * @return 返回getter对应的lambda
+   */
+  public static <T, F> F getGetter(Class<T> clazz, String propertyName, Class<F> lambdaType) {
+    return revert(
+        lambdaType, ReflectHelper.getMethod(clazz, BeanHelper.getGetterName(propertyName)));
+  }
+
+  /**
+   * 获取setter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param <T> 类型
+   * @param <U> setter参数类型
+   * @return 返回setter对应的lambda
+   */
+  public static <T, U> SerBiCons<T, U> getSetter(Class<T> clazz, String propertyName) {
+    return SerFunc.<SerBiCons<?, ?>, SerBiCons<T, U>>cast()
+        .apply(getSetter(clazz, propertyName, SerBiCons.class));
+  }
+
+  /**
+   * 获取setter对应的lambda
+   *
+   * @param clazz 类
+   * @param propertyName 属性名
+   * @param lambdaType lambda类型
+   * @param <T> 类型
+   * @param <F> lambda类型
+   * @return 返回setter对应的lambda
+   */
+  public static <T, F> F getSetter(Class<T> clazz, String propertyName, Class<F> lambdaType) {
+    return revert(
+        lambdaType,
+        ReflectHelper.getMethod(
+            clazz,
+            BeanHelper.getSetterName(propertyName),
+            ReflectHelper.getField(clazz, propertyName).getType()));
+  }
+
+  /**
+   * 通过getter获取setter
+   *
+   * @param getter getter对应的lambda
+   * @param <T> getter参数类型
+   * @param <R> property类型
+   * @return 返回setter对应的lambda
+   */
+  public static <T, R> SerBiCons<T, R> getSetter(SerFunc<T, R> getter) {
+    return getSetter(getter, SerBiCons.class);
+  }
+
+  /**
+   * 通过getter获取setter
+   *
+   * @param getter getter对应的lambda
+   * @param lambdaType setter对应的lambda类型
+   * @param <F> getter对应的lambda类型
+   * @param <C> setter对应的lambda类型
+   * @return 返回setter对应的lambda
+   */
+  public static <F extends Serializable, C> C getSetter(F getter, Class<? super C> lambdaType) {
+    LambdaExecutable executable = LambdaHelper.resolve(getter);
+    Object setter =
+        getSetter(
+            executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
+    return SerFunc.<Object, C>cast().apply(setter);
   }
 }

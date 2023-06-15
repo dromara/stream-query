@@ -3,15 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>stream-query</artifactId>
         <groupId>org.dromara.stream-query</groupId>
+        <artifactId>stream-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../stream-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>stream-plugin</artifactId>
     <packaging>pom</packaging>
+    <name>Stream Plugin</name>
+    <description>Stream Plugin</description>
+
     <modules>
         <module>stream-plugin-mybatis-plus</module>
     </modules>
@@ -21,8 +24,8 @@
         <dependency>
             <groupId>org.dromara.stream-query</groupId>
             <artifactId>stream-core</artifactId>
-            <version>${revision}</version>
         </dependency>
+
     </dependencies>
 
 </project>

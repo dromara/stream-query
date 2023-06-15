@@ -16,13 +16,13 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.annotation;
 
+import org.dromara.streamquery.stream.plugin.mybatisplus.annotation.pojo.po.RoleInfo;
+import org.dromara.streamquery.stream.plugin.mybatisplus.annotation.pojo.po.UserInfo;
+import org.dromara.streamquery.stream.plugin.mybatisplus.annotation.pojo.po.UserRole;
+import org.dromara.streamquery.stream.plugin.mybatisplus.annotation.pojo.po.inner.AddressInfo;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.GenerateMapper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.StreamScannerConfigurer;
-import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.RoleInfo;
-import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
-import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserRole;
-import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.inner.AddressInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
@@ -31,18 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * EnableMybatisPlusPluginByClassesTest
+ * EnableMybatisPlusPluginByAnnotationTest
  *
  * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
  */
 @EnableAutoConfiguration
-@EnableMybatisPlusPlugin(
-    basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po",
-    annotation = GenerateMapper.class)
+@EnableMybatisPlusPlugin(annotation = GenerateMapper.class)
 public class EnableMybatisPlusPluginByAnnotationTest extends AbstractMybatisPlusTestApplication {
 
   @Test
-  void testScanByValue() {
+  void testScanByAnnotation() {
     StreamScannerConfigurer bean = context.getBean(StreamScannerConfigurer.class);
     assertNotNull(bean);
     assertNotNull(bean.getEntityClasses());

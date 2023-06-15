@@ -16,10 +16,17 @@
  */
 package org.dromara.streamquery.stream.core.collection;
 
+import org.dromara.streamquery.stream.core.enums.JreEnum;
+import org.dromara.streamquery.stream.core.lambda.function.SerThiFunc;
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
+import org.dromara.streamquery.stream.core.stream.collector.Collective;
 import org.dromara.streamquery.stream.core.variable.VariableHelper;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
@@ -136,8 +143,8 @@ public class Maps {
    * @return a {@link Steam} object
    */
   @SafeVarargs
-  public static <K, A, V> Steam<Map.Entry<K, List<V>>> oneToManyToOne(
-      Map<K, List<A>> middleMap, Map<A, V> attachMap, UnaryOperator<Steam<V>>... unaryOperator) {
+  public static <K, A, V, C extends Collection<A>> Steam<Map.Entry<K, List<V>>> oneToManyToOne(
+      Map<K, C> middleMap, Map<A, V> attachMap, UnaryOperator<Steam<V>>... unaryOperator) {
     return Steam.of(middleMap.entrySet())
         .map(
             e ->
@@ -206,5 +213,107 @@ public class Maps {
    */
   public static <K, V> Map<K, V> empty() {
     return Collections.emptyMap();
+  }
+
+  /**
+   * merge 合并两个Map得到一个新的Map，如果key相同，使用mergeFunction处理value
+   *
+   * @param m1 map1
+   * @param m2 map2
+   * @param mergeFunction 合并操作
+   * @param <K> a K object
+   * @param <V> a V object
+   * @return 合并后的map
+   */
+  public static <K, V> Map<K, V> merge(
+      Map<K, V> m1, Map<K, V> m2, SerThiFunc<K, V, V, V> mergeFunction) {
+    Map<K, V> result = new HashMap<>(m1);
+    m2.forEach(
+        (key, value) -> result.merge(key, value, (v1, v2) -> mergeFunction.apply(key, v1, v2)));
+    return result;
+  }
+
+  /**
+   * 根据value是否符合条件过滤出符合条件的key
+   *
+   * @param map map
+   * @param biPredicate 条件操作
+   * @param <K> a K object
+   * @param <V> a V object
+   * @return 过滤后的map
+   */
+  public static <K, V> Map<K, V> filter(Map<K, V> map, BiPredicate<K, V> biPredicate) {
+    return Steam.of(map.entrySet())
+        .filter(e -> biPredicate.test(e.getKey(), e.getValue()))
+        .collect(Collective.entryToMap());
+  }
+
+  /**
+   * 将具有多个级别的嵌套 {@link java.util.Map} 平展为单级 {@link java.util.Map} 使用指定分隔符从原始键值连接。
+   *
+   * @param nestedMap a {@link java.util.Map} object
+   * @param delimiter a {@link java.lang.String} object
+   * @param <K> a K object
+   * @param <V> a V object
+   * @return a {@link java.util.Map} object
+   */
+  public static <K, V> Map<String, V> flatten(
+      Map<String, Map<String, V>> nestedMap, String delimiter) {
+    return Steam.of(nestedMap.entrySet())
+        .flat(
+            entry ->
+                Steam.of(entry.getValue().entrySet())
+                    .map(
+                        innerEntry ->
+                            Maps.entry(
+                                entry.getKey() + delimiter + innerEntry.getKey(),
+                                innerEntry.getValue())))
+        .collect(Collective.entryToMap());
+  }
+
+  /**
+   * computeIfAbsent.
+   *
+   * @param map a {@link java.util.Map} object
+   * @param key a K object
+   * @param mappingFunction a {@link java.util.function.Function} object
+   * @param <K> a K class
+   * @param <V> a V class
+   * @return a V object
+   */
+  public static <K, V> V computeIfAbsent(
+      Map<K, V> map, K key, Function<? super K, ? extends V> mappingFunction) {
+    if (JreEnum.JAVA_8.isCurrentVersion() && map instanceof ConcurrentHashMap) {
+      return Opp.of(map.get(key))
+          .orElseGet(
+              () -> {
+                V value = mappingFunction.apply(key);
+                map.put(key, value);
+                return value;
+              });
+    }
+    return map.computeIfAbsent(key, mappingFunction);
+  }
+
+  /**
+   * isEmpty.
+   *
+   * @param map a {@link java.util.Map} object
+   * @param <K> a K class
+   * @param <V> a V class
+   */
+  public static <K, V> boolean isEmpty(Map<K, V> map) {
+    return map == null || map.isEmpty();
+  }
+
+  /**
+   * isNotEmpty.
+   *
+   * @param map a {@link java.util.Map} object
+   * @param <K> a K class
+   * @param <V> a V class
+   */
+  public static <K, V> boolean isNotEmpty(Map<K, V> map) {
+    return !isEmpty(map);
   }
 }

@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.GenerateMapper;
 
@@ -31,6 +32,7 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.Gener
  */
 @Data
 @GenerateMapper
+@TableName("role_info")
 @KeySequence(dbType = DbType.H2)
 public class RoleInfo {
 

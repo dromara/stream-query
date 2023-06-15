@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.stream.collector;
 
+import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiOp;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerPred;
@@ -838,7 +839,7 @@ public class Collective {
         (m, t) -> {
           // stream-core changed this line
           K key = Opp.of(t).map(classifier).orElse(null);
-          A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());
+          A container = Maps.computeIfAbsent(m, key, k -> downstreamSupplier.get());
           Opp.of(t).ifPresent(o -> downstreamAccumulator.accept(container, o));
         };
     BinaryOperator<Map<K, A>> merger = Collective.mapMerger(downstream.combiner());
@@ -981,14 +982,14 @@ public class Collective {
       accumulator =
           (m, t) -> {
             K key = Objects.requireNonNull(classifier.apply(t), NON_NULL_MSG);
-            A resultContainer = m.computeIfAbsent(key, k -> downstreamSupplier.get());
+            A resultContainer = Maps.computeIfAbsent(m, key, k -> downstreamSupplier.get());
             downstreamAccumulator.accept(resultContainer, t);
           };
     } else {
       accumulator =
           (m, t) -> {
             K key = Objects.requireNonNull(classifier.apply(t), NON_NULL_MSG);
-            A resultContainer = m.computeIfAbsent(key, k -> downstreamSupplier.get());
+            A resultContainer = Maps.computeIfAbsent(m, key, k -> downstreamSupplier.get());
             synchronized (resultContainer) {
               downstreamAccumulator.accept(resultContainer, t);
             }

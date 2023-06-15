@@ -44,6 +44,11 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
     super(methodName);
   }
 
+  /** Constructor for UpdateOneSql. */
+  public UpdateOneSql() {
+    super(SqlMethodEnum.UPDATE_ONE_SQL.getMethod());
+  }
+
   /** 注入自定义 MappedStatement */
   @Override
   public MappedStatement injectMappedStatement(
@@ -90,7 +95,7 @@ public class UpdateOneSql extends AbstractMethod implements PluginConst {
                                 String.format(
                                     WHEN_THEN,
                                     safeKeyProperty,
-                                    SqlScriptUtils.safeParam(ENTITY_DOT + i.getProperty())),
+                                    SqlScriptUtils.safeParam(ENTITY_DOT + i.getEl())),
                                 String.format(WHEN_THEN, safeKeyProperty, i.getColumn())),
                             COLLECTION_PARAM_NAME,
                             null,

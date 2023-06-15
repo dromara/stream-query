@@ -17,10 +17,8 @@
 package org.dromara.streamquery.stream.core.lambda;
 
 import lombok.SneakyThrows;
-import org.dromara.streamquery.stream.core.lambda.function.SerArgsFunc;
-import org.dromara.streamquery.stream.core.lambda.function.SerCons;
-import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
-import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
+import lombok.val;
+import org.dromara.streamquery.stream.core.lambda.function.*;
 import org.dromara.streamquery.stream.core.reflect.AbstractTypeReference;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
@@ -210,5 +208,47 @@ class LambdaHelperTest {
     executable.setName("test");
     Assertions.assertEquals("test", invoke.apply(executable));
     Assertions.assertEquals("getName", LambdaHelper.resolve(invoke).getName());
+  }
+
+  @Test
+  void testGetGetter() {
+    SerFunc<LambdaExecutable, String> nameGetter =
+        LambdaHelper.getGetter(LambdaExecutable.class, "name");
+    String name = nameGetter.apply(LambdaHelper.resolve(nameGetter));
+    Assertions.assertEquals("getName", name);
+    val lambda = LambdaHelper.getGetter(LambdaExecutable.class, "clazz", Function.class);
+    Function<LambdaExecutable, Class<?>> clazzGetter =
+        SerFunc.<Function<?, ?>, Function<LambdaExecutable, Class<?>>>cast().apply(lambda);
+    Class<?> clazz =
+        clazzGetter.apply(
+            new LambdaExecutable() {
+              {
+                setClazz(String.class);
+              }
+            });
+    Assertions.assertEquals(String.class, clazz);
+  }
+
+  @Test
+  void testGetSetter() {
+    SerBiCons<LambdaExecutable, String> nameSetter =
+        LambdaHelper.getSetter(LambdaExecutable.class, "name");
+    LambdaExecutable executable = new LambdaExecutable();
+    nameSetter.accept(executable, "kubernetes");
+    Assertions.assertEquals("kubernetes", executable.getName());
+    val lambda = LambdaHelper.getSetter(LambdaExecutable.class, "clazz", BiConsumer.class);
+    BiConsumer<LambdaExecutable, Class<?>> clazzSetter =
+        SerFunc.<BiConsumer<?, ?>, BiConsumer<LambdaExecutable, Class<?>>>cast().apply(lambda);
+    clazzSetter.accept(executable, String.class);
+    Assertions.assertEquals(String.class, executable.getClazz());
+    clazzSetter = LambdaHelper.getSetter(LambdaExecutable::getClazz);
+    clazzSetter.accept(executable, Object.class);
+    Assertions.assertEquals(Object.class, executable.getClazz());
+    SerBiCons<LambdaExecutable, String> nameSerSetter =
+        LambdaHelper
+            .<SerFunc<LambdaExecutable, String>, SerBiCons<LambdaExecutable, String>>getSetter(
+                LambdaExecutable::getName, SerBiCons.class);
+    nameSerSetter.accept(executable, "serializable");
+    Assertions.assertEquals("serializable", executable.getName());
   }
 }

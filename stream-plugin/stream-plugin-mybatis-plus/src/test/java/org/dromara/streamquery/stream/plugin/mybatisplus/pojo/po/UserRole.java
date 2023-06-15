@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -25,6 +26,7 @@ import lombok.Data;
  * @since 2022/5/23
  */
 @Data
+@TableName("user_role")
 public class UserRole {
 
   private Long id;

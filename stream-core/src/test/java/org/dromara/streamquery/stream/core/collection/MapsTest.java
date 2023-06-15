@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.collection;
 
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.core.stream.collector.Collective;
 import org.junit.jupiter.api.Assertions;
@@ -28,6 +29,8 @@ import java.util.*;
  * @since 2022/10/21 16:48
  */
 class MapsTest {
+
+  public static final Map<?, ?> NULL_MAP = Opp.<Map<?, ?>>empty().get();
 
   @Test
   void testOf() {
@@ -48,7 +51,7 @@ class MapsTest {
   void testOneToManyToOne() {
     final Map<String, List<String>> map =
         Maps.oneToManyToOne(
-                new HashMap<String, List<String>>() {
+                new HashMap<String, Collection<String>>() {
                   {
                     put("key", Arrays.asList("value", null));
                   }
@@ -61,7 +64,7 @@ class MapsTest {
                 Steam::nonNull)
             .collect(Collective.entryToMap());
     Assertions.assertEquals(1, map.get("key").size());
-    Assertions.assertEquals("Good", map.get("key").get(0));
+    Assertions.assertEquals("Good", map.get("key").stream().findFirst().get());
   }
 
   @Test
@@ -106,5 +109,61 @@ class MapsTest {
     Assertions.assertEquals(2, map.get("key").size());
     Assertions.assertEquals("Good", map.get("key").get(0));
     Assertions.assertEquals("Bad", map.get("key").get(1));
+  }
+
+  @Test
+  void testMerge() {
+    final Map<String, String> map = Maps.of("key", "value", "key1", "value1");
+    final Map<String, String> mergeMap = Maps.of("key", "Value", "key2", "value2");
+    final Map<String, String> merge = Maps.merge(map, mergeMap, (key, v1, v2) -> v1 + v2);
+    Assertions.assertEquals("valueValue", merge.get("key"));
+    Assertions.assertEquals("value1", merge.get("key1"));
+    Assertions.assertEquals("value2", merge.get("key2"));
+  }
+
+  @Test
+  void filter() {
+    Map<String, Integer> map1 = new HashMap<>();
+    map1.put("a", 1);
+    map1.put("b", 2);
+    map1.put("c", 3);
+    Map<String, Integer> result = Maps.filter(map1, (key, value) -> value > 2);
+    Assertions.assertEquals(Maps.of("c", 3), result);
+
+    Map<String, List<Integer>> map2 = new HashMap<>();
+    map2.put("a", Arrays.asList(1, 2, 3));
+    map2.put("b", Arrays.asList(4, 5, 6));
+    map2.put("c", Arrays.asList(7, 8, 9));
+    Map<String, List<Integer>> result2 = Maps.filter(map2, (key, value) -> value.contains(3));
+    Assertions.assertEquals(result2, Maps.of("a", Lists.of(1, 2, 3)));
+  }
+
+  @Test
+  void flatten() {
+    Map<String, Map<String, Integer>> nestedMap = new HashMap<>();
+    Map<String, Integer> innerMap1 = new HashMap<>();
+    innerMap1.put("a", 1);
+    innerMap1.put("b", 2);
+    nestedMap.put("key1", innerMap1);
+
+    Map<String, Integer> innerMap2 = new HashMap<>();
+    innerMap2.put("c", 3);
+    nestedMap.put("key2", innerMap2);
+    final Map<String, Integer> flatten = Maps.flatten(nestedMap, "_");
+    Assertions.assertEquals(flatten, Maps.of("key1_a", 1, "key1_b", 2, "key2_c", 3));
+  }
+
+  @Test
+  void testIsEmpty() {
+    Assertions.assertTrue(Maps.isEmpty(NULL_MAP));
+    Assertions.assertTrue(Maps.isEmpty(new HashMap<>()));
+    Assertions.assertFalse(Maps.isEmpty(Maps.of("key", "value")));
+  }
+
+  @Test
+  void testIsNotEmpty() {
+    Assertions.assertFalse(Maps.isNotEmpty(NULL_MAP));
+    Assertions.assertFalse(Maps.isNotEmpty(new HashMap<>()));
+    Assertions.assertTrue(Maps.isNotEmpty(Maps.of("key", "value")));
   }
 }

@@ -205,7 +205,8 @@ public class ReflectHelper {
    * @return a {@link java.util.List} object
    */
   public static List<Field> getFields(Class<?> clazz) {
-    return CLASS_FIELDS_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        CLASS_FIELDS_CACHE,
         clazz,
         k -> {
           Steam.Builder<Field> fieldsBuilder = Steam.builder();
@@ -267,7 +268,8 @@ public class ReflectHelper {
    * @return An array of all declared methods of the class.
    */
   public static List<Method> getMethods(Class<?> clazz) {
-    return CLASS_METHODS_CACHE.computeIfAbsent(
+    return Maps.computeIfAbsent(
+        CLASS_METHODS_CACHE,
         clazz,
         k ->
             Steam.<Class<?>>iterate(clazz, Objects::nonNull, Class::getSuperclass)
@@ -517,9 +519,11 @@ public class ReflectHelper {
 
   /**
    * explain.
+   * 此方法会在2.0版本移除
    *
    * @param obj a {@link java.lang.Object} object
    */
+  @Deprecated
   public static void explain(Object obj) {
     LOGGER.info(() -> "obj: " + obj + " class: " + obj.getClass());
     LOGGER.info(() -> "fields: ");

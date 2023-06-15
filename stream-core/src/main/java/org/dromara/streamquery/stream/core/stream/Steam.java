@@ -124,6 +124,18 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   }
 
   /**
+   * 返回包含指定元素的串行流
+   *
+   * @param map 指定元素
+   * @param <K> key类型
+   * @param <V> value类型
+   * @return 包含指定元素的串行流 从一个安全数组中创建流
+   */
+  public static <K, V> Steam<Map.Entry<K, V>> of(Map<K, V> map) {
+    return Maps.isEmpty(map) ? empty() : Steam.of(map.entrySet());
+  }
+
+  /**
    * 返回无限有序流 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
    *
    * <p>例如 {@code Steam.iterate(0, i -> i + 1)} 就可以创建从0开始，每次+1的无限流，使用{@link
@@ -448,7 +460,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   public <F> Steam<T> distinct(Function<? super T, F> keyExtractor) {
     Objects.requireNonNull(keyExtractor);
     if (isParallel()) {
-      ConcurrentHashMap<F, Boolean> exists = new ConcurrentHashMap<>(32);
+      Set<F> seenKeys = ConcurrentHashMap.newKeySet();
       // 标记是否出现过null值，用于保留第一个出现的null
       // 由于ConcurrentHashMap的key不能为null，所以用此变量来标记
       AtomicBoolean hasNull = new AtomicBoolean(false);
@@ -456,15 +468,9 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
               e -> {
                 F key = keyExtractor.apply(e);
                 if (key == null) {
-                  // 已经出现过null值，跳过该值
-                  if (hasNull.get()) {
-                    return false;
-                  }
-                  hasNull.set(Boolean.TRUE);
-                  return true;
+                  return !hasNull.getAndSet(true);
                 } else {
-                  // 第一次出现的key返回true
-                  return null == exists.putIfAbsent(key, Boolean.TRUE);
+                  return seenKeys.add(key);
                 }
               }))
           .parallel();
