@@ -46,7 +46,6 @@ public class JsonPostInitTableInfoHandler implements PostInitTableInfoHandler {
   @Override
   public void postTableInfo(TableInfo tableInfo, Configuration configuration) {
     PostInitTableInfoHandler.super.postTableInfo(tableInfo, configuration);
-    String originalTableName = tableInfo.getTableName();
     Annotation[] annotations = tableInfo.getEntityType().getAnnotations();
     for (Annotation annotation : annotations) {
       if (annotation.annotationType().isAnnotationPresent(TableName.class)) {
