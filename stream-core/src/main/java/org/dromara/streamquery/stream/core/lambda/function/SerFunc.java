@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * 可序列化的Function

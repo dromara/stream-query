@@ -296,6 +296,21 @@ class SteamTest {
     List<Integer> nonNull = Steam.of(list).nonNull().toList();
     Assertions.assertEquals(asList(1, 2, 3), nonNull);
   }
+  
+  @Test
+  void testNonNullMapping() {
+    List<Student> original = asList(
+            Student.builder().name("臧臧").age(23).build(),
+            Student.builder().name("阿超").age(21).build()
+    );
+    List<Student> nonNull = Steam.of(original)
+              .push(Student.builder()/*.name(null)*/.age(21).build())
+              .unshift(Student.builder().name("阿郎")/*.age(null)*/.build())
+              .nonNull(Student::getName)
+              .nonNull(Student::getAge)
+              .toList();
+    Assertions.assertEquals(original, nonNull);
+  }
 
   @Test
   void testPush() {
