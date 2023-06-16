@@ -64,14 +64,6 @@ public interface SerFunc<T, R> extends Function<T, R>, Serializable {
   static <T> SerFunc<T, T> identity() {
     return t -> t;
   }
-  
-  static <T, R, Y> SerFunc<T, Y> apply(SerFunc<T, R> fun, SerFunc<R, Y> fun1) {
-    return t -> fun1.apply(fun.apply(t));
-  }
-  
-  static <T, X, Y, Z> SerFunc<T, Z> apply(SerFunc<T, X> fun1, SerFunc<X, Y> fun2, SerFunc<Y, Z> fun3) {
-    return t -> fun3.apply(fun2.apply(fun1.apply(t)));
-  }
 
   /**
    * cast identity

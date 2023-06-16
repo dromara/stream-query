@@ -335,6 +335,12 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     return filter(Objects::nonNull);
   }
   
+  /**
+   * 便捷转换后进行非空过滤, 为无状态的中间操作
+   * @param mapper 便捷转换
+   * @return Steam<T> 返回叠加过滤操作后的流
+   * @param <R> 边界转换后用于非空判断的类型
+   */
   public <R> Steam<T> nonNull(Function<? super T, ? extends R> mapper) {
     return filter(t -> Objects.nonNull(mapper.apply(t)));
   }

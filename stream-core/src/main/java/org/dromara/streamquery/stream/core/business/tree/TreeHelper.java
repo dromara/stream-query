@@ -181,7 +181,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     }
     if (Objects.isNull(parentPredicate)) {
       final Map<R, List<T>> pIdValuesMap =
-          Steam.of(list).filter(SerPred.test(idGetter::apply, Objects::nonNull)).group(pidGetter);
+          Steam.of(list).nonNull(idGetter::apply).group(pidGetter);
       final List<T> parents = pIdValuesMap.getOrDefault(pidValue, new ArrayList<>());
       return getTreeSet(level, pIdValuesMap, parents, levelSetter);
     }
