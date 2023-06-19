@@ -126,7 +126,7 @@ public class BeanHelper {
    */
   public static <T> T copyProperties(T source, T target) {
     if (Objects.isNull(source)) {
-      return null;
+      return target;
     }
     Class<T> clazz = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
     AtomicReference<T> targetRef = new AtomicReference<>(target);

@@ -50,6 +50,7 @@ class BeanHelperTest {
         LambdaHelper.resolve(
             (Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
     LambdaExecutable target = BeanHelper.copyProperties(source, null);
+    Assertions.assertNotNull(target);
     Assertions.assertEquals(source.getName(), target.getName());
   }
 }
