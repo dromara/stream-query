@@ -16,16 +16,16 @@
  */
 package org.dromara.streamquery.stream.core.bean;
 
+import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * BeanHelper class.
@@ -124,22 +124,42 @@ public class BeanHelper {
    * @param target 目标对象
    * @param <T> 对象类型
    */
-  public static <T> T copyProperties(T source, T target) {
+  public static <T, R> R copyProperties(T source, R target) {
+    if (Objects.isNull(source) || Objects.isNull(target)) {
+      return target;
+    }
+    Class<T> sourceType = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
+    Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourcePropertyGetterSetterMap =
+        LambdaHelper.getPropertyGetterSetterMap(sourceType);
+    Class<R> targetType = SerFunc.<Class<?>, Class<R>>cast().apply(target.getClass());
+    Map<String, Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>>> targetPropertyGetterSetterMap =
+        LambdaHelper.getPropertyGetterSetterMap(targetType);
+    sourcePropertyGetterSetterMap.forEach(
+        (property, sourceGetterSetter) -> {
+          Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>> targetGetterSetter =
+              targetPropertyGetterSetterMap.get(property);
+          if (Objects.isNull(targetGetterSetter)) {
+            return;
+          }
+          SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
+          SerFunc<R, Object> targetGetter = targetGetterSetter.getKey();
+          LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
+          LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
+          if (!Opp.of(sourceGetterLambda.getReturnType())
+              .map(Type::getTypeName)
+              .equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
+            return;
+          }
+          targetGetterSetter.getValue().accept(target, sourceGetter.apply(source));
+        });
+    return target;
+  }
+
+  public static <T, R> R copyProperties(T source, Class<R> targetType) {
+    R target = ReflectHelper.newInstance(targetType);
     if (Objects.isNull(source)) {
       return target;
     }
-    Class<T> clazz = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
-    AtomicReference<T> targetRef = new AtomicReference<>(target);
-    if (Objects.isNull(targetRef.get())) {
-      SerFunc<Class<T>, Constructor<T>> getConstructor = Class::getConstructor;
-      Constructor<T> constructor = getConstructor.andThen(ReflectHelper::accessible).apply(clazz);
-      SerFunc<Constructor<T>, T> newInstance = Constructor::newInstance;
-      targetRef.set(newInstance.apply(constructor));
-    }
-    Map<SerFunc<T, Object>, SerBiCons<T, Object>> getterSetterMap =
-        LambdaHelper.getGetterSetterMap(clazz);
-    getterSetterMap.forEach(
-        (getter, setter) -> setter.accept(targetRef.get(), getter.apply(source)));
-    return targetRef.get();
+    return copyProperties(source, target);
   }
 }

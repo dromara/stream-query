@@ -24,6 +24,7 @@ import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
+import org.dromara.streamquery.stream.core.stream.collector.Collective;
 
 import java.io.Serializable;
 import java.lang.invoke.*;
@@ -46,6 +47,9 @@ public class LambdaHelper {
       new WeakHashMap<>();
   private static final WeakHashMap<Class<?>, WeakHashMap<Executable, Object>> LAMBDA_REVERT_CACHE =
       new WeakHashMap<>();
+  private static final WeakHashMap<
+          Class<?>, Map<String, Map.Entry<SerFunc<?, Object>, SerBiCons<?, Object>>>>
+      PROPERTY_GETTER_SETTER_CACHE = new WeakHashMap<>();
 
   private LambdaHelper() {
     /* Do not new me! */
@@ -286,20 +290,48 @@ public class LambdaHelper {
    */
   public static <T> Map<SerFunc<T, Object>, SerBiCons<T, Object>> getGetterSetterMap(
       Class<T> clazz) {
-    List<Method> methods = ReflectHelper.getMethods(clazz);
-    List<String> methodNames = Steam.of(methods).map(Method::getName).toList();
-    List<String> properties =
-        Steam.of(ReflectHelper.getFields(clazz))
-            .map(Field::getName)
-            .filter(
-                name -> {
-                  String getterName = BeanHelper.getGetterName(name);
-                  String setterName = BeanHelper.getSetterName(name);
-                  return methodNames.contains(getterName) && methodNames.contains(setterName);
-                })
-            .toList();
-    return Steam.of(properties)
-        .map(property -> LambdaHelper.getGetter(clazz, property))
-        .toMap(Function.identity(), LambdaHelper::getSetter);
+    return Steam.of(getPropertyGetterSetterMap(clazz).values()).collect(Collective.entryToMap());
+  }
+
+  /**
+   * 获取属性名和getter和setter组成的map
+   *
+   * @param clazz 类
+   * @param <T> 类型
+   * @return 返回属性名和getter和setter组成的map
+   */
+  public static <T>
+      Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> getPropertyGetterSetterMap(
+          Class<T> clazz) {
+    Map<String, Map.Entry<SerFunc<?, Object>, SerBiCons<?, Object>>> propertyGetterSetterMap =
+        PROPERTY_GETTER_SETTER_CACHE.computeIfAbsent(
+            clazz,
+            key -> {
+              List<Method> methods = ReflectHelper.getMethods(clazz);
+              List<String> methodNames = Steam.of(methods).map(Method::getName).toList();
+              List<String> properties =
+                  Steam.of(ReflectHelper.getFields(clazz))
+                      .map(Field::getName)
+                      .filter(
+                          name -> {
+                            String getterName = BeanHelper.getGetterName(name);
+                            String setterName = BeanHelper.getSetterName(name);
+                            return methodNames.contains(getterName)
+                                && methodNames.contains(setterName);
+                          })
+                      .toList();
+              return Steam.of(properties)
+                  .toMap(
+                      Function.identity(),
+                      property ->
+                          Maps.entry(
+                              LambdaHelper.getGetter(clazz, property),
+                              LambdaHelper.getSetter(clazz, property)));
+            });
+    return SerFunc
+        .<Map<String, Map.Entry<SerFunc<?, Object>, SerBiCons<?, Object>>>,
+            Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>>>
+            cast()
+        .apply(propertyGetterSetterMap);
   }
 }

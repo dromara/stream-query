@@ -267,4 +267,13 @@ class LambdaHelperTest {
         });
     Assertions.assertEquals(lambdaExecutable.getLambda(), lambda.getLambda());
   }
+
+  @Test
+  void testGetPropertyGetterSetterMap() {
+    Map<String, Map.Entry<SerFunc<LambdaExecutable, Object>, SerBiCons<LambdaExecutable, Object>>>
+        propertyGetterSetterMap = LambdaHelper.getPropertyGetterSetterMap(LambdaExecutable.class);
+    LambdaExecutable executable = new LambdaExecutable();
+    propertyGetterSetterMap.get("name").getValue().accept(executable, "test");
+    Assertions.assertEquals("test", executable.getName());
+  }
 }

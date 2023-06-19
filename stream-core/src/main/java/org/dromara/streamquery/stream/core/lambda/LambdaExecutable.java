@@ -61,8 +61,8 @@ public class LambdaExecutable {
     final MethodType methodType =
         MethodType.fromMethodDescriptorString(
             lambda.getInstantiatedMethodType(), Thread.currentThread().getContextClassLoader());
-    final Class<?>[] instantiatedTypes = ReflectHelper.getFieldValue(methodType, "ptypes");
-    final Class<?> returnType = ReflectHelper.getFieldValue(methodType, "rtype");
+    final Class<?>[] curInstantiatedTypes = ReflectHelper.getFieldValue(methodType, "ptypes");
+    final Class<?> curReturnType = ReflectHelper.getFieldValue(methodType, "rtype");
     try {
       Class<?> implClass = ReflectHelper.loadClass(lambda.getImplClass());
       if (CONSTRUCTOR_METHOD_NAME.equals(lambda.getImplMethodName())) {
@@ -77,8 +77,8 @@ public class LambdaExecutable {
       this.setParameterTypes(ReflectHelper.getArgsFromDescriptor(lambda.getImplMethodSignature()));
       this.setName(lambda.getImplMethodName());
     }
-    this.setInstantiatedTypes(instantiatedTypes);
-    this.setReturnType(returnType);
+    this.setInstantiatedTypes(curInstantiatedTypes);
+    this.setReturnType(curReturnType);
     this.setLambda(lambda);
   }
 

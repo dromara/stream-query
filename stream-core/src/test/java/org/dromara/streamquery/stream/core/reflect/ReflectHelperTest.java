@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.reflect;
 
+import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -91,5 +92,11 @@ class ReflectHelperTest {
             ReflectHelper.getMethod(Array.class, "newInstance", Class.class, int.class),
             Class.class,
             0));
+  }
+
+  @Test
+  void testNewInstance() {
+    LambdaExecutable lambdaExecutable = ReflectHelper.newInstance(LambdaExecutable.class);
+    Assertions.assertNotNull(lambdaExecutable);
   }
 }
