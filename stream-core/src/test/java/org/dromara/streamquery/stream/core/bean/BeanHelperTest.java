@@ -16,8 +16,13 @@
  */
 package org.dromara.streamquery.stream.core.bean;
 
+import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
+import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.Serializable;
+import java.util.function.Function;
 
 /**
  * BeanHelperTest
@@ -37,5 +42,14 @@ class BeanHelperTest {
   void testGetGetterName() {
     Assertions.assertEquals("getName", BeanHelper.getGetterName("name"));
     Assertions.assertEquals("getLambda", BeanHelper.getGetterName("lambda"));
+  }
+
+  @Test
+  void testCopyProperties() {
+    LambdaExecutable source =
+        LambdaHelper.resolve(
+            (Serializable & Function<LambdaExecutable, String>) LambdaExecutable::getName);
+    LambdaExecutable target = BeanHelper.copyProperties(source, null);
+    Assertions.assertEquals(source.getName(), target.getName());
   }
 }

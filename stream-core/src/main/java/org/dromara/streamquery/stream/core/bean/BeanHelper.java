@@ -16,7 +16,16 @@
  */
 package org.dromara.streamquery.stream.core.bean;
 
+import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
+import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
+import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Opp;
+import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
+
+import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * BeanHelper class.
@@ -106,5 +115,31 @@ public class BeanHelper {
    */
   public static String getGetterName(String propertyName) {
     return GETTER_PREFIX + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+  }
+
+  /**
+   * 拷贝属性
+   *
+   * @param source 源对象
+   * @param target 目标对象
+   * @param <T> 对象类型
+   */
+  public static <T> T copyProperties(T source, T target) {
+    if (Objects.isNull(source)) {
+      return null;
+    }
+    Class<T> clazz = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
+    AtomicReference<T> targetRef = new AtomicReference<>(target);
+    if (Objects.isNull(targetRef.get())) {
+      SerFunc<Class<T>, Constructor<T>> getConstructor = Class::getConstructor;
+      Constructor<T> constructor = getConstructor.andThen(ReflectHelper::accessible).apply(clazz);
+      SerFunc<Constructor<T>, T> newInstance = Constructor::newInstance;
+      targetRef.set(newInstance.apply(constructor));
+    }
+    Map<SerFunc<T, Object>, SerBiCons<T, Object>> getterSetterMap =
+        LambdaHelper.getGetterSetterMap(clazz);
+    getterSetterMap.forEach(
+        (getter, setter) -> setter.accept(targetRef.get(), getter.apply(source)));
+    return targetRef.get();
   }
 }

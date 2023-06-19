@@ -18,11 +18,8 @@ package org.dromara.streamquery.stream.core.stream;
 
 import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
-import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
-import org.dromara.streamquery.stream.core.lambda.function.SerPred;
 import org.dromara.streamquery.stream.core.optional.Opp;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -334,9 +331,10 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   public Steam<T> nonNull() {
     return filter(Objects::nonNull);
   }
-  
+
   /**
    * 便捷转换后进行非空过滤, 为无状态的中间操作
+   *
    * @param mapper 便捷转换
    * @return Steam<T> 返回叠加过滤操作后的流
    * @param <R> 边界转换后用于非空判断的类型
@@ -803,10 +801,13 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   public Steam<Steam<T>> split(final int batchSize) {
     final Iterator<T> iterator = Steam.of(this.stream).iterator();
     final IntPredicate x = s -> iterator.hasNext();
-    return Steam.iterate(Steam.of(IntStream.range(0, batchSize).filter(x).mapToObj(i -> iterator.next())),
-            s -> iterator.hasNext(), s -> Steam.of(IntStream.range(0, batchSize).filter(x).mapToObj(i -> iterator.next()))).parallel(isParallel());
+    return Steam.iterate(
+            Steam.of(IntStream.range(0, batchSize).filter(x).mapToObj(i -> iterator.next())),
+            s -> iterator.hasNext(),
+            s -> Steam.of(IntStream.range(0, batchSize).filter(x).mapToObj(i -> iterator.next())))
+        .parallel(isParallel());
   }
-  
+
   /**
    * 按指定长度切分为元素为list的流
    *

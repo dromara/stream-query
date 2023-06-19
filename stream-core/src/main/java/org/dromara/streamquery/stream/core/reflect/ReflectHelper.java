@@ -518,8 +518,7 @@ public class ReflectHelper {
   }
 
   /**
-   * explain.
-   * 此方法会在2.0版本移除
+   * explain. 此方法会在2.0版本移除
    *
    * @param obj a {@link java.lang.Object} object
    */

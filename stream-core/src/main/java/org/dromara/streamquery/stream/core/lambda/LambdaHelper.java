@@ -29,8 +29,10 @@ import java.io.Serializable;
 import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 
 /**
  * LambdaHelper
@@ -273,5 +275,31 @@ public class LambdaHelper {
         getSetter(
             executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
     return SerFunc.<Object, C>cast().apply(setter);
+  }
+
+  /**
+   * 获取getter和setter组成的map
+   *
+   * @param clazz 类
+   * @param <T> 类型
+   * @return 返回getter和setter组成的map
+   */
+  public static <T> Map<SerFunc<T, Object>, SerBiCons<T, Object>> getGetterSetterMap(
+      Class<T> clazz) {
+    List<Method> methods = ReflectHelper.getMethods(clazz);
+    List<String> methodNames = Steam.of(methods).map(Method::getName).toList();
+    List<String> properties =
+        Steam.of(ReflectHelper.getFields(clazz))
+            .map(Field::getName)
+            .filter(
+                name -> {
+                  String getterName = BeanHelper.getGetterName(name);
+                  String setterName = BeanHelper.getSetterName(name);
+                  return methodNames.contains(getterName) && methodNames.contains(setterName);
+                })
+            .toList();
+    return Steam.of(properties)
+        .map(property -> LambdaHelper.getGetter(clazz, property))
+        .toMap(Function.identity(), LambdaHelper::getSetter);
   }
 }

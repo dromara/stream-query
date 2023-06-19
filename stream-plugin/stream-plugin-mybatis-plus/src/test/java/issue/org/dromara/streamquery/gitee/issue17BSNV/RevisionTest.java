@@ -45,13 +45,17 @@ class RevisionTest extends AbstractMybatisPlusTestApplication {
     UserInfoWithTableAnnotation userInfo = new UserInfoWithTableAnnotation();
     userInfo.setName("ruben");
     List<UserInfoWithTableAnnotation> list = Arrays.asList(userInfo, entity);
-    long effectRows = Database.execute(UserInfoWithTableAnnotation.class,
+    long effectRows =
+        Database.execute(
+            UserInfoWithTableAnnotation.class,
             (IMapper<UserInfoWithTableAnnotation> m) -> m.saveOneSql(list));
     Assertions.assertEquals(2, effectRows);
     Assertions.assertEquals(7, Database.count(UserInfoWithTableAnnotation.class));
 
     Assertions.assertEquals(
-            0L, Database.execute(UserInfoWithTableAnnotation.class,
-                    (IMapper<UserInfoWithTableAnnotation> m) -> m.saveOneSql(Lists.empty())));
+        0L,
+        Database.execute(
+            UserInfoWithTableAnnotation.class,
+            (IMapper<UserInfoWithTableAnnotation> m) -> m.saveOneSql(Lists.empty())));
   }
 }
