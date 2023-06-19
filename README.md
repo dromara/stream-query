@@ -49,9 +49,9 @@
         <!-- 可单独引入 -->
         <!-- https://mvnrepository.com/artifact/org.dromara/stream-core -->
 <dependency>
-<groupId>org.dromara.stream-query</groupId>
-<artifactId>stream-core</artifactId>
-<version>x.x.x</version>
+  <groupId>org.dromara.stream-query</groupId>
+  <artifactId>stream-core</artifactId>
+  <version>x.x.x</version>
 </dependency>
 ```
 
