@@ -3,7 +3,7 @@
   <strong>hardcore extreme opinionated.</strong>
 </p>
 <p align="center">
-	👉 <a href="https://dromara.gitee.io/stream-query/#/">stream-query</a> 👈
+	👉 <a href="http://stream-query.dromara.org/">stream-query</a> 👈
 </p>
 <p align="center">
     <a target="_blank" href="https://search.maven.org/artifact/org.dromara.stream-query/stream-query">
@@ -28,7 +28,7 @@
 
 ## 📝文档
 
-[中文文档](https://dromara.gitee.io/stream-query)
+[中文文档](http://stream-query.dromara.org)
 &nbsp;[仓库地址](https://gitee.com/dromara/stream-query)
 &nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
 
@@ -49,9 +49,9 @@
         <!-- 可单独引入 -->
         <!-- https://mvnrepository.com/artifact/org.dromara/stream-core -->
 <dependency>
-<groupId>org.dromara.stream-query</groupId>
-<artifactId>stream-core</artifactId>
-<version>x.x.x</version>
+  <groupId>org.dromara.stream-query</groupId>
+  <artifactId>stream-core</artifactId>
+  <version>x.x.x</version>
 </dependency>
 ```
 
@@ -90,11 +90,11 @@ Database.saveBatch(userList);
 Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 ```
 
-[更多使用姿势-Database](https://dromara.gitee.io/stream-query/#/docs/module/plugin/mybatis-plus/database)
+[更多使用姿势-Database](http://stream-query.dromara.org/pages/454a9b/)
 
-[更多使用姿势-One/Many/OneToMany](https://dromara.gitee.io/stream-query/#/docs/module/plugin/mybatis-plus/query?id=one)
+[更多使用姿势-One/Many/OneToMany](http://stream-query.dromara.org/pages/4f06cd/)
 
-更多请看[文档](https://dromara.gitee.io/stream-query)
+更多请看[文档](http://stream-query.dromara.org)
 
 ## 🐞提供bug反馈或建议
 

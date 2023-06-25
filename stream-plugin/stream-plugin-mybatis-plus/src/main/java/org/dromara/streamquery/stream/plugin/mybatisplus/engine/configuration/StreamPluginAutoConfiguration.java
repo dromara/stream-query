@@ -27,7 +27,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.enumration.SqlMethodEnum;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.JsonPostInitTableInfoHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.DynamicMapperHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.SaveOneSql;
@@ -61,8 +60,8 @@ public class StreamPluginAutoConfiguration {
       @Override
       public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
         List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
-        methodList.add(new SaveOneSql(SqlMethodEnum.SAVE_ONE_SQL.getMethod()));
-        methodList.add(new UpdateOneSql(SqlMethodEnum.UPDATE_ONE_SQL.getMethod()));
+        methodList.add(new SaveOneSql());
+        methodList.add(new UpdateOneSql());
         return methodList;
       }
 

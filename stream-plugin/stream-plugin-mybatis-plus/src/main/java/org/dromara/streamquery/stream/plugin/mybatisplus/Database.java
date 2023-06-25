@@ -45,7 +45,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
-import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
@@ -154,7 +153,9 @@ public class Database {
    * @param <T> a T class
    * @param <E> a E class
    * @return a {@link Opp} object
+   * @deprecated use {@link WrapperHelper#lambdaQuery(Serializable, SFunction)} instead
    */
+  @Deprecated
   public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
       E data, SFunction<T, E> condition) {
     return Opp.of(data)
@@ -173,7 +174,9 @@ public class Database {
    * @param <T> a T class
    * @param <E> a E class
    * @return a {@link Opp} object
+   * @deprecated use {@link WrapperHelper#lambdaQuery(Collection, SFunction)} instead
    */
+  @Deprecated
   public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
       Collection<E> dataList, SFunction<T, E> condition) {
     return Opp.ofColl(dataList)
@@ -204,7 +207,9 @@ public class Database {
    * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
    * @param <T> a T class
    * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SFunction[])}
    */
+  @Deprecated
   @SafeVarargs
   public static <T> LambdaQueryWrapper<T> select(
       LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
@@ -220,21 +225,15 @@ public class Database {
    * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
    * @param <T> a T class
    * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
+   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SerBiCons, SFunction[])}
    */
+  @Deprecated
   @SafeVarargs
   public static <T> LambdaQueryWrapper<T> select(
       LambdaQueryWrapper<T> wrapper,
       SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn,
       SFunction<T, ?>... columns) {
-    if (Stream.of(columns)
-        .allMatch(
-            func ->
-                Objects.nonNull(func)
-                    && PropertyNamer.isGetter(
-                        LambdaHelper.resolve(func).getLambda().getImplMethodName()))) {
-      whenAllMatchColumn.accept(wrapper, columns);
-    }
-    return wrapper;
+    return WrapperHelper.select(wrapper, whenAllMatchColumn, columns);
   }
 
   /**

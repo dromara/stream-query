@@ -121,6 +121,18 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   }
 
   /**
+   * 返回包含指定元素的串行流
+   *
+   * @param map 指定元素
+   * @param <K> key类型
+   * @param <V> value类型
+   * @return 包含指定元素的串行流 从一个安全数组中创建流
+   */
+  public static <K, V> Steam<Map.Entry<K, V>> of(Map<K, V> map) {
+    return Maps.isEmpty(map) ? empty() : Steam.of(map.entrySet());
+  }
+
+  /**
    * 返回无限有序流 该流由 初始值 以及执行 迭代函数 进行迭代获取到元素
    *
    * <p>例如 {@code Steam.iterate(0, i -> i + 1)} 就可以创建从0开始，每次+1的无限流，使用{@link
@@ -317,7 +329,18 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
    * @return 过滤后的流
    */
   public Steam<T> nonNull() {
-    return new Steam<>(stream.filter(Objects::nonNull));
+    return filter(Objects::nonNull);
+  }
+
+  /**
+   * 便捷转换后进行非空过滤, 为无状态的中间操作
+   *
+   * @param mapper 便捷转换
+   * @return Steam<T> 返回叠加过滤操作后的流
+   * @param <R> 边界转换后用于非空判断的类型
+   */
+  public <R> Steam<T> nonNull(Function<? super T, ? extends R> mapper) {
+    return filter(t -> Objects.nonNull(mapper.apply(t)));
   }
 
   /** 返回与指定函数将元素作为参数执行的结果组成的流 这是一个无状态中间操作 */
@@ -776,15 +799,12 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
    * @return 切好的流
    */
   public Steam<Steam<T>> split(final int batchSize) {
-    List<T> list = toList();
-    final int size = list.size();
-    // 指定长度 大于等于 列表长度
-    if (size <= batchSize) {
-      // 返回第一层只有单个元素的双层流，形如：[[1,2,3,4,5]]
-      return Steam.<Steam<T>>of(of(list, isParallel()));
-    }
-    return Steam.iterate(0, i -> i < size, i -> i + batchSize)
-        .map(skip -> of(list.subList(skip, Math.min(size, skip + batchSize)), isParallel()))
+    final Iterator<T> iterator = Steam.of(this.stream).iterator();
+    final IntPredicate x = s -> iterator.hasNext();
+    return Steam.iterate(
+            Steam.of(IntStream.range(0, batchSize).filter(x).mapToObj(i -> iterator.next())),
+            s -> iterator.hasNext(),
+            s -> Steam.of(IntStream.range(0, batchSize).filter(x).mapToObj(i -> iterator.next())))
         .parallel(isParallel());
   }
 

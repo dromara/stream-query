@@ -17,6 +17,7 @@
 package org.dromara.streamquery.stream.core.reflect;
 
 import org.dromara.streamquery.stream.core.collection.Maps;
+import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerPred;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
@@ -518,10 +519,11 @@ public class ReflectHelper {
   }
 
   /**
-   * explain.
+   * explain. 此方法会在2.0版本移除
    *
    * @param obj a {@link java.lang.Object} object
    */
+  @Deprecated
   public static void explain(Object obj) {
     LOGGER.info(() -> "obj: " + obj + " class: " + obj.getClass());
     LOGGER.info(() -> "fields: ");
@@ -542,5 +544,12 @@ public class ReflectHelper {
                             + methodName
                             + ": "
                             + Opp.ofTry(() -> getMethod(obj.getClass(), methodName).invoke(obj))));
+  }
+
+  public static <T> T newInstance(Class<T> clazz) {
+    SerFunc<Class<T>, Constructor<T>> getConstructor = Class::getConstructor;
+    Constructor<T> constructor = getConstructor.andThen(ReflectHelper::accessible).apply(clazz);
+    SerFunc<Constructor<T>, T> newInstance = Constructor::newInstance;
+    return newInstance.apply(constructor);
   }
 }

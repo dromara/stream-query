@@ -153,7 +153,7 @@ public abstract class BaseQueryHelper<
    */
   protected <R> void attachSingle(SFunction<T, R> valueFunction) {
     this.valueFunction = (SFunction<T, V>) valueFunction;
-    Database.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
+    WrapperHelper.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
   }
 
   /**
@@ -164,7 +164,7 @@ public abstract class BaseQueryHelper<
    */
   protected <R> void attachDouble(SFunction<T, R> valueFunction) {
     this.valueFunction = (SFunction<T, V>) valueFunction;
-    Database.select(wrapper, keyFunction, valueFunction);
+    WrapperHelper.select(wrapper, keyFunction, valueFunction);
   }
 
   /**

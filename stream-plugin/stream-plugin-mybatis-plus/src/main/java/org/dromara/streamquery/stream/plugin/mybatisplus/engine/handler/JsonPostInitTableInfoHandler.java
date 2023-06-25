@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -23,6 +24,12 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
+import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
+import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
+import org.springframework.core.annotation.AnnotationUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 /**
  * @author VampireAchao
@@ -39,6 +46,21 @@ public class JsonPostInitTableInfoHandler implements PostInitTableInfoHandler {
   @Override
   public void postTableInfo(TableInfo tableInfo, Configuration configuration) {
     PostInitTableInfoHandler.super.postTableInfo(tableInfo, configuration);
+    Annotation[] annotations = tableInfo.getEntityType().getAnnotations();
+    for (Annotation annotation : annotations) {
+      if (annotation.annotationType().isAnnotationPresent(TableName.class)) {
+        Map<String, Object> annotationAttributes =
+            AnnotationUtils.getAnnotationAttributes(annotation);
+        TableName synthesizedTableName =
+            AnnotationUtils.synthesizeAnnotation(
+                annotationAttributes, TableName.class, tableInfo.getEntityType());
+        String tableNamePropertyName = LambdaHelper.getPropertyName(TableInfo::getTableName);
+        String tableNameValue = synthesizedTableName.value();
+        ReflectHelper.setFieldValue(tableInfo, tableNamePropertyName, tableNameValue);
+        break;
+      }
+    }
+
     for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {
       if (fieldInfo.getTypeHandler() == null) {
         continue;

@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.collection;
 
+import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.core.stream.collector.Collective;
 import org.junit.jupiter.api.Assertions;
@@ -28,6 +29,8 @@ import java.util.*;
  * @since 2022/10/21 16:48
  */
 class MapsTest {
+
+  public static final Map<?, ?> NULL_MAP = Opp.<Map<?, ?>>empty().get();
 
   @Test
   void testOf() {
@@ -109,7 +112,7 @@ class MapsTest {
   }
 
   @Test
-  public void testMerge() {
+  void testMerge() {
     final Map<String, String> map = Maps.of("key", "value", "key1", "value1");
     final Map<String, String> mergeMap = Maps.of("key", "Value", "key2", "value2");
     final Map<String, String> merge = Maps.merge(map, mergeMap, (key, v1, v2) -> v1 + v2);
@@ -119,7 +122,7 @@ class MapsTest {
   }
 
   @Test
-  public void filter() {
+  void filter() {
     Map<String, Integer> map1 = new HashMap<>();
     map1.put("a", 1);
     map1.put("b", 2);
@@ -136,7 +139,7 @@ class MapsTest {
   }
 
   @Test
-  public void flatten() {
+  void flatten() {
     Map<String, Map<String, Integer>> nestedMap = new HashMap<>();
     Map<String, Integer> innerMap1 = new HashMap<>();
     innerMap1.put("a", 1);
@@ -151,30 +154,16 @@ class MapsTest {
   }
 
   @Test
-  public void testMergeMaps() {
-    Map<String, Integer> map1 = new HashMap<>();
-    map1.put("a", 1);
-    map1.put("b", 2);
+  void testIsEmpty() {
+    Assertions.assertTrue(Maps.isEmpty(NULL_MAP));
+    Assertions.assertTrue(Maps.isEmpty(new HashMap<>()));
+    Assertions.assertFalse(Maps.isEmpty(Maps.of("key", "value")));
+  }
 
-    Map<String, Integer> map2 = new HashMap<>();
-    map2.put("b", 3);
-    map2.put("c", 4);
-
-    Map<String, Integer> map3 = new HashMap<>();
-    map3.put("c", 5);
-    map3.put("d", 6);
-
-    List<Map<String, Integer>> mapList = Arrays.asList(map1, map2, map3);
-    Map<String, List<Integer>> mergedMap = Maps.mergeMaps(mapList);
-    final HashMap<String, List<Integer>> hashMap = new HashMap<String, List<Integer>>() {
-      private static final long serialVersionUID = 237587093605410403L;
-      {
-        put("a", Collections.singletonList(1));
-        put("b", Arrays.asList(2, 3));
-        put("c", Arrays.asList(4, 5));
-        put("d", Collections.singletonList(6));
-      }
-    };
-    Assertions.assertEquals(mergedMap, hashMap);
+  @Test
+  void testIsNotEmpty() {
+    Assertions.assertFalse(Maps.isNotEmpty(NULL_MAP));
+    Assertions.assertFalse(Maps.isNotEmpty(new HashMap<>()));
+    Assertions.assertTrue(Maps.isNotEmpty(Maps.of("key", "value")));
   }
 }

@@ -48,6 +48,11 @@ public class SaveOneSql extends AbstractMethod implements PluginConst {
     super(methodName);
   }
 
+  /** Constructor for SaveOneSql. */
+  public SaveOneSql() {
+    super(SqlMethodEnum.SAVE_ONE_SQL.getMethod());
+  }
+
   /** 注入自定义 MappedStatement */
   @Override
   public MappedStatement injectMappedStatement(

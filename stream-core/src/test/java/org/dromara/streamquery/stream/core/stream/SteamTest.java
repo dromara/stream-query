@@ -19,6 +19,7 @@ package org.dromara.streamquery.stream.core.stream;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
+import org.dromara.streamquery.stream.core.collection.Maps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,6 +50,7 @@ class SteamTest {
     Assertions.assertEquals(3, Steam.of(asList(1, 2, 3), true).count());
     Assertions.assertEquals(3, Steam.of(1, 2, 3).count());
     Assertions.assertEquals(3, Steam.of(Stream.builder().add(1).add(2).add(3).build()).count());
+    Assertions.assertEquals(0, Steam.of(Maps.of()).count());
   }
 
   @Test
@@ -293,6 +295,22 @@ class SteamTest {
     List<Integer> list = asList(1, null, 2, 3);
     List<Integer> nonNull = Steam.of(list).nonNull().toList();
     Assertions.assertEquals(asList(1, 2, 3), nonNull);
+  }
+
+  @Test
+  void testNonNullMapping() {
+    List<Student> original =
+        asList(
+            Student.builder().name("臧臧").age(23).build(),
+            Student.builder().name("阿超").age(21).build());
+    List<Student> nonNull =
+        Steam.of(original)
+            .push(Student.builder() /*.name(null)*/.age(21).build())
+            .unshift(Student.builder().name("阿郎") /*.age(null)*/.build())
+            .nonNull(Student::getName)
+            .nonNull(Student::getAge)
+            .toList();
+    Assertions.assertEquals(original, nonNull);
   }
 
   @Test

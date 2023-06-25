@@ -180,8 +180,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
       return new ArrayList<>();
     }
     if (Objects.isNull(parentPredicate)) {
-      final Map<R, List<T>> pIdValuesMap =
-          Steam.of(list).filter(e -> Objects.nonNull(idGetter.apply(e))).group(pidGetter);
+      final Map<R, List<T>> pIdValuesMap = Steam.of(list).nonNull(idGetter::apply).group(pidGetter);
       final List<T> parents = pIdValuesMap.getOrDefault(pidValue, new ArrayList<>());
       return getTreeSet(level, pIdValuesMap, parents, levelSetter);
     }

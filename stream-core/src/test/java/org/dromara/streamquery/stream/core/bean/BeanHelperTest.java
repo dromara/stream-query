@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.bean;
 
+import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,5 +38,27 @@ class BeanHelperTest {
   void testGetGetterName() {
     Assertions.assertEquals("getName", BeanHelper.getGetterName("name"));
     Assertions.assertEquals("getLambda", BeanHelper.getGetterName("lambda"));
+  }
+
+  @Data
+  public static class User {
+    private String name;
+  }
+
+  @Data
+  public static class Person {
+    private String name;
+  }
+
+  @Test
+  void testCopyProperties() {
+    User source =
+        new User() {
+          {
+            setName("test");
+          }
+        };
+    Person target = BeanHelper.copyProperties(source, Person.class);
+    Assertions.assertEquals(source.getName(), target.getName());
   }
 }
