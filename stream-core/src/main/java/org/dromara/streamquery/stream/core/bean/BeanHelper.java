@@ -125,35 +125,42 @@ public class BeanHelper {
    * @param <T> 对象类型
    */
   public static <T, R> R copyProperties(T source, R target) {
-    if (Objects.isNull(source) || Objects.isNull(target)) {
+    if (source == null || target ==null) {
       return target;
     }
+
     Class<T> sourceType = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
-    Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourcePropertyGetterSetterMap =
-        LambdaHelper.getPropertyGetterSetterMap(sourceType);
+    Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourcePropertyGetterSetterMap = LambdaHelper.getPropertyGetterSetterMap(sourceType);
+
     Class<R> targetType = SerFunc.<Class<?>, Class<R>>cast().apply(target.getClass());
-    Map<String, Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>>> targetPropertyGetterSetterMap =
-        LambdaHelper.getPropertyGetterSetterMap(targetType);
-    sourcePropertyGetterSetterMap.forEach(
-        (property, sourceGetterSetter) -> {
-          Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>> targetGetterSetter =
-              targetPropertyGetterSetterMap.get(property);
-          if (Objects.isNull(targetGetterSetter)) {
-            return;
-          }
-          SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
-          SerFunc<R, Object> targetGetter = targetGetterSetter.getKey();
-          LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
-          LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
-          if (!Opp.of(sourceGetterLambda.getReturnType())
-              .map(Type::getTypeName)
-              .equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
-            return;
-          }
-          targetGetterSetter.getValue().accept(target, sourceGetter.apply(source));
-        });
+    Map<String, Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>>> targetPropertyGetterSetterMap = LambdaHelper.getPropertyGetterSetterMap(targetType);
+
+    for (Map.Entry<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourceEntry : sourcePropertyGetterSetterMap.entrySet()) {
+      String property = sourceEntry.getKey();
+      Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>> sourceGetterSetter = sourceEntry.getValue();
+      Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>> targetGetterSetter = targetPropertyGetterSetterMap.get(property);
+
+      if (targetGetterSetter == null) {
+        continue;
+      }
+
+      SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
+      SerFunc<R, Object> targetGetter = targetGetterSetter.getKey();
+
+      LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
+      LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
+
+      if (!Opp.of(sourceGetterLambda.getReturnType()).map(Type::getTypeName).equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
+        continue;
+      }
+
+      Object value = sourceGetter.apply(source);
+      targetGetterSetter.getValue().accept(target, value);
+    }
+
     return target;
   }
+
 
   public static <T, R> R copyProperties(T source, Class<R> targetType) {
     R target = ReflectHelper.newInstance(targetType);
