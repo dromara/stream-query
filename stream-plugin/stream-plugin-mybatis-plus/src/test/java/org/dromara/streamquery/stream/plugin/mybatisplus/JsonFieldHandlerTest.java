@@ -86,12 +86,12 @@ class JsonFieldHandlerTest {
     Database.updateFewSql(Lists.of(user));
 
     QueryCondition<UserInfoWithJsonName> wrapper =
-            QueryCondition.query(UserInfoWithJsonName.class).eq(UserInfoWithJsonName::getName, name);
+        QueryCondition.query(UserInfoWithJsonName.class).eq(UserInfoWithJsonName::getName, name);
     val list = Database.list(wrapper);
 
     assertEquals(1, list.size(), "Query should return exactly one result");
     assertEquals(
-            name, list.get(0).getName(), "Returned user's name should match the expected name");
+        name, list.get(0).getName(), "Returned user's name should match the expected name");
   }
 
   @Test
@@ -106,16 +106,16 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(user));
 
     QueryCondition<UserInfoWithJsonName> wrapper =
-            QueryCondition.query(UserInfoWithJsonName.class)
-                    .activeEq(UserInfoWithJsonName::getName, name);
+        QueryCondition.query(UserInfoWithJsonName.class)
+            .activeEq(UserInfoWithJsonName::getName, name);
 
     val list = Database.list(wrapper);
 
     assertEquals(1, list.size(), "Query should return exactly one result");
     assertEquals(
-            name.getUsername(),
-            list.get(0).getName().getUsername(),
-            "Returned user's username should match the expected username");
+        name.getUsername(),
+        list.get(0).getName().getUsername(),
+        "Returned user's username should match the expected username");
   }
 
   @Test
@@ -144,27 +144,27 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(user1, user2, user3));
 
     QueryCondition<UserInfoWithJsonName> wrapper =
-            (QueryCondition<UserInfoWithJsonName>)
-                    QueryCondition.query(UserInfoWithJsonName.class)
-                            .in(UserInfoWithJsonName::getName, Lists.of(name1, name3))
-                            .or(i -> i.eq(UserInfoWithJsonName::getName, user2.getName()));
+        (QueryCondition<UserInfoWithJsonName>)
+            QueryCondition.query(UserInfoWithJsonName.class)
+                .in(UserInfoWithJsonName::getName, Lists.of(name1, name3))
+                .or(i -> i.eq(UserInfoWithJsonName::getName, user2.getName()));
 
     val list = Database.list(wrapper);
 
     assertEquals(3, list.size(), "Query should return exactly two results");
 
     List<String> usernames =
-            list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
+        list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
 
     assertTrue(
-            usernames.contains(name1.getUsername()),
-            "Returned users should contain the first expected username");
+        usernames.contains(name1.getUsername()),
+        "Returned users should contain the first expected username");
     assertTrue(
-            usernames.contains(name3.getUsername()),
-            "Returned users should contain the third expected username");
+        usernames.contains(name3.getUsername()),
+        "Returned users should contain the third expected username");
     assertTrue(
-            usernames.contains(name2.getUsername()),
-            "Returned users should not contain the second username");
+        usernames.contains(name2.getUsername()),
+        "Returned users should not contain the second username");
   }
 
   @Test
@@ -193,25 +193,25 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(user1, user2, user3));
 
     QueryCondition<UserInfoWithJsonName> wrapper =
-            QueryCondition.query(UserInfoWithJsonName.class)
-                    .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
+        QueryCondition.query(UserInfoWithJsonName.class)
+            .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
 
     val list = Database.list(wrapper);
 
     assertEquals(2, list.size(), "Query should return exactly two results");
 
     List<String> usernames =
-            list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
+        list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
 
     assertTrue(
-            usernames.contains(name1.getUsername()),
-            "Returned users should contain the first expected username");
+        usernames.contains(name1.getUsername()),
+        "Returned users should contain the first expected username");
     assertTrue(
-            usernames.contains(name3.getUsername()),
-            "Returned users should contain the third expected username");
+        usernames.contains(name3.getUsername()),
+        "Returned users should contain the third expected username");
     assertFalse(
-            usernames.contains(name2.getUsername()),
-            "Returned users should not contain the second username");
+        usernames.contains(name2.getUsername()),
+        "Returned users should not contain the second username");
   }
 
   @Test
@@ -240,25 +240,25 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(user1, user2, user3));
 
     QueryCondition<UserInfoWithJsonName> wrapper =
-            QueryCondition.query(UserInfoWithJsonName.class)
-                    .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
+        QueryCondition.query(UserInfoWithJsonName.class)
+            .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
 
     val list = Database.list(wrapper);
 
     assertEquals(2, list.size(), "Query should return exactly two results");
 
     List<String> usernames =
-            list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
+        list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
 
     assertTrue(
-            usernames.contains(name1.getUsername()),
-            "Returned users should contain the first expected username");
+        usernames.contains(name1.getUsername()),
+        "Returned users should contain the first expected username");
     assertTrue(
-            usernames.contains(name3.getUsername()),
-            "Returned users should contain the third expected username");
+        usernames.contains(name3.getUsername()),
+        "Returned users should contain the third expected username");
     assertFalse(
-            usernames.contains(name2.getUsername()),
-            "Returned users should not contain the second username");
+        usernames.contains(name2.getUsername()),
+        "Returned users should not contain the second username");
   }
 
   @Test
@@ -273,17 +273,17 @@ class JsonFieldHandlerTest {
     Database.updateFewSql(Lists.of(user));
 
     LambdaQueryWrapper<UserInfoWithJsonName> wrapper =
-            QueryCondition.query(UserInfoWithJsonName.class)
-                    .select(UserInfoWithJsonName::getName)
-                    .eq(UserInfoWithJsonName::getName, name);
+        QueryCondition.query(UserInfoWithJsonName.class)
+            .select(UserInfoWithJsonName::getName)
+            .eq(UserInfoWithJsonName::getName, name);
     val list = Database.list(wrapper);
     assertEquals(1, list.size(), "Query should return exactly one result");
 
     UserInfoWithJsonName dbUser = list.get(0);
     assertEquals(
-            user.getName().getUsername(), dbUser.getName().getUsername(), "Username should match");
+        user.getName().getUsername(), dbUser.getName().getUsername(), "Username should match");
     assertEquals(
-            user.getName().getNickname(), dbUser.getName().getNickname(), "Nickname should match");
+        user.getName().getNickname(), dbUser.getName().getNickname(), "Nickname should match");
   }
 
   public static class JsonFieldHandler extends AbstractJsonFieldHandler<Object> {
