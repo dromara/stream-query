@@ -302,7 +302,7 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     Queue<T> queue = new LinkedList<>();
     queue.offer(node);
     int maxDepth = 0;
-    while (!Opp.ofColl(queue).isEmpty()) {
+    while (Opp.ofColl(queue).isPresent()) {
       // 每层节点的数量
       for (int i = 0; i < queue.size(); i++) {
         Steam.of(childrenGetter.apply(queue.poll())).forEach(queue::offer);
