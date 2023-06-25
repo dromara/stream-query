@@ -125,20 +125,25 @@ public class BeanHelper {
    * @param <T> 对象类型
    */
   public static <T, R> R copyProperties(T source, R target) {
-    if (source == null || target ==null) {
+    if (source == null || target == null) {
       return target;
     }
 
     Class<T> sourceType = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
-    Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourcePropertyGetterSetterMap = LambdaHelper.getPropertyGetterSetterMap(sourceType);
+    Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourcePropertyGetterSetterMap =
+        LambdaHelper.getPropertyGetterSetterMap(sourceType);
 
     Class<R> targetType = SerFunc.<Class<?>, Class<R>>cast().apply(target.getClass());
-    Map<String, Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>>> targetPropertyGetterSetterMap = LambdaHelper.getPropertyGetterSetterMap(targetType);
+    Map<String, Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>>> targetPropertyGetterSetterMap =
+        LambdaHelper.getPropertyGetterSetterMap(targetType);
 
-    for (Map.Entry<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourceEntry : sourcePropertyGetterSetterMap.entrySet()) {
+    for (Map.Entry<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourceEntry :
+        sourcePropertyGetterSetterMap.entrySet()) {
       String property = sourceEntry.getKey();
-      Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>> sourceGetterSetter = sourceEntry.getValue();
-      Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>> targetGetterSetter = targetPropertyGetterSetterMap.get(property);
+      Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>> sourceGetterSetter =
+          sourceEntry.getValue();
+      Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>> targetGetterSetter =
+          targetPropertyGetterSetterMap.get(property);
 
       if (targetGetterSetter == null) {
         continue;
@@ -150,7 +155,9 @@ public class BeanHelper {
       LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
       LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
 
-      if (!Opp.of(sourceGetterLambda.getReturnType()).map(Type::getTypeName).equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
+      if (!Opp.of(sourceGetterLambda.getReturnType())
+          .map(Type::getTypeName)
+          .equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
         continue;
       }
 
@@ -160,7 +167,6 @@ public class BeanHelper {
 
     return target;
   }
-
 
   public static <T, R> R copyProperties(T source, Class<R> targetType) {
     R target = ReflectHelper.newInstance(targetType);
