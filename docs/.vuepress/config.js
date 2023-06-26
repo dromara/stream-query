@@ -115,6 +115,8 @@ module.exports = {
           {text: '1-6-0-alpha', link: '/pages/ca8d6e/#v1-6-0-alpha'},
           {text: '1-7-0-alpha', link: '/pages/ca8d6e/#v1-7-0-alpha'},
           {text: '1-8-0', link: '/pages/ca8d6e/#v1-8-0'},
+          {text: '1-9-0', link: '/pages/ca8d6e/#v1-9-0'},
+          {text: '1-9-1', link: '/pages/ca8d6e/#v1-9-1'},
         ]
       },
     ],
