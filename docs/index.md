@@ -210,6 +210,25 @@ postList: none
 ```
 :::
 
+## 🎖[aizuda](http://doc.aizuda.com/)组织项目
+::: cardList 4
+```yaml
+#- name: 名称
+#  desc: 描述
+#  avatar: https://xxx.jpg # 头像，可选
+#  link: https://xxx/ # 链接，可选
+#  bgColor: '#CBEAFA' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
+#  textColor: '#6854A1' # 文本色，可选，默认var(--textColor)
+- name: mybatis-plus
+  desc: 🚀为简化开发而生
+  link: https://baomidou.com/
+- name: Easy-Security
+  desc: 简单易用的鉴权框架 只需四步完成使用
+  link: https://easy-security.aizuda.com/
+
+```
+:::
+
 <!-- <object type="image/svg+xml" data="/img/projects.svg"></object> -->
 
 <br/>
