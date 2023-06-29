@@ -30,18 +30,18 @@ import org.junit.jupiter.api.Test;
  * @since 2023-06-27
  */
 @MybatisPlusTest
-public class SqlInjectionWrapperTest {
+class SqlInjectionWrapperTest {
 
   @Test
   void applyTest() {
     String unsafeSql = "'1 = 1) OR 1 = 1 --";
+      LambdaQueryWrapper<UserInfo> wrapper =
+              QueryCondition.query(UserInfo.class).apply(unsafeSql);
+      val list = Database.list(wrapper);
     Throwable exception =
         Assertions.assertThrows(
             IllegalArgumentException.class,
             () -> {
-              LambdaQueryWrapper<UserInfo> wrapper =
-                  QueryCondition.query(UserInfo.class).apply(unsafeSql);
-              val list = Database.list(wrapper);
             });
 
     Assertions.assertEquals("SQL Injection attempt detected in 'apply'", exception.getMessage());
@@ -50,12 +50,12 @@ public class SqlInjectionWrapperTest {
   @Test
   void havingApply() {
     String unsafeSql = "1 = 1) OR 1 = 1 --";
+      LambdaQueryWrapper<UserInfo> wrapper =
+              QueryCondition.query(UserInfo.class).having(unsafeSql);
     Throwable exception =
         Assertions.assertThrows(
             IllegalArgumentException.class,
             () -> {
-              LambdaQueryWrapper<UserInfo> wrapper =
-                  QueryCondition.query(UserInfo.class).having(unsafeSql);
               val list = Database.list(wrapper);
             });
 

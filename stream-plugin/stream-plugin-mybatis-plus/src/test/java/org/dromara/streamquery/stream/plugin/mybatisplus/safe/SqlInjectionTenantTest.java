@@ -43,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
 @MybatisPlusTest
 @ContextConfiguration(
     classes = {MybatisPlusTestApplication.class, SqlInjectionTenantTest.TenantPluginConfig.class})
-public class SqlInjectionTenantTest {
+class SqlInjectionTenantTest {
   static class TenantPluginConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor2() {
@@ -74,13 +74,13 @@ public class SqlInjectionTenantTest {
 
   @Test
   void TenantTest() {
+      QueryCondition<ProductInfo> wrapper =
+              QueryCondition.query(ProductInfo.class).eq(ProductInfo::getId, 1L);
     Throwable exception =
         Assertions.assertThrows(
             PersistenceException.class,
             () -> {
-              QueryCondition<ProductInfo> wrapper =
-                  QueryCondition.query(ProductInfo.class).eq(ProductInfo::getId, 1L);
-              val list = Database.list(wrapper);
+                Database.list(wrapper);
             });
 
     Assertions.assertTrue(exception.getCause() instanceof IllegalArgumentException);
