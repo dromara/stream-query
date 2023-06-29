@@ -6,6 +6,7 @@ logging:
 
 stream-query:
   mybatis-plus:
+    safe-mode: on
     dynamic-mapper:
       base-packages:
         - org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po
