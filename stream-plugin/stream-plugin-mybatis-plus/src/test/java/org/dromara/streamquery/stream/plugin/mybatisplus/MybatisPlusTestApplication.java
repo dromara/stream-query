@@ -16,13 +16,8 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 /**
  * MybatisPlusTestApplication less Create Retrieve Update Delete
@@ -30,19 +25,6 @@ import org.springframework.context.annotation.Bean;
  * @author VampireAchao Cizai_
  * @since 2022/5/21
  */
-@EnableMybatisPlusPlugin("org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po")
 @SpringBootApplication
-public class MybatisPlusTestApplication {
-  /**
-   * mybatisPlusInterceptor.
-   *
-   * @return a {@link com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor} object
-   */
-  @Bean
-  public MybatisPlusInterceptor mybatisPlusInterceptor() {
-    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-    interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
-    interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
-    return interceptor;
-  }
-}
+@EnableMybatisPlusPlugin("org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po")
+public class MybatisPlusTestApplication {}
