@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package issue.org.dromara.streamquery.gitee.issue17BSNV;
+package org.dromara.streamquery.stream.plugin.mybatisplus.issue.gitee.issue17BSNV;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import org.springframework.core.annotation.AliasFor;

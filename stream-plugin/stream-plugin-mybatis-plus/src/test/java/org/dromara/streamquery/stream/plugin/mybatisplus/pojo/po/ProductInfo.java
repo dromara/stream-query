@@ -18,9 +18,9 @@ package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import issue.org.dromara.streamquery.gitee.issue17BSNV.Table;
 import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
+import org.dromara.streamquery.stream.plugin.mybatisplus.issue.gitee.issue17BSNV.Table;
 
 import java.math.BigDecimal;
 
