@@ -25,6 +25,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author VampireAchao Cizai_
  * @since 2022/5/21
  */
-@EnableMybatisPlusPlugin("org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po")
 @SpringBootApplication
+@EnableMybatisPlusPlugin("org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po")
 public class MybatisPlusTestApplication {}
