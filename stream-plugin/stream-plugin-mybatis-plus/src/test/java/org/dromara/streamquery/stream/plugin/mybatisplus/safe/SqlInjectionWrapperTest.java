@@ -16,10 +16,7 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.safe;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
-import lombok.val;
-import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
 import org.dromara.streamquery.stream.plugin.mybatisplus.QueryCondition;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
@@ -35,14 +32,10 @@ class SqlInjectionWrapperTest {
   @Test
   void applyTest() {
     String unsafeSql = "'1 = 1) OR 1 = 1 --";
-      LambdaQueryWrapper<UserInfo> wrapper =
-              QueryCondition.query(UserInfo.class).apply(unsafeSql);
-      val list = Database.list(wrapper);
     Throwable exception =
         Assertions.assertThrows(
             IllegalArgumentException.class,
-            () -> {
-            });
+            () -> QueryCondition.query(UserInfo.class).apply(unsafeSql));
 
     Assertions.assertEquals("SQL Injection attempt detected in 'apply'", exception.getMessage());
   }
@@ -50,14 +43,10 @@ class SqlInjectionWrapperTest {
   @Test
   void havingApply() {
     String unsafeSql = "1 = 1) OR 1 = 1 --";
-      LambdaQueryWrapper<UserInfo> wrapper =
-              QueryCondition.query(UserInfo.class).having(unsafeSql);
     Throwable exception =
         Assertions.assertThrows(
             IllegalArgumentException.class,
-            () -> {
-              val list = Database.list(wrapper);
-            });
+            () -> QueryCondition.query(UserInfo.class).having(unsafeSql));
 
     Assertions.assertEquals("SQL Injection attempt detected in 'having'", exception.getMessage());
   }
