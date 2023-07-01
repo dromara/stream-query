@@ -14,17 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus;
+package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import issue.org.dromara.streamquery.gitee.issue17BSNV.Table;
+import lombok.Data;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
+
+import java.math.BigDecimal;
 
 /**
- * MybatisPlusTestApplication less Create Retrieve Update Delete
- *
- * @author VampireAchao Cizai_
- * @since 2022/5/21
+ * @author Cason
+ * @since 2023-06-27 20:13
  */
-@EnableMybatisPlusPlugin("org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po")
-@SpringBootApplication
-public class MybatisPlusTestApplication {}
+@Data
+@Table("product_info")
+public class ProductInfo implements IGenerateMapper {
+  private static final long serialVersionUID = -7219188882388819210L;
+
+  @TableId(value = "id", type = IdType.AUTO)
+  private Long id;
+
+  private String productName;
+
+  private BigDecimal productPrice;
+
+  private String tenantId;
+}
