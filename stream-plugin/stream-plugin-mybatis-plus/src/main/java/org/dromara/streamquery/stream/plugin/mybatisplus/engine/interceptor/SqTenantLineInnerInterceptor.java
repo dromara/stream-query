@@ -31,7 +31,7 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils.SqlInjecti
 
 /**
  * @author Cason
- * @since 2023-06-23 21:36
+ * @date 2023-06-23 21:36
  */
 public class SqTenantLineInnerInterceptor extends TenantLineInnerInterceptor {
   public SqTenantLineInnerInterceptor(TenantLineHandler tenantLineHandler) {

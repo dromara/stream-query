@@ -16,9 +16,13 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.safe;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import lombok.val;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -29,7 +33,6 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.interceptor.SqTe
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.ProductInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -40,13 +43,13 @@ import org.springframework.test.context.ContextConfiguration;
 @MybatisPlusTest
 @ContextConfiguration(
     classes = {MybatisPlusTestApplication.class, SqlInjectionTenantTest.TenantPluginConfig.class})
-@OverrideAutoConfiguration(enabled = true)
 class SqlInjectionTenantTest {
-
   static class TenantPluginConfig {
     @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    public MybatisPlusInterceptor mybatisPlusInterceptor2() {
       MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+      interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
+      interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
       interceptor.addInnerInterceptor(
           new SqTenantLineInnerInterceptor(
               new TenantLineHandler() {
@@ -59,6 +62,11 @@ class SqlInjectionTenantTest {
                 public String getTenantIdColumn() {
                   return "tenant_id";
                 }
+
+                @Override
+                public boolean ignoreTable(String tableName) {
+                  return "user_info".equalsIgnoreCase(tableName);
+                }
               }));
       return interceptor;
     }
@@ -66,10 +74,14 @@ class SqlInjectionTenantTest {
 
   @Test
   void TenantTest() {
-    QueryCondition<ProductInfo> wrapper =
-        QueryCondition.query(ProductInfo.class).eq(ProductInfo::getId, 1L);
+      QueryCondition<ProductInfo> wrapper =
+              QueryCondition.query(ProductInfo.class).eq(ProductInfo::getId, 1L);
     Throwable exception =
-        Assertions.assertThrows(PersistenceException.class, () -> Database.list(wrapper));
+        Assertions.assertThrows(
+            PersistenceException.class,
+            () -> {
+                Database.list(wrapper);
+            });
 
     Assertions.assertTrue(exception.getCause() instanceof IllegalArgumentException);
     Assertions.assertEquals(
