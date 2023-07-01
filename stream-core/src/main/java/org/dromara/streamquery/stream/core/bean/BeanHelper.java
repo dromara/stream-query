@@ -145,26 +145,23 @@ public class BeanHelper {
       Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>> targetGetterSetter =
           targetPropertyGetterSetterMap.get(property);
 
-      if (targetGetterSetter == null) {
-        continue;
+      if (targetGetterSetter != null) {
+        SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
+        SerFunc<R, Object> targetGetter = targetGetterSetter.getKey();
+
+        LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
+        LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
+
+        if (!Opp.of(sourceGetterLambda.getReturnType())
+                .map(Type::getTypeName)
+                .equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
+          continue;
+        }
+
+        Object value = sourceGetter.apply(source);
+        targetGetterSetter.getValue().accept(target, value);
       }
-
-      SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
-      SerFunc<R, Object> targetGetter = targetGetterSetter.getKey();
-
-      LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
-      LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
-
-      if (!Opp.of(sourceGetterLambda.getReturnType())
-          .map(Type::getTypeName)
-          .equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
-        continue;
-      }
-
-      Object value = sourceGetter.apply(source);
-      targetGetterSetter.getValue().accept(target, value);
     }
-
     return target;
   }
 
