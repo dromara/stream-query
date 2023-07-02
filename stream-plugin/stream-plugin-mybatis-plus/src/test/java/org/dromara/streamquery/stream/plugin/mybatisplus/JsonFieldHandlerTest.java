@@ -70,10 +70,6 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(user));
     Database.updateFewSql(Lists.of(user));
     val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
-    //    val user1 = Database.list(new
-    // LambdaQueryWrapper<>(UserInfoWithJsonName.class).eq(UserInfoWithJsonName::getName,
-    // user.getName()));
-    Database.updateById(user);
     Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());
     Assertions.assertEquals("阿超", dbUser.getName().getNickname());
   }
