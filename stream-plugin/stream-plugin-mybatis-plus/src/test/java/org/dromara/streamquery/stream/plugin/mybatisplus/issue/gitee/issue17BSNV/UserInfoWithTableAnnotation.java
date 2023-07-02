@@ -14,31 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
+package org.dromara.streamquery.stream.plugin.mybatisplus.issue.gitee.issue17BSNV;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import issue.org.dromara.streamquery.gitee.issue17BSNV.Table;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-/**
- * @author Cason
- * @since 2023-06-27 20:13
- */
 @Data
-@Table("product_info")
-public class ProductInfo implements IGenerateMapper {
+@Table(value = "user_info")
+public class UserInfoWithTableAnnotation implements IGenerateMapper {
   private static final long serialVersionUID = -7219188882388819210L;
 
   @TableId(value = "id", type = IdType.AUTO)
   private Long id;
 
-  private String productName;
+  private String name;
+  private Integer age;
+  private String email;
 
-  private BigDecimal productPrice;
-
-  private String tenantId;
+  @TableLogic(value = "'2001-01-01 00:00:00'", delval = "NOW()")
+  private LocalDateTime gmtDeleted;
 }
