@@ -19,23 +19,26 @@ package org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.issue.gitee.issue17BSNV.Table;
+
+import java.math.BigDecimal;
 
 /**
  * @author Cason
- * @since 2023-06-27
+ * @since 2023-06-27 20:13
  */
 @Data
-@Table("product_category")
-public class ProductCategory {
+@Table("product_info")
+public class ProductInfo implements IGenerateMapper {
   private static final long serialVersionUID = -7219188882388819210L;
 
   @TableId(value = "id", type = IdType.AUTO)
   private Long id;
 
-  private Long productId;
+  private String productName;
 
-  private Long categoryId;
+  private BigDecimal productPrice;
 
   private String tenantId;
 }

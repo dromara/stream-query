@@ -153,8 +153,8 @@ public class BeanHelper {
         LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
 
         if (!Opp.of(sourceGetterLambda.getReturnType())
-                .map(Type::getTypeName)
-                .equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
+            .map(Type::getTypeName)
+            .equals(Opp.of(targetGetterLambda.getReturnType()).map(Type::getTypeName))) {
           continue;
         }
 

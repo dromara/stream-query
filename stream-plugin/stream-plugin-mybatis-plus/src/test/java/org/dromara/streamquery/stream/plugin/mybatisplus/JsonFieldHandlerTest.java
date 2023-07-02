@@ -30,12 +30,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
-import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.Serializable;
 import java.util.List;
@@ -72,7 +70,9 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(user));
     Database.updateFewSql(Lists.of(user));
     val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
-//    val user1 = Database.list(new LambdaQueryWrapper<>(UserInfoWithJsonName.class).eq(UserInfoWithJsonName::getName, user.getName()));
+    //    val user1 = Database.list(new
+    // LambdaQueryWrapper<>(UserInfoWithJsonName.class).eq(UserInfoWithJsonName::getName,
+    // user.getName()));
     Database.updateById(user);
     Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());
     Assertions.assertEquals("阿超", dbUser.getName().getNickname());

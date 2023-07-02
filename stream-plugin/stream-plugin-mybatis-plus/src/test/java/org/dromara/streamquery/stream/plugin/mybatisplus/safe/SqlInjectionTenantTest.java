@@ -76,30 +76,29 @@ class SqlInjectionTenantTest {
         exception.getCause().getMessage());
   }
 
-    @Test
-    void insertTest() {
-        ProductInfo product = new ProductInfo();
-        product.setId(2L);
-        product.setProductName("Product 2");
-        Throwable exception = Assertions.assertThrows(PersistenceException.class, () -> Database.save(product));
-        Assertions.assertTrue(exception.getCause() instanceof IllegalArgumentException);
-        Assertions.assertEquals(
-                "SQL Injection attempt detected in 'TenantLineInnerInterceptor'",
-                exception.getCause().getMessage());
-    }
+  @Test
+  void insertTest() {
+    ProductInfo product = new ProductInfo();
+    product.setId(2L);
+    product.setProductName("Product 2");
+    Throwable exception =
+        Assertions.assertThrows(PersistenceException.class, () -> Database.save(product));
+    Assertions.assertTrue(exception.getCause() instanceof IllegalArgumentException);
+    Assertions.assertEquals(
+        "SQL Injection attempt detected in 'TenantLineInnerInterceptor'",
+        exception.getCause().getMessage());
+  }
 
-    @Test
-    void updateTest() {
-        ProductInfo product = new ProductInfo();
-        product.setId(1L);
-        product.setProductName("Updated Product 1");
-        Throwable exception = Assertions.assertThrows(PersistenceException.class, () -> Database.updateById(product));
-        Assertions.assertTrue(exception.getCause() instanceof IllegalArgumentException);
-        Assertions.assertEquals(
-                "SQL Injection attempt detected in 'TenantLineInnerInterceptor'",
-                exception.getCause().getMessage());
-    }
-
-
-
+  @Test
+  void updateTest() {
+    ProductInfo product = new ProductInfo();
+    product.setId(1L);
+    product.setProductName("Updated Product 1");
+    Throwable exception =
+        Assertions.assertThrows(PersistenceException.class, () -> Database.updateById(product));
+    Assertions.assertTrue(exception.getCause() instanceof IllegalArgumentException);
+    Assertions.assertEquals(
+        "SQL Injection attempt detected in 'TenantLineInnerInterceptor'",
+        exception.getCause().getMessage());
+  }
 }

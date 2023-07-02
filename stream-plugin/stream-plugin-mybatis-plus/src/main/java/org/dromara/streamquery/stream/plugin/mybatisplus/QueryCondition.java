@@ -32,6 +32,8 @@ import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.StreamPluginAutoConfiguration;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils.SqlInjectionUtilSq;
 
 import java.util.Collection;
 import java.util.Map;
@@ -265,5 +267,21 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
         SharedString.emptyString(),
         SharedString.emptyString(),
         SharedString.emptyString());
+  }
+
+  @Override
+  public LambdaQueryWrapper<T> apply(boolean condition, String applySql, Object... values) {
+    if (StreamPluginAutoConfiguration.isSafeModeEnabled() && SqlInjectionUtilSq.check(applySql)) {
+      throw new IllegalArgumentException("SQL Injection attempt detected in 'apply'");
+    }
+    return super.apply(condition, applySql, values);
+  }
+
+  @Override
+  public LambdaQueryWrapper<T> having(boolean condition, String sqlHaving, Object... params) {
+    if (StreamPluginAutoConfiguration.isSafeModeEnabled() && SqlInjectionUtilSq.check(sqlHaving)) {
+      throw new IllegalArgumentException("SQL Injection attempt detected in 'having'");
+    }
+    return super.having(condition, sqlHaving, params);
   }
 }
