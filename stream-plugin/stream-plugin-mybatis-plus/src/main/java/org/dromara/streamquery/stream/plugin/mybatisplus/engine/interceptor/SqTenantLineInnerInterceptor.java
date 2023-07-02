@@ -16,18 +16,16 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.interceptor;
 
-import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
-import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.insert.Insert;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils.SqlInjectionUtilSq;
+
+
 
 /**
  * @author Cason
@@ -39,26 +37,26 @@ public class SqTenantLineInnerInterceptor extends TenantLineInnerInterceptor {
   }
 
   @Override
-  public void beforeQuery(
-      Executor executor,
-      MappedStatement ms,
-      Object parameter,
-      RowBounds rowBounds,
-      ResultHandler resultHandler,
-      BoundSql boundSql) {
-    if (!InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
-      Expression tenantId = this.getTenantLineHandler().getTenantId();
-      if (tenantId instanceof StringValue) {
-        StringValue stringValue = (StringValue) tenantId;
-        String tenantIdStr = stringValue.getValue();
-        if (SqlInjectionUtilSq.check(tenantIdStr)) {
-          throw new IllegalArgumentException(
-              "SQL Injection attempt detected in 'TenantLineInnerInterceptor'");
-        }
+  protected void processInsert(Insert insert, int index, String sql, Object obj) {
+    checkTenantId();
+    super.processInsert(insert, index, sql, obj);
+  }
+
+  @Override
+  public Expression buildTableExpression(Table table, Expression where, String whereSegment) {
+    checkTenantId();
+    return super.buildTableExpression(table, where, whereSegment);
+  }
+
+  private void checkTenantId() {
+    Expression tenantId = this.getTenantLineHandler().getTenantId();
+    if (tenantId instanceof StringValue) {
+      StringValue stringValue = (StringValue) tenantId;
+      String tenantIdStr = stringValue.getValue();
+      if (SqlInjectionUtilSq.check(tenantIdStr)) {
+        throw new IllegalArgumentException(
+            "SQL Injection attempt detected in 'TenantLineInnerInterceptor'");
       }
-      PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
-      String parsedSql = this.parserSingle(mpBs.sql(), null);
-      mpBs.sql(parsedSql);
     }
   }
 }

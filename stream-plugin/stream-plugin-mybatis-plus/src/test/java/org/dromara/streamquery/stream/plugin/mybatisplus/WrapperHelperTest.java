@@ -25,6 +25,7 @@ import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.Objects;
