@@ -17,7 +17,9 @@
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import lombok.val;
 import org.dromara.streamquery.stream.core.optional.Opp;
+import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -62,14 +64,21 @@ class ManyTest {
   @Test
   void testNoQuery() {
     UserInfo[] eqNullUserArray =
-        Many.of(UserInfo::getId).eq(NULL_LONG_VALUE).query(s -> s.toArray(UserInfo[]::new));
+            Many.of(UserInfo::getId).eq(NULL_LONG_VALUE).query(s -> s.toArray(UserInfo[]::new));
     Assertions.assertArrayEquals(new UserInfo[0], eqNullUserArray);
 
     List<String> inEmptyNameList =
-        Many.of(UserInfo::getId).in(Collections.emptyList()).value(UserInfo::getName).query();
+            Many.of(UserInfo::getId).in(Collections.emptyList()).value(UserInfo::getName).query();
     Assertions.assertTrue(inEmptyNameList.isEmpty());
 
     List<UserInfo> conditionNullUserList = Many.of(UserInfo::getId).condition(w -> null).query();
     Assertions.assertTrue(conditionNullUserList.isEmpty());
+  }
+
+  @Test
+  void testBatch() {
+    val list = Steam.iterate(0L, i -> i < 2000, i -> i + 1).toList();
+    val query = Many.of(UserInfo::getId).in(list).enableBatch().query();
+    System.out.println(query);
   }
 }

@@ -17,6 +17,7 @@
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.stream.Steam;
 
@@ -75,12 +76,20 @@ public class Many<T, K extends Serializable & Comparable<? super K>, V>
    * @return a R object
    */
   public <R> R query(SerFunc<Steam<V>, R> mapper) {
+    final List<T> list;
+    if (enableBatch && Lists.isNotEmpty(keys)) {
+      list = Steam.of(keys).splitList(batchSize)
+              .flat(ks -> Database.list(wrapper.clone().in(keyFunction, ks)))
+              .toList();
+    } else {
+      list = Database.list(wrapper);
+    }
     return mapper.apply(
-        Steam.of(Database.list(wrapper))
-            .peek(peekConsumer)
-            .parallel(isParallel)
-            .nonNull()
-            .map(valueOrIdentity()));
+            Steam.of(list)
+                    .peek(peekConsumer)
+                    .parallel(isParallel)
+                    .nonNull()
+                    .map(valueOrIdentity()));
   }
 
   /**

@@ -18,8 +18,11 @@ package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.constant.PluginConst;
 
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -34,6 +37,9 @@ public abstract class BaseQuery<T, K, V> {
   protected SFunction<T, V> valueFunction;
   protected LambdaQueryWrapper<T> wrapper;
   protected boolean isParallel = false;
+  protected boolean enableBatch = false;
+  protected int batchSize = PluginConst.DEFAULT_BATCH_SIZE;
+  protected Collection<K> keys = Lists.empty();
   protected SerCons<T> peekConsumer = SerCons.nothing();
 
   /**
