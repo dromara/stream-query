@@ -18,13 +18,13 @@ package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Sf;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.function.UnaryOperator;
 
 /**
@@ -72,11 +72,11 @@ public abstract class BaseQueryHelper<
    * @return a S object
    */
   public S in(Collection<K> dataList) {
-    if (Lists.isEmpty(dataList)) {
-      Database.notActive(wrapper);
-      return (S) this;
-    }
-    this.keys = dataList;
+    wrapper =
+        Sf.mayColl(dataList)
+            .mayLet(HashSet::new)
+            .mayLet(values -> wrapper.in(keyFunction, values))
+            .orGet(() -> Database.notActive(wrapper));
     return (S) this;
   }
 
@@ -103,37 +103,6 @@ public abstract class BaseQueryHelper<
   public S condition(UnaryOperator<LambdaQueryWrapper<T>> queryOperator) {
     wrapper = Sf.of(queryOperator.apply(wrapper)).orGet(() -> Database.notActive(wrapper));
     return (S) this;
-  }
-
-  /**
-   * batchSize.
-   *
-   * @param batchSize a int
-   * @return a S object
-   */
-  public S batchSize(int batchSize) {
-    this.batchSize = batchSize;
-    return (S) this;
-  }
-
-  /**
-   * enableBatch.
-   *
-   * @param enableBatch a boolean
-   * @return a S object
-   */
-  public S enableBatch(boolean enableBatch) {
-    this.enableBatch = enableBatch;
-    return (S) this;
-  }
-
-  /**
-   * enableBatch.
-   *
-   * @return a S object
-   */
-  public S enableBatch() {
-    return enableBatch(true);
   }
 
   /**
