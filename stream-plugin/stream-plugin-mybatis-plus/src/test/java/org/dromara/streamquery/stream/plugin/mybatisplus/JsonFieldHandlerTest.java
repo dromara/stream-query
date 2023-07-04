@@ -144,10 +144,9 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(user1, user2, user3));
 
     QueryCondition<UserInfoWithJsonName> wrapper =
-        (QueryCondition<UserInfoWithJsonName>)
             QueryCondition.query(UserInfoWithJsonName.class)
-                .in(UserInfoWithJsonName::getName, Lists.of(name1, name3))
-                .or(i -> i.eq(UserInfoWithJsonName::getName, user2.getName()));
+               .in(UserInfoWithJsonName::getName, Lists.of(name1, name3))
+               .or(i -> i.eq(UserInfoWithJsonName::getName, user2.getName()));
 
     val list = Database.list(wrapper);
 

@@ -207,6 +207,12 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   }
 
   @Override
+  public QueryCondition<T> or(Consumer<LambdaQueryWrapper<T>> consumer) {
+    super.or(consumer);
+    return this;
+  }
+
+  @Override
   protected LambdaQueryWrapper<T> addCondition(
       boolean condition, SFunction<T, ?> column, SqlKeyword sqlKeyword, Object val) {
 
