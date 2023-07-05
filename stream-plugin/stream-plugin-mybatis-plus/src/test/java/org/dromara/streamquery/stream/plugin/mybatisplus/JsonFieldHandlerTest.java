@@ -167,6 +167,42 @@ class JsonFieldHandlerTest {
   }
 
   @Test
+  void andTest() {
+    Name name1 = new Name();
+    name1.setUsername("Cason");
+    name1.setNickname("JAY");
+
+    Name name2 = new Name();
+    name2.setUsername("Alice");
+    name2.setNickname("AL");
+
+    Name name3 = new Name();
+    name3.setUsername("Bob");
+    name3.setNickname("BB");
+
+    UserInfoWithJsonName user1 = new UserInfoWithJsonName();
+    user1.setName(name1);
+
+    UserInfoWithJsonName user2 = new UserInfoWithJsonName();
+    user2.setName(name2);
+
+    UserInfoWithJsonName user3 = new UserInfoWithJsonName();
+    user3.setName(name3);
+
+    Database.saveFewSql(Lists.of(user1, user2, user3));
+
+    QueryCondition<UserInfoWithJsonName> wrapper =
+            QueryCondition.query(UserInfoWithJsonName.class)
+                    .eq(UserInfoWithJsonName::getId, 1L)
+                    .and(i -> i.eq(UserInfoWithJsonName::getName, user2.getName()));
+
+    val list = Database.list(wrapper);
+
+    assertEquals(0, list.size(), "Query should return exactly zero result");
+
+  }
+
+  @Test
   void InTest() {
     Name name1 = new Name();
     name1.setUsername("Cason");
@@ -312,13 +348,8 @@ class JsonFieldHandlerTest {
   }
 
   @Data
-  static class Name implements Serializable, Comparable<Name> {
+  static class Name implements Serializable {
     private String username;
     private String nickname;
-
-    @Override
-    public int compareTo(Name o) {
-      return username.compareTo(o.username);
-    }
   }
 }
