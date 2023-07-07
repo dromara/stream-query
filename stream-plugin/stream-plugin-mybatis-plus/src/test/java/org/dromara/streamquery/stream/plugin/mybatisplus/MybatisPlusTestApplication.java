@@ -16,8 +16,10 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.annotation.EnableMybatisPlusPlugin;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 /**
  * MybatisPlusTestApplication less Create Retrieve Update Delete
@@ -27,4 +29,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @EnableMybatisPlusPlugin("org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po")
-public class MybatisPlusTestApplication {}
+public class MybatisPlusTestApplication {
+
+  @Bean
+  public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    return new MybatisPlusInterceptor();
+  }
+}

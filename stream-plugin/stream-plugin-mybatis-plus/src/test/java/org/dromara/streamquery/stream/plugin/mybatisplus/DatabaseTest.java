@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -42,8 +42,6 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.RoleInfo;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.UserInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.lang.reflect.Proxy;
 import java.util.*;
@@ -55,17 +53,11 @@ import java.util.*;
  * @since 2022-05-03
  */
 @MybatisPlusTest
-@ContextConfiguration(
-    classes = {MybatisPlusTestApplication.class, DatabaseTest.MybatisPlusConfig.class})
-class DatabaseTest {
+class DatabaseTest extends InterceptorTest {
 
-  static class MybatisPlusConfig {
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
-      MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-      interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
-      return interceptor;
-    }
+  @Override
+  public List<InnerInterceptor> interceptors() {
+    return Lists.of(new PaginationInnerInterceptor(DbType.H2));
   }
 
   @Test

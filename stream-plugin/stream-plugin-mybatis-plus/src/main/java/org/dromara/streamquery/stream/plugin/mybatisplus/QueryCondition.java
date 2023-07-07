@@ -149,8 +149,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    * @param <R> a R class
    * @return a {@link QueryCondition} object
    */
-  public <R> QueryCondition<T> in(
-      SFunction<T, R> column, Collection<R> dataList) {
+  public <R> QueryCondition<T> in(SFunction<T, R> column, Collection<R> dataList) {
     this.mapping = getMapping(column);
     super.in(column, dataList);
     return this;
@@ -180,8 +179,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    * @deprecated because this method is optional
    */
   @Deprecated
-  public <R> QueryCondition<T> activeEq(
-      SFunction<T, R> column, R data) {
+  public <R> QueryCondition<T> activeEq(SFunction<T, R> column, R data) {
     Opp.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
     return this;
   }
@@ -210,8 +208,7 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    * @deprecated because this method is optional
    */
   @Deprecated
-  public <R> QueryCondition<T> activeIn(
-      SFunction<T, R> column, Collection<R> dataList) {
+  public <R> QueryCondition<T> activeIn(SFunction<T, R> column, Collection<R> dataList) {
     this.mapping = getMapping(column);
     Opp.ofColl(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
     return this;

@@ -16,52 +16,45 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.safe;
 
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
-import org.dromara.streamquery.stream.plugin.mybatisplus.MybatisPlusTestApplication;
+import org.dromara.streamquery.stream.plugin.mybatisplus.InterceptorTest;
 import org.dromara.streamquery.stream.plugin.mybatisplus.QueryCondition;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.interceptor.SqTenantLineInnerInterceptor;
 import org.dromara.streamquery.stream.plugin.mybatisplus.pojo.po.ProductInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ContextConfiguration;
+
+import java.util.List;
 
 /**
  * @author Cason
  * @since 2023-06-27
  */
 @MybatisPlusTest
-@ContextConfiguration(
-    classes = {MybatisPlusTestApplication.class, SqlInjectionTenantTest.TenantPluginConfig.class})
-@OverrideAutoConfiguration(enabled = true)
-class SqlInjectionTenantTest {
+class SqlInjectionTenantTest extends InterceptorTest {
 
-  static class TenantPluginConfig {
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
-      MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-      interceptor.addInnerInterceptor(
-          new SqTenantLineInnerInterceptor(
-              new TenantLineHandler() {
-                @Override
-                public Expression getTenantId() {
-                  return new StringValue("' or 1=1 and '123'='123");
-                }
+  @Override
+  public List<InnerInterceptor> interceptors() {
+    return Lists.of(
+        new SqTenantLineInnerInterceptor(
+            new TenantLineHandler() {
+              @Override
+              public Expression getTenantId() {
+                return new StringValue("' or 1=1 and '123'='123");
+              }
 
-                @Override
-                public String getTenantIdColumn() {
-                  return "tenant_id";
-                }
-              }));
-      return interceptor;
-    }
+              @Override
+              public String getTenantIdColumn() {
+                return "tenant_id";
+              }
+            }));
   }
 
   @Test
