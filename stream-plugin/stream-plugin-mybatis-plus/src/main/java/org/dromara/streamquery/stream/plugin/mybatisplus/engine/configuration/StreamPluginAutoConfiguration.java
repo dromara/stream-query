@@ -31,36 +31,27 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.JsonPost
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.DynamicMapperHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.SaveOneSql;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.UpdateOneSql;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 
 import java.util.List;
 
 /**
- * MPSql注入
+ * stream-query自动装配
  *
  * @author VampireAchao Cizai_
  */
+@EnableConfigurationProperties(StreamPluginProperties.class)
 public class StreamPluginAutoConfiguration {
 
+  public StreamPluginAutoConfiguration(StreamPluginProperties properties) {
+    StreamPluginConfig.setSafeModeEnabled(properties.isSafeMode());
+  }
+
   private static final String CURRENT_NAMESPACE =
-      LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
-
-  private static boolean safeModeEnabled;
-
-  @Autowired
-  public void setEnvironment(Environment environment) {
-    safeModeEnabled =
-        Boolean.parseBoolean(
-            environment.getProperty("stream-query.mybatis-plus.safe-mode", "false"));
-  }
-
-  public static boolean isSafeModeEnabled() {
-    return safeModeEnabled;
-  }
+          LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
 
   /**
    * defaultSqlInjector.

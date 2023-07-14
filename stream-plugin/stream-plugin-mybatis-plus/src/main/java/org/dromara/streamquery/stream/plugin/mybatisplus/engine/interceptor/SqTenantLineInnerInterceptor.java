@@ -22,6 +22,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.insert.Insert;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.StreamPluginConfig;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils.SqlInjectionUtilSq;
 
 /**
@@ -46,13 +47,16 @@ public class SqTenantLineInnerInterceptor extends TenantLineInnerInterceptor {
   }
 
   private void checkTenantId() {
+    if (!StreamPluginConfig.isSafeModeEnabled()) {
+      return;
+    }
     Expression tenantId = this.getTenantLineHandler().getTenantId();
     if (tenantId instanceof StringValue) {
       StringValue stringValue = (StringValue) tenantId;
       String tenantIdStr = stringValue.getValue();
       if (SqlInjectionUtilSq.check(tenantIdStr)) {
         throw new IllegalArgumentException(
-            "SQL Injection attempt detected in 'TenantLineInnerInterceptor'");
+                "SQL Injection attempt detected in 'TenantLineInnerInterceptor'");
       }
     }
   }

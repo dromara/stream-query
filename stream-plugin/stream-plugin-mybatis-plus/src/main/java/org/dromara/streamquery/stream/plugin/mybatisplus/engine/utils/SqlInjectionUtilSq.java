@@ -37,9 +37,4 @@ public class SqlInjectionUtilSq {
     Objects.requireNonNull(value);
     return SQL_COMMENT_PATTERN.matcher(value).find() || SQL_SYNTAX_PATTERN.matcher(value).find();
   }
-
-  public static String removeEscapeCharacter(String text) {
-    Objects.nonNull(text);
-    return text.replaceAll("\"", "").replaceAll("'", "");
-  }
 }
