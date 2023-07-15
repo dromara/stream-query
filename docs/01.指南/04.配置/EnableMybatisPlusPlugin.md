@@ -22,11 +22,11 @@ public class MybatisPlusTestApplication {}
 
 #### 指定package
 
-**basePackages** 指定需要增强的实体类的包路径，支持 ***** 通配符 
+**basePackages** 指定需要增强的实体类的包路径，支持 * 通配符 
 
 ```java
-@EnableMybatisPlusPlugin(basePackages = "org.dromara.streamquery.stream.plugin.mybatisplus.annotation.pojo.*")
-public class EnableMybatisPlusPluginByBasePackagesTest {}
+@EnableMybatisPlusPlugin(basePackages = "org.dromara.streamquery.stream.plugin.**.pojo.**")
+public class SpringBootApplication {}
 ```
 
 #### 指定注解
@@ -53,7 +53,7 @@ public class Student {
 
 ```java
 @EnableMybatisPlusPlugin(interfaceClass = IGenerateMapper.class)
-public class EnableMybatisPlusPluginByInterfaceClassTest {}
+public class SpringBootApplication {}
 ```
 
 ```java
@@ -70,6 +70,6 @@ public class Student implements IGenerateMapper {
 
 ```java
 @EnableMybatisPlusPlugin(classes = {Student.class})
-public class EnableMybatisPlusPluginByClassesTest {}
+public class SpringBootApplication {}
 ```
 

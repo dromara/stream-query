@@ -68,10 +68,10 @@ module.exports = {
           {
             text: '动态mapper', link: '/pages/30c2c9/',
             items: [
-              {text: '指定package', link: ''},
-              {text: '指定注解', link: ''},
-              {text: '指定接口', link: ''},
-              {text: '指定实体类', link: ''},
+              {text: '指定package', link: '/pages/30c2c9/#指定package'},
+              {text: '指定注解', link: '/pages/30c2c9/#指定注解'},
+              {text: '指定接口', link: '/pages/30c2c9/#指定接口'},
+              {text: '指定实体类', link: '/pages/30c2c9/#指定实体类'},
             ]
           },
         ]
