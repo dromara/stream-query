@@ -66,7 +66,7 @@ module.exports = {
             ]
           },
           {
-            text: '动态mapper', link: '',
+            text: '动态mapper', link: '/pages/30c2c9/',
             items: [
               {text: '指定package', link: ''},
               {text: '指定注解', link: ''},
