@@ -29,7 +29,7 @@ public class SqlInjectionUtilSq {
           "(insert|delete|update|select|create|drop|truncate|grant|alter|deny|revoke|call|execute|exec|declare|show|rename|set)\\s+.*(into|from|set|where|table|database|view|index|on|cursor|procedure|trigger|for|password|union|and|or)|(select\\s*\\*\\s*from\\s+)",
           Pattern.CASE_INSENSITIVE);
   private static final Pattern SQL_COMMENT_PATTERN =
-      Pattern.compile("(or|union|--|#|/*|;)", Pattern.CASE_INSENSITIVE);
+          Pattern.compile("(['\"]?.*(\\bor\\b|\\bunion\\b|--|#|\\/\\*|;))", Pattern.CASE_INSENSITIVE);
 
   public SqlInjectionUtilSq() {}
 
