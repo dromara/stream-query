@@ -19,6 +19,7 @@ package org.dromara.streamquery.stream.core.lambda.function;
 import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -68,9 +69,7 @@ public interface SerArgsPred<T> extends Serializable {
    *     java.util.Objects#equals(Object, Object)}
    */
   static <T> SerArgsPred<T> isEqual(Object... targetRef) {
-    return (null == targetRef)
-        ? Objects::isNull
-        : object -> Stream.of(targetRef).allMatch(target -> target.equals(object));
+    return (null == targetRef) ? Objects::isNull : objects -> Arrays.deepEquals(objects, targetRef);
   }
 
   /**
