@@ -14,21 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
+package org.dromara.streamquery.stream.core.variable;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
+ * BoolHelper class.
+ *
  * @author VampireAchao
- * @since 2023/7/14 18:10
+ * @since 2023-07-28
  */
-public class StreamPluginConfig {
+public class BoolHelper {
 
-  private static boolean safeModeEnabled = false;
-
-  public static void setSafeModeEnabled(boolean safeModeEnabled) {
-    StreamPluginConfig.safeModeEnabled = safeModeEnabled;
+  private BoolHelper() {
+    /* Do not new me! */
   }
 
-  public static boolean isSafeModeEnabled() {
-    return safeModeEnabled;
+  public static final List<Object> FALSY_VALUES =
+      Arrays.asList(false, 0, -0, 0L, 0.0D, -0.0D, "", null);
+
+  public static boolean isFalsy(Object value) {
+    if (FALSY_VALUES.contains(value)) {
+      return true;
+    }
+    if (value instanceof Double) {
+      return Double.isNaN((Double) value);
+    }
+    return false;
+  }
+
+  public static boolean isTruthy(Object value) {
+    return !isFalsy(value);
   }
 }

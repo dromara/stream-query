@@ -56,7 +56,7 @@ public class SqTenantLineInnerInterceptor extends TenantLineInnerInterceptor {
       String tenantIdStr = stringValue.getValue();
       if (SqlInjectionUtilSq.check(tenantIdStr)) {
         throw new IllegalArgumentException(
-                "SQL Injection attempt detected in 'TenantLineInnerInterceptor'");
+            "SQL Injection attempt detected in 'TenantLineInnerInterceptor'");
       }
     }
   }

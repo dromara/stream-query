@@ -51,7 +51,7 @@ public class StreamPluginAutoConfiguration {
   }
 
   private static final String CURRENT_NAMESPACE =
-          LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
+      LambdaHelper.getPropertyName(TableInfo::getCurrentNamespace);
 
   /**
    * defaultSqlInjector.
