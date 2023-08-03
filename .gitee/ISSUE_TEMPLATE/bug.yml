@@ -48,7 +48,7 @@ body:
       label: 版本
       description: 你当前正在使用我们软件的哪个版本/分支？
       options:
-        - 1.4.4
-        - 1.4.3
+        - 最新版本
+        - 不是最新版（请升级最新版）
     validations:
       required: false
