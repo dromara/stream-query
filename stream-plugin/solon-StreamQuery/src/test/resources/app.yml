@@ -1,0 +1,29 @@
+solon.app:
+    name: demoapp
+    group: demo
+
+solon.output.meta: 1
+
+test.db1:
+    jdbcUrl: jdbc:h2:mem:test #配置h2数据库的连接地址
+    driver-class-name: org.h2.Driver #配置JDBC Driver
+    username: sa
+    password: 123456
+    platform: h2  #表明使用的数据库平台是h2
+
+logging:
+    level:
+        root: INFO
+        org.dromara.streamquery.stream.plugin.solon.mapper: DEBUG
+        org.dromara.streamquery.stream.plugin.solon.dynamicMapper: DEBUG
+
+solon.logging.logger:
+    org.dromara.streamquery.stream.plugin.solon.dynamicMapper.*:
+        level: DEBUG
+
+stream-query.db1:
+    mybatis-plus:
+        safe-mode: on
+
+
+
