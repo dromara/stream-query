@@ -18,6 +18,7 @@ package org.dromara.streamquery.stream.plugin.mybatisplus;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Sf;
@@ -153,7 +154,8 @@ public abstract class BaseQueryHelper<
    */
   protected <R> void attachSingle(SFunction<T, R> valueFunction) {
     this.valueFunction = (SFunction<T, V>) valueFunction;
-    WrapperHelper.select(wrapper, (w, col) -> w.select(col[1]), keyFunction, valueFunction);
+    WrapperHelper.select(
+        wrapper, (w, col) -> w.select(Lists.of(col[1])), keyFunction, valueFunction);
   }
 
   /**

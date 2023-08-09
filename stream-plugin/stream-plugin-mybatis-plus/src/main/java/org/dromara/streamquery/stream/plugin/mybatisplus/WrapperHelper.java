@@ -37,7 +37,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.stream.Stream;
 
 /**
  * @author VampireAchao
@@ -125,7 +124,7 @@ public class WrapperHelper {
   @SafeVarargs
   public static <T> LambdaQueryWrapper<T> select(
       LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
-    return select(wrapper, LambdaQueryWrapper::select, columns);
+    return select(wrapper, (w, cols) -> w.select(Lists.of(cols)), columns);
   }
 
   /**
@@ -143,7 +142,7 @@ public class WrapperHelper {
       LambdaQueryWrapper<T> wrapper,
       SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn,
       SFunction<T, ?>... columns) {
-    if (Stream.of(columns)
+    if (Steam.of(columns)
         .allMatch(
             func ->
                 Objects.nonNull(func)
