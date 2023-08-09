@@ -22,7 +22,9 @@ package org.dromara.streamquery.stream.plugin.solon.integration;
  * @version 1.0.0 @Description TODO
  * @createTime 2023年08月02日 16:53:00
  */
+import com.baomidou.mybatisplus.solon.integration.MybatisAdapterFactoryPlus;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.solon.integration.MybatisAdapterManager;
 import org.dromara.streamquery.stream.plugin.solon.scanner.StreamScanConfig;
 import org.noear.solon.Solon;
 import org.noear.solon.core.AopContext;
@@ -34,6 +36,7 @@ import javax.sql.DataSource;
 public class XPluginImpl implements Plugin {
   @Override
   public void start(AopContext context) throws Throwable {
-    context.subWrapsOfType(DataSource.class, StreamAdapterManager::register);
+      MybatisAdapterManager.setAdapterFactory(new StreamAdapterFactory());
+
   }
 }

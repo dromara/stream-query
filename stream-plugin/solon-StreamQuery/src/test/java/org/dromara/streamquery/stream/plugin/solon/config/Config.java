@@ -21,12 +21,6 @@ import javax.sql.DataSource;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.solon.annotation.Db;
-import org.dromara.streamquery.stream.plugin.solon.handler.StreamQueryHandler;
-import org.dromara.streamquery.stream.plugin.solon.integration.StreamAdapter;
-import org.dromara.streamquery.stream.plugin.solon.integration.StreamAdapterManager;
-import org.dromara.streamquery.stream.plugin.solon.scanner.StreamScanConfig;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
@@ -38,8 +32,6 @@ import java.sql.SQLException;
 public class Config {
   @Bean(value = "db1", typed = true)
   public DataSource db1(@Inject("${test.db1}") HikariDataSource ds) {
-//    System.out.println("数据源注册为Bean");
-//    System.out.println(Thread.currentThread().getId());
     return ds;
   }
 
@@ -56,19 +48,4 @@ public class Config {
 
     scriptRunner.runScript(Resources.getResourceAsReader(filePath));
   }
-
-  @Bean
-  public StreamAdapter sqConfig(@Db("db1") SqlSessionFactory factory) {
-
-//    System.out.println("拿到 Factory");
-    System.out.println(Thread.currentThread().getId());
-    StreamScanConfig cfg = new StreamScanConfig();
-    cfg.setBasePackages("org/dromara/streamquery/stream/plugin/solon/pojo/po");
-    return StreamAdapterManager.enableStreamQuery(factory, cfg);
-  }
-
-  //    @Bean
-  //    public MybatisSqlSessionFactoryBuilder factoryBuilderNew(){
-  //        return new MybatisSqlSessionFactoryBuilderImpl();
-  //    }
 }

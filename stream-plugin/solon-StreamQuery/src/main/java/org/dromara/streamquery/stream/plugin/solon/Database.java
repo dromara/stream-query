@@ -55,6 +55,7 @@ import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.solon.engine.constant.PluginConst;
 import org.dromara.streamquery.stream.plugin.solon.engine.mapper.IMapper;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -1013,9 +1014,22 @@ public class Database {
     try {
       return sFunction.apply(getMapper(entityClass, sqlSession));
     } finally {
-      //      SqlSessionUtils.closeSqlSession(
-      //          sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
-      sqlSession.close();
+      closeSqlSession(sqlSession);
+    }
+  }
+
+  public static void closeSqlSession(SqlSession session) {
+    if (session == null) {
+      LOG.warn("No SqlSession specified. Cannot close.");
+      return;
+    }
+
+    try {
+      LOG.debug("Closing SqlSession [" + session + "]");
+      session.close();
+    } catch (Exception e) {
+      // 这里可以记录异常信息或者根据情况重新抛出
+      LOG.error("Failed to close SqlSession", e);
     }
   }
 

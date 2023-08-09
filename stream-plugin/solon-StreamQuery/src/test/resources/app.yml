@@ -5,21 +5,47 @@ solon.app:
 solon.output.meta: 1
 
 test.db1:
-    jdbcUrl: jdbc:h2:mem:test #配置h2数据库的连接地址
+    jdbcUrl: jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE #配置h2数据库的连接地址
     driver-class-name: org.h2.Driver #配置JDBC Driver
     username: sa
     password: 123456
     platform: h2  #表明使用的数据库平台是h2
 
-logging:
-    level:
-        root: INFO
-        org.dromara.streamquery.stream.plugin.solon.mapper: DEBUG
-        org.dromara.streamquery.stream.plugin.solon.dynamicMapper: DEBUG
+mybatis.db1:
+#    typeAliases:    #支持包名 或 类名 //支持 ** 和 *
+#        - "demo4031.model"
+#    #        - "demo4031.*.AppxModel"
+#    mappers:        #支持包名 或 类名 或 xml（.xml结尾）//支持 ** 和 *
+#        - "demo4031.dso.mapper"
+#    #        - "classpath:demo4031/dso/mapper/*.xml"
+#    configuration:
+#        cacheEnabled: false
+#        mapperVerifyEnabled: false
+#        mapUnderscoreToCamelCase: true
+#        logImpl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+#    globalConfig:
+#        banner: false
+#        metaObjectHandler: "demo4031.dso.MetaObjectHandlerImpl"
+#        dbConfig:
+#            logicDeleteField: "deleted"
+#            logicDeleteValue: "2"
+    stream-query:
+        basePackages:
+            - "org.dromara.streamquery.stream.plugin.solon.pojo.po"
+#        annotation: org.dromara.streamquery.stream.plugin.solon.engine.constant.GenerateMapper
+#        interfaceClass: org.dromara.streamquery.stream.plugin.solon.engine.mapper.IMapper
 
-solon.logging.logger:
-    org.dromara.streamquery.stream.plugin.solon.dynamicMapper.*:
-        level: DEBUG
+
+
+#logging:
+#    level:
+#        root: INFO
+#        org.dromara.streamquery.stream.plugin.solon.mapper: DEBUG
+#        org.dromara.streamquery.stream.plugin.solon.dynamicMapper: DEBUG
+
+#solon.logging.logger:
+#    org.dromara.streamquery.stream.plugin.solon.dynamicMapper.*:
+#        level: DEBUG
 
 stream-query.db1:
     mybatis-plus:

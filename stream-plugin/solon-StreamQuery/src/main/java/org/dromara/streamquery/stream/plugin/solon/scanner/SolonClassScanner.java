@@ -66,30 +66,30 @@ public class SolonClassScanner {
     return Steam.of(basePackages)
         .flat(this::scanBasePackages)
         .sorted(Comparator.comparing(String::length))
-        .map(
+        .<Class<?>>map(
             name -> {
               String className = name.substring(0, name.length() - 6);
               className = className.replace("/", ".");
               return ClassUtil.loadClass(classLoader, className);
             })
         .filter(Objects::nonNull)
-        .<Class<?>>map(
+        .filter(
             clz -> {
-              // 检查是否带有指定的注解
-              if (this.annotation != null && !clz.isAnnotationPresent(this.annotation)) {
-                return null;
+              // 如果没有指定注解和接口，则仅排除名为 "package-info" 的类、所有接口和所有抽象类
+              if (this.annotation == null && this.interfaceClass == null) {
+                return !clz.getName().endsWith("package-info")
+                        && !clz.isInterface()
+                        && !Modifier.isAbstract(clz.getModifiers());
               }
-              // 检查是否实现了指定的接口
-              if (this.interfaceClass != null && !this.interfaceClass.isAssignableFrom(clz)) {
-                return null;
-              }
-              // 排除名为 "package-info" 的类、所有接口和所有抽象类
-              if (clz.getName().endsWith("package-info")
-                  || clz.isInterface()
-                  || Modifier.isAbstract(clz.getModifiers())) {
-                return null;
-              }
-              return clz;
+
+              boolean hasAnnotation = this.annotation != null && clz.isAnnotationPresent(this.annotation);
+              boolean hasInterface = this.interfaceClass != null && this.interfaceClass.isAssignableFrom(clz);
+
+              boolean exclude = clz.getName().endsWith("package-info")
+                      || clz.isInterface()
+                      || Modifier.isAbstract(clz.getModifiers());
+
+              return (hasAnnotation || hasInterface) && !exclude;
             })
         .filter(
             SerPred.<Class<?>>multiOr(
@@ -98,7 +98,8 @@ public class SolonClassScanner {
         .toSet();
   }
 
-  public Set<String> scanBasePackages(String basePackages) {
-    return ScanUtil.scan(classLoader, basePackages, n -> n.endsWith(".class"));
+  public Set<String> scanBasePackages(String basePackage) {
+    String dir = basePackage.replace('.', '/');
+    return ScanUtil.scan(classLoader, dir, n -> n.endsWith(".class"));
   }
 }

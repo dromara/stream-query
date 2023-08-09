@@ -16,11 +16,8 @@
  */
 package org.dromara.streamquery.stream.plugin.solon.features;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+
 import org.apache.ibatis.exceptions.TooManyResultsException;
-import org.dromara.streamquery.stream.core.collection.Lists;
-import org.dromara.streamquery.stream.plugin.solon.Database;
 import org.dromara.streamquery.stream.plugin.solon.One;
 import org.dromara.streamquery.stream.plugin.solon.config.DemoApp;
 import org.dromara.streamquery.stream.plugin.solon.pojo.po.UserInfo;
@@ -30,52 +27,30 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.noear.solon.test.SolonJUnit5Extension;
 import org.noear.solon.test.SolonTest;
 
-import java.util.Arrays;
-import java.util.List;
-
-/** @author noear 2021/9/3 created */
+/**
+ * 查询单条测试
+ *
+ * @author VampireAchao Cizai_
+ * @since 2022/6/18 14:25
+ */
 @ExtendWith(SolonJUnit5Extension.class)
 @SolonTest(DemoApp.class)
-public class DataBaseTest {
-
-  @Test
-  void testSaveFewSql() {
-    UserInfo entity = new UserInfo();
-    entity.setName("cat");
-    entity.setAge(20);
-    entity.setEmail("myEmail");
-    UserInfo userInfo = new UserInfo();
-    userInfo.setName("ruben");
-    List<UserInfo> list = Arrays.asList(userInfo, entity);
-    boolean isSuccess = Database.saveFewSql(list);
-    Assertions.assertTrue(isSuccess);
-    Assertions.assertEquals(7, Database.count(UserInfo.class));
-
-    Assertions.assertFalse(Database.saveFewSql(Lists.empty()));
-  }
-
-  @Test
-  void testGetOne() {
-    LambdaQueryWrapper<UserInfo> wrapper = Wrappers.lambdaQuery(UserInfo.class);
-    Assertions.assertThrows(TooManyResultsException.class, () -> Database.getOne(wrapper));
-    UserInfo one = Database.getOne(wrapper, false);
-    Assertions.assertNotNull(one);
-  }
+public class OneTest {
 
   @Test
   void testQuery() {
     UserInfo userInfo = One.of(UserInfo::getId).eq(1L).query();
     String name = One.of(UserInfo::getId).eq(1L).value(UserInfo::getName).query();
     String leAgeName =
-            One.of(UserInfo::getId)
-                    .eq(1L)
-                    .value(UserInfo::getName)
-                    .condition(w -> w.le(UserInfo::getAge, 20))
-                    .query();
+        One.of(UserInfo::getId)
+            .eq(1L)
+            .value(UserInfo::getName)
+            .condition(w -> w.le(UserInfo::getAge, 20))
+            .query();
     Assertions.assertNotNull(userInfo);
     Assertions.assertNotNull(name);
     Assertions.assertNotNull(leAgeName);
     Assertions.assertThrows(
-            TooManyResultsException.class, () -> One.of(UserInfo::getName).like("a").query());
+        TooManyResultsException.class, () -> One.of(UserInfo::getName).like("a").query());
   }
 }
