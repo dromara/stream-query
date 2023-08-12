@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus;
+package org.dromara.streamquery.stream.plugin.solon;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
@@ -32,9 +32,6 @@ import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.StreamPluginConfig;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils.SqlInjectionUtilSq;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -289,19 +286,5 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
         SharedString.emptyString());
   }
 
-  @Override
-  public LambdaQueryWrapper<T> apply(boolean condition, String applySql, Object... values) {
-    if (StreamPluginConfig.isSafeModeEnabled() && SqlInjectionUtilSq.check(applySql)) {
-      throw new IllegalArgumentException("SQL Injection attempt detected in 'apply'");
-    }
-    return super.apply(condition, applySql, values);
-  }
 
-  @Override
-  public LambdaQueryWrapper<T> having(boolean condition, String sqlHaving, Object... params) {
-    if (StreamPluginConfig.isSafeModeEnabled() && SqlInjectionUtilSq.check(sqlHaving)) {
-      throw new IllegalArgumentException("SQL Injection attempt detected in 'having'");
-    }
-    return super.having(condition, sqlHaving, params);
-  }
 }
