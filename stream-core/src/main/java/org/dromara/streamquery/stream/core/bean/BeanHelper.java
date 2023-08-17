@@ -18,8 +18,6 @@ package org.dromara.streamquery.stream.core.bean;
 
 import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
-import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
-import org.dromara.streamquery.stream.core.lambda.function.SerBiFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
@@ -28,6 +26,8 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 /**
  * BeanHelper class.
@@ -161,10 +161,10 @@ public class BeanHelper {
 
         Object value = sourceGetter.apply(source);
         Serializable setter = targetGetterSetter.getValue();
-        if (SerBiCons.class.isAssignableFrom(setter.getClass())) {
-          ((SerBiCons<R, Object>) setter).accept(target, value);
+        if (BiConsumer.class.isAssignableFrom(setter.getClass())) {
+          SerFunc.<Serializable, BiConsumer<R, Object>>cast().apply(setter).accept(target, value);
         } else {
-          ((SerBiFunc<R, Object, R>) setter).apply(target, value);
+          SerFunc.<Serializable, BiFunction<R, Object, R>>cast().apply(setter).apply(target, value);
         }
       }
     }
