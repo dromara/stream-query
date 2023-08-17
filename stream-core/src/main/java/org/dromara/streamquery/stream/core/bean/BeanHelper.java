@@ -19,10 +19,12 @@ package org.dromara.streamquery.stream.core.bean;
 import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
+import org.dromara.streamquery.stream.core.lambda.function.SerBiFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
@@ -130,19 +132,18 @@ public class BeanHelper {
     }
 
     Class<T> sourceType = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
-    Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourcePropertyGetterSetterMap =
+    Map<String, Map.Entry<SerFunc<T, Object>, Serializable>> sourcePropertyGetterSetterMap =
         LambdaHelper.getPropertyGetterSetterMap(sourceType);
 
     Class<R> targetType = SerFunc.<Class<?>, Class<R>>cast().apply(target.getClass());
-    Map<String, Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>>> targetPropertyGetterSetterMap =
+    Map<String, Map.Entry<SerFunc<R, Object>, Serializable>> targetPropertyGetterSetterMap =
         LambdaHelper.getPropertyGetterSetterMap(targetType);
 
-    for (Map.Entry<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> sourceEntry :
+    for (Map.Entry<String, Map.Entry<SerFunc<T, Object>, Serializable>> sourceEntry :
         sourcePropertyGetterSetterMap.entrySet()) {
       String property = sourceEntry.getKey();
-      Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>> sourceGetterSetter =
-          sourceEntry.getValue();
-      Map.Entry<SerFunc<R, Object>, SerBiCons<R, Object>> targetGetterSetter =
+      Map.Entry<SerFunc<T, Object>, Serializable> sourceGetterSetter = sourceEntry.getValue();
+      Map.Entry<SerFunc<R, Object>, Serializable> targetGetterSetter =
           targetPropertyGetterSetterMap.get(property);
 
       if (targetGetterSetter != null) {
@@ -159,7 +160,12 @@ public class BeanHelper {
         }
 
         Object value = sourceGetter.apply(source);
-        targetGetterSetter.getValue().accept(target, value);
+        Serializable setter = targetGetterSetter.getValue();
+        if (SerBiCons.class.isAssignableFrom(setter.getClass())) {
+          ((SerBiCons<R, Object>) setter).accept(target, value);
+        } else {
+          ((SerBiFunc<R, Object, R>) setter).apply(target, value);
+        }
       }
     }
     return target;
