@@ -254,7 +254,7 @@ class LambdaHelperTest {
 
   @Test
   void testGetSetterMap() {
-    Map<SerFunc<LambdaExecutable, Object>, SerBiCons<LambdaExecutable, Object>> getterSetterMap =
+    Map<SerFunc<LambdaExecutable, Object>, Serializable> getterSetterMap =
         LambdaHelper.getGetterSetterMap(LambdaExecutable.class);
     LambdaExecutable lambdaExecutable =
         LambdaHelper.resolve(
@@ -263,17 +263,21 @@ class LambdaHelperTest {
     getterSetterMap.forEach(
         (getter, setter) -> {
           Object value = getter.apply(lambdaExecutable);
-          setter.accept(lambda, value);
+          SerFunc.<Serializable, SerBiCons<LambdaExecutable, Object>>cast()
+              .apply(setter)
+              .accept(lambda, value);
         });
     Assertions.assertEquals(lambdaExecutable.getLambda(), lambda.getLambda());
   }
 
   @Test
   void testGetPropertyGetterSetterMap() {
-    Map<String, Map.Entry<SerFunc<LambdaExecutable, Object>, SerBiCons<LambdaExecutable, Object>>>
+    Map<String, Map.Entry<SerFunc<LambdaExecutable, Object>, Serializable>>
         propertyGetterSetterMap = LambdaHelper.getPropertyGetterSetterMap(LambdaExecutable.class);
     LambdaExecutable executable = new LambdaExecutable();
-    propertyGetterSetterMap.get("name").getValue().accept(executable, "test");
+    SerFunc.<Serializable, SerBiCons<LambdaExecutable, Object>>cast()
+        .apply(propertyGetterSetterMap.get("name").getValue())
+        .accept(executable, "test");
     Assertions.assertEquals("test", executable.getName());
   }
 }

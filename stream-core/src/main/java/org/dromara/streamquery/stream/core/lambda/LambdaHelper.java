@@ -19,6 +19,7 @@ package org.dromara.streamquery.stream.core.lambda;
 import org.dromara.streamquery.stream.core.bean.BeanHelper;
 import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
+import org.dromara.streamquery.stream.core.lambda.function.SerBiFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.core.optional.Opp;
@@ -48,7 +49,7 @@ public class LambdaHelper {
   private static final WeakHashMap<Class<?>, WeakHashMap<Executable, Object>> LAMBDA_REVERT_CACHE =
       new WeakHashMap<>();
   private static final WeakHashMap<
-          Class<?>, Map<String, Map.Entry<SerFunc<?, Object>, SerBiCons<?, Object>>>>
+          Class<?>, Map<String, Map.Entry<SerFunc<?, Object>, Serializable>>>
       PROPERTY_GETTER_SETTER_CACHE = new WeakHashMap<>();
 
   private LambdaHelper() {
@@ -288,8 +289,7 @@ public class LambdaHelper {
    * @param <T> 类型
    * @return 返回getter和setter组成的map
    */
-  public static <T> Map<SerFunc<T, Object>, SerBiCons<T, Object>> getGetterSetterMap(
-      Class<T> clazz) {
+  public static <T> Map<SerFunc<T, Object>, Serializable> getGetterSetterMap(Class<T> clazz) {
     return Steam.of(getPropertyGetterSetterMap(clazz).values()).collect(Collective.entryToMap());
   }
 
@@ -301,9 +301,9 @@ public class LambdaHelper {
    * @return 返回属性名和getter和setter组成的map
    */
   public static <T>
-      Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>> getPropertyGetterSetterMap(
+      Map<String, Map.Entry<SerFunc<T, Object>, Serializable>> getPropertyGetterSetterMap(
           Class<T> clazz) {
-    Map<String, Map.Entry<SerFunc<?, Object>, SerBiCons<?, Object>>> propertyGetterSetterMap =
+    Map<String, Map.Entry<SerFunc<?, Object>, Serializable>> propertyGetterSetterMap =
         PROPERTY_GETTER_SETTER_CACHE.computeIfAbsent(
             clazz,
             key -> {
@@ -323,14 +323,24 @@ public class LambdaHelper {
               return Steam.of(properties)
                   .toMap(
                       Function.identity(),
-                      property ->
-                          Maps.entry(
-                              LambdaHelper.getGetter(clazz, property),
-                              LambdaHelper.getSetter(clazz, property)));
+                      property -> {
+                        Method method =
+                            ReflectHelper.getMethod(
+                                clazz,
+                                BeanHelper.getSetterName(property),
+                                ReflectHelper.getField(clazz, property).getType());
+                        final Serializable setter =
+                            LambdaHelper.revert(
+                                void.class.isAssignableFrom(method.getReturnType())
+                                    ? SerBiCons.class
+                                    : SerBiFunc.class,
+                                method);
+                        return Maps.entry(LambdaHelper.getGetter(clazz, property), setter);
+                      });
             });
     return SerFunc
-        .<Map<String, Map.Entry<SerFunc<?, Object>, SerBiCons<?, Object>>>,
-            Map<String, Map.Entry<SerFunc<T, Object>, SerBiCons<T, Object>>>>
+        .<Map<String, Map.Entry<SerFunc<?, Object>, Serializable>>,
+            Map<String, Map.Entry<SerFunc<T, Object>, Serializable>>>
             cast()
         .apply(propertyGetterSetterMap);
   }
