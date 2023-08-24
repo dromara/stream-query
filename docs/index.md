@@ -84,6 +84,12 @@ postList: none
   link: https://gitee.com/KamToHung # 链接，可选
   bgColor: '#cb4b41' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
   textColor: '#f4f4fc' # 文本色，可选，默认var(--textColor)
+- name: Cason
+  desc: '- 实现动态Mapper<br>- 适配solon框架'
+  avatar: /img/commiter/Cason.jpg # 头像，可选
+  link: https://gitee.com/Casonhqc # 链接，可选
+  bgColor: '#40f2ff' # 背景色，可选，默认var(--bodyBg)。颜色值有#号时请添加引号
+  textColor: '#f4f4fc' # 文本色，可选，默认var(--textColor)
 ```
 :::
 
