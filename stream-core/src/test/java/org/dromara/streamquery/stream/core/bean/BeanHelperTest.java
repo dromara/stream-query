@@ -17,6 +17,7 @@
 package org.dromara.streamquery.stream.core.bean;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,6 +47,7 @@ class BeanHelperTest {
   }
 
   @Data
+  @Accessors(chain = true)
   public static class Person {
     private String name;
   }
