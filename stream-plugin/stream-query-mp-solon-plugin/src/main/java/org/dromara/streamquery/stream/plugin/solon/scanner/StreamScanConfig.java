@@ -77,6 +77,9 @@ public class StreamScanConfig {
   }
 
   public void scan() {
+    if (this.basePackages.size() == 1 && this.basePackages.contains("")) {
+      this.emptyBasePackages = true;
+    }
     defaultScanConfig();
     // 指定类
     registerEntityClasses(this.classes);
