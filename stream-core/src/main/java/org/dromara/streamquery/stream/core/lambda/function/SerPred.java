@@ -39,10 +39,10 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
    * Returns a predicate that tests if two arguments are equal according to {@link
    * Objects#equals(Object, Object)}.
    */
-  static <T> SerPred<T> isEqual(Object... targetRef) {
+  static <T> SerPred<T> isEqual(Object targetRef) {
     return (null == targetRef)
-        ? Objects::isNull
-        : object -> Stream.of(targetRef).allMatch(target -> target.equals(object));
+            ? Objects::isNull
+            : object -> targetRef.equals(object);
   }
 
   /** Evaluates this predicate on the given argument. */
