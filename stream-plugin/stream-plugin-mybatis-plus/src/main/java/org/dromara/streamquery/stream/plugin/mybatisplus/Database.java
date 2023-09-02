@@ -1044,7 +1044,7 @@ public class Database {
                   .name(
                       String.format(
                           "%s.%sMapper",
-                          PluginConst.DYNAMIC_MAPPER_PREFIX, entityClass.getSimpleName()))
+                          PluginConst.DYNAMIC_MAPPER_PREFIX, entityClass.getName()))
                   .make()
                   .load(ClassUtils.class.getClassLoader())
                   .getLoaded();
