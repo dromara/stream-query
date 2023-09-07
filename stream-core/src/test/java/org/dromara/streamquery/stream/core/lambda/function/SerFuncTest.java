@@ -50,9 +50,10 @@ class SerFuncTest {
 
   @Test
   void applyingExceptionTest() {
-    SerFunc<String, Integer> func = s -> {
-      throw new Exception("Test exception");
-    };
+    SerFunc<String, Integer> func =
+        s -> {
+          throw new Exception("Test exception");
+        };
     Assertions.assertThrows(LambdaInvokeException.class, () -> func.apply("foo"));
   }
 
@@ -67,6 +68,4 @@ class SerFuncTest {
     Function<String, Object> castFunc = SerFunc.cast();
     Assertions.assertEquals("foo", castFunc.apply("foo"));
   }
-
-
 }

@@ -34,7 +34,8 @@ public class SerArgsPredTest {
 
   @Test
   void multiAndFalseTest() {
-    SerArgsPred<String> pred = SerArgsPred.multiAnd(e -> e[0].equals("foo"), e -> e[1].equals("baz"));
+    SerArgsPred<String> pred =
+        SerArgsPred.multiAnd(e -> e[0].equals("foo"), e -> e[1].equals("baz"));
     Assertions.assertFalse(pred.test("foo", "bar"));
   }
 
@@ -58,6 +59,7 @@ public class SerArgsPredTest {
     val result = SerArgsPred.isEqual("foo").negate().test("foo");
     Assertions.assertFalse(result);
   }
+
   @Test
   void andTest() {
     val result1 = SerArgsPred.<String>isEqual("foo").and(e -> e[0].equals("foo")).test("foo");
@@ -73,7 +75,6 @@ public class SerArgsPredTest {
     Assertions.assertTrue(result1);
     Assertions.assertFalse(result2);
   }
-
 
   @Test
   void isEqualNullTest() {
