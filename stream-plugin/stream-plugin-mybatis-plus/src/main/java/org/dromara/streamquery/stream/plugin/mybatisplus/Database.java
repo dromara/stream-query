@@ -1043,8 +1043,7 @@ public class Database {
                           .build())
                   .name(
                       String.format(
-                          "%s.%sMapper",
-                          PluginConst.DYNAMIC_MAPPER_PREFIX, entityClass.getSimpleName()))
+                          "%s.%sMapper", PluginConst.DYNAMIC_MAPPER_PREFIX, entityClass.getName()))
                   .make()
                   .load(ClassUtils.class.getClassLoader())
                   .getLoaded();

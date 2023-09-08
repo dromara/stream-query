@@ -16,7 +16,6 @@
  */
 package org.dromara.streamquery.stream.core.lambda.function;
 
-import lombok.val;
 import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,34 +24,53 @@ import org.junit.jupiter.api.Test;
 public class SerArgsFuncTest {
 
   @Test
-  void lastTest() {
-    val last = SerArgsFunc.last().apply("foo", "bar");
-    Assertions.assertEquals("bar", last);
+  void testLast() {
+    Assertions.assertEquals(3, SerArgsFunc.last().apply(1, 2, 3));
   }
 
   @Test
-  void composeTest() {
-    val compose = SerArgsFunc.last().compose(e -> e[0] + "bar").apply("foo");
-    Assertions.assertEquals("foobar", compose);
+  void applyingTest() throws Throwable {
+    Assertions.assertEquals(
+        "foo", ((SerArgsFunc<String, String>) (String... strs) -> strs[0]).applying("foo", "bar"));
+  }
+
+  @Test
+  void applyingExceptionTest() {
+    Assertions.assertThrows(
+        LambdaInvokeException.class,
+        () ->
+            ((SerArgsFunc<String, String>)
+                    (String... strs) -> {
+                      throw new Exception("Testing");
+                    })
+                .apply("foo"));
+  }
+
+  @Test
+  void applyWithNoArgsTest() {
+    Assertions.assertNull(SerArgsFunc.<String>last().apply());
+  }
+
+  @Test
+  void composeNullExceptionTest() {
+    Assertions.assertThrows(
+        NullPointerException.class, () -> SerArgsFunc.<String>last().compose(null));
+  }
+
+  @Test
+  void composeFunctionTest() {
+    Assertions.assertEquals(
+        "foobaz", SerArgsFunc.last().compose(e -> e[0] + "baz").apply("foo", "bar"));
+  }
+
+  @Test
+  void andThenNullExceptionTest() {
+    Assertions.assertThrows(NullPointerException.class, () -> SerArgsFunc.last().andThen(null));
   }
 
   @Test
   void andThenTest() {
-    val andThen = SerArgsFunc.last().andThen(e -> e[0] + "bar").apply("foo");
-    Assertions.assertEquals("foobar", andThen);
-  }
-
-  @Test
-  void throwsTest() {
-    Assertions.assertThrows(
-        LambdaInvokeException.class,
-        () -> {
-          SerArgsFunc.last()
-              .andThen(
-                  e -> {
-                    throw new LambdaInvokeException("test");
-                  })
-              .apply("foo", "bar");
-        });
+    Assertions.assertEquals(
+        "bazbar", SerArgsFunc.last().andThen(e -> e[0] + "bar").apply("foo", "baz"));
   }
 }

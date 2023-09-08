@@ -18,9 +18,12 @@ package org.dromara.streamquery.stream.core.lambda.function;
 
 import lombok.val;
 import org.dromara.streamquery.stream.core.collection.Maps;
+import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.function.Function;
 
 /**
  * SerBiFuncTest
@@ -37,5 +40,32 @@ class SerFuncTest {
             .findFirst();
     Assertions.assertTrue(first.isPresent());
     Assertions.assertEquals("foobar", first.get());
+  }
+
+  @Test
+  void applyingTest() throws Throwable {
+    SerFunc<String, Integer> func = String::length;
+    Assertions.assertEquals(3, func.applying("foo"));
+  }
+
+  @Test
+  void applyingExceptionTest() {
+    SerFunc<String, Integer> func =
+        s -> {
+          throw new Exception("Test exception");
+        };
+    Assertions.assertThrows(LambdaInvokeException.class, () -> func.apply("foo"));
+  }
+
+  @Test
+  void identityTest() {
+    SerFunc<String, String> identity = SerFunc.identity();
+    Assertions.assertEquals("foo", identity.apply("foo"));
+  }
+
+  @Test
+  void castTest() {
+    Function<String, Object> castFunc = SerFunc.cast();
+    Assertions.assertEquals("foo", castFunc.apply("foo"));
   }
 }
