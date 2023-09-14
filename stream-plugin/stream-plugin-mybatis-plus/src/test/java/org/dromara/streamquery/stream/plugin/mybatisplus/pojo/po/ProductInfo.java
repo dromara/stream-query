@@ -22,6 +22,7 @@ import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.issue.gitee.issue17BSNV.Table;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -30,7 +31,7 @@ import java.math.BigDecimal;
  */
 @Data
 @Table("product_info")
-public class ProductInfo implements IGenerateMapper {
+public class ProductInfo implements IGenerateMapper, Serializable {
   private static final long serialVersionUID = -7219188882388819210L;
 
   @TableId(value = "id", type = IdType.AUTO)

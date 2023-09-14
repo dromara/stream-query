@@ -40,7 +40,7 @@ public interface SerPred<T> extends Predicate<T>, Serializable {
    * Objects#equals(Object, Object)}.
    */
   static <T> SerPred<T> isEqual(Object targetRef) {
-    return (null == targetRef) ? Objects::isNull : object -> targetRef.equals(object);
+    return (null == targetRef) ? Objects::isNull : targetRef::equals;
   }
 
   /** Evaluates this predicate on the given argument. */

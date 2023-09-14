@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -33,7 +34,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("user_info")
-public class UserInfo implements IGenerateMapper {
+public class UserInfo implements IGenerateMapper, Serializable {
 
   private static final long serialVersionUID = -7219188882388819210L;
 

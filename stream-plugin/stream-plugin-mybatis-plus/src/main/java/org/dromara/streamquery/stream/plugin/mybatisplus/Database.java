@@ -1238,7 +1238,7 @@ public class Database {
   protected static <T> Class<T> getEntityClass(Collection<T> entityList) {
     Class<T> entityClass = null;
     for (T entity : entityList) {
-      if (entity != null && entity.getClass() != null) {
+      if (entity != null) {
         entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
         break;
       }

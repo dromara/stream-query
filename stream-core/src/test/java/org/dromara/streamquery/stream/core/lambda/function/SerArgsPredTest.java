@@ -86,13 +86,11 @@ public class SerArgsPredTest {
   void throwsTest() {
     Assertions.assertThrows(
         LambdaInvokeException.class,
-        () -> {
-          SerArgsPred.isEqual("foo")
-              .or(
-                  e -> {
-                    throw new Exception("test");
-                  })
-              .test("bar");
-        });
+        () -> SerArgsPred.isEqual("foo")
+            .or(
+                e -> {
+                  throw new Exception("test");
+                })
+            .test("bar"));
   }
 }

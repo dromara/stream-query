@@ -78,7 +78,7 @@ public enum JreEnum {
 
   private static JreEnum getJre() {
     String version = System.getProperty("java.version");
-    boolean isBlank = version == null || version.trim().length() == 0;
+    boolean isBlank = version == null || version.trim().isEmpty();
     if (isBlank) {
       LOGGER.info("java.version is blank");
     }

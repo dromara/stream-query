@@ -21,13 +21,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.issue.gitee.issue17BSNV.Table;
 
+import java.io.Serializable;
+
 /**
  * @author Cason
  * @since 2023-06-27
  */
 @Data
 @Table("product_category")
-public class ProductCategory {
+public class ProductCategory implements Serializable {
   private static final long serialVersionUID = -7219188882388819210L;
 
   @TableId(value = "id", type = IdType.AUTO)
