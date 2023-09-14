@@ -532,7 +532,7 @@ public class ReflectHelper {
         .forEach(
             fieldName ->
                 LOGGER.info(
-                    () -> "field " + "" + fieldName + ": " + getFieldValue(obj, fieldName)));
+                    () -> "field " + fieldName + ": " + getFieldValue(obj, fieldName)));
     LOGGER.info(() -> "no arg methods: ");
     Steam.of(getMethods(obj.getClass()))
         .map(Method::getName)

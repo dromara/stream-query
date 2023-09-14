@@ -22,11 +22,12 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IGenerateMapper;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Table(value = "user_info")
-public class UserInfoWithTableAnnotation implements IGenerateMapper {
+public class UserInfoWithTableAnnotation implements IGenerateMapper, Serializable {
   private static final long serialVersionUID = -7219188882388819210L;
 
   @TableId(value = "id", type = IdType.AUTO)

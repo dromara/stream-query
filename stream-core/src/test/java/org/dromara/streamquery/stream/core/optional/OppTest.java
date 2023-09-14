@@ -175,7 +175,6 @@ class OppTest {
     Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
   }
 
-  @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "ConstantConditions"})
   @Test
   void failOrElseTest() {
     // 有一些资深的程序员跟我说你这个lambda，双冒号语法糖看不懂...
@@ -451,15 +450,11 @@ class OppTest {
     final AtomicReference<String> oppStrNull = new AtomicReference<>("");
     Opp.ofStr(oppStrNull.get())
         .orElseRun(
-            () -> {
-              oppStrNull.set("stream-query");
-            });
+            () -> oppStrNull.set("stream-query"));
     final String elseRun =
         Opp.ofStr(oppStrNull.get())
             .orElseRun(
-                () -> {
-                  oppStrNull.set("");
-                });
+                () -> oppStrNull.set(""));
     Assertions.assertEquals(oppStrNull.get(), "stream-query");
     Assertions.assertEquals(elseRun, "stream-query");
   }
