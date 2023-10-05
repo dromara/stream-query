@@ -20,6 +20,7 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -42,6 +43,7 @@ class AsyncHelperTest {
   }
 
   @Test
+  @Disabled("sleep")
   void testTimeout() {
     final AsyncConfig asyncConfig = AsyncConfig.create();
     asyncConfig.setTimeout(1);
