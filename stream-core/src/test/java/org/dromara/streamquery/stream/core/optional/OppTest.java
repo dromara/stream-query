@@ -63,6 +63,13 @@ class OppTest {
   }
 
   @Test
+  void foldTest() {
+      final Opp<String> opp = Opp.ofStr("     ");
+      final String fold = opp.fold(String::toUpperCase, () -> "hutool");
+      Assertions.assertEquals("hutool", fold);
+  }
+
+  @Test
   void peekTest() {
     final User user = new User();
     // 相当于ifPresent的链式调用
