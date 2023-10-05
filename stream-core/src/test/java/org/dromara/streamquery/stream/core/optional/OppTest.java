@@ -65,7 +65,7 @@ class OppTest {
   @Test
   void foldTest() {
       final Opp<String> opp = Opp.ofStr("     ");
-      final String fold = opp.fold(() -> "hutool", String::toUpperCase);
+      final String fold = opp.fold(String::toUpperCase, () -> "hutool");
       Assertions.assertEquals("hutool", fold);
   }
 
