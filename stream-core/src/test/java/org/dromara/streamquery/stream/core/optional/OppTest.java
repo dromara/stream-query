@@ -64,9 +64,9 @@ class OppTest {
 
   @Test
   void foldTest() {
-      final Opp<String> opp = Opp.ofStr("     ");
-      final String fold = opp.fold(String::toUpperCase, () -> "hutool");
-      Assertions.assertEquals("hutool", fold);
+    final Opp<String> opp = Opp.ofStr("     ");
+    final String fold = opp.fold(String::toUpperCase, () -> "hutool");
+    Assertions.assertEquals("hutool", fold);
   }
 
   @Test
@@ -455,13 +455,8 @@ class OppTest {
   @Test
   void testOrElseRun() {
     final AtomicReference<String> oppStrNull = new AtomicReference<>("");
-    Opp.ofStr(oppStrNull.get())
-        .orElseRun(
-            () -> oppStrNull.set("stream-query"));
-    final String elseRun =
-        Opp.ofStr(oppStrNull.get())
-            .orElseRun(
-                () -> oppStrNull.set(""));
+    Opp.ofStr(oppStrNull.get()).orElseRun(() -> oppStrNull.set("stream-query"));
+    final String elseRun = Opp.ofStr(oppStrNull.get()).orElseRun(() -> oppStrNull.set(""));
     Assertions.assertEquals(oppStrNull.get(), "stream-query");
     Assertions.assertEquals(elseRun, "stream-query");
   }

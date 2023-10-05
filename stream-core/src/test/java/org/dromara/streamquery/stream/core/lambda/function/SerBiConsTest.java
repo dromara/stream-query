@@ -62,11 +62,12 @@ public class SerBiConsTest {
   void throwsTest() {
     Assertions.assertThrows(
         LambdaInvokeException.class,
-        () -> SerBiCons.multi(
-                SerBiCons.nothing(),
-                (f, b) -> {
-                  throw new Exception("test");
-                })
-            .accept("foo", "bar"));
+        () ->
+            SerBiCons.multi(
+                    SerBiCons.nothing(),
+                    (f, b) -> {
+                      throw new Exception("test");
+                    })
+                .accept("foo", "bar"));
   }
 }
