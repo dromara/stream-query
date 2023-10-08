@@ -1043,8 +1043,7 @@ public class Database {
                           .build())
                   .name(
                       String.format(
-                          "%s.%sMapper",
-                          PluginConst.DYNAMIC_MAPPER_PREFIX, entityClass.getName()))
+                          "%s.%sMapper", PluginConst.DYNAMIC_MAPPER_PREFIX, entityClass.getName()))
                   .make()
                   .load(ClassUtils.class.getClassLoader())
                   .getLoaded();
@@ -1239,7 +1238,7 @@ public class Database {
   protected static <T> Class<T> getEntityClass(Collection<T> entityList) {
     Class<T> entityClass = null;
     for (T entity : entityList) {
-      if (entity != null && entity.getClass() != null) {
+      if (entity != null) {
         entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
         break;
       }

@@ -89,15 +89,14 @@ class WrapperHelperTest {
         WrapperHelper.multi(
             Wrappers.lambdaQuery(UserInfo.class),
             dataList,
-            (wrap, data) -> {
-              wrap.or(
-                  w ->
-                      w.eq(Objects.nonNull(data.getEmail()), UserInfo::getEmail, data.getEmail())
-                          .eq(
-                              StringUtils.isNotBlank(data.getName()),
-                              UserInfo::getName,
-                              data.getName()));
-            });
+            (wrap, data) ->
+                wrap.or(
+                    w ->
+                        w.eq(Objects.nonNull(data.getEmail()), UserInfo::getEmail, data.getEmail())
+                            .eq(
+                                StringUtils.isNotBlank(data.getName()),
+                                UserInfo::getName,
+                                data.getName())));
     // ==>  Preparing: SELECT id,name,age,email,gmt_deleted FROM user_info WHERE
     // gmt_deleted='2001-01-01 00:00:00'
     // AND (((name = ?) OR (email = ?) OR (name = ?)))

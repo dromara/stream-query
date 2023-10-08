@@ -362,6 +362,17 @@ public class Opp<T> {
   }
 
   /**
+   * 如果包裹里的值存在，则返回该值，如果不存在返回默认的值
+   *
+   * @param f 存在时执行的操作
+   * @param supplier 如果不存在则返回的默认值
+   * @return 如果包裹里的值存在，则返回该值，如果不存在返回默认的值
+   */
+  public <U> U fold(Function<? super T, ? extends U> f, Supplier<? extends U> supplier) {
+    return this.<U>map(f).orElseGet(supplier);
+  }
+
+  /**
    * 如果包裹里元素的值存在，就执行对应的操作，并返回本身 如果不存在，返回一个空的{@code Opp}
    *
    * <p>属于 {@link #ifPresent}的链式拓展

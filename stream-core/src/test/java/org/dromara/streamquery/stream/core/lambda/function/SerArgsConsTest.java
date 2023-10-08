@@ -22,7 +22,6 @@ import org.dromara.streamquery.stream.core.lambda.LambdaInvokeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 /** @author VampireAchao */
 public class SerArgsConsTest {
 
@@ -34,36 +33,36 @@ public class SerArgsConsTest {
     Assertions.assertEquals("bar", list.get(1));
   }
 
-    @Test
-    void testAcceptingAndAccept() {
-        SerArgsCons<Integer> mayThrowException = (Integer... args) -> {
-            if (args[0] == 0) throw new Exception("Zero");
+  @Test
+  void testAcceptingAndAccept() {
+    SerArgsCons<Integer> mayThrowException =
+        (Integer... args) -> {
+          if (args[0] == 0) throw new Exception("Zero");
         };
 
-        Assertions.assertThrows(LambdaInvokeException.class, () -> mayThrowException.accept(0));
-        Assertions.assertThrows(Exception.class, () -> mayThrowException.accepting(0));
-    }
+    Assertions.assertThrows(LambdaInvokeException.class, () -> mayThrowException.accept(0));
+    Assertions.assertThrows(Exception.class, () -> mayThrowException.accepting(0));
+  }
 
-    @Test
-    void testAndThen() throws Throwable {
-        val addOne = (SerArgsCons<Integer>) (Integer... args) -> args[0] += 1;
-        val addTwo = (SerArgsCons<Integer>) (Integer... args) -> args[0] += 2;
-        val combined = addOne.andThen(addTwo);
+  @Test
+  void testAndThen() throws Throwable {
+    val addOne = (SerArgsCons<Integer>) (Integer... args) -> args[0] += 1;
+    val addTwo = (SerArgsCons<Integer>) (Integer... args) -> args[0] += 2;
+    val combined = addOne.andThen(addTwo);
 
-        val testArr = new Integer[]{0};
-        combined.accepting(testArr);
+    val testArr = new Integer[] {0};
+    combined.accepting(testArr);
 
-        Assertions.assertEquals(3, testArr[0]);
-    }
+    Assertions.assertEquals(3, testArr[0]);
+  }
 
-    @Test
-    void testNothing() throws Throwable {
-        val doNothing = SerArgsCons.nothing();
+  @Test
+  void testNothing() throws Throwable {
+    val doNothing = SerArgsCons.nothing();
 
-        val testArr = new Integer[]{0};
-        doNothing.accepting(testArr);
+    val testArr = new Integer[] {0};
+    doNothing.accepting(testArr);
 
-        Assertions.assertEquals(0, testArr[0]);
-    }
-
+    Assertions.assertEquals(0, testArr[0]);
+  }
 }

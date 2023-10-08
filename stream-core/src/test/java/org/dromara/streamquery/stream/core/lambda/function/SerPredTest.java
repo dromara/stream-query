@@ -42,7 +42,6 @@ class SerPredTest {
     val isEqualToFooOrBar = SerPred.isEqual("foo");
     Assertions.assertTrue(isEqualToFooOrBar.test("foo"));
     Assertions.assertFalse(isEqualToFooOrBar.test("bar"));
-
   }
 
   @Test
@@ -54,9 +53,10 @@ class SerPredTest {
 
   @Test
   void testingExceptionTest() {
-    SerPred<String> throwException = s -> {
-      throw new Exception("Test exception");
-    };
+    SerPred<String> throwException =
+        s -> {
+          throw new Exception("Test exception");
+        };
     Assertions.assertThrows(LambdaInvokeException.class, () -> throwException.test("foo"));
   }
 

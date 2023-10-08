@@ -63,6 +63,13 @@ class OppTest {
   }
 
   @Test
+  void foldTest() {
+    final Opp<String> opp = Opp.ofStr("     ");
+    final String fold = opp.fold(String::toUpperCase, () -> "hutool");
+    Assertions.assertEquals("hutool", fold);
+  }
+
+  @Test
   void peekTest() {
     final User user = new User();
     // 相当于ifPresent的链式调用
@@ -175,7 +182,6 @@ class OppTest {
     Assertions.assertTrue(Opp.ofColl(Arrays.asList(null, null, null)).isEmpty());
   }
 
-  @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "ConstantConditions"})
   @Test
   void failOrElseTest() {
     // 有一些资深的程序员跟我说你这个lambda，双冒号语法糖看不懂...
@@ -449,17 +455,8 @@ class OppTest {
   @Test
   void testOrElseRun() {
     final AtomicReference<String> oppStrNull = new AtomicReference<>("");
-    Opp.ofStr(oppStrNull.get())
-        .orElseRun(
-            () -> {
-              oppStrNull.set("stream-query");
-            });
-    final String elseRun =
-        Opp.ofStr(oppStrNull.get())
-            .orElseRun(
-                () -> {
-                  oppStrNull.set("");
-                });
+    Opp.ofStr(oppStrNull.get()).orElseRun(() -> oppStrNull.set("stream-query"));
+    final String elseRun = Opp.ofStr(oppStrNull.get()).orElseRun(() -> oppStrNull.set(""));
     Assertions.assertEquals(oppStrNull.get(), "stream-query");
     Assertions.assertEquals(elseRun, "stream-query");
   }

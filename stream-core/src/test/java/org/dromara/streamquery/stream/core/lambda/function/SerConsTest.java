@@ -40,10 +40,7 @@ class SerConsTest {
   @Test
   void multiTest() {
     val list = Lists.of();
-    SerCons.<String>multi(
-            t -> list.add(t),
-            t -> list.add(t + t)
-    ).accept("foo");
+    SerCons.<String>multi(list::add, t -> list.add(t + t)).accept("foo");
     Assertions.assertEquals("foo", list.get(0));
     Assertions.assertEquals("foofoo", list.get(1));
   }
@@ -51,9 +48,7 @@ class SerConsTest {
   @Test
   void andThenTest() {
     val list = Lists.of();
-    ((SerCons<String>) t -> list.add(t))
-            .andThen(t -> list.add(t + t))
-            .accept("foo");
+    ((SerCons<String>) list::add).andThen(t -> list.add(t + t)).accept("foo");
     Assertions.assertEquals("foo", list.get(0));
     Assertions.assertEquals("foofoo", list.get(1));
   }
@@ -61,20 +56,20 @@ class SerConsTest {
   @Test
   void acceptingTest() throws Throwable {
     val list = Lists.of();
-    ((SerCons<String>) t -> list.add(t)).accepting("foo");
+    ((SerCons<String>) list::add).accepting("foo");
     Assertions.assertEquals("foo", list.get(0));
   }
 
   @Test
   void throwsTest() {
     Assertions.assertThrows(
-            LambdaInvokeException.class,
-            () -> SerCons.multi(
+        LambdaInvokeException.class,
+        () ->
+            SerCons.multi(
                     SerCons.nothing(),
                     t -> {
                       throw new Exception("test");
-                    }
-            ).accept("foo")
-    );
+                    })
+                .accept("foo"));
   }
 }
