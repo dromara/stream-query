@@ -28,7 +28,7 @@ import java.util.function.Function;
 /**
  * SerBiFuncTest
  *
- * @author VampireAchao
+ * @author VampireAchao Cason
  * @since 2023/5/13
  */
 class SerFuncTest {
