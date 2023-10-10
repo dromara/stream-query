@@ -21,7 +21,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author VampireAchao
+ * @author VampireAchao Cizai_
  * @since 2022/12/26 18:01
  */
 public class AsyncConfig {
