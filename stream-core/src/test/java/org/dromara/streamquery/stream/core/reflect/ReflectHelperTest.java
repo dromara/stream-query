@@ -20,12 +20,13 @@ import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+
 
 /**
  * @author VampireAchao Cizai_
@@ -63,11 +64,19 @@ class ReflectHelperTest {
   @Test
   void testGetGenericMap() {
     final Map<String, Type> genericMap =
-        ReflectHelper.getGenericMap(new HashMap<String, TreeMap<String, Object>>() {}.getClass());
+        ReflectHelper.getGenericMap(new HashMap<String, TreeMap<String, Object>>() {
+          private static final long serialVersionUID = -3694145972588238697L;
+        }.getClass());
     Assertions.assertEquals(String.class, genericMap.get("K"));
-    Assertions.assertEquals(
-        ParameterizedTypeImpl.make(TreeMap.class, new Type[] {String.class, Object.class}, null),
-        genericMap.get("V"));
+    Type vType = genericMap.get("V");
+    if (vType instanceof ParameterizedType) {
+      ParameterizedType pt = (ParameterizedType) vType;
+      Assertions.assertEquals(TreeMap.class, pt.getRawType());
+      Assertions.assertEquals(String.class, pt.getActualTypeArguments()[0]);
+      Assertions.assertEquals(Object.class, pt.getActualTypeArguments()[1]);
+    } else {
+      Assertions.fail("Expected V type to be ParameterizedType");
+    }
   }
 
   @Test
