@@ -21,14 +21,14 @@ import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerPred;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.stream.Steam;
-import org.dromara.streamquery.stream.core.stream.collector.Collective;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 反射工具类
@@ -295,13 +295,15 @@ public class ReflectHelper {
 
   public static Map<String, Type> getGenericMap(Type paramType) {
     Type type = resolveType(paramType);
-    if (type instanceof ParameterizedTypeImpl) {
-      ParameterizedTypeImpl ty = (ParameterizedTypeImpl) type;
-      final Class<?> rawType = ty.getRawType();
-      return Steam.of(rawType.getTypeParameters())
-          .map(Type::getTypeName)
-          .zip(Steam.of(ty.getActualTypeArguments()), Maps::entry)
-          .collect(Collective.entryToMap(LinkedHashMap::new));
+    if (type instanceof ParameterizedType) {
+      ParameterizedType pType = (ParameterizedType) type;
+      Class<?> rawType = (Class<?>) pType.getRawType();
+      Type[] actualTypeArguments = pType.getActualTypeArguments();
+      TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
+
+      return IntStream.range(0, typeParameters.length)
+              .boxed()
+              .collect(Collectors.toMap(i -> typeParameters[i].getName(), i -> actualTypeArguments[i]));
     }
     return new HashMap<>();
   }
