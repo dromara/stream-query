@@ -721,11 +721,8 @@ public class Database {
       return null;
     }
     Class<T> entityClass = getEntityClass(queryWrapper);
-    if (throwEx) {
-      return execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper));
-    }
-    return execute(
-        entityClass, baseMapper -> SqlHelper.getObject(LOG, baseMapper.selectList(queryWrapper)));
+
+    return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper,throwEx));
   }
 
   /**
