@@ -273,13 +273,13 @@
 
     <profiles>
         <profile>
-            <!-- 这个profile在Java 9或更高版本时激活 -->
-            <id>java9+</id>
+            <!-- 这个profile在Java 8或更高版本时激活 -->
+            <id>java8+</id>
             <activation>
                 <jdk>[8,)</jdk>
             </activation>
             <properties>
-                <!-- 重写argLine属性为Java 9+的配置 -->
+                <!-- 重写argLine属性为Java 8+的配置 -->
                 <surefire.argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED</surefire.argLine>
             </properties>
         </profile>
