@@ -24,6 +24,7 @@
         <revision>2.0.0-alpha+002</revision>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <surefire.argLine></surefire.argLine>
         <maven-javadoc-plugin.version>3.4.0</maven-javadoc-plugin.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
@@ -33,6 +34,8 @@
         <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
+
+
 
     <name>Stream Query</name>
     <description>允许完全摆脱Mapper的mybatis-plus体验！可以使用类似“工具类”这样的静态函数进行数据库操作</description>
@@ -108,6 +111,8 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
+                    <!-- 使用属性值来配置argLine -->
+                    <argLine>${surefire.argLine}</argLine>
                 </configuration>
             </plugin>
             <!-- Javadoc -->
@@ -267,6 +272,18 @@
     </build>
 
     <profiles>
+        <profile>
+            <!-- 这个profile在Java 9或更高版本时激活 -->
+            <id>java9+</id>
+            <activation>
+                <jdk>[8,)</jdk>
+            </activation>
+            <properties>
+                <!-- 重写argLine属性为Java 9+的配置 -->
+                <surefire.argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED</surefire.argLine>
+            </properties>
+        </profile>
+
         <profile>
             <id>release</id>
             <distributionManagement>
