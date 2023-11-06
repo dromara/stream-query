@@ -148,12 +148,11 @@ class JsonFieldHandlerTest {
             .in(UserInfoWithJsonName::getName, Lists.of(name1, name3))
             .or(i -> i.eq(UserInfoWithJsonName::getName, user2.getName()));
 
-    val list = Database.list(wrapper);
+    List<UserInfoWithJsonName> list = Database.list(wrapper);
 
     assertEquals(3, list.size(), "Query should return exactly two results");
 
-    List<String> usernames =
-        list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
+    List<String> usernames = list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
 
     assertTrue(
         usernames.contains(name1.getUsername()),
@@ -230,7 +229,7 @@ class JsonFieldHandlerTest {
         QueryCondition.query(UserInfoWithJsonName.class)
             .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
 
-    val list = Database.list(wrapper);
+    List<UserInfoWithJsonName> list = Database.list(wrapper);
 
     assertEquals(2, list.size(), "Query should return exactly two results");
 
@@ -277,7 +276,7 @@ class JsonFieldHandlerTest {
         QueryCondition.query(UserInfoWithJsonName.class)
             .activeIn(UserInfoWithJsonName::getName, Lists.of(name1, name3));
 
-    val list = Database.list(wrapper);
+    List<UserInfoWithJsonName> list = Database.list(wrapper);
 
     assertEquals(2, list.size(), "Query should return exactly two results");
 
