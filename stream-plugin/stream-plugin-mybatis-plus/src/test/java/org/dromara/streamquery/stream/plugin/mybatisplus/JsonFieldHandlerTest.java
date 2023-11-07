@@ -152,7 +152,8 @@ class JsonFieldHandlerTest {
 
     assertEquals(3, list.size(), "Query should return exactly two results");
 
-    List<String> usernames = list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
+    List<String> usernames =
+        list.stream().map(user -> user.getName().getUsername()).collect(Collectors.toList());
 
     assertTrue(
         usernames.contains(name1.getUsername()),

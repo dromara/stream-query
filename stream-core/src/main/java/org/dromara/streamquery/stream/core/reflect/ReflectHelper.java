@@ -302,8 +302,8 @@ public class ReflectHelper {
       TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
 
       return IntStream.range(0, typeParameters.length)
-              .boxed()
-              .collect(Collectors.toMap(i -> typeParameters[i].getName(), i -> actualTypeArguments[i]));
+          .boxed()
+          .collect(Collectors.toMap(i -> typeParameters[i].getName(), i -> actualTypeArguments[i]));
     }
     return new HashMap<>();
   }

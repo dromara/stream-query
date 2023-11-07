@@ -27,7 +27,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
 
-
 /**
  * @author VampireAchao Cizai_
  * @since 2022/6/7 13:49
@@ -64,9 +63,10 @@ class ReflectHelperTest {
   @Test
   void testGetGenericMap() {
     final Map<String, Type> genericMap =
-        ReflectHelper.getGenericMap(new HashMap<String, TreeMap<String, Object>>() {
-          private static final long serialVersionUID = -3694145972588238697L;
-        }.getClass());
+        ReflectHelper.getGenericMap(
+            new HashMap<String, TreeMap<String, Object>>() {
+              private static final long serialVersionUID = -3694145972588238697L;
+            }.getClass());
     Assertions.assertEquals(String.class, genericMap.get("K"));
     Type vType = genericMap.get("V");
     if (vType instanceof ParameterizedType) {
