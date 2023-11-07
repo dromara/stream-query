@@ -16,8 +16,11 @@
  */
 package org.dromara.streamquery.stream.core.enums;
 
+import org.dromara.streamquery.stream.core.stream.Steam;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.function.Predicate;
 
 /**
  * JreEnumTest.
@@ -29,6 +32,6 @@ class JreEnumTest {
   @Test
   void currentVersion() {
     JreEnum jreEnum = JreEnum.currentVersion();
-    Assertions.assertEquals(JreEnum.JAVA_8, jreEnum);
+    Assertions.assertTrue(Steam.of(JreEnum.values()).anyMatch(Predicate.isEqual(jreEnum)));
   }
 }

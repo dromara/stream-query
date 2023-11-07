@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <revision>2.0.0-alpha+002</revision>
+        <revision>2.0.1</revision>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <surefire.argLine></surefire.argLine>
@@ -34,7 +34,6 @@
         <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
-
 
 
     <name>Stream Query</name>
@@ -280,7 +279,9 @@
             </activation>
             <properties>
                 <!-- 重写argLine属性为Java 8+的配置 -->
-                <surefire.argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED</surefire.argLine>
+                <surefire.argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens
+                    java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED
+                </surefire.argLine>
             </properties>
         </profile>
 
