@@ -112,7 +112,7 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 | 包名            | 内容                              |
 |---------------|---------------------------------|
 | stream-query  | 优雅的流式操作                         |
-| stream-plugin | orm框架->使用优雅的Lambda进行对数据库进行一系列操作 |
+| stream-plugin | orm框架 -> 使用优雅的Lambda进行对数据库进行一系列操作 |
 
 ### 🐾贡献代码的步骤
 
