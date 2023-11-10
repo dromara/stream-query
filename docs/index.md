@@ -240,10 +240,12 @@ postList: none
 <br/>
 
 ## 🎉上新推荐
-* `v1.5.0-alpha`
-  - 支持了几种配置动态mapper的方式如配置文件、注解硬编码等[pulls/304](https://gitee.com/dromara/stream-query/pulls/304) [pulls/305](https://gitee.com/dromara/stream-query/pulls/305)
-  - 新增JsonFieldHandler，封装typeHandler，使其在序列化/反序列化时可以拿到字段信息
-  - 新增了几个Sets/Lists/Maps等类的函数
+* `v2.0.2`
+  - 升级mybatis-plus到3.5.4
+  - 适配JDK17
+  - BeanHelper.copyProperties支持lombok的@Accessors(chain = true)
+  - 调整SerPred#isEqual方法参数为单个
+  - 解决SimpleName一样的实体类导致只存在一个Mapper的问题，感谢@huang-up
 
 更多上新请查阅：[**更新日志**](https://gitee.com/dromara/stream-query/releases)
 

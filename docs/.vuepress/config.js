@@ -117,6 +117,9 @@ module.exports = {
           {text: '1-8-0', link: '/pages/ca8d6e/#v1-8-0'},
           {text: '1-9-0', link: '/pages/ca8d6e/#v1-9-0'},
           {text: '1-9-1', link: '/pages/ca8d6e/#v1-9-1'},
+          {text: '2.0.0-alpha+001', link: '/pages/ca8d6e/#v2.0.0-alpha+001'},
+          {text: '2.0.0-alpha+002', link: '/pages/ca8d6e/#v2.0.0-alpha+002'},
+          {text: '2.0.2', link: '/pages/ca8d6e/#v2.0.2'}
         ]
       },
     ],
