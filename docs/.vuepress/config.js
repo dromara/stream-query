@@ -39,6 +39,7 @@ module.exports = {
               {text: 'TreeHelper', link: '/pages/c62c28/'},
               {text: 'HighlightHelper', link: '/pages/ca3c2c/'},
               {text: 'ReflectHelper', link: '/pages/affd4f/'},
+              {text: 'BeanHelper', link: '/pages/bd04ee/'},
             ]
           },
           {
