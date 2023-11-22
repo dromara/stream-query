@@ -721,8 +721,7 @@ public class Database {
       return null;
     }
     Class<T> entityClass = getEntityClass(queryWrapper);
-    return execute(
-        entityClass, baseMapper -> baseMapper.selectOne(queryWrapper, throwEx));
+    return execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper, throwEx));
   }
 
   /**
