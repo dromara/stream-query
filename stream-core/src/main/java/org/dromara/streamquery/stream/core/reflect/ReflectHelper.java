@@ -79,7 +79,7 @@ public class ReflectHelper {
                     }));
 
     final String jdkVersion = JreEnum.currentVersion().name();
-    return $ACCESSIBLEObjectOpp.orElseThrow(() -> new RuntimeException("当前JDK版本" + jdkVersion + "进行了模块化管理，可以手动修改JVM启动参数来解决，如：--add-opens java.base/java.util=ALL-UNNAMED --add-opens\n" +
+    return $ACCESSIBLEObjectOpp.orElseThrow(() -> new RuntimeException("当前JDK版本" + jdkVersion + "可能进行了模块化管理，可以尝试手动修改JVM启动参数来解决，如：--add-opens java.base/java.util=ALL-UNNAMED --add-opens\n" +
             "                    java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"));
   }
 
