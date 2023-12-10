@@ -21,6 +21,8 @@ import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serializable;
+
 /**
  * BeanHelperTest
  *
@@ -52,6 +54,12 @@ class BeanHelperTest {
     private String name;
   }
 
+  @Data
+  public static class Artist implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String name;
+  }
+
   @Test
   void testCopyProperties() {
     User source =
@@ -60,7 +68,18 @@ class BeanHelperTest {
             setName("test");
           }
         };
-    Person target = BeanHelper.copyProperties(source, Person.class);
-    Assertions.assertEquals(source.getName(), target.getName());
+    Person person = BeanHelper.copyProperties(source, Person.class);
+    Assertions.assertEquals(source.getName(), person.getName());
+
+    Artist artist =
+        new Artist() {
+          private static final long serialVersionUID = 6276191330280044345L;
+
+          {
+            setName("test");
+          }
+        };
+    User user = BeanHelper.copyProperties(source, User.class);
+    Assertions.assertEquals(artist.getName(), user.getName());
   }
 }
