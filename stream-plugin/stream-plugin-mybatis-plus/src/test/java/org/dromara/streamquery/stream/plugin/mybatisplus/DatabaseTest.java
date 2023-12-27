@@ -417,7 +417,7 @@ class DatabaseTest extends InterceptorTest {
     Page<UserInfo> page = new Page<>();
     page.addOrder(OrderItem.desc("gmtDeleted"));
     Database.ordersPropertyToColumn(page, UserInfo.class);
-    List<OrderItem> orders = page.getOrders();
+    List<OrderItem> orders = page.orders();
     Assertions.assertEquals("gmt_deleted", orders.get(0).getColumn());
 
     // order by gmt_deleted desc

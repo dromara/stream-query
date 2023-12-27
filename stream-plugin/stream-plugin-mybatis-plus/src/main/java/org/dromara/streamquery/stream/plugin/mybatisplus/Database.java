@@ -1210,7 +1210,7 @@ public class Database {
    */
   @SuppressWarnings("deprecation")
   public static <T> void ordersPropertyToColumn(Page<T> page, Class<T> clazz) {
-    page.getOrders()
+    page.orders()
         .forEach(
             SerCons.multi(
                 order ->
