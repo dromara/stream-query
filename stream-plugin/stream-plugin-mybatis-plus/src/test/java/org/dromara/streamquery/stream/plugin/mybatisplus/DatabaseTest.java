@@ -432,11 +432,9 @@ class DatabaseTest extends InterceptorTest {
                   Database.ordersPropertyToColumn(badPage, UserInfo.class);
                   return null;
                 })
-            .getThrowable()
-            .getCause()
-            .getCause();
+            .getThrowable();
     Assertions.assertEquals(
-        "order column { id;drop table user_info; } must not null or be sql injection",
+        "order column { iddroptableuser_info } must not null or be sql injection",
         throwable.getMessage());
   }
 
