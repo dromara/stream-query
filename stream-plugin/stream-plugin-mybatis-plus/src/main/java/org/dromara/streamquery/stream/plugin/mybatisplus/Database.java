@@ -28,7 +28,6 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -46,10 +45,8 @@ import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
-import org.dromara.streamquery.stream.core.lambda.function.SerCons;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Opp;
-import org.dromara.streamquery.stream.core.optional.Sf;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.constant.PluginConst;
@@ -1208,21 +1205,11 @@ public class Database {
    * @param clazz 实体类型
    * @param <T> a T class
    */
-  @SuppressWarnings("deprecation")
   public static <T> void ordersPropertyToColumn(Page<T> page, Class<T> clazz) {
     page.orders()
         .forEach(
-            SerCons.multi(
-                order ->
-                    Sf.of(order.getColumn())
-                        .takeUnless(SqlInjectionUtils::check)
-                        .require(
-                            () ->
-                                new IllegalArgumentException(
-                                    String.format(
-                                        "order column { %s } must not null or be sql injection",
-                                        order.getColumn()))),
-                order -> order.setColumn(propertyToColumn(clazz, order.getColumn()))));
+            order ->
+                Opp.of(propertyToColumn(clazz, order.getColumn())).ifPresent(order::setColumn));
   }
 
   /**

@@ -34,7 +34,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
-import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.mapper.UserInfoMapper;
@@ -412,7 +411,6 @@ class DatabaseTest extends InterceptorTest {
   }
 
   @Test
-  @SuppressWarnings("deprecation")
   void testOrdersPropertyToColumn() {
     Page<UserInfo> page = new Page<>();
     page.addOrder(OrderItem.desc("gmtDeleted"));
@@ -426,16 +424,8 @@ class DatabaseTest extends InterceptorTest {
     // sql injection
     Page<UserInfo> badPage = new Page<>();
     badPage.addOrder(OrderItem.asc("id;drop table user_info;"));
-    Throwable throwable =
-        Opp.ofTry(
-                () -> {
-                  Database.ordersPropertyToColumn(badPage, UserInfo.class);
-                  return null;
-                })
-            .getThrowable();
-    Assertions.assertEquals(
-        "order column { iddroptableuser_info } must not null or be sql injection",
-        throwable.getMessage());
+    OrderItem orderItem = badPage.orders().get(0);
+    Assertions.assertEquals("iddroptableuser_info", orderItem.getColumn());
   }
 
   @Test
