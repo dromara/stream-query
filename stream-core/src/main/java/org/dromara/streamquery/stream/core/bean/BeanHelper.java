@@ -126,11 +126,11 @@ public class BeanHelper {
    * @param <T> 对象类型
    */
   public static <T, R> R copyProperties(T source, R target) {
-    return copyProperties(source, target, CopyOption.globalCopyOption);
+    return copyProperties(source, target, CopyOption.GLOBAL_COPY_OPTION);
   }
 
   public static <T, R> R copyProperties(T source, Class<R> targetType) {
-    return copyProperties(source, targetType, CopyOption.globalCopyOption);
+    return copyProperties(source, targetType, CopyOption.GLOBAL_COPY_OPTION);
   }
 
   public static <T, R> R copyProperties(T source, Class<R> targetType, CopyOption copyOption) {
@@ -153,18 +153,18 @@ public class BeanHelper {
 
     Class<T> sourceType = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
     Map<String, Map.Entry<SerFunc<T, Object>, Serializable>> sourcePropertyGetterSetterMap =
-            LambdaHelper.getPropertyGetterSetterMap(sourceType);
+        LambdaHelper.getPropertyGetterSetterMap(sourceType);
 
     Class<R> targetType = SerFunc.<Class<?>, Class<R>>cast().apply(target.getClass());
     Map<String, Map.Entry<SerFunc<R, Object>, Serializable>> targetPropertyGetterSetterMap =
-            LambdaHelper.getPropertyGetterSetterMap(targetType);
+        LambdaHelper.getPropertyGetterSetterMap(targetType);
 
     for (Map.Entry<String, Map.Entry<SerFunc<T, Object>, Serializable>> sourceEntry :
-            sourcePropertyGetterSetterMap.entrySet()) {
+        sourcePropertyGetterSetterMap.entrySet()) {
       String property = sourceEntry.getKey();
       Map.Entry<SerFunc<T, Object>, Serializable> sourceGetterSetter = sourceEntry.getValue();
       Map.Entry<SerFunc<R, Object>, Serializable> targetGetterSetter =
-              targetPropertyGetterSetterMap.get(property);
+          targetPropertyGetterSetterMap.get(property);
 
       if (targetGetterSetter != null) {
         SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
@@ -173,10 +173,16 @@ public class BeanHelper {
         LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
         LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
         Object value = sourceGetter.apply(source);
-        final Converter<Object, Object> converter = copyOption.getConverter((Class<?>) sourceGetterLambda.getReturnType(), (Class<?>) targetGetterLambda.getReturnType());
+        final Converter<Object, Object> converter =
+            copyOption.getConverter(
+                (Class<?>) sourceGetterLambda.getReturnType(),
+                (Class<?>) targetGetterLambda.getReturnType());
         if (Objects.isNull(converter)) {
           if (!copyOption.isIgnoreError()) {
-            throw new ConvertFailException(String.format("no convert from %s to %s", sourceGetterLambda.getReturnType(), targetGetterLambda.getReturnType()));
+            throw new ConvertFailException(
+                String.format(
+                    "no convert from %s to %s",
+                    sourceGetterLambda.getReturnType(), targetGetterLambda.getReturnType()));
           }
         } else {
           value = converter.convert(value);
@@ -187,7 +193,9 @@ public class BeanHelper {
           if (BiConsumer.class.isAssignableFrom(setter.getClass())) {
             SerFunc.<Serializable, BiConsumer<R, Object>>cast().apply(setter).accept(target, value);
           } else if (BiFunction.class.isAssignableFrom(setter.getClass())) {
-            SerFunc.<Serializable, BiFunction<R, Object, R>>cast().apply(setter).apply(target, value);
+            SerFunc.<Serializable, BiFunction<R, Object, R>>cast()
+                .apply(setter)
+                .apply(target, value);
           }
         } catch (Exception e) {
           if (copyOption.isIgnoreError()) {
@@ -199,5 +207,4 @@ public class BeanHelper {
     }
     return target;
   }
-
 }

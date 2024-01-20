@@ -90,7 +90,6 @@ class BeanHelperTest {
     assertEquals(artist.getName(), user.getName());
   }
 
-
   @Data
   public static class EntityWithStringId {
     private String id;
@@ -107,7 +106,8 @@ class BeanHelperTest {
     source.setId("1");
     EntityWithIntegerId target = BeanHelper.copyProperties(source, EntityWithIntegerId.class);
     assertEquals(source.getId(), target.getId().toString());
-    assertEquals(source.getId(), BeanHelper.copyProperties(target, EntityWithStringId.class).getId());
+    assertEquals(
+        source.getId(), BeanHelper.copyProperties(target, EntityWithStringId.class).getId());
 
     assertNull(BeanHelper.copyProperties(null, Object.class));
     assertEquals("1", BeanHelper.copyProperties(1, String.class));
@@ -130,9 +130,13 @@ class BeanHelperTest {
     UUID uuid = UUID.randomUUID();
     assertEquals(uuid, BeanHelper.copyProperties(uuid.toString(), UUID.class));
     LocalDateTime ldt = LocalDateTime.now();
-    assertEquals(Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant()), BeanHelper.copyProperties(ldt, Date.class));
+    assertEquals(
+        Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant()),
+        BeanHelper.copyProperties(ldt, Date.class));
     LocalDate ld = LocalDate.now();
-    assertEquals(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant()), BeanHelper.copyProperties(ld, Date.class));
+    assertEquals(
+        Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant()),
+        BeanHelper.copyProperties(ld, Date.class));
     assertEquals(ld, BeanHelper.copyProperties(ldt, LocalDate.class));
     assertEquals(ld.atStartOfDay(), BeanHelper.copyProperties(ld, LocalDateTime.class));
   }
@@ -141,7 +145,12 @@ class BeanHelperTest {
   void testIgnoreError() {
     val source = new EntityWithStringId();
     source.setId("1");
-    assertThrows(ConvertFailException.class, () -> BeanHelper.copyProperties(source, EntityWithIntegerId.class, new CopyOption()));
-    assertDoesNotThrow(() -> BeanHelper.copyProperties(source, EntityWithIntegerId.class, new CopyOption().setIgnoreError(true)));
+    assertThrows(
+        ConvertFailException.class,
+        () -> BeanHelper.copyProperties(source, EntityWithIntegerId.class, new CopyOption()));
+    assertDoesNotThrow(
+        () ->
+            BeanHelper.copyProperties(
+                source, EntityWithIntegerId.class, new CopyOption().setIgnoreError(true)));
   }
 }
