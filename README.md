@@ -44,14 +44,14 @@
 <dependency>
    <groupId>org.dromara.stream-query</groupId>
    <artifactId>stream-plugin-mybatis-plus</artifactId>
-   <version>x.x.x</version>
+   <version>2.1.0-alpha</version>
 </dependency>
 <!-- 可单独引入 -->
 <!-- https://mvnrepository.com/artifact/org.dromara/stream-core -->
 <dependency>
   <groupId>org.dromara.stream-query</groupId>
   <artifactId>stream-core</artifactId>
-  <version>x.x.x</version>
+  <version>2.1.0-alpha</version>
 </dependency>
 ```
 
