@@ -108,6 +108,28 @@ class BeanHelperTest {
     assertEquals(source.getId(), target.getId().toString());
     assertEquals(
         source.getId(), BeanHelper.copyProperties(target, EntityWithStringId.class).getId());
+    assertEquals(
+        target.getId(),
+        BeanHelper.copyProperties(
+                source,
+                EntityWithIntegerId.class,
+                new CopyOption().addConverter(String.class, Integer.class, Integer::new))
+            .getId());
+    assertEquals(
+        target.getId(),
+        BeanHelper.copyProperties(
+                source,
+                EntityWithIntegerId.class,
+                new CopyOption()
+                    .addConverter(
+                        EntityWithStringId.class,
+                        EntityWithIntegerId.class,
+                        s -> {
+                          val t = new EntityWithIntegerId();
+                          t.setId(Integer.valueOf(s.getId()));
+                          return t;
+                        }))
+            .getId());
 
     assertNull(BeanHelper.copyProperties(null, Object.class));
     assertEquals("1", BeanHelper.copyProperties(1, String.class));
