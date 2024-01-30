@@ -49,8 +49,8 @@ public class BeanHelper {
   /**
    * getPropertyName.
    *
-   * @param getterOrSetter a {@link java.lang.String} object
-   * @return a {@link java.lang.String} object
+   * @param getterOrSetter a {@link String} object
+   * @return a {@link String} object
    */
   public static String getPropertyName(String getterOrSetter) {
     String originProperty = null;
@@ -70,7 +70,7 @@ public class BeanHelper {
   /**
    * isGetter.
    *
-   * @param methodName a {@link java.lang.String} object
+   * @param methodName a {@link String} object
    * @return a boolean
    */
   public static boolean isGetter(String methodName) {
@@ -81,7 +81,7 @@ public class BeanHelper {
   /**
    * isGetterBoolean.
    *
-   * @param methodName a {@link java.lang.String} object
+   * @param methodName a {@link String} object
    * @return a boolean
    */
   public static boolean isGetterBoolean(String methodName) {
@@ -91,7 +91,7 @@ public class BeanHelper {
   /**
    * isSetter.
    *
-   * @param methodName a {@link java.lang.String} object
+   * @param methodName a {@link String} object
    * @return a boolean
    */
   public static boolean isSetter(String methodName) {
@@ -166,43 +166,43 @@ public class BeanHelper {
       Map.Entry<SerFunc<R, Object>, Serializable> targetGetterSetter =
           targetPropertyGetterSetterMap.get(property);
 
-      if (targetGetterSetter != null) {
-        SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
-        SerFunc<R, Object> targetGetter = targetGetterSetter.getKey();
+      if (sourceGetterSetter == null || targetGetterSetter == null) {
+        continue;
+      }
+      SerFunc<T, Object> sourceGetter = sourceGetterSetter.getKey();
+      SerFunc<R, Object> targetGetter = targetGetterSetter.getKey();
 
-        LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
-        LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
-        Object value = sourceGetter.apply(source);
-        final Converter<Object, Object> converter =
-            copyOption.getConverter(
-                (Class<?>) sourceGetterLambda.getReturnType(),
-                (Class<?>) targetGetterLambda.getReturnType());
+      LambdaExecutable sourceGetterLambda = LambdaHelper.resolve(sourceGetter);
+      LambdaExecutable targetGetterLambda = LambdaHelper.resolve(targetGetter);
+      Object value = sourceGetter.apply(source);
+      Converter<Object, Object> converter =
+          copyOption.getConverter(
+              (Class<?>) sourceGetterLambda.getReturnType(),
+              (Class<?>) targetGetterLambda.getReturnType());
+      if (Objects.isNull(converter)
+          && Objects.equals(
+              sourceGetterLambda.getReturnType(), targetGetterLambda.getReturnType())) {
+        converter = CopyOption.NO_OP_CONVERTER;
+      }
+      try {
         if (Objects.isNull(converter)) {
-          if (!copyOption.isIgnoreError()) {
-            throw new ConvertFailException(
-                String.format(
-                    "no convert from %s to %s",
-                    sourceGetterLambda.getReturnType(), targetGetterLambda.getReturnType()));
-          }
-        } else {
-          value = converter.convert(value);
+          throw new ConvertFailException(
+              String.format(
+                  "no converter from %s to %s",
+                  sourceGetterLambda.getReturnType(), targetGetterLambda.getReturnType()));
         }
+        value = converter.convert(value);
         Serializable setter = targetGetterSetter.getValue();
-
-        try {
-          if (BiConsumer.class.isAssignableFrom(setter.getClass())) {
-            SerFunc.<Serializable, BiConsumer<R, Object>>cast().apply(setter).accept(target, value);
-          } else if (BiFunction.class.isAssignableFrom(setter.getClass())) {
-            SerFunc.<Serializable, BiFunction<R, Object, R>>cast()
-                .apply(setter)
-                .apply(target, value);
-          }
-        } catch (Exception e) {
-          if (copyOption.isIgnoreError()) {
-            continue;
-          }
-          throw new ConvertFailException(e);
+        if (BiConsumer.class.isAssignableFrom(setter.getClass())) {
+          SerFunc.<Serializable, BiConsumer<R, Object>>cast().apply(setter).accept(target, value);
+        } else if (BiFunction.class.isAssignableFrom(setter.getClass())) {
+          SerFunc.<Serializable, BiFunction<R, Object, R>>cast().apply(setter).apply(target, value);
         }
+      } catch (Exception e) {
+        if (copyOption.isIgnoreError()) {
+          continue;
+        }
+        throw new ConvertFailException(e);
       }
     }
     return target;
