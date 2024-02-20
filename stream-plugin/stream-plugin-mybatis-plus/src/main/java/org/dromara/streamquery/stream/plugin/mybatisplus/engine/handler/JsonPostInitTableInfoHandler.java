@@ -30,6 +30,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author VampireAchao
@@ -70,13 +71,14 @@ public class JsonPostInitTableInfoHandler implements PostInitTableInfoHandler {
       }
       ResultMap resultMap = configuration.getResultMap(tableInfo.getResultMap());
       for (ResultMapping resultMapping : resultMap.getResultMappings()) {
-        if (resultMapping.getProperty().equalsIgnoreCase(fieldInfo.getProperty())) {
-          TypeHandler<?> handler = resultMapping.getTypeHandler();
-          if (handler instanceof AbstractJsonFieldHandler) {
-            AbstractJsonFieldHandler<?> typeHandler = (AbstractJsonFieldHandler<?>) handler;
-            typeHandler.setTableInfo(tableInfo);
-            typeHandler.setFieldInfo(fieldInfo);
-          }
+        if (!Objects.equals(resultMapping.getProperty(), fieldInfo.getProperty())) {
+          continue;
+        }
+        TypeHandler<?> handler = resultMapping.getTypeHandler();
+        if (handler instanceof AbstractJsonFieldHandler) {
+          AbstractJsonFieldHandler<?> typeHandler = (AbstractJsonFieldHandler<?>) handler;
+          typeHandler.setTableInfo(tableInfo);
+          typeHandler.setFieldInfo(fieldInfo);
         }
       }
     }
