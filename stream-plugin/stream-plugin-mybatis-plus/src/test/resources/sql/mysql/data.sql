@@ -1,6 +1,5 @@
 DELETE
 FROM user_info;
-
 INSERT INTO user_info (name, age, email)
 VALUES ('Jon', 18, 'myEmail1'),
        ('Jack', 18, 'myEmail2'),
@@ -10,7 +9,6 @@ VALUES ('Jon', 18, 'myEmail1'),
 
 DELETE
 FROM user_role;
-
 INSERT INTO user_role (user_id, role_id)
 VALUES (1, '1'),
        (1, '2'),
@@ -25,14 +23,12 @@ VALUES (1, '1'),
 
 DELETE
 FROM role_info;
-
 INSERT INTO role_info (id, role_name)
 VALUES ('1', 'admin'),
        ('2', 'user'),
        ('3', 'guest');
 
 DELETE FROM product_info;
-
 INSERT INTO product_info (product_name, product_price, tenant_id)
 VALUES ('Apple iPhone 13', 699, '1'),
        ('Samsung Galaxy S21', 799, '1'),
@@ -41,7 +37,6 @@ VALUES ('Apple iPhone 13', 699, '1'),
        ('Sony Xperia 1 III', 1199, '1');
 
 DELETE FROM product_category;
-
 INSERT INTO product_category (product_id, category_id, tenant_id)
 VALUES (1, 1, '1'),
        (1, 2, '1'),
