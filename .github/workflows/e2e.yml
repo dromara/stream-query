@@ -65,12 +65,24 @@ jobs:
       - name: Run H2 Tests (Default)
         run: mvn -B test
 
+      - name: Execute MySQL schema and data scripts
+        run: |
+          cat ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/schema.sql | mysql -h 127.0.0.1 -P 3306 -u stream-query --password=stream-query stream-query
+          cat ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/data.sql | mysql -h 127.0.0.1 -P 3306 -u stream-query --password=stream-query stream-query
+        if: success()
+
       - name: Run MySQL Tests
         run: mvn -B test -Dspring.profiles.active=mysql
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/stream-query?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
           SPRING_DATASOURCE_USERNAME: stream-query
           SPRING_DATASOURCE_PASSWORD: stream-query
+
+      - name: Execute PostgreSQL schema and data scripts
+        run: |
+          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/pgsql/schema.sql
+          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/pgsql/data.sql
+        if: success()
 
       - name: Run PostgreSQL Tests
         run: mvn -B test -Dspring.profiles.active=pgsql
