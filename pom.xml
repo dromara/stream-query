@@ -109,7 +109,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
                     <!-- 使用属性值来配置argLine -->
                     <argLine>${surefire.argLine}</argLine>
                 </configuration>
