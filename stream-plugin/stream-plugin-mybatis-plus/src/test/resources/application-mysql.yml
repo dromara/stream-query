@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/stream-query?useSSL=false&serverTimezone=UTC
+    username: stream-query
+    password: stream-query
+    driver-class-name: com.mysql.cj.jdbc.Driver
