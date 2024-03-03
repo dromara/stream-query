@@ -50,12 +50,16 @@ import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.constant.PluginConst;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.DynamicRoutingDataSource;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.toolkit.DynamicDataSourceContextHolder;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.mybatis.spring.SqlSessionUtils;
 
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -67,6 +71,10 @@ import java.util.stream.Stream;
  */
 public class Database {
   private static final Log LOG = LogFactory.getLog(Database.class);
+
+  private static final AtomicInteger dataSourceCounter = new AtomicInteger(0);
+
+  private static DynamicRoutingDataSource routingDataSource;
 
   private static final Map<Class<?>, Map<String, String>> TABLE_PROPERTY_COLUMN_CACHE =
       new ConcurrentHashMap<>();
@@ -1276,5 +1284,41 @@ public class Database {
    */
   public static boolean isDynamicMapper(String mapperClassName) {
     return mapperClassName.startsWith(PluginConst.DYNAMIC_MAPPER_PREFIX);
+  }
+
+  /**
+   * 自动配置时注入
+   * @param dataSource
+   */
+  public static void setRoutingDataSource(DynamicRoutingDataSource dataSource) {
+    routingDataSource = dataSource;
+  }
+
+  /**
+   * 手动更换数据源
+   * @param dataSource
+   */
+  public static void setDataSource(DataSource dataSource) {
+    // 生成一个唯一的序号
+    int dsNumber = dataSourceCounter.incrementAndGet();
+
+    // 拼接名称，形成 "slave1", "slave2", 等等
+    String dsName = "slave" + dsNumber;
+
+    // 假设这里有一个方法来配置并返回Database实例
+    setDataSource(dsName, dataSource);
+  }
+
+  public static void setDataSource(String ds, DataSource dataSource) {
+    DynamicDataSourceContextHolder.push(ds);
+    routingDataSource.addDataSource(ds, dataSource);
+  }
+
+  /**
+   * 手动移除当前使用的数据源
+   */
+  public static void popDataSource() {
+    String ds = DynamicDataSourceContextHolder.poll();
+    routingDataSource.removeDataSource(ds);
   }
 }
