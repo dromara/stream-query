@@ -18,7 +18,7 @@ spring:
     url: jdbc:mysql://localhost:3306/test?useSSL=false&autoReconnect=true&characterEncoding=utf8&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 13311785855
+    password:
     # 指定为HikariDataSource
     type: com.zaxxer.hikari.HikariDataSource
     # hikari连接池配置

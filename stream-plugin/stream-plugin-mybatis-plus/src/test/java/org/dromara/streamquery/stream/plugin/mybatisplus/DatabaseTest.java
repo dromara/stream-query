@@ -71,7 +71,7 @@ class DatabaseTest extends InterceptorTest {
     config.setJdbcUrl("jdbc:mysql://localhost:3306/crm?useSSL=false&autoReconnect=true&characterEncoding=utf8&allowPublicKeyRetrieval=true");
     config.setDriverClassName("com.mysql.cj.jdbc.Driver");
     config.setUsername("root");
-    config.setPassword("13311785855");  // 请不要硬编码密码，考虑使用更安全的方式管理密码
+    config.setPassword("");  // 请不要硬编码密码，考虑使用更安全的方式管理密码
 
     // HikariCP特定配置
     config.setPoolName("HikariCP");
