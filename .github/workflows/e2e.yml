@@ -67,8 +67,8 @@ jobs:
 
       - name: Execute MySQL schema and data scripts
         run: |
-          cat ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/schema.sql | mysql -h 127.0.0.1 -P 3306 -u stream-query --password=stream-query stream-query
-          cat ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/data.sql | mysql -h 127.0.0.1 -P 3306 -u stream-query --password=stream-query stream-query
+          mysql -h 127.0.0.1 -P 3306 -u stream-query --password=stream-query stream-query < ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/schema.sql
+          mysql -h 127.0.0.1 -P 3306 -u stream-query --password=stream-query stream-query < ./stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/data.sql
         if: success()
 
       - name: Run MySQL Tests
