@@ -30,7 +30,7 @@
 
 [中文文档](http://stream-query.dromara.org)
 &nbsp;[仓库地址](https://gitee.com/dromara/stream-query)
-&nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
+&nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai) 
 
 ## 📦安装
 
