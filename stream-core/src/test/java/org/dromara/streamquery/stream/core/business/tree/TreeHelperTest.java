@@ -25,8 +25,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -183,6 +185,20 @@ class TreeHelperTest {
     Assertions.assertEquals(originStudentTree, studentTree);
   }
 
+  @Test
+  void testCascadeSelect() {
+    List<Student> studentTree = studentTreeHelper.toTree(originStudentList);
+
+    Long targetStudentId = 6L;
+
+    List<Long> expectedPathIds = Arrays.asList(1L, 3L, 6L);
+
+    List<Student> selectedPath = studentTreeHelper.cascadeSelect(studentTree, targetStudentId);
+
+    List<Long> selectedPathIds = selectedPath.stream().map(Student::getId).collect(Collectors.toList());
+
+    Assertions.assertEquals(expectedPathIds, selectedPathIds);
+  }
   @Test
   void testToTreeWithCondition() {
     TreeHelper<Student, Long> conditionTreeHelper =
