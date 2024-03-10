@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -15,12 +16,11 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.jndi;
 
+import javax.sql.DataSource;
 
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.DataSourceProperty;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.DataSourceCreator;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
-
-import javax.sql.DataSource;
 
 /**
  * JNDI数据源创建器
@@ -30,26 +30,26 @@ import javax.sql.DataSource;
  */
 public class JndiDataSourceCreator implements DataSourceCreator {
 
-    private static final JndiDataSourceLookup LOOKUP = new JndiDataSourceLookup();
+  private static final JndiDataSourceLookup LOOKUP = new JndiDataSourceLookup();
 
-    /**
-     * 创建JNDI数据源
-     *
-     * @param jndiName jndi数据源名称
-     * @return 数据源
-     */
-    public DataSource createDataSource(String jndiName) {
-        return LOOKUP.getDataSource(jndiName);
-    }
+  /**
+   * 创建JNDI数据源
+   *
+   * @param jndiName jndi数据源名称
+   * @return 数据源
+   */
+  public DataSource createDataSource(String jndiName) {
+    return LOOKUP.getDataSource(jndiName);
+  }
 
-    @Override
-    public DataSource createDataSource(DataSourceProperty dataSourceProperty) {
-        return createDataSource(dataSourceProperty.getJndiName());
-    }
+  @Override
+  public DataSource createDataSource(DataSourceProperty dataSourceProperty) {
+    return createDataSource(dataSourceProperty.getJndiName());
+  }
 
-    @Override
-    public boolean support(DataSourceProperty dataSourceProperty) {
-        String jndiName = dataSourceProperty.getJndiName();
-        return jndiName != null && !jndiName.isEmpty();
-    }
+  @Override
+  public boolean support(DataSourceProperty dataSourceProperty) {
+    String jndiName = dataSourceProperty.getJndiName();
+    return jndiName != null && !jndiName.isEmpty();
+  }
 }

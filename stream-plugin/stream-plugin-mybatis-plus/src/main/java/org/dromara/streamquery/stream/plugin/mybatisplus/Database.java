@@ -16,6 +16,8 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus;
 
+import javax.sql.DataSource;
+
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
@@ -55,7 +57,6 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSourc
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.mybatis.spring.SqlSessionUtils;
 
-import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1288,6 +1289,7 @@ public class Database {
 
   /**
    * 自动配置时注入
+   *
    * @param dataSource
    */
   public static void setRoutingDataSource(DynamicRoutingDataSource dataSource) {
@@ -1296,6 +1298,7 @@ public class Database {
 
   /**
    * 手动更换数据源
+   *
    * @param dataSource
    */
   public static void setDataSource(DataSource dataSource) {
@@ -1314,9 +1317,7 @@ public class Database {
     routingDataSource.addDataSource(ds, dataSource);
   }
 
-  /**
-   * 手动移除当前使用的数据源
-   */
+  /** 手动移除当前使用的数据源 */
   public static void popDataSource() {
     String ds = DynamicDataSourceContextHolder.poll();
     routingDataSource.removeDataSource(ds);

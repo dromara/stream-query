@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -14,8 +15,6 @@
  * limitations under the License.
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.tx.annotation;
-
-
 
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.tx.DsPropagation;
 
@@ -31,24 +30,24 @@ import java.lang.annotation.*;
 @Documented
 public @interface DSTransactional {
 
-    /**
-     * 回滚异常
-     *
-     * @return Class[]
-     */
-    Class<? extends Throwable>[] rollbackFor() default {Exception.class};
+  /**
+   * 回滚异常
+   *
+   * @return Class[]
+   */
+  Class<? extends Throwable>[] rollbackFor() default {Exception.class};
 
-    /**
-     * 不回滚异常
-     *
-     * @return Class[]
-     */
-    Class<? extends Throwable>[] noRollbackFor() default {};
+  /**
+   * 不回滚异常
+   *
+   * @return Class[]
+   */
+  Class<? extends Throwable>[] noRollbackFor() default {};
 
-    /**
-     * 事务传播行为
-     *
-     * @return DsPropagation
-     */
-    DsPropagation propagation() default DsPropagation.REQUIRED;
+  /**
+   * 事务传播行为
+   *
+   * @return DsPropagation
+   */
+  DsPropagation propagation() default DsPropagation.REQUIRED;
 }

@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.tx;
-
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,93 +31,87 @@ import java.util.List;
  */
 @Slf4j
 public class SavePointHolder {
-    /**
-     * savepoint name prefix
-     */
-    private static final String SAVEPOINT_NAME_PREFIX = "DYNAMIC_";
-    /**
-     * connection proxy
-     */
-    private ConnectionProxy connectionProxy;
-    /**
-     * savepoints
-     */
-    private LinkedList<Savepoint> savepoints;
+  /** savepoint name prefix */
+  private static final String SAVEPOINT_NAME_PREFIX = "DYNAMIC_";
+  /** connection proxy */
+  private ConnectionProxy connectionProxy;
+  /** savepoints */
+  private LinkedList<Savepoint> savepoints;
 
-    /**
-     * constructor
-     *
-     * @param connectionProxy connection proxy
-     */
-    public SavePointHolder(ConnectionProxy connectionProxy) {
-        this.connectionProxy = connectionProxy;
-        this.savepoints = new LinkedList<>();
-    }
+  /**
+   * constructor
+   *
+   * @param connectionProxy connection proxy
+   */
+  public SavePointHolder(ConnectionProxy connectionProxy) {
+    this.connectionProxy = connectionProxy;
+    this.savepoints = new LinkedList<>();
+  }
 
-    /**
-     * conversion savepoint holder
-     *
-     * @throws SQLException SQLException
-     */
-    public void conversionSavePointHolder() throws SQLException {
-        if (connectionProxy == null) {
-            throw new SQLTransientConnectionException();
-        }
-        int savepointCounter = connectionProxy.getSavepointCounter();
-        Savepoint savepoint = connectionProxy.setSavepoint(SAVEPOINT_NAME_PREFIX + savepointCounter);
-        connectionProxy.setSavepointCounter(savepointCounter + 1);
-        savepoints.addLast(savepoint);
+  /**
+   * conversion savepoint holder
+   *
+   * @throws SQLException SQLException
+   */
+  public void conversionSavePointHolder() throws SQLException {
+    if (connectionProxy == null) {
+      throw new SQLTransientConnectionException();
     }
+    int savepointCounter = connectionProxy.getSavepointCounter();
+    Savepoint savepoint = connectionProxy.setSavepoint(SAVEPOINT_NAME_PREFIX + savepointCounter);
+    connectionProxy.setSavepointCounter(savepointCounter + 1);
+    savepoints.addLast(savepoint);
+  }
 
-    /**
-     * release savepoint
-     *
-     * @return savepoint index
-     * @throws SQLException SQLException
-     */
-    public boolean releaseSavepoint() throws SQLException {
-        Savepoint savepoint = savepoints.pollLast();
-        if (savepoint != null) {
-            connectionProxy.releaseSavepoint(savepoint);
-            String savepointName = savepoint.getSavepointName();
-            log.info("dynamic-datasource releaseSavepoint [{}]", savepointName);
-            return savepoints.isEmpty();
-        }
-        return true;
+  /**
+   * release savepoint
+   *
+   * @return savepoint index
+   * @throws SQLException SQLException
+   */
+  public boolean releaseSavepoint() throws SQLException {
+    Savepoint savepoint = savepoints.pollLast();
+    if (savepoint != null) {
+      connectionProxy.releaseSavepoint(savepoint);
+      String savepointName = savepoint.getSavepointName();
+      log.info("dynamic-datasource releaseSavepoint [{}]", savepointName);
+      return savepoints.isEmpty();
     }
+    return true;
+  }
 
-    /**
-     * rollback savepoint
-     *
-     * @return savepoint index
-     * @throws SQLException SQLException
-     */
-    public boolean rollbackSavePoint() throws SQLException {
-        Savepoint savepoint = savepoints.pollLast();
-        if (savepoint != null) {
-            connectionProxy.rollback(savepoint);
-            String savepointName = savepoint.getSavepointName();
-            log.info("dynamic-datasource rollbackSavePoint [{}]", savepointName);
-            return savepoints.isEmpty();
-        }
-        return true;
+  /**
+   * rollback savepoint
+   *
+   * @return savepoint index
+   * @throws SQLException SQLException
+   */
+  public boolean rollbackSavePoint() throws SQLException {
+    Savepoint savepoint = savepoints.pollLast();
+    if (savepoint != null) {
+      connectionProxy.rollback(savepoint);
+      String savepointName = savepoint.getSavepointName();
+      log.info("dynamic-datasource rollbackSavePoint [{}]", savepointName);
+      return savepoints.isEmpty();
     }
+    return true;
+  }
 
-    /**
-     * get connection proxy
-     *
-     * @return
-     */
-    public ConnectionProxy getConnectionProxy() {
-        return this.connectionProxy;
-    }
+  /**
+   * get connection proxy
+   *
+   * @return
+   */
+  public ConnectionProxy getConnectionProxy() {
+    return this.connectionProxy;
+  }
 
-    /**
-     * get savepoints
-     *
-     * @return
-     */
-    public List<Savepoint> getSavePoints() {
-        return this.savepoints;
-    }
+  /**
+   * get savepoints
+   *
+   * @return
+   */
+  public List<Savepoint> getSavePoints() {
+    return this.savepoints;
+  }
 }

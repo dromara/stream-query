@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.tx;
-
 
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.tx.annotation.DsTxEventListener;
 import org.springframework.context.ApplicationListener;
@@ -30,20 +30,21 @@ import java.lang.reflect.Method;
  * @author zp
  */
 public class DsTxEventListenerFactory implements EventListenerFactory, Ordered {
-    private static final int EVENT_ORDER = 100;
+  private static final int EVENT_ORDER = 100;
 
-    @Override
-    public boolean supportsMethod(Method method) {
-        return AnnotatedElementUtils.hasAnnotation(method, DsTxEventListener.class);
-    }
+  @Override
+  public boolean supportsMethod(Method method) {
+    return AnnotatedElementUtils.hasAnnotation(method, DsTxEventListener.class);
+  }
 
-    @Override
-    public ApplicationListener<?> createApplicationListener(String beanName, Class<?> type, Method method) {
-        return new DsTxListenerMethodAdapter(beanName, type, method);
-    }
+  @Override
+  public ApplicationListener<?> createApplicationListener(
+      String beanName, Class<?> type, Method method) {
+    return new DsTxListenerMethodAdapter(beanName, type, method);
+  }
 
-    @Override
-    public int getOrder() {
-        return EVENT_ORDER;
-    }
+  @Override
+  public int getOrder() {
+    return EVENT_ORDER;
+  }
 }

@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -23,33 +24,19 @@ package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSour
  */
 public interface DdConstants {
 
-    /**
-     * 数据源：主库
-     */
-    String MASTER = "master";
-    /**
-     * 数据源：从库
-     */
-    String SLAVE = "slave";
+  /** 数据源：主库 */
+  String MASTER = "master";
+  /** 数据源：从库 */
+  String SLAVE = "slave";
 
-    /**
-     * DRUID数据源类
-     */
-    String DRUID_DATASOURCE = "com.alibaba.druid.pool.DruidDataSource";
-    /**
-     * HikariCp数据源
-     */
-    String HIKARI_DATASOURCE = "com.zaxxer.hikari.HikariDataSource";
-    /**
-     * BeeCp数据源
-     */
-    String BEECP_DATASOURCE = "cn.beecp.BeeDataSource";
-    /**
-     * DBCP2数据源
-     */
-    String DBCP2_DATASOURCE = "org.apache.commons.dbcp2.BasicDataSource";
-    /**
-     * Atomikos数据源
-     */
-    String ATOMIKOS_DATASOURCE = "com.atomikos.jdbc.AtomikosDataSourceBean";
+  /** DRUID数据源类 */
+  String DRUID_DATASOURCE = "com.alibaba.druid.pool.DruidDataSource";
+  /** HikariCp数据源 */
+  String HIKARI_DATASOURCE = "com.zaxxer.hikari.HikariDataSource";
+  /** BeeCp数据源 */
+  String BEECP_DATASOURCE = "cn.beecp.BeeDataSource";
+  /** DBCP2数据源 */
+  String DBCP2_DATASOURCE = "org.apache.commons.dbcp2.BasicDataSource";
+  /** Atomikos数据源 */
+  String ATOMIKOS_DATASOURCE = "com.atomikos.jdbc.AtomikosDataSourceBean";
 }

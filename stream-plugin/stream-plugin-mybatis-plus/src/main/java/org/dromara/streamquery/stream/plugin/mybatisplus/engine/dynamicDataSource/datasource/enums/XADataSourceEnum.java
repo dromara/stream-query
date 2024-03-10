@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -24,49 +25,39 @@ import lombok.Getter;
  */
 @Getter
 public enum XADataSourceEnum {
-    /**
-     * mysql
-     */
-    MYSQL("com.mysql.cj.jdbc.MysqlXADataSource"),
-    /**
-     * oracle
-     */
-    ORACLE("oracle.jdbc.xa.client.OracleXADataSource"),
-    /**
-     * postgresql
-     */
-    POSTGRE_SQL("org.postgresql.xa.PGXADataSource"),
-    /**
-     * h2
-     */
-    H2("org.h2.jdbcx.JdbcDataSource");
+  /** mysql */
+  MYSQL("com.mysql.cj.jdbc.MysqlXADataSource"),
+  /** oracle */
+  ORACLE("oracle.jdbc.xa.client.OracleXADataSource"),
+  /** postgresql */
+  POSTGRE_SQL("org.postgresql.xa.PGXADataSource"),
+  /** h2 */
+  H2("org.h2.jdbcx.JdbcDataSource");
 
-    /**
-     * xa数据源类名
-     */
-    private final String xaDriverClassName;
+  /** xa数据源类名 */
+  private final String xaDriverClassName;
 
-    /**
-     * 构造方法
-     *
-     * @param xaDriverClassName
-     */
-    XADataSourceEnum(String xaDriverClassName) {
-        this.xaDriverClassName = xaDriverClassName;
+  /**
+   * 构造方法
+   *
+   * @param xaDriverClassName
+   */
+  XADataSourceEnum(String xaDriverClassName) {
+    this.xaDriverClassName = xaDriverClassName;
+  }
+
+  /**
+   * 是否包含
+   *
+   * @param xaDataSourceClassName xa数据源类名
+   * @return boolean 包含
+   */
+  public static boolean contains(String xaDataSourceClassName) {
+    for (XADataSourceEnum item : values()) {
+      if (item.getXaDriverClassName().equals(xaDataSourceClassName)) {
+        return true;
+      }
     }
-
-    /**
-     * 是否包含
-     *
-     * @param xaDataSourceClassName xa数据源类名
-     * @return boolean 包含
-     */
-    public static boolean contains(String xaDataSourceClassName) {
-        for (XADataSourceEnum item : values()) {
-            if (item.getXaDriverClassName().equals(xaDataSourceClassName)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    return false;
+  }
 }

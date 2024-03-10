@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -18,14 +19,13 @@ package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSour
 import javax.sql.DataSource;
 
 /**
- * Description
- * Detect if the datasource contains active connections
+ * Description Detect if the datasource contains active connections
  *
  * @author alvinkwok
  * @since 2023/10/18
  */
 public interface DataSourceActiveDetector {
-    boolean containsActiveConnection(DataSource dataSource);
+  boolean containsActiveConnection(DataSource dataSource);
 
-    boolean support(DataSource dataSource);
+  boolean support(DataSource dataSource);
 }

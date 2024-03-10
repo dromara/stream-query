@@ -195,10 +195,12 @@ class TreeHelperTest {
 
     List<Student> selectedPath = studentTreeHelper.cascadeSelect(studentTree, targetStudentId);
 
-    List<Long> selectedPathIds = selectedPath.stream().map(Student::getId).collect(Collectors.toList());
+    List<Long> selectedPathIds =
+        selectedPath.stream().map(Student::getId).collect(Collectors.toList());
 
     Assertions.assertEquals(expectedPathIds, selectedPathIds);
   }
+
   @Test
   void testToTreeWithCondition() {
     TreeHelper<Student, Long> conditionTreeHelper =

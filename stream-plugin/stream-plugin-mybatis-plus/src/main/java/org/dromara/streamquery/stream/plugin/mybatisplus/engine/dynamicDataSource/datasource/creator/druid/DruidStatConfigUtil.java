@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -31,36 +32,37 @@ import java.util.Map;
 @Slf4j
 public final class DruidStatConfigUtil {
 
-    private static final Map<String, Method> METHODS = DsConfigUtil.getSetterMethods(StatFilter.class);
+  private static final Map<String, Method> METHODS =
+      DsConfigUtil.getSetterMethods(StatFilter.class);
 
-    static {
+  static {
+    try {
+      METHODS.put("dbType", StatFilter.class.getDeclaredMethod("setDbType", String.class));
+    } catch (Exception ignore) {
+    }
+  }
+
+  /**
+   * 根据当前的配置生成druid防火墙配置
+   *
+   * @param map 配置
+   * @return StatFilter
+   */
+  public static StatFilter toStatFilter(Map<String, Object> map) {
+    StatFilter filter = new StatFilter();
+    for (Map.Entry<String, Object> item : map.entrySet()) {
+      String key = DsConfigUtil.lineToUpper(item.getKey());
+      Method method = METHODS.get(key);
+      if (method != null) {
         try {
-            METHODS.put("dbType", StatFilter.class.getDeclaredMethod("setDbType", String.class));
-        } catch (Exception ignore) {
+          method.invoke(filter, DsConfigUtil.convertValue(method, item.getValue()));
+        } catch (Exception e) {
+          log.warn("druid stat set param {} error", key, e);
         }
+      } else {
+        log.warn("druid stat does not have param {}", key);
+      }
     }
-
-    /**
-     * 根据当前的配置生成druid防火墙配置
-     *
-     * @param map 配置
-     * @return StatFilter
-     */
-    public static StatFilter toStatFilter(Map<String, Object> map) {
-        StatFilter filter = new StatFilter();
-        for (Map.Entry<String, Object> item : map.entrySet()) {
-            String key = DsConfigUtil.lineToUpper(item.getKey());
-            Method method = METHODS.get(key);
-            if (method != null) {
-                try {
-                    method.invoke(filter, DsConfigUtil.convertValue(method, item.getValue()));
-                } catch (Exception e) {
-                    log.warn("druid stat set param {} error", key, e);
-                }
-            } else {
-                log.warn("druid stat does not have param {}", key);
-            }
-        }
-        return filter;
-    }
+    return filter;
+  }
 }

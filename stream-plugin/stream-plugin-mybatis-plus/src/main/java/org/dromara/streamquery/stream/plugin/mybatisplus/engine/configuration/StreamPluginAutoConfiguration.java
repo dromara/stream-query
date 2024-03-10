@@ -16,6 +16,8 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
+import javax.sql.DataSource;
+
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
@@ -43,7 +45,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -55,7 +56,8 @@ import java.util.List;
 public class StreamPluginAutoConfiguration {
   private final DataSourceProperty properties;
 
-  public StreamPluginAutoConfiguration(StreamPluginProperties properties, DataSourceProperty dataProperties) {
+  public StreamPluginAutoConfiguration(
+      StreamPluginProperties properties, DataSourceProperty dataProperties) {
     StreamPluginConfig.setSafeModeEnabled(properties.isSafeMode());
     this.properties = dataProperties;
   }
@@ -114,7 +116,6 @@ public class StreamPluginAutoConfiguration {
     return new JsonPostInitTableInfoHandler();
   }
 
-
   @Bean
   @ConditionalOnMissingBean
   public DataSourceInitEvent dataSourceInitEvent() {
@@ -123,7 +124,8 @@ public class StreamPluginAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public DefaultDataSourceCreator dataSourceCreator(List<DataSourceCreator> dataSourceCreators, DataSourceInitEvent dataSourceInitEvent) {
+  public DefaultDataSourceCreator dataSourceCreator(
+      List<DataSourceCreator> dataSourceCreators, DataSourceInitEvent dataSourceInitEvent) {
     DefaultDataSourceCreator creator = new DefaultDataSourceCreator();
     creator.setCreators(dataSourceCreators);
     creator.setDataSourceInitEvent(dataSourceInitEvent);
@@ -136,8 +138,10 @@ public class StreamPluginAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(DataSource.class)
-  public DataSource dataSource(DefaultDataSourceCreator defaultDataSourceCreator, DataSourceProperty properties) {
-    DynamicRoutingDataSource dataSource = new DynamicRoutingDataSource(defaultDataSourceCreator, properties);
+  public DataSource dataSource(
+      DefaultDataSourceCreator defaultDataSourceCreator, DataSourceProperty properties) {
+    DynamicRoutingDataSource dataSource =
+        new DynamicRoutingDataSource(defaultDataSourceCreator, properties);
     dataSource.setPrimary("master");
     dataSource.setP6spy(properties.getP6spy());
     dataSource.setSeata(properties.getSeata());

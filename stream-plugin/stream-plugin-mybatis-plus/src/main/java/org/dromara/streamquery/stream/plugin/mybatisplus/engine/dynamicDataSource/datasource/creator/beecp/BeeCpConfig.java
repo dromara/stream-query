@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -30,30 +31,30 @@ import java.util.Properties;
 @Setter
 public class BeeCpConfig {
 
-    private String defaultCatalog;
-    private String defaultSchema;
-    private Boolean defaultReadOnly;
-    private Boolean defaultAutoCommit;
-    private Integer defaultTransactionIsolationCode;
-    private String defaultTransactionIsolationName;
+  private String defaultCatalog;
+  private String defaultSchema;
+  private Boolean defaultReadOnly;
+  private Boolean defaultAutoCommit;
+  private Integer defaultTransactionIsolationCode;
+  private String defaultTransactionIsolationName;
 
-    private Boolean fairMode;
-    private Integer initialSize;
-    private Integer maxActive;
-    private Integer borrowSemaphoreSize;
-    private Long maxWait;
-    private Long idleTimeout;
-    private Long holdTimeout;
-    private String connectionTestSql;
-    private Integer connectionTestTimeout;
-    private Long connectionTestIntegererval;
-    private Long idleCheckTimeIntegererval;
-    private Boolean forceCloseUsingOnClear;
-    private Long delayTimeForNextClear;
+  private Boolean fairMode;
+  private Integer initialSize;
+  private Integer maxActive;
+  private Integer borrowSemaphoreSize;
+  private Long maxWait;
+  private Long idleTimeout;
+  private Long holdTimeout;
+  private String connectionTestSql;
+  private Integer connectionTestTimeout;
+  private Long connectionTestIntegererval;
+  private Long idleCheckTimeIntegererval;
+  private Boolean forceCloseUsingOnClear;
+  private Long delayTimeForNextClear;
 
-    private String connectionFactoryClassName;
-    private String xaConnectionFactoryClassName;
-    private Properties connectProperties;
-    private String poolImplementClassName;
-    private Boolean enableJmx;
+  private String connectionFactoryClassName;
+  private String xaConnectionFactoryClassName;
+  private Properties connectProperties;
+  private String poolImplementClassName;
+  private Boolean enableJmx;
 }

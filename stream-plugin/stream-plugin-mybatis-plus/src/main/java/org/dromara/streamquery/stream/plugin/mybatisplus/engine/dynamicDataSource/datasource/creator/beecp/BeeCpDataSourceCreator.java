@@ -1,9 +1,10 @@
 /*
- * Copyright © 2018 organization baomidou
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -15,6 +16,8 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.beecp;
 
+import javax.sql.DataSource;
+
 import cn.beecp.BeeDataSource;
 import cn.beecp.BeeDataSourceConfig;
 import lombok.AllArgsConstructor;
@@ -25,10 +28,8 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSourc
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.toolkit.ConfigMergeCreator;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.toolkit.DsStrUtils;
 
-import javax.sql.DataSource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 
 /**
  * BeeCp数据源创建器
@@ -40,46 +41,48 @@ import java.lang.reflect.Method;
 @AllArgsConstructor
 public class BeeCpDataSourceCreator implements DataSourceCreator {
 
-    private static final ConfigMergeCreator<BeeCpConfig, BeeDataSourceConfig> MERGE_CREATOR = new ConfigMergeCreator<>("BeeCp", BeeCpConfig.class, BeeDataSourceConfig.class);
+  private static final ConfigMergeCreator<BeeCpConfig, BeeDataSourceConfig> MERGE_CREATOR =
+      new ConfigMergeCreator<>("BeeCp", BeeCpConfig.class, BeeDataSourceConfig.class);
 
-    private static Method copyToMethod = null;
+  private static Method copyToMethod = null;
 
-    static {
-        try {
-            copyToMethod = BeeDataSourceConfig.class.getDeclaredMethod("copyTo", BeeDataSourceConfig.class);
-            copyToMethod.setAccessible(true);
-        } catch (NoSuchMethodException ignored) {
-        }
+  static {
+    try {
+      copyToMethod =
+          BeeDataSourceConfig.class.getDeclaredMethod("copyTo", BeeDataSourceConfig.class);
+      copyToMethod.setAccessible(true);
+    } catch (NoSuchMethodException ignored) {
     }
+  }
 
-    private BeeCpConfig gConfig;
+  private BeeCpConfig gConfig;
 
-    @Override
-    public DataSource createDataSource(DataSourceProperty dataSourceProperty) {
-        BeeDataSourceConfig config = MERGE_CREATOR.create(gConfig, dataSourceProperty.getBeecp());
-        config.setUsername(dataSourceProperty.getUsername());
-        config.setPassword(dataSourceProperty.getPassword());
-        config.setJdbcUrl(dataSourceProperty.getUrl());
-        config.setPoolName(dataSourceProperty.getPoolName());
-        String driverClassName = dataSourceProperty.getDriverClassName();
-        if (DsStrUtils.hasText(driverClassName)) {
-            config.setDriverClassName(driverClassName);
-        }
-        if (Boolean.FALSE.equals(dataSourceProperty.getLazy())) {
-            return new BeeDataSource(config);
-        }
-        BeeDataSource beeDataSource = new BeeDataSource();
-        try {
-            copyToMethod.invoke(config, beeDataSource);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return beeDataSource;
+  @Override
+  public DataSource createDataSource(DataSourceProperty dataSourceProperty) {
+    BeeDataSourceConfig config = MERGE_CREATOR.create(gConfig, dataSourceProperty.getBeecp());
+    config.setUsername(dataSourceProperty.getUsername());
+    config.setPassword(dataSourceProperty.getPassword());
+    config.setJdbcUrl(dataSourceProperty.getUrl());
+    config.setPoolName(dataSourceProperty.getPoolName());
+    String driverClassName = dataSourceProperty.getDriverClassName();
+    if (DsStrUtils.hasText(driverClassName)) {
+      config.setDriverClassName(driverClassName);
     }
-
-    @Override
-    public boolean support(DataSourceProperty dataSourceProperty) {
-        Class<? extends DataSource> type = dataSourceProperty.getType();
-        return type == null || DdConstants.BEECP_DATASOURCE.equals(type.getName());
+    if (Boolean.FALSE.equals(dataSourceProperty.getLazy())) {
+      return new BeeDataSource(config);
     }
+    BeeDataSource beeDataSource = new BeeDataSource();
+    try {
+      copyToMethod.invoke(config, beeDataSource);
+    } catch (InvocationTargetException | IllegalAccessException e) {
+      e.printStackTrace();
+    }
+    return beeDataSource;
+  }
+
+  @Override
+  public boolean support(DataSourceProperty dataSourceProperty) {
+    Class<? extends DataSource> type = dataSourceProperty.getType();
+    return type == null || DdConstants.BEECP_DATASOURCE.equals(type.getName());
+  }
 }
