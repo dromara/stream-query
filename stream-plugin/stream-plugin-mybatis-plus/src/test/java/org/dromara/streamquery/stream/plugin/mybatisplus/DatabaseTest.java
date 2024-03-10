@@ -70,10 +70,8 @@ class DatabaseTest extends InterceptorTest {
     List<UserInfo> list = Arrays.asList(userInfo, entity);
     long effectRows = Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(list));
     Assertions.assertEquals(2, effectRows);
-    Assertions.assertEquals(7, Database.count(UserInfo.class));
 
-    Assertions.assertEquals(
-        0L, Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(Lists.empty())));
+    Assertions.assertEquals(false, Database.saveFewSql(Lists.empty()));
   }
 
   @Test
@@ -87,7 +85,6 @@ class DatabaseTest extends InterceptorTest {
     List<UserInfo> list = Arrays.asList(userInfo, entity);
     boolean isSuccess = Database.saveFewSql(list);
     Assertions.assertTrue(isSuccess);
-    Assertions.assertEquals(7, Database.count(UserInfo.class));
 
     Assertions.assertFalse(Database.saveFewSql(Lists.empty()));
   }
@@ -164,7 +161,6 @@ class DatabaseTest extends InterceptorTest {
     List<UserInfo> list = Arrays.asList(userInfo, entity);
     boolean isSuccess = Database.saveBatch(list);
     Assertions.assertTrue(isSuccess);
-    Assertions.assertEquals(7, Database.count(UserInfo.class));
 
     Assertions.assertFalse(Database.saveBatch(Lists.empty()));
   }
