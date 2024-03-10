@@ -14,26 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
-
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.enums;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * Seata 支持的模式枚举
+ *
+ * @author TaoYu
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
-
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
-  }
-
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
-  }
+public enum SeataMode {
+  /** XA 模式 */
+  XA,
+  /** AT 模式 */
+  AT
 }

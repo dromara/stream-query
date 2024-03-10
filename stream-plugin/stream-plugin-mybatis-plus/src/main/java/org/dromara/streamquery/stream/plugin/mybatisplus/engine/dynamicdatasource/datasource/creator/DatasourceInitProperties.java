@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lombok.Data;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * 动态数据源初始化脚本配置
+ *
+ * @author TaoYu
+ * @since 3.5.0
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
+@Data
+public class DatasourceInitProperties {
 
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
-  }
+  /** 自动运行的建表脚本 */
+  private String schema;
+  /** 自动运行的数据脚本 */
+  private String data;
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
-  }
+  /** 错误是否继续 默认 true */
+  private boolean continueOnError = true;
+  /** 分隔符 默认 ; */
+  private String separator = ";";
 }

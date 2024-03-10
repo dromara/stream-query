@@ -14,26 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.tx.annotation;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.tx.DsPropagation;
+
+import java.lang.annotation.*;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * multi data source transaction
+ *
+ * @author funkye
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface DSTransactional {
 
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
-  }
+  /**
+   * 回滚异常
+   *
+   * @return Class[]
+   */
+  Class<? extends Throwable>[] rollbackFor() default {Exception.class};
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
-  }
+  /**
+   * 不回滚异常
+   *
+   * @return Class[]
+   */
+  Class<? extends Throwable>[] noRollbackFor() default {};
+
+  /**
+   * 事务传播行为
+   *
+   * @return DsPropagation
+   */
+  DsPropagation propagation() default DsPropagation.REQUIRED;
 }

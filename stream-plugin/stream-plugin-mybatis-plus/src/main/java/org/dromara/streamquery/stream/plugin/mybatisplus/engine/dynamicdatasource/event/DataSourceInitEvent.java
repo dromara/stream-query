@@ -14,26 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.event;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import javax.sql.DataSource;
+
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration.DataSourceProperty;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * 多数据源连接池创建事件
+ *
+ * @author TaoYu
+ * @since 3.5.0
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
+public interface DataSourceInitEvent {
 
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
-  }
+  /**
+   * 连接池创建前执行（可用于参数解密）
+   *
+   * @param dataSourceProperty 数据源基础信息
+   */
+  void beforeCreate(DataSourceProperty dataSourceProperty);
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
-  }
+  /**
+   * 连接池创建后执行
+   *
+   * @param dataSource 连接池
+   */
+  void afterCreate(DataSource dataSource);
 }

@@ -14,26 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.tx.annotation;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.lang.annotation.*;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * The core Annotation to switch datasource. It can be annotated at class or method.
+ *
+ * @author TaoYu Kanyuxia
+ * @since 1.0.0
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface DS {
 
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
-  }
-
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
-  }
+  /**
+   * groupName or specific database name or spring SPEL name.
+   *
+   * @return the database you want to switch
+   */
+  String value();
 }

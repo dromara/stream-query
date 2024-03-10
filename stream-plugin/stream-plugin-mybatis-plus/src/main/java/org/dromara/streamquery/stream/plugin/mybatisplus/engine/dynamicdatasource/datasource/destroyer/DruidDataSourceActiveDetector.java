@@ -14,26 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.destroyer;
 
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import javax.sql.DataSource;
+
+import lombok.SneakyThrows;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * Description alibaba Druid data source pool active detector.
+ *
+ * @author alvinkwok
+ * @since 2023/10/18
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
-
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
+public class DruidDataSourceActiveDetector implements DataSourceActiveDetector {
+  @Override
+  @SneakyThrows(ReflectiveOperationException.class)
+  public boolean containsActiveConnection(DataSource dataSource) {
+    int activeCount = (int) dataSource.getClass().getMethod("getActiveCount").invoke(dataSource);
+    return activeCount != 0;
   }
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
+  @Override
+  public boolean support(DataSource dataSource) {
+    return "com.alibaba.druid.pool.DruidDataSource".equals(dataSource.getClass().getName());
   }
 }

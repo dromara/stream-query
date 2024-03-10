@@ -52,8 +52,8 @@ import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.constant.PluginConst;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.DynamicRoutingDataSource;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.toolkit.DynamicDataSourceContextHolder;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.toolkit.DynamicDataSourceContextHolder;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.mybatis.spring.SqlSessionUtils;
 
@@ -73,7 +73,7 @@ import java.util.stream.Stream;
 public class Database {
   private static final Log LOG = LogFactory.getLog(Database.class);
 
-  private static final AtomicInteger dataSourceCounter = new AtomicInteger(0);
+  private static final AtomicInteger DATA_SOURCE_COUNTER = new AtomicInteger(0);
 
   private static DynamicRoutingDataSource routingDataSource;
 
@@ -1303,7 +1303,7 @@ public class Database {
    */
   public static void setDataSource(DataSource dataSource) {
     // 生成一个唯一的序号
-    int dsNumber = dataSourceCounter.incrementAndGet();
+    int dsNumber = DATA_SOURCE_COUNTER.incrementAndGet();
 
     // 拼接名称，形成 "slave1", "slave2", 等等
     String dsName = "slave" + dsNumber;

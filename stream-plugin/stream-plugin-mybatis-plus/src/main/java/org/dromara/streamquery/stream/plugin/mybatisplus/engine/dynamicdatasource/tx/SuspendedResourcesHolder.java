@@ -14,26 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
-
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.tx;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * SuspendedResourcesHolder
+ *
+ * @author Hzh
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
+public class SuspendedResourcesHolder {
+  /** 事务ID */
+  private String xid;
 
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
+  /**
+   * Instantiates a new Suspended resources holder.
+   *
+   * @param xid 事务ID
+   */
+  public SuspendedResourcesHolder(String xid) {
+    if (xid == null) {
+      throw new IllegalArgumentException("xid must be not null");
+    }
+    this.xid = xid;
   }
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
+  /**
+   * 获得事务ID.
+   *
+   * @return 事务ID
+   */
+  public String getXid() {
+    return xid;
   }
 }

@@ -14,26 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
-
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.exception;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * 事务异常
+ *
+ * @author Hzh
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
-
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
+public class TransactionException extends RuntimeException {
+  /**
+   * 构造
+   *
+   * @param message 消息
+   */
+  public TransactionException(String message) {
+    super(message);
   }
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
+  /**
+   * 构造
+   *
+   * @param message 消息
+   * @param cause 异常
+   */
+  public TransactionException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

@@ -20,12 +20,12 @@ import javax.sql.DataSource;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.DatasourceInitProperties;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.atomikos.AtomikosConfig;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.beecp.BeeCpConfig;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.dbcp.Dbcp2Config;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.druid.DruidConfig;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicDataSource.datasource.creator.hikaricp.HikariCpConfig;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.DatasourceInitProperties;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.atomikos.AtomikosConfig;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.beecp.BeeCpConfig;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.dbcp.Dbcp2Config;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.druid.DruidConfig;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.hikaricp.HikariCpConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

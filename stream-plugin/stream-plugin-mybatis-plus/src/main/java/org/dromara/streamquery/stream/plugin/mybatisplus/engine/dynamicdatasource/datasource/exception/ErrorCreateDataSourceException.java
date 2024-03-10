@@ -14,26 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
-
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.exception;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * exception when druid dataSource init failed
+ *
+ * @author TaoYu
+ * @since 2.5.6
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
+public class ErrorCreateDataSourceException extends RuntimeException {
 
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
+  /**
+   * Constructor for ErrorCreateDataSourceException.
+   *
+   * @param message message
+   */
+  public ErrorCreateDataSourceException(String message) {
+    super(message);
   }
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
+  /**
+   * Constructor for ErrorCreateDataSourceException.
+   *
+   * @param message message
+   * @param cause cause
+   */
+  public ErrorCreateDataSourceException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

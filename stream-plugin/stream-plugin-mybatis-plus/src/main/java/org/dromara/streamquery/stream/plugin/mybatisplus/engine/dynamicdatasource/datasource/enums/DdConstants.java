@@ -14,26 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils;
-
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.enums;
 
 /**
- * @author Cason
- * @since 2024-02-25
+ * 动态数据源常量
+ *
+ * @author jobob
+ * @since 2019-10-08
  */
-@Component
-public class DataSourceUtil {
-  private static DynamicRoutingDataSource dynamicRoutingDataSource;
+public interface DdConstants {
 
-  @Autowired
-  public void setDynamicRoutingDataSource(DynamicRoutingDataSource dataSource) {
-    DataSourceUtil.dynamicRoutingDataSource = dataSource;
-  }
+  /** 数据源：主库 */
+  String MASTER = "master";
+  /** 数据源：从库 */
+  String SLAVE = "slave";
 
-  public static DynamicRoutingDataSource getDynamicRoutingDataSource() {
-    return dynamicRoutingDataSource;
-  }
+  /** DRUID数据源类 */
+  String DRUID_DATASOURCE = "com.alibaba.druid.pool.DruidDataSource";
+  /** HikariCp数据源 */
+  String HIKARI_DATASOURCE = "com.zaxxer.hikari.HikariDataSource";
+  /** BeeCp数据源 */
+  String BEECP_DATASOURCE = "cn.beecp.BeeDataSource";
+  /** DBCP2数据源 */
+  String DBCP2_DATASOURCE = "org.apache.commons.dbcp2.BasicDataSource";
+  /** Atomikos数据源 */
+  String ATOMIKOS_DATASOURCE = "com.atomikos.jdbc.AtomikosDataSourceBean";
 }
