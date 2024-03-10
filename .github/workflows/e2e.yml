@@ -18,7 +18,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: stream-query
           MYSQL_DATABASE: stream-query
-          MYSQL_USER: stream-query
+          MYSQL_USER: root
           MYSQL_PASSWORD: stream-query
         ports:
           - 3306:3306
