@@ -18,8 +18,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: stream-query
           MYSQL_DATABASE: stream-query
-          MYSQL_USER: stream-query
-          MYSQL_PASSWORD: stream-query
         ports:
           - 3306:3306
         options: >-
@@ -73,10 +71,6 @@ jobs:
 
       - name: Run MySQL Tests
         run: mvn -B -X test -Dspring.profiles.active=mysql
-        env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/stream-query?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: stream-query
 
       - name: Execute PostgreSQL schema and data scripts
         run: |
@@ -86,7 +80,3 @@ jobs:
 
       - name: Run PostgreSQL Tests
         run: mvn -B -X test -Dspring.profiles.active=pgsql
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/stream-query
-          SPRING_DATASOURCE_USERNAME: stream-query
-          SPRING_DATASOURCE_PASSWORD: stream-query
