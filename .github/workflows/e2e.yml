@@ -60,10 +60,10 @@ jobs:
             ${{ runner.os }}-m2-
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B -X package --file pom.xml
 
       - name: Run H2 Tests (Default)
-        run: mvn -B test
+        run: mvn -B -X test
 
       - name: Execute MySQL schema and data scripts
         run: |
@@ -72,7 +72,7 @@ jobs:
         if: success()
 
       - name: Run MySQL Tests
-        run: mvn -B test -Dspring.profiles.active=mysql
+        run: mvn -B -X test -Dspring.profiles.active=mysql
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/stream-query?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
           SPRING_DATASOURCE_USERNAME: stream-query
@@ -85,7 +85,7 @@ jobs:
         if: success()
 
       - name: Run PostgreSQL Tests
-        run: mvn -B test -Dspring.profiles.active=pgsql
+        run: mvn -B -X test -Dspring.profiles.active=pgsql
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/stream-query
           SPRING_DATASOURCE_USERNAME: stream-query
