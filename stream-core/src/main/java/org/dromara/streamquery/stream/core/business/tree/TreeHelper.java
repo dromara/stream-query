@@ -359,4 +359,3 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     return maxDepth;
   }
 }
-
