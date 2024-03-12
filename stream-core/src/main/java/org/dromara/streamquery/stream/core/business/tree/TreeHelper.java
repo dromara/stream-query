@@ -70,6 +70,52 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
   }
 
   /**
+   * 根据给定的节点列表和选中的ID，选择一个级联路径。 使用流处理每个根节点，并尝试找到从根节点到所选ID的路径。 如果找到路径，则返回该路径；如果在所有节点中都未找到路径，则返回空列表。
+   *
+   * @param nodes 包含树形结构根节点的列表。
+   * @param selectedId 要查找的选中节点的ID。
+   * @return 选中节点的路径列表，如果未找到则为空列表。
+   */
+  public List<T> cascadeSelect(List<T> nodes, R selectedId) {
+    return Steam.of(nodes)
+        .map(rootNode -> findPath(rootNode, selectedId))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .findFirst()
+        .orElseGet(Collections::emptyList);
+  }
+
+  /**
+   * 递归方法，用于查找从当前节点到所选ID的路径。 如果当前节点或其任一子节点的ID与所选ID匹配，则构建并返回该路径。 如果在当前节点的子树中未找到所选ID，则返回一个空的Optional。
+   *
+   * @param currentNode 正在检查的当前节点。
+   * @param selectedId 要查找的选中节点的ID。
+   * @return 包含从当前节点到所选ID的路径的Optional对象，如果未找到则为空。
+   */
+  private Optional<List<T>> findPath(T currentNode, R selectedId) {
+    if (currentNode == null) {
+      return Optional.empty();
+    }
+
+    List<T> path = new ArrayList<>();
+    path.add(currentNode);
+
+    if (idGetter.apply(currentNode).equals(selectedId)) {
+      return Optional.of(path);
+    }
+
+    return Steam.of(childrenGetter.apply(currentNode))
+        .map(child -> findPath(child, selectedId))
+        .filter(Optional::isPresent)
+        .findFirst()
+        .map(
+            childPath -> {
+              path.addAll(childPath.get());
+              return path;
+            });
+  }
+
+  /**
    * 通过提供节点信息构造树先生，此方法用于根节点为Null时
    *
    * @param idGetter 获取节点id操作 {@link SerFunc} object
@@ -313,3 +359,4 @@ public class TreeHelper<T, R extends Comparable<? super R>> {
     return maxDepth;
   }
 }
+
