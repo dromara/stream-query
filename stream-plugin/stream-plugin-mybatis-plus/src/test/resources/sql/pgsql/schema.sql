@@ -1,43 +1,41 @@
-DROP TABLE IF EXISTS user_info;
-CREATE TABLE IF NOT EXISTS user_info
+DROP TABLE IF EXISTS "user_info";
+CREATE TABLE IF NOT EXISTS "user_info"
 (
-    id          BIGSERIAL PRIMARY KEY NOT NULL,
+    id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(50) DEFAULT NULL,
     age         INT         DEFAULT NULL,
     email       VARCHAR(50) DEFAULT NULL,
-    gmt_deleted TIMESTAMP   DEFAULT '2001-01-01 00:00:00',
-    PRIMARY KEY (id)
+    gmt_deleted TIMESTAMP    DEFAULT '2001-01-01 00:00:00'
     );
 
-DROP TABLE IF EXISTS user_role;
-CREATE TABLE IF NOT EXISTS user_role
+DROP TABLE IF EXISTS "user_role";
+CREATE TABLE IF NOT EXISTS "user_role"
 (
-    id      BIGSERIAL PRIMARY KEY NOT NULL,
+    id      BIGSERIAL PRIMARY KEY,
     user_id BIGINT      DEFAULT NULL,
     role_id VARCHAR(30) DEFAULT NULL
     );
 
-DROP TABLE IF EXISTS role_info;
-CREATE TABLE IF NOT EXISTS role_info
+DROP TABLE IF EXISTS "role_info";
+CREATE TABLE IF NOT EXISTS "role_info"
 (
-    id        VARCHAR(30) NOT NULL,
-    role_name VARCHAR(30) DEFAULT NULL,
-    PRIMARY KEY (id)
+    id        VARCHAR(30) PRIMARY KEY,
+    role_name VARCHAR(30) DEFAULT NULL
     );
 
-DROP TABLE IF EXISTS product_info;
-CREATE TABLE IF NOT EXISTS product_info
+DROP TABLE IF EXISTS "product_info";
+CREATE TABLE IF NOT EXISTS "product_info"
 (
-    id            BIGSERIAL PRIMARY KEY NOT NULL,
+    id            BIGSERIAL PRIMARY KEY,
     product_name  VARCHAR(50) DEFAULT NULL,
-    product_price FLOAT       DEFAULT NULL,
+    product_price FLOAT8 DEFAULT NULL,
     tenant_id     VARCHAR(50) DEFAULT NULL
     );
 
-DROP TABLE IF EXISTS product_category;
-CREATE TABLE IF NOT EXISTS product_category
+DROP TABLE IF EXISTS "product_category";
+CREATE TABLE IF NOT EXISTS "product_category"
 (
-    id          BIGSERIAL PRIMARY KEY NOT NULL,
+    id          BIGSERIAL PRIMARY KEY,
     product_id  BIGINT DEFAULT NULL,
     category_id BIGINT DEFAULT NULL,
     tenant_id   VARCHAR(50) DEFAULT NULL
