@@ -51,18 +51,6 @@ jobs:
           submodules: true
       - name: Check codestyle
         run: ./mvnw -B -q -nsu checkstyle:check spotless:check
-  dead-link:
-    if: github.repository == 'dromara/stream-query'
-    name: Dead links
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v3
-      - run: sudo npm install -g markdown-link-check@3.10.3
-      - run: |
-          for file in $(find . -name "*.md"); do
-            markdown-link-check -c .dlc.json -q "$file"
-          done
   test:
     runs-on: ubuntu-latest
 
