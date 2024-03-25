@@ -29,8 +29,13 @@ on:
       - '**.md'
 
 jobs:
-  test:
+  build:
+    name: "maven-compile (java-${{ matrix.java }})"
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 8 , 17 ]
 
     services:
       mysql:
@@ -52,11 +57,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 8
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-          distribution: 'temurin'
+      - name: Execute MySQL schema and data scripts
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < ./sql/mysql/schema.sql
+          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < ./sql/mysql/data.sql
+      - name: Execute PostgreSQL schema and data scripts
+        run: |
+          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./sql/pgsql/schema.sql
+          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./sql/pgsql/data.sql
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
@@ -66,15 +74,7 @@ jobs:
         run: mvn -B package --file pom.xml
       - name: Run H2 Tests (Default)
         run: mvn test
-      - name: Execute MySQL schema and data scripts
-        run: |
-          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < ./sql/mysql/schema.sql
-          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < ./sql/mysql/data.sql
       - name: Run MySQL Tests
         run: mvn test -Dspring.profiles.active=mysql
-      - name: Execute PostgreSQL schema and data scripts
-        run: |
-          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./sql/pgsql/schema.sql
-          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./sql/pgsql/data.sql
       - name: Run PostgreSQL Tests
         run: mvn test -Dspring.profiles.active=pgsql
