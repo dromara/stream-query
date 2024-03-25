@@ -33,6 +33,8 @@
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <apache-rat-plugin.version>0.16.1</apache-rat-plugin.version>
+        <license-maven-plugin.version>2.4.0</license-maven-plugin.version>
     </properties>
 
 
@@ -92,6 +94,57 @@
 
     <build>
         <plugins>
+            <!--项目合规-->
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>${apache-rat-plugin.version}</version>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <name>Apache License 2.0</name>
+                            <patterns>
+                                <pattern>Apache License 2.0</pattern>
+                            </patterns>
+                        </licenseSet>
+                    </licenseSets>
+                    <!-- 排除不需要检查的文件或目录 -->
+                    <excludes>
+                        <exclude>.git/</exclude>
+                        <exclude>.github/**</exclude>
+                        <exclude>.gitignore</exclude>
+
+                        <exclude>**/.idea/</exclude>
+                        <exclude>**/.gitee/</exclude>
+                        <exclude>**/*.iml</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/*.json</exclude>
+                        <exclude>**/*.md</exclude>
+                        <exclude>**/*.log</exclude>
+                        <exclude>**/.gitkeep</exclude>
+                        <exclude>**/.settings/*</exclude>
+                        <exclude>**/.classpath</exclude>
+                        <exclude>**/.project</exclude>
+                        <exclude>**/target/**</exclude>
+                        <exclude>**/META-INF/**</exclude>
+
+                        <exclude>.mvn/**</exclude>
+                        <exclude>compiler/**</exclude>
+                        <exclude>mvnw</exclude>
+                        <exclude>mvnw.cmd</exclude>
+                        <exclude>README.md</exclude>
+
+                        <exclude>node_modules/**</exclude>
+                        <exclude>**/dist/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license-maven-plugin.version}</version>
+            </plugin>
+            <!--maven编译-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
