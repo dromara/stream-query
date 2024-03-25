@@ -63,7 +63,7 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B package -DskipTests --file pom.xml
       - name: Run H2 Tests (Default)
         run: mvn test
       - name: Execute MySQL schema and data scripts
