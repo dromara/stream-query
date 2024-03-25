@@ -16,6 +16,8 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource;
 
+import javax.sql.DataSource;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.streamquery.stream.core.collection.Maps;
@@ -31,7 +33,6 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasourc
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.sql.DataSource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

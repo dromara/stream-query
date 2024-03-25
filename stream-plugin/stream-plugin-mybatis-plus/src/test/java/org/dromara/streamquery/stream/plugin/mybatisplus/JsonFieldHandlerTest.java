@@ -28,6 +28,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.dromara.streamquery.stream.core.collection.Lists;
+import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 import org.junit.jupiter.api.Assertions;
@@ -37,8 +38,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -51,11 +54,12 @@ class JsonFieldHandlerTest {
   @BeforeEach
   void init(@Autowired SqlSessionFactory sqlSessionFactory) {
     Database.buildMapper(sqlSessionFactory.getConfiguration(), UserInfoWithJsonName.class);
+    Database.buildMapper(sqlSessionFactory.getConfiguration(), UserInfoWithJsonCollection.class);
   }
 
   @Test
-  void test() {
-    val user =
+  void testJsonSaveAndQuery() {
+    val userInfoWithJsonName =
         new UserInfoWithJsonName() {
           {
             setName(
@@ -67,11 +71,28 @@ class JsonFieldHandlerTest {
                 });
           }
         };
-    Database.saveFewSql(Lists.of(user));
-    Database.updateFewSql(Lists.of(user));
-    val dbUser = Database.getById(user.getId(), UserInfoWithJsonName.class);
-    Assertions.assertEquals("VampireAchao", dbUser.getName().getUsername());
-    Assertions.assertEquals("阿超", dbUser.getName().getNickname());
+    Database.saveFewSql(Lists.of(userInfoWithJsonName));
+    Database.updateFewSql(Lists.of(userInfoWithJsonName));
+    val dbUserInfoWithJsonName =
+        Database.getById(userInfoWithJsonName.getId(), UserInfoWithJsonName.class);
+    Assertions.assertEquals("VampireAchao", dbUserInfoWithJsonName.getName().getUsername());
+    Assertions.assertEquals("阿超", dbUserInfoWithJsonName.getName().getNickname());
+
+    val userInfoWithJsonCollection =
+        new UserInfoWithJsonCollection() {
+          {
+            setName(Maps.of("username", "VampireAchao", "nickname", "阿超"));
+            setEmail(Lists.of("achao@apache.org", "vampireachao@dromara.org", "achao@hutool.cn"));
+          }
+        };
+    Database.saveFewSql(Lists.of(userInfoWithJsonCollection));
+    Database.updateFewSql(Lists.of(userInfoWithJsonCollection));
+    val dbUserInfoWithJsonCollection =
+        Database.getById(userInfoWithJsonCollection.getId(), UserInfoWithJsonCollection.class);
+    Assertions.assertEquals("VampireAchao", dbUserInfoWithJsonCollection.getName().get("username"));
+    Assertions.assertEquals("阿超", dbUserInfoWithJsonCollection.getName().get("nickname"));
+    assertThat(dbUserInfoWithJsonCollection.getEmail())
+        .containsExactly("achao@apache.org", "vampireachao@dromara.org", "achao@hutool.cn");
   }
 
   @Test
@@ -350,5 +371,17 @@ class JsonFieldHandlerTest {
   static class Name implements Serializable {
     private String username;
     private String nickname;
+  }
+
+  @Data
+  @TableName(value = "user_info", autoResultMap = true)
+  static class UserInfoWithJsonCollection {
+    private Long id;
+
+    @TableField(typeHandler = JsonFieldHandler.class)
+    private Map<String, Object> name;
+
+    @TableField(typeHandler = JsonFieldHandler.class)
+    private List<String> email;
   }
 }
