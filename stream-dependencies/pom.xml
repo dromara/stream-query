@@ -83,10 +83,6 @@
         <junit.version>5.9.0</junit.version>
         <jmh.version>1.35</jmh.version>
         <ttl.version>2.14.1</ttl.version>
-        <druid.version>1.2.20</druid.version>
-        <transactions-jdbc.version>4.0.6</transactions-jdbc.version>
-        <commons-dbcp2.version>2.10.0</commons-dbcp2.version>
-        <beecp.version>3.3.0</beecp.version>
     </properties>
 
     <dependencyManagement>
@@ -147,31 +143,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-json</artifactId>
                 <version>${spring-boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.atomikos</groupId>
-                <artifactId>transactions-jdbc</artifactId>
-                <optional>true</optional>
-                <version>${transactions-jdbc.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-dbcp2</artifactId>
-                <version>${commons-dbcp2.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.chris2018998</groupId>
-                <artifactId>beecp</artifactId>
-                <version>${beecp.version}</version>
             </dependency>
 
             <!-- 测试依赖 -->

@@ -16,8 +16,6 @@
  */
 package org.dromara.streamquery.stream.plugin.mybatisplus.engine.configuration;
 
-import javax.sql.DataSource;
-
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
@@ -29,12 +27,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.plugin.mybatisplus.Database;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.DynamicRoutingDataSource;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.DataSourceCreator;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.datasource.creator.DefaultDataSourceCreator;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.event.DataSourceInitEvent;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.event.EncDataSourceInitEvent;
-import org.dromara.streamquery.stream.plugin.mybatisplus.engine.dynamicdatasource.tx.DsTxEventListenerFactory;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.JsonPostInitTableInfoHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.DynamicMapperHandler;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.SaveOneSql;
@@ -42,7 +34,6 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.methods.UpdateOn
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 import java.util.List;
@@ -52,14 +43,11 @@ import java.util.List;
  *
  * @author VampireAchao Cizai_
  */
-@EnableConfigurationProperties({StreamPluginProperties.class, DataSourceProperty.class})
+@EnableConfigurationProperties(StreamPluginProperties.class)
 public class StreamPluginAutoConfiguration {
-  private final DataSourceProperty properties;
 
-  public StreamPluginAutoConfiguration(
-      StreamPluginProperties properties, DataSourceProperty dataProperties) {
+  public StreamPluginAutoConfiguration(StreamPluginProperties properties) {
     StreamPluginConfig.setSafeModeEnabled(properties.isSafeMode());
-    this.properties = dataProperties;
   }
 
   private static final String CURRENT_NAMESPACE =
@@ -68,7 +56,7 @@ public class StreamPluginAutoConfiguration {
   /**
    * defaultSqlInjector.
    *
-   * @return a {@link DefaultSqlInjector} object
+   * @return a {@link com.baomidou.mybatisplus.core.injector.DefaultSqlInjector} object
    */
   @Bean
   @Order
@@ -114,47 +102,5 @@ public class StreamPluginAutoConfiguration {
   @ConditionalOnMissingBean(JsonPostInitTableInfoHandler.class)
   public JsonPostInitTableInfoHandler jsonPostInitTableInfoHandler() {
     return new JsonPostInitTableInfoHandler();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public DataSourceInitEvent dataSourceInitEvent() {
-    return new EncDataSourceInitEvent();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public DefaultDataSourceCreator dataSourceCreator(
-      List<DataSourceCreator> dataSourceCreators, DataSourceInitEvent dataSourceInitEvent) {
-    DefaultDataSourceCreator creator = new DefaultDataSourceCreator();
-    creator.setCreators(dataSourceCreators);
-    creator.setDataSourceInitEvent(dataSourceInitEvent);
-    creator.setPublicKey(properties.getPublicKey());
-    creator.setLazy(properties.getLazy());
-    creator.setP6spy(properties.getP6spy());
-    creator.setSeata(properties.getSeata());
-    return creator;
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(DataSource.class)
-  public DataSource dataSource(
-      DefaultDataSourceCreator defaultDataSourceCreator, DataSourceProperty properties) {
-    DynamicRoutingDataSource dataSource =
-        new DynamicRoutingDataSource(defaultDataSourceCreator, properties);
-    dataSource.setPrimary("master");
-    dataSource.setP6spy(properties.getP6spy());
-    dataSource.setSeata(properties.getSeata());
-    Database.setRoutingDataSource(dataSource);
-    return dataSource;
-  }
-
-  @Configuration
-  static class DsTxEventListenerFactoryConfiguration {
-    @Bean
-    @ConditionalOnMissingBean
-    public DsTxEventListenerFactory dsTxEventListenerFactory() {
-      return new DsTxEventListenerFactory();
-    }
   }
 }

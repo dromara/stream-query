@@ -29,8 +29,6 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -55,37 +53,6 @@ import java.util.*;
  */
 @MybatisPlusTest
 class DatabaseTest extends InterceptorTest {
-
-  @Test
-  void testDataSource() {
-    UserInfo entity = new UserInfo();
-    entity.setName("cat");
-    entity.setAge(20);
-    entity.setEmail("myEmail");
-    UserInfo userInfo = new UserInfo();
-    userInfo.setName("ruben");
-    List<UserInfo> list = Arrays.asList(userInfo, entity);
-    HikariConfig config = new HikariConfig();
-
-    // 基本数据源配置
-    config.setJdbcUrl(
-        "jdbc:mysql://localhost:3306/crm?useSSL=false&autoReconnect=true&characterEncoding=utf8&allowPublicKeyRetrieval=true");
-    config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-    config.setUsername("root");
-    config.setPassword(""); // 请不要硬编码密码，考虑使用更安全的方式管理密码
-
-    // HikariCP特定配置
-    config.setPoolName("HikariCP");
-    config.setMinimumIdle(5); // 最小空闲连接数
-    config.setIdleTimeout(600000); // 空闲连接存活最大时间
-    config.setMaximumPoolSize(10); // 连接池最大连接数
-    config.setAutoCommit(true); // 连接的默认自动提交行为
-    config.setMaxLifetime(1800000); // 连接的最长生命周期
-    config.setConnectionTimeout(30000); // 数据库连接超时时间
-    //    config.setConnectionTestQuery("SELECT 1");  // 连接测试query
-    Database.setDataSource(new HikariDataSource(config));
-    long effectRows = Database.execute(UserInfo.class, (IMapper<UserInfo> m) -> m.saveOneSql(list));
-  }
 
   @Override
   public List<InnerInterceptor> interceptors() {

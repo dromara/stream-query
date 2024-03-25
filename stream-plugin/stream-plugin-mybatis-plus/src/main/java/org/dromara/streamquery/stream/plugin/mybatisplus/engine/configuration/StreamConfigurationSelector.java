@@ -31,9 +31,7 @@ public class StreamConfigurationSelector implements DeferredImportSelector, Orde
   @Override
   public String[] selectImports(AnnotationMetadata metadata) {
     return new String[] {
-      StreamScannerRegistrar.class.getName(),
-      DynamicDataSourceCreatorAutoConfiguration.class.getName(),
-      StreamPluginAutoConfiguration.class.getName()
+      StreamScannerRegistrar.class.getName(), StreamPluginAutoConfiguration.class.getName()
     };
   }
 
