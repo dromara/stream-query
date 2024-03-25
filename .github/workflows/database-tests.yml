@@ -57,16 +57,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: true
       - name: Execute MySQL schema and data scripts
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < ./sql/mysql/schema.sql
-          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < ./sql/mysql/data.sql
+          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/schema.sql
+          mysql -h 127.0.0.1 -P 3306 -u root --password=stream-query stream-query < stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/mysql/data.sql
       - name: Execute PostgreSQL schema and data scripts
         run: |
-          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./sql/pgsql/schema.sql
-          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f ./sql/pgsql/data.sql
+          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/pgsql/schema.sql
+          PGPASSWORD=stream-query psql -h localhost -U stream-query -d stream-query -p 5432 -a -f stream-plugin/stream-plugin-mybatis-plus/src/test/resources/sql/pgsql/data.sql
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
