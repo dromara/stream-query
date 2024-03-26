@@ -1,0 +1,4 @@
+License: EPL-1.0, LGPL-2.1
+Version: 1.2.11
+URL: [Specific URL for the license if available]
+

@@ -1,0 +1,4 @@
+License: MIT
+Version: 1.7.36
+URL: https://opensource.org/licenses/MIT
+

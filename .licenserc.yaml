@@ -65,7 +65,6 @@ header:
 dependency:
   files:
     - pom.xml
-    - package.json
   licenses:
     - name: ch.qos.logback:logback-classic
       license: EPL-1.0, LGPL-2.1
