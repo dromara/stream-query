@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -38,7 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -387,13 +385,7 @@ class JsonFieldHandlerTest {
       return ((SerSupp<Object>)
               (() ->
                   objectMapper.readValue(
-                      json,
-                      new TypeReference<Object>() {
-                        @Override
-                        public Type getType() {
-                          return fieldInfo.getField().getGenericType();
-                        }
-                      })))
+                      json, objectMapper.constructType(fieldInfo.getField().getGenericType()))))
           .get();
     }
 
