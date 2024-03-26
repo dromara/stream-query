@@ -78,7 +78,6 @@ public class JsonPostInitTableInfoHandler implements PostInitTableInfoHandler {
         if (handler instanceof AbstractJsonFieldHandler) {
           AbstractJsonFieldHandler<?> typeHandler = (AbstractJsonFieldHandler<?>) handler;
           typeHandler.setTableInfo(tableInfo);
-          typeHandler.setFieldInfo(fieldInfo);
         }
       }
     }

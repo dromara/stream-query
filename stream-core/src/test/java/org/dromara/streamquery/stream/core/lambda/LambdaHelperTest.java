@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static org.dromara.streamquery.stream.core.clazz.ClassHelper.cast;
+
 /**
  * LambdaHelper测试
  *
@@ -153,7 +155,6 @@ class LambdaHelperTest {
     MethodHandles.Lookup lookup = MethodHandles.lookup();
     MethodHandle getR = lookup.findVirtual(B.class, "getR", MethodType.methodType(Object.class));
     SerFunc<A, A> lambda = MethodHandleProxies.asInterfaceInstance(SerFunc.class, getR);
-    LambdaExecutable lambdaExecutable = LambdaHelper.resolve(lambda);
     Assertions.assertEquals(B.class, LambdaHelper.resolve(lambda).getInstantiatedTypes()[0]);
   }
 
@@ -217,8 +218,7 @@ class LambdaHelperTest {
     String name = nameGetter.apply(LambdaHelper.resolve(nameGetter));
     Assertions.assertEquals("getName", name);
     val lambda = LambdaHelper.getGetter(LambdaExecutable.class, "clazz", Function.class);
-    Function<LambdaExecutable, Class<?>> clazzGetter =
-        SerFunc.<Function<?, ?>, Function<LambdaExecutable, Class<?>>>cast().apply(lambda);
+    Function<LambdaExecutable, Class<?>> clazzGetter = cast(lambda);
     Class<?> clazz =
         clazzGetter.apply(
             new LambdaExecutable() {
@@ -237,8 +237,7 @@ class LambdaHelperTest {
     nameSetter.accept(executable, "kubernetes");
     Assertions.assertEquals("kubernetes", executable.getName());
     val lambda = LambdaHelper.getSetter(LambdaExecutable.class, "clazz", BiConsumer.class);
-    BiConsumer<LambdaExecutable, Class<?>> clazzSetter =
-        SerFunc.<BiConsumer<?, ?>, BiConsumer<LambdaExecutable, Class<?>>>cast().apply(lambda);
+    BiConsumer<LambdaExecutable, Class<?>> clazzSetter = cast(lambda);
     clazzSetter.accept(executable, String.class);
     Assertions.assertEquals(String.class, executable.getClazz());
     clazzSetter = LambdaHelper.getSetter(LambdaExecutable::getClazz);

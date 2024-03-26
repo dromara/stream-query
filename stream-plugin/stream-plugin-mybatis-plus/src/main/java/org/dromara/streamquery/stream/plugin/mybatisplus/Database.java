@@ -45,7 +45,6 @@ import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
-import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
@@ -58,6 +57,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import static org.dromara.streamquery.stream.core.clazz.ClassHelper.cast;
 
 /**
  * 辅助类
@@ -244,7 +245,7 @@ public class Database {
     if (Objects.isNull(entity)) {
       return false;
     }
-    Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
+    Class<T> entityClass = cast(entity.getClass());
     Integer result = execute(entityClass, baseMapper -> baseMapper.insert(entity));
     return SqlHelper.retBool(result);
   }
@@ -477,7 +478,7 @@ public class Database {
     if (Objects.isNull(entity)) {
       return false;
     }
-    Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
+    Class<T> entityClass = cast(entity.getClass());
     return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
   }
 
@@ -506,7 +507,7 @@ public class Database {
     if (Objects.isNull(entity)) {
       return false;
     }
-    Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
+    Class<T> entityClass = cast(entity.getClass());
     return execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
   }
 
@@ -523,12 +524,12 @@ public class Database {
     if (Objects.isNull(entity) || ArrayUtils.isEmpty(updateKeys)) {
       return updateById(entity);
     }
-    Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
+    Class<T> entityClass = cast(entity.getClass());
     TableInfo tableInfo = getTableInfo(entityClass);
     T bean = ClassUtils.newInstance(entityClass);
     String keyProperty = tableInfo.getKeyProperty();
     ReflectHelper.setFieldValue(
-        bean, keyProperty, ReflectionKit.getFieldValue(entity, keyProperty));
+        bean, keyProperty, ReflectHelper.getFieldValue(entity, keyProperty));
     LambdaUpdateWrapper<T> updateWrapper =
         Stream.of(updateKeys)
             .reduce(
@@ -661,7 +662,7 @@ public class Database {
     if (Objects.isNull(entity)) {
       return false;
     }
-    Class<T> entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
+    Class<T> entityClass = cast(entity.getClass());
     TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
     if (tableInfo == null) {
       throw ExceptionUtils.mpe(
@@ -1222,7 +1223,7 @@ public class Database {
     Class<T> entityClass = null;
     for (T entity : entityList) {
       if (entity != null) {
-        entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
+        entityClass = cast(entity.getClass());
         break;
       }
     }
@@ -1245,7 +1246,7 @@ public class Database {
     if (entityClass == null) {
       T entity = queryWrapper.getEntity();
       if (entity != null) {
-        entityClass = SerFunc.<Class<?>, Class<T>>cast().apply(entity.getClass());
+        entityClass = cast(entity.getClass());
       }
     }
     if (entityClass == null) {

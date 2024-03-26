@@ -16,7 +16,6 @@
  */
 package org.dromara.streamquery.stream.core.bean;
 
-import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
 import org.dromara.streamquery.stream.core.lambda.function.SerUnOp;
 
 import java.time.LocalDate;
@@ -27,6 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static org.dromara.streamquery.stream.core.clazz.ClassHelper.cast;
 
 /**
  * CopyOption
@@ -90,10 +91,7 @@ public class CopyOption {
 
   public <S, T> CopyOption addConverter(
       Class<S> sourceType, Class<T> targetType, Converter<S, T> converter) {
-    getConverterMap()
-        .put(
-            formatConverterKey(sourceType, targetType),
-            SerFunc.<Converter<S, T>, Converter<Object, Object>>cast().apply(converter));
+    getConverterMap().put(formatConverterKey(sourceType, targetType), cast(converter));
     return this;
   }
 
@@ -121,13 +119,13 @@ public class CopyOption {
     Converter<Object, Object> converter =
         getConverterMap().get(formatConverterKey(sourceType, targetType));
     if (converter != null) {
-      return SerFunc.<Converter<Object, Object>, Converter<S, T>>cast().apply(converter);
+      return cast(converter);
     }
     if (Objects.equals(sourceType.getTypeName(), targetType.getTypeName())) {
       converter = NO_OP_CONVERTER;
     } else {
       converter = getConverterMap().get(formatConverterKey(null, targetType));
     }
-    return SerFunc.<Converter<Object, Object>, Converter<S, T>>cast().apply(converter);
+    return cast(converter);
   }
 }

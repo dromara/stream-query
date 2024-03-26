@@ -16,6 +16,7 @@
  */
 package org.dromara.streamquery.stream.core.bean;
 
+import org.dromara.streamquery.stream.core.clazz.ClassHelper;
 import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
 import org.dromara.streamquery.stream.core.lambda.LambdaHelper;
 import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
@@ -27,6 +28,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+
+import static org.dromara.streamquery.stream.core.clazz.ClassHelper.cast;
 
 /**
  * BeanHelper class.
@@ -137,7 +140,7 @@ public class BeanHelper {
     if (Objects.isNull(source)) {
       return null;
     }
-    final Class<T> sourceType = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
+    final Class<T> sourceType = cast(source.getClass());
     final Converter<T, R> classConverter = copyOption.getConverter(sourceType, targetType);
     if (Objects.nonNull(classConverter)) {
       return classConverter.convert(source);
@@ -151,11 +154,11 @@ public class BeanHelper {
       return target;
     }
 
-    Class<T> sourceType = SerFunc.<Class<?>, Class<T>>cast().apply(source.getClass());
+    Class<T> sourceType = cast(source.getClass());
     Map<String, Map.Entry<SerFunc<T, Object>, Serializable>> sourcePropertyGetterSetterMap =
         LambdaHelper.getPropertyGetterSetterMap(sourceType);
 
-    Class<R> targetType = SerFunc.<Class<?>, Class<R>>cast().apply(target.getClass());
+    Class<R> targetType = cast(target.getClass());
     Map<String, Map.Entry<SerFunc<R, Object>, Serializable>> targetPropertyGetterSetterMap =
         LambdaHelper.getPropertyGetterSetterMap(targetType);
 
@@ -194,9 +197,9 @@ public class BeanHelper {
         value = converter.convert(value);
         Serializable setter = targetGetterSetter.getValue();
         if (BiConsumer.class.isAssignableFrom(setter.getClass())) {
-          SerFunc.<Serializable, BiConsumer<R, Object>>cast().apply(setter).accept(target, value);
+          ClassHelper.<BiConsumer<R, Object>>cast(setter).accept(target, value);
         } else if (BiFunction.class.isAssignableFrom(setter.getClass())) {
-          SerFunc.<Serializable, BiFunction<R, Object, R>>cast().apply(setter).apply(target, value);
+          ClassHelper.<BiFunction<R, Object, R>>cast(setter).apply(target, value);
         }
       } catch (Exception e) {
         if (copyOption.isIgnoreError()) {

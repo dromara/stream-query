@@ -31,6 +31,8 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import static org.dromara.streamquery.stream.core.clazz.ClassHelper.cast;
+
 /**
  * 收集器
  *
@@ -853,7 +855,7 @@ public class Collective {
       Function<Map<K, A>, M> finisher =
           intermediate -> {
             intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-            return SerFunc.<Map<K, A>, M>cast().apply(intermediate);
+            return cast(intermediate);
           };
       return new Collective.CollectorImpl<>(mangledFactory, accumulator, merger, finisher, CH_NOID);
     }
@@ -975,8 +977,7 @@ public class Collective {
     Supplier<A> downstreamSupplier = downstream.supplier();
     BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
     BinaryOperator<ConcurrentMap<K, A>> merger = Collective.mapMerger(downstream.combiner());
-    Supplier<ConcurrentMap<K, A>> mangledFactory =
-        SerFunc.<Supplier<M>, Supplier<ConcurrentMap<K, A>>>cast().apply(mapFactory);
+    Supplier<ConcurrentMap<K, A>> mangledFactory = cast(mapFactory);
     BiConsumer<ConcurrentMap<K, A>, T> accumulator;
     if (downstream.characteristics().contains(Collector.Characteristics.CONCURRENT)) {
       accumulator =
@@ -1003,7 +1004,7 @@ public class Collective {
       Function<ConcurrentMap<K, A>, M> finisher =
           intermediate -> {
             intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-            return SerFunc.<ConcurrentMap<K, A>, M>cast().apply(intermediate);
+            return cast(intermediate);
           };
       return new Collective.CollectorImpl<>(
           mangledFactory, accumulator, merger, finisher, CH_CONCURRENT_NOID);

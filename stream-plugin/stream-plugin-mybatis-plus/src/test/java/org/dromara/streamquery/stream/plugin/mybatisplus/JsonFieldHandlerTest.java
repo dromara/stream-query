@@ -57,30 +57,12 @@ class JsonFieldHandlerTest {
   @BeforeEach
   void init(@Autowired SqlSessionFactory sqlSessionFactory) {
     Database.buildMapper(sqlSessionFactory.getConfiguration(), UserInfoWithJsonName.class);
-    Database.buildMapper(sqlSessionFactory.getConfiguration(), UserInfoWithJsonCollection.class);
+    Database.buildMapper(sqlSessionFactory.getConfiguration(), UserInfoWithMapName.class);
   }
 
   @Test
   void testJsonSaveAndQuery() {
-    val userInfoWithJsonName =
-        new UserInfoWithJsonName() {
-          {
-            setName(
-                new Name() {
-                  {
-                    setUsername("VampireAchao");
-                    setNickname("阿超");
-                  }
-                });
-          }
-        };
-    Database.saveFewSql(Lists.of(userInfoWithJsonName));
-    Database.updateFewSql(Lists.of(userInfoWithJsonName));
-    val dbUserInfoWithJsonName =
-        Database.getById(userInfoWithJsonName.getId(), UserInfoWithJsonName.class);
-    Assertions.assertEquals("VampireAchao", dbUserInfoWithJsonName.getName().getUsername());
-    Assertions.assertEquals("阿超", dbUserInfoWithJsonName.getName().getNickname());
-    List<Email> emails =
+    val emails =
         Lists.of(
             new Email() {
               {
@@ -100,8 +82,27 @@ class JsonFieldHandlerTest {
                 setDomain("hutool.cn");
               }
             });
-
-    Map<String, Name> nameMap =
+    val userInfoWithJsonName =
+        new UserInfoWithJsonName() {
+          {
+            setName(
+                new Name() {
+                  {
+                    setUsername("VampireAchao");
+                    setNickname("阿超");
+                  }
+                });
+            setEmail(emails);
+          }
+        };
+    Database.saveFewSql(Lists.of(userInfoWithJsonName));
+    Database.updateFewSql(Lists.of(userInfoWithJsonName));
+    val dbUserInfoWithJsonName =
+        Database.getById(userInfoWithJsonName.getId(), UserInfoWithJsonName.class);
+    Assertions.assertEquals("VampireAchao", dbUserInfoWithJsonName.getName().getUsername());
+    Assertions.assertEquals("阿超", dbUserInfoWithJsonName.getName().getNickname());
+    Assertions.assertEquals(emails, dbUserInfoWithJsonName.getEmail());
+    val nameMap =
         Maps.of(
             "zh",
             new Name() {
@@ -118,7 +119,7 @@ class JsonFieldHandlerTest {
               }
             });
     val userInfoWithJsonCollection =
-        new UserInfoWithJsonCollection() {
+        new UserInfoWithMapName() {
           {
             setName(nameMap);
             setEmail(emails);
@@ -127,7 +128,7 @@ class JsonFieldHandlerTest {
     Database.saveFewSql(Lists.of(userInfoWithJsonCollection));
     Database.updateFewSql(Lists.of(userInfoWithJsonCollection));
     val dbUserInfoWithJsonCollection =
-        Database.getById(userInfoWithJsonCollection.getId(), UserInfoWithJsonCollection.class);
+        Database.getById(userInfoWithJsonCollection.getId(), UserInfoWithMapName.class);
     Assertions.assertEquals(nameMap, dbUserInfoWithJsonCollection.getName());
     assertThat(dbUserInfoWithJsonCollection.getEmail()).containsExactlyElementsOf(emails);
   }
@@ -419,7 +420,7 @@ class JsonFieldHandlerTest {
 
     @Override
     @SneakyThrows
-    public String toJson(Object obj, TableInfo tableInfo, TableFieldInfo fieldInfo) {
+    public String toJson(Object obj) {
       return objectMapper.writeValueAsString(obj);
     }
   }
@@ -431,6 +432,9 @@ class JsonFieldHandlerTest {
 
     @TableField(typeHandler = JsonFieldHandler.class)
     private Name name;
+
+    @TableField(typeHandler = JsonFieldHandler.class)
+    private List<Email> email;
   }
 
   @Data
@@ -447,7 +451,7 @@ class JsonFieldHandlerTest {
 
   @Data
   @TableName(value = "user_info", autoResultMap = true)
-  static class UserInfoWithJsonCollection {
+  static class UserInfoWithMapName {
     private Long id;
 
     @TableField(typeHandler = JsonFieldHandler.class)

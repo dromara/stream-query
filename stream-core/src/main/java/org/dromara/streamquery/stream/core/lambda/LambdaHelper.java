@@ -36,6 +36,8 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Function;
 
+import static org.dromara.streamquery.stream.core.clazz.ClassHelper.cast;
+
 /**
  * LambdaHelper
  *
@@ -160,7 +162,7 @@ public class LambdaHelper {
                                       instantiatedMethodType))
                       .get();
               final MethodHandle target = callSite.getTarget();
-              return ((SerSupp<T>) () -> SerFunc.<Object, T>cast().apply(target.invoke())).get();
+              return ((SerSupp<T>) () -> cast(target.invoke())).get();
             });
   }
 
@@ -279,7 +281,7 @@ public class LambdaHelper {
     Object setter =
         getSetter(
             executable.getClazz(), BeanHelper.getPropertyName(executable.getName()), lambdaType);
-    return SerFunc.<Object, C>cast().apply(setter);
+    return cast(setter);
   }
 
   /**

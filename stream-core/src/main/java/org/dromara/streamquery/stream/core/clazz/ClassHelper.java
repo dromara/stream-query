@@ -99,14 +99,14 @@ public class ClassHelper {
         .toList();
   }
 
-    /**
-     * Cast obj type.
-     *
-     * @param obj obj
-     * @param <T> T
-     * @return T
-     */
-    public static <T> T cast(Object obj) {
-        return SerFunc.<Object, T>cast().apply(obj);
-    }
+  /**
+   * Cast obj type.
+   *
+   * @param obj obj
+   * @param <T> T
+   * @return T
+   */
+  public static <T> T cast(Object obj) {
+    return SerFunc.<Object, T>cast().apply(obj);
+  }
 }
