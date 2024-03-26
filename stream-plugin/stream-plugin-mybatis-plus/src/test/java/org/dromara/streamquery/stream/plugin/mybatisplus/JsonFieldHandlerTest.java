@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -30,8 +31,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
-import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
-import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -385,37 +384,17 @@ class JsonFieldHandlerTest {
 
     @Override
     public Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
-      Class<?> fieldType = fieldInfo.getField().getType();
-      if (List.class.isAssignableFrom(fieldInfo.getField().getType())) {
-        Class<?> clazzOpt =
-            Steam.of(ReflectHelper.getGenericTypes(fieldInfo.getField().getGenericType()))
-                .findFirst()
-                .map(type -> (Class<?>) type)
-                .orElseThrow(
-                    () -> new IllegalArgumentException("List type must have a generic type"));
-        return ((SerSupp<Object>)
-                (() ->
-                    objectMapper.readValue(
-                        json,
-                        objectMapper
-                            .getTypeFactory()
-                            .constructCollectionType(List.class, clazzOpt))))
-            .get();
-      } else if (Map.class.isAssignableFrom(fieldInfo.getField().getType())) {
-        Class<?>[] genericClazz =
-            Steam.of(ReflectHelper.getGenericTypes(fieldInfo.getField().getGenericType()))
-                .map(type -> (Class<?>) type)
-                .toArray(Class[]::new);
-        return ((SerSupp<Object>)
-                (() ->
-                    objectMapper.readValue(
-                        json,
-                        objectMapper
-                            .getTypeFactory()
-                            .constructMapType(HashMap.class, genericClazz[0], genericClazz[1]))))
-            .get();
-      }
-      return ((SerSupp<Object>) (() -> objectMapper.readValue(json, fieldType))).get();
+      return ((SerSupp<Object>)
+              (() ->
+                  objectMapper.readValue(
+                      json,
+                      new TypeReference<Object>() {
+                        @Override
+                        public Type getType() {
+                          return fieldInfo.getField().getGenericType();
+                        }
+                      })))
+          .get();
     }
 
     @Override
