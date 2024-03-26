@@ -98,4 +98,15 @@ public class ClassHelper {
                     && !Modifier.isInterface(clazz.getModifiers()))
         .toList();
   }
+
+    /**
+     * Cast obj type.
+     *
+     * @param obj obj
+     * @param <T> T
+     * @return T
+     */
+    public static <T> T cast(Object obj) {
+        return SerFunc.<Object, T>cast().apply(obj);
+    }
 }

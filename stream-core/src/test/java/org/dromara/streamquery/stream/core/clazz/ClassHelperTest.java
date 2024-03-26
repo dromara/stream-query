@@ -35,4 +35,11 @@ class ClassHelperTest {
     Assertions.assertTrue(
         classes.stream().anyMatch(clazz -> clazz.getName().equals(ClassHelper.class.getName())));
   }
+
+  @Test
+  void testCast() {
+    Object obj = "foo";
+    String cast = ClassHelper.cast(obj);
+    Assertions.assertEquals("foo", cast);
+  }
 }
