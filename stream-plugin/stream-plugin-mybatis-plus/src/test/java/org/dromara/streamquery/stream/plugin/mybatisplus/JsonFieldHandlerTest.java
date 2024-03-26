@@ -30,6 +30,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
 import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
+import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
+import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.handler.AbstractJsonFieldHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,22 +80,56 @@ class JsonFieldHandlerTest {
         Database.getById(userInfoWithJsonName.getId(), UserInfoWithJsonName.class);
     Assertions.assertEquals("VampireAchao", dbUserInfoWithJsonName.getName().getUsername());
     Assertions.assertEquals("阿超", dbUserInfoWithJsonName.getName().getNickname());
+    List<Email> emails =
+        Lists.of(
+            new Email() {
+              {
+                setEmail("achao@apache.org");
+                setDomain("apache.org");
+              }
+            },
+            new Email() {
+              {
+                setEmail("vampireachao@dromara.org");
+                setDomain("dromara.org");
+              }
+            },
+            new Email() {
+              {
+                setEmail("achao@hutool.cn");
+                setDomain("hutool.cn");
+              }
+            });
 
+    Map<String, Name> nameMap =
+        Maps.of(
+            "zh",
+            new Name() {
+              {
+                setUsername("吸血鬼阿超");
+                setNickname("阿超");
+              }
+            },
+            "en",
+            new Name() {
+              {
+                setUsername("VampireAchao");
+                setNickname("Achao");
+              }
+            });
     val userInfoWithJsonCollection =
         new UserInfoWithJsonCollection() {
           {
-            setName(Maps.of("username", "VampireAchao", "nickname", "阿超"));
-            setEmail(Lists.of("achao@apache.org", "vampireachao@dromara.org", "achao@hutool.cn"));
+            setName(nameMap);
+            setEmail(emails);
           }
         };
     Database.saveFewSql(Lists.of(userInfoWithJsonCollection));
     Database.updateFewSql(Lists.of(userInfoWithJsonCollection));
     val dbUserInfoWithJsonCollection =
         Database.getById(userInfoWithJsonCollection.getId(), UserInfoWithJsonCollection.class);
-    Assertions.assertEquals("VampireAchao", dbUserInfoWithJsonCollection.getName().get("username"));
-    Assertions.assertEquals("阿超", dbUserInfoWithJsonCollection.getName().get("nickname"));
-    assertThat(dbUserInfoWithJsonCollection.getEmail())
-        .containsExactly("achao@apache.org", "vampireachao@dromara.org", "achao@hutool.cn");
+    Assertions.assertEquals(nameMap, dbUserInfoWithJsonCollection.getName());
+    assertThat(dbUserInfoWithJsonCollection.getEmail()).containsExactlyElementsOf(emails);
   }
 
   @Test
@@ -348,6 +385,35 @@ class JsonFieldHandlerTest {
     @Override
     public Object parse(String json, TableInfo tableInfo, TableFieldInfo fieldInfo) {
       Class<?> fieldType = fieldInfo.getField().getType();
+      if (List.class.isAssignableFrom(fieldInfo.getField().getType())) {
+        Class<?> clazzOpt =
+            Steam.of(ReflectHelper.getGenericTypes(fieldInfo.getField().getGenericType()))
+                .findFirst()
+                .map(type -> (Class<?>) type)
+                .orElseThrow(
+                    () -> new IllegalArgumentException("List type must have a generic type"));
+        return ((SerSupp<Object>)
+                (() ->
+                    objectMapper.readValue(
+                        json,
+                        objectMapper
+                            .getTypeFactory()
+                            .constructCollectionType(List.class, clazzOpt))))
+            .get();
+      } else if (Map.class.isAssignableFrom(fieldInfo.getField().getType())) {
+        Class<?>[] genericClazz =
+            Steam.of(ReflectHelper.getGenericTypes(fieldInfo.getField().getGenericType()))
+                .map(type -> (Class<?>) type)
+                .toArray(Class[]::new);
+        return ((SerSupp<Object>)
+                (() ->
+                    objectMapper.readValue(
+                        json,
+                        objectMapper
+                            .getTypeFactory()
+                            .constructMapType(HashMap.class, genericClazz[0], genericClazz[1]))))
+            .get();
+      }
       return ((SerSupp<Object>) (() -> objectMapper.readValue(json, fieldType))).get();
     }
 
@@ -374,14 +440,20 @@ class JsonFieldHandlerTest {
   }
 
   @Data
+  static class Email implements Serializable {
+    private String email;
+    private String domain;
+  }
+
+  @Data
   @TableName(value = "user_info", autoResultMap = true)
   static class UserInfoWithJsonCollection {
     private Long id;
 
     @TableField(typeHandler = JsonFieldHandler.class)
-    private Map<String, Object> name;
+    private Map<String, Name> name;
 
     @TableField(typeHandler = JsonFieldHandler.class)
-    private List<String> email;
+    private List<Email> email;
   }
 }

@@ -116,14 +116,6 @@
                 <artifactId>apache-rat-plugin</artifactId>
                 <version>${apache-rat-plugin.version}</version>
                 <configuration>
-                    <licenseSets>
-                        <licenseSet>
-                            <name>Apache License 2.0</name>
-                            <patterns>
-                                <pattern>Apache License 2.0</pattern>
-                            </patterns>
-                        </licenseSet>
-                    </licenseSets>
                     <!-- 排除不需要检查的文件或目录 -->
                     <excludes>
                         <exclude>.git/</exclude>
