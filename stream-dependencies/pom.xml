@@ -74,15 +74,15 @@
 
     <properties>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
-        <byte-buddy.version>1.12.21</byte-buddy.version>
-        <lombok.version>1.18.24</lombok.version>
+        <byte-buddy.version>1.14.12</byte-buddy.version>
+        <lombok.version>1.18.30</lombok.version>
         <spring-boot.version>2.7.0</spring-boot.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.224</h2.version>
         <mysql.version>8.0.33</mysql.version>
-        <pgsql.version>42.7.1</pgsql.version>
-        <junit.version>5.9.0</junit.version>
-        <jmh.version>1.35</jmh.version>
-        <ttl.version>2.14.1</ttl.version>
+        <pgsql.version>42.7.3</pgsql.version>
+        <junit.version>5.10.2</junit.version>
+        <jmh.version>1.37</jmh.version>
+        <ttl.version>2.14.5</ttl.version>
     </properties>
 
     <dependencyManagement>
