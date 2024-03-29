@@ -138,4 +138,4 @@ powered by [JetBrains](https://www.jetbrains.com)Open source license
 ## 赞助商
 
 [![xiaonuo](https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg)](https://www.xiaonuo.vip/?from=hutool)
-[![xiaonuo](http://stream-query.dromara.org/img/sponsor/yinmaisoft.jpg)](https://www.xiaonuo.vip/?from=hutool)
+[![yinmaisoft](http://stream-query.dromara.org/img/sponsor/yinmaisoft.jpg)](https://www.jnpfsoft.com/index.html?from=stream-query)
