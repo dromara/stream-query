@@ -133,3 +133,9 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 
 powered by [GitHub Copilot](https://copilot.github.com)
 powered by [JetBrains](https://www.jetbrains.com)Open source license
+
+
+## 赞助商
+
+[![xiaonuo](https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg)](https://www.xiaonuo.vip/?from=hutool)
+[![xiaonuo](http://stream-query.dromara.org/img/sponsor/yinmaisoft.jpg)](https://www.xiaonuo.vip/?from=hutool)
