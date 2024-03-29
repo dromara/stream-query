@@ -63,6 +63,10 @@ postList: none
   <img src="https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg" />
 </a>
 
+<a target="_blank" href="https://www.jnpfsoft.com/index.html?from=stream-query">
+  <img src="/img/sponsor/yinmaisoft.jpg" />
+</a>
+
 ## ⛄开发团队成员
 ::: cardList 3
 ```yaml

@@ -51,7 +51,13 @@ module.exports = {
   <div style="display: flex; justify-content: center; align-items: center;">
     <img src="https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg" style="max-width: 100%; max-height: 100%;" alt="">
   </div>
-</a>`,
+  </a>
+  <a target="_blank" href="https://www.jnpfsoft.com/index.html?from=stream-query">
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <img src="/img/sponsor/yinmaisoft.jpg" style="max-width: 100%; max-height: 100%;" alt="">
+  </div>
+  </a>
+`,
 
 
   // windowRB: `

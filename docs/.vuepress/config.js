@@ -238,15 +238,6 @@ module.exports = {
       }
     }],
     [
-      'vuepress-plugin-zooming', // 放大图片
-      {
-        selector: '.theme-vdoing-content img:not(.no-zoom)',
-        options: {
-          bgColor: 'rgba(0,0,0,0.6)'
-        },
-      },
-    ],
-    [
       '@vuepress/last-updated', // "上次更新"时间格式
       {
         transformer: (timestamp, lang) => {
