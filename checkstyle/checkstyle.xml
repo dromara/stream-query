@@ -25,7 +25,6 @@
   <property name="fileExtensions" value="java"/>
 
   <module name="Header">
-    <property name="headerFile" value="checkstyle/license-header.txt"/>
     <property name="fileExtensions" value="java"/>
   </module>
 
