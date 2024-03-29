@@ -1,21 +1,10 @@
 /*
- * This file, "Database.java", contains modifications based upon:
- * com.baomidou.mybatisplus.extension.toolkit.Db from the MyBatis-Plus project,
- * which is licensed under the Apache License, Version 2.0 (the "License").
- * You may obtain a copy of the License at:
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * The modifications to the original "Db" class from MyBatis-Plus include
- * adaptations for specific usage within the org.dromara.streamquery project.
- * These modifications are made by VampireAchao, and the file is
- * subsequently re-licensed to the Apache Software Foundation under one or more
- * contributor license agreements.
- *
- * See the NOTICE file distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file to You under
- * the Apache License, Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -72,7 +61,7 @@ import java.util.stream.Stream;
 import static org.dromara.streamquery.stream.core.clazz.ClassHelper.cast;
 
 /**
- * 数据库操作
+ * 辅助类
  *
  * @author VampireAchao Cizai_
  * @since 1.0
