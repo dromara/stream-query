@@ -50,6 +50,8 @@ import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.constant.PluginConst;
 import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IMapper;
+import org.dromara.streamquery.stream.plugin.mybatisplus.engine.utils.SpringUtil;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
@@ -1007,13 +1009,18 @@ public class Database {
    */
   public static <T, R, M extends BaseMapper<T>> R execute(
       Class<T> entityClass, SFunction<M, R> sFunction) {
-    SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
-    try {
-      return sFunction.apply(getMapper(entityClass, sqlSession));
-    } finally {
-      SqlSessionUtils.closeSqlSession(
-          sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
+//    SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+//    try {
+//      return sFunction.apply(getMapper(entityClass, sqlSession));
+//    } finally {
+//      SqlSessionUtils.closeSqlSession(
+//          sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
+//    }
+    SqlSessionTemplate sqlSessionTemplate =  SpringUtil.getBean(SqlSessionTemplate.class);
+    if(sqlSessionTemplate == null){
+      throw ExceptionUtils.mpe("sqlSessionTemplate can't be null!");
     }
+    return sFunction.apply(getMapper(entityClass, sqlSessionTemplate));
   }
 
   /**
@@ -1022,7 +1029,7 @@ public class Database {
    * @param configuration mybatis-plus配置
    * @param entityClass 实体类
    */
-  public static void buildMapper(Configuration configuration, Class<?> entityClass) {
+  public static void buildMapper(Configuration configuration, Class<?> entityClass,Class<? extends BaseMapper> mapperClass) {
     if (!(configuration instanceof MybatisConfiguration)) {
       throw new IllegalArgumentException("configuration must be MybatisConfiguration");
     }
@@ -1033,7 +1040,7 @@ public class Database {
           Class<?> dynamicMapper =
               new ByteBuddy()
                   .makeInterface(
-                      TypeDescription.Generic.Builder.parameterizedType(IMapper.class, entityClass)
+                      TypeDescription.Generic.Builder.parameterizedType(mapperClass, entityClass)
                           .build())
                   .name(
                       String.format(
@@ -1044,6 +1051,10 @@ public class Database {
           configuration.addMapper(dynamicMapper);
           return dynamicMapper;
         });
+  }
+
+  public static void buildMapper(Configuration configuration, Class<?> entityClass) {
+    buildMapper(configuration,entityClass,IMapper.class);
   }
 
   /**
@@ -1063,6 +1074,7 @@ public class Database {
    * @param <M> Mapper类型
    * @return Mapper
    */
+  @Deprecated
   @SuppressWarnings("unchecked")
   public static <T, M extends BaseMapper<T>> M getMapper(
       Class<T> entityClass, SqlSession sqlSession) {
@@ -1078,6 +1090,24 @@ public class Database {
     Class<?> mapperClass = getMapperClass(entityClass);
     return (M) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
   }
+
+  /**
+   * 不需要手动关闭链接，spring mybatis 会自动管理
+   * @param entityClass
+   * @param sqlSessionTemplate
+   * @return
+   * @param <T>
+   * @param <M>
+   */
+  public static <T, M extends BaseMapper<T>> M getMapper(
+          Class<T> entityClass, SqlSessionTemplate sqlSessionTemplate) {
+    if (entityClass == null) {
+      throw ExceptionUtils.mpe("entityClass can't be null!");
+    }
+    Class<?> mapperClass = getMapperClass(entityClass);
+    return (M) sqlSessionTemplate.getMapper(mapperClass);
+  }
+
 
   /**
    * 获取实体类和mapper缓存
