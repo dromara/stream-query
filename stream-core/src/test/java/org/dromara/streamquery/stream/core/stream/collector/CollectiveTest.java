@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,6 +61,20 @@ class CollectiveTest {
             .parallel()
             .group(Object::hashCode, mapping(Function.identity(), toList()))
             .isEmpty());
+  }
+
+  @Test
+  void testGroupingBySkip() {
+    List<Integer> list = Arrays.asList(0, 0, 0, 1, 1, 1, 2, 2, 2);
+    Collector<Integer, ?, Map<Integer, List<Integer>>> grouping = groupingBy(i -> i * 2,
+            Collectors.mapping(i -> i + 1,
+                    Collectors.collectingAndThen(toList(), a -> a.subList(0, 2))));
+    Collector<Integer, ?, Map<Integer, List<Integer>>> grouping1 = groupingBy(i -> i * 2, subList(0, 2));
+
+    Map<Integer, List<Integer>> collect1 = list.stream().collect(grouping);
+    Map<Integer, List<Integer>> collect = list.stream().collect(grouping1);
+    System.out.println(collect1);
+    System.out.println(collect);
   }
 
   @Test

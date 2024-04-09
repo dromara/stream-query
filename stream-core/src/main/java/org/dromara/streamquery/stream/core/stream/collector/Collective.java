@@ -116,6 +116,20 @@ public class Collective {
         CH_ID);
   }
 
+  public static <T> Collector<T, ?, List<T>> listSkipping(int skip) {
+    return subList(skip, null);
+  }
+
+  public static <T> Collector<T, ?, List<T>> subList(Integer skip, Integer limit) {
+    Integer offset = Opp.of(skip).orElse(0);
+    return mapping(Function.identity(), collectingAndThen(toList(), list -> {
+      int size = list.size();
+      int fromIndex = offset > size ? size : offset;
+      int toIndex = Math.min(fromIndex + limit, size);
+      return list.subList(fromIndex, toIndex);
+    }));
+  }
+
   /**
    * Returns a {@code Collector} that accumulates the input elements into a new {@code Set}. There
    * are no guarantees on the type, mutability, serializability, or thread-safety of the {@code Set}
