@@ -61,25 +61,5 @@ public class JsonPostInitTableInfoHandler implements PostInitTableInfoHandler {
         break;
       }
     }
-
-    for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {
-      if (fieldInfo.getTypeHandler() == null) {
-        continue;
-      }
-      if (tableInfo.getResultMap() == null) {
-        return;
-      }
-      ResultMap resultMap = configuration.getResultMap(tableInfo.getResultMap());
-      for (ResultMapping resultMapping : resultMap.getResultMappings()) {
-        if (!Objects.equals(resultMapping.getProperty(), fieldInfo.getProperty())) {
-          continue;
-        }
-        TypeHandler<?> handler = resultMapping.getTypeHandler();
-        if (handler instanceof AbstractJsonFieldHandler) {
-          AbstractJsonFieldHandler<?> typeHandler = (AbstractJsonFieldHandler<?>) handler;
-          typeHandler.setTableInfo(tableInfo);
-        }
-      }
-    }
   }
 }
