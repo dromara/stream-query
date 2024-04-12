@@ -116,16 +116,28 @@ public class Collective {
         CH_ID);
   }
 
-  public static <T> Collector<T, ?, List<T>> listSkipping(int skip) {
+  public static <T> Collector<T, ?, List<T>> limiting(int limit) {
+    return subList(null, limit);
+  }
+
+  public static <T> Collector<T, ?, List<T>> skipping(int skip) {
     return subList(skip, null);
   }
 
+  /**
+   *
+   * @param skip
+   * @param limit
+   * @return a {@code Collector} which collects all the input elements into a {@code Set}
+   * @param <T> the type of the input elements
+   */
   public static <T> Collector<T, ?, List<T>> subList(Integer skip, Integer limit) {
     Integer offset = Opp.of(skip).orElse(0);
+    Integer limited = Opp.of(limit).orElse(0);
     return mapping(Function.identity(), collectingAndThen(toList(), list -> {
       int size = list.size();
       int fromIndex = offset > size ? size : offset;
-      int toIndex = Math.min(fromIndex + limit, size);
+      int toIndex = Math.min(fromIndex + limited, size);
       return list.subList(fromIndex, toIndex);
     }));
   }

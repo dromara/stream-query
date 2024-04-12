@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,17 +63,25 @@ class CollectiveTest {
   }
 
   @Test
-  void testGroupingBySkip() {
+  void testSubList() {
     List<Integer> list = Arrays.asList(0, 0, 0, 1, 1, 1, 2, 2, 2);
-    Collector<Integer, ?, Map<Integer, List<Integer>>> grouping = groupingBy(i -> i * 2,
-            Collectors.mapping(i -> i + 1,
-                    Collectors.collectingAndThen(toList(), a -> a.subList(0, 2))));
-    Collector<Integer, ?, Map<Integer, List<Integer>>> grouping1 = groupingBy(i -> i * 2, subList(0, 2));
+    Map<Integer, List<Integer>> map1 = list.stream().collect(groupingBy(Function.identity(), subList(1, 2)));
+    Assertions.assertEquals(3, map1.size());
+    Assertions.assertEquals(2, map1.get(0).size());
+    Assertions.assertEquals(2, map1.get(1).size());
+    Assertions.assertEquals(2, map1.get(2).size());
 
-    Map<Integer, List<Integer>> collect1 = list.stream().collect(grouping);
-    Map<Integer, List<Integer>> collect = list.stream().collect(grouping1);
-    System.out.println(collect1);
-    System.out.println(collect);
+    Map<Integer, List<Integer>> map2 = list.stream().collect(groupingBy(Function.identity(), subList(10, 2)));
+    Assertions.assertEquals(3, map2.size());
+    Assertions.assertEquals(0, map2.get(0).size());
+    Assertions.assertEquals(0, map2.get(1).size());
+    Assertions.assertEquals(0, map2.get(2).size());
+
+
+
+    Assertions.assertThrows(, () -> {
+      list.stream().collect(groupingBy(Function.identity(), subList(1, 0)));
+    });
   }
 
   @Test
