@@ -116,28 +116,42 @@ public class Collective {
         CH_ID);
   }
 
+  /**
+   * Constructs a collector that retrieves a sublist from the input elements.
+   *
+   * @param limit The maximum length of the returned list. If null, returns all remaining elements.
+   * @param <T>   The type of the input elements.
+   * @return a {@code Collector} that collects all input elements into a {@code List}, representing a subset of the original collection.
+   */
   public static <T> Collector<T, ?, List<T>> limiting(int limit) {
     return subList(null, limit);
   }
 
+  /**
+   * Constructs a collector that retrieves a sublist from the input elements.
+   *
+   * @param skip The number of elements to skip, ignore the first few elements of the collection. If null, no elements are skipped.
+   * @param <T>  The type of the input elements.
+   * @return a {@code Collector} that collects all input elements into a {@code List}, representing a subset of the original collection.
+   */
   public static <T> Collector<T, ?, List<T>> skipping(int skip) {
     return subList(skip, null);
   }
 
   /**
+   * Constructs a collector that retrieves a sublist from the input elements.
    *
-   * @param skip
-   * @param limit
-   * @return a {@code Collector} which collects all the input elements into a {@code Set}
-   * @param <T> the type of the input elements
+   * @param skip  The number of elements to skip, ignore the first few elements of the collection. If null, no elements are skipped.
+   * @param limit The maximum length of the returned list. If null, returns all remaining elements.
+   * @param <T>   The type of the input elements.
+   * @return a {@code Collector} that collects all input elements into a {@code List}, representing a subset of the original collection.
    */
   public static <T> Collector<T, ?, List<T>> subList(Integer skip, Integer limit) {
     Integer offset = Opp.of(skip).orElse(0);
-    Integer limited = Opp.of(limit).orElse(0);
     return mapping(Function.identity(), collectingAndThen(toList(), list -> {
       int size = list.size();
-      int fromIndex = offset > size ? size : offset;
-      int toIndex = Math.min(fromIndex + limited, size);
+      int fromIndex = Math.min(size, offset);
+      int toIndex = Opp.of(limit).map(l -> Math.min(fromIndex + l, size)).orElse(size);
       return list.subList(fromIndex, toIndex);
     }));
   }
