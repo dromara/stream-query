@@ -57,6 +57,11 @@ module.exports = {
     <img src="/img/sponsor/yinmaisoft.jpg" style="max-width: 100%; max-height: 100%;" alt="">
   </div>
   </a>
+  <a target="_blank" href="http://doc.zyplayer.com/#/integrate/zyplayer-doc?utm=stream-query">
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <img src="/img/sponsor/logo-正方形.jpg" style="max-width: 100%; max-height: 50%;" alt="">
+  </div>
+  </a>
 `,
 
 
