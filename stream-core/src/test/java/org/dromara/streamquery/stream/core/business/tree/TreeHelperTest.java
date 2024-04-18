@@ -188,16 +188,11 @@ class TreeHelperTest {
   @Test
   void testCascadeSelect() {
     List<Student> studentTree = studentTreeHelper.toTree(originStudentList);
-
     Long targetStudentId = 6L;
-
     List<Long> expectedPathIds = Arrays.asList(1L, 3L, 6L);
-
     List<Student> selectedPath = studentTreeHelper.cascadeSelect(studentTree, targetStudentId);
-
     List<Long> selectedPathIds =
         selectedPath.stream().map(Student::getId).collect(Collectors.toList());
-
     Assertions.assertEquals(expectedPathIds, selectedPathIds);
   }
 

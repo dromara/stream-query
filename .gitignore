@@ -10,3 +10,6 @@
 /.fleet/
 *.flattened-pom.xml
 /.fastRequest/
+/.mvn/
+mvnw
+mvnw.cmd
