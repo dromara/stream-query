@@ -81,7 +81,7 @@
     </developers>
 
     <properties>
-        <mybatis-plus.version>3.5.6</mybatis-plus.version>
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <byte-buddy.version>1.14.12</byte-buddy.version>
         <lombok.version>1.18.30</lombok.version>
         <spring-boot.version>2.7.0</spring-boot.version>
