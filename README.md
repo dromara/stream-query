@@ -105,6 +105,7 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 
 提交问题反馈请说明正在使用的JDK版本、stream-query版本和相关依赖库版本。如果可以请尽量详细或加图片以便于我们去复现
 
+[Gitcode issue](https://gitcode.com/dromara/stream-query/issues)<br/>
 [Gitee issue](https://gitee.com/dromara/stream-query/issues)<br/>
 [Github issue](https://github.com/dromara/stream-query/issues)
 
@@ -121,11 +122,11 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 
 ### 🐾贡献代码的步骤
 
-1. 在`Gitee`或者`Github`上`fork`项目到自己的`repo`
+1. 在`Gitcode`或者`Gitee`或者`Github`上`fork`项目到自己的`repo`
 2. 把`fork`过去的项目也就是你的项目`clone`到你的本地
 3. 修改代码
 4. `commit`后`push`到自己的库
-5. 登录`Gitee`或`Github`在你仓库首页可以看到一个 `pull request` 按钮，点击它，填写一些说明信息，然后提交即可。
+5. 登录`Gitcode`或`Gitee`或`Github`在你仓库首页可以看到一个 `pull request` 按钮，点击它，填写一些说明信息，然后提交即可。
    等待维护者合并
 
 ### 📐PR遵照的原则
