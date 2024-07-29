@@ -136,10 +136,6 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 - 新加的方法尽可能不要使用额外的第三方库方法
 - 我们如果关闭了你的issue或pr，请不要诧异，这是我们保持问题处理整洁的一种方式，你依旧可以继续讨论，当有讨论结果时我们会重新打开。
 
-powered by [GitHub Copilot](https://copilot.github.com)
-powered by [JetBrains](https://www.jetbrains.com)Open source license
-
-
 
 
 ## 赞助商
@@ -147,4 +143,5 @@ powered by [JetBrains](https://www.jetbrains.com)Open source license
 [![xiaonuo](https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg)](https://www.xiaonuo.vip/?from=hutool)
 [![yinmaisoft](https://plus.hutool.cn/images/zz/yinmaisoft.jpg)](https://www.jnpfsoft.com/index.html?from=stream-query)
 
-
+powered by [GitHub Copilot](https://copilot.github.com)
+powered by [JetBrains](https://www.jetbrains.com)Open source license
