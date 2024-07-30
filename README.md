@@ -29,7 +29,7 @@
 ## 🍺Committer卑微求职 北京、雄安求内推
 v：Cizai_
 
-<img src="https://zang-1307996497.cos.ap-beijing.myqcloud.com/undefinedWechatIMG379.jpg" alt="微信" width="280px">
+<img src="https://zang-1307996497.cos.ap-beijing.myqcloud.com/undefinedWechatIMG379.jpg" alt="微信" width="300px">
 
 ## 📝文档
 
