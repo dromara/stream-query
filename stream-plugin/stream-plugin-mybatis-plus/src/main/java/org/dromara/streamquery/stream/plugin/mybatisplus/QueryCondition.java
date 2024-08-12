@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.core.enums.WrapperKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.dromara.streamquery.stream.core.bean.BeanHelper;
 import org.dromara.streamquery.stream.core.lambda.LambdaExecutable;
@@ -104,40 +103,12 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
    * eq.
    *
    * @param column a {@link SFunction} object
-   * @param data a {@link String} object
-   * @return a {@link QueryCondition} object
-   * @deprecated because this method is superfluous
-   */
-  @Deprecated
-  public QueryCondition<T> eq(SFunction<T, String> column, String data) {
-    super.eq(StringUtils.isNotEmpty(data), column, data);
-    return this;
-  }
-
-  /**
-   * eq.
-   *
-   * @param column a {@link SFunction} object
    * @param data a R object
    * @param <R> a R class
    * @return a {@link QueryCondition} object
    */
   public <R> QueryCondition<T> eq(SFunction<T, R> column, R data) {
     super.eq(column, data);
-    return this;
-  }
-
-  /**
-   * like.
-   *
-   * @param column a {@link SFunction} object
-   * @param data a {@link String} object
-   * @return a {@link QueryCondition} object
-   * @deprecated because this method is superfluous
-   */
-  @Deprecated
-  public QueryCondition<T> like(SFunction<T, String> column, String data) {
-    super.like(StringUtils.isNotEmpty(data), column, data);
     return this;
   }
 
@@ -152,65 +123,6 @@ public class QueryCondition<T> extends LambdaQueryWrapper<T> {
   public <R> QueryCondition<T> in(SFunction<T, R> column, Collection<R> dataList) {
     this.mapping = getMapping(column);
     super.in(column, dataList);
-    return this;
-  }
-
-  /**
-   * activeEq.
-   *
-   * @param column a {@link SFunction} object
-   * @param data a {@link String} object
-   * @return a {@link QueryCondition} object
-   * @deprecated because this method is superfluous
-   */
-  @Deprecated
-  public QueryCondition<T> activeEq(SFunction<T, String> column, String data) {
-    Opp.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
-    return this;
-  }
-
-  /**
-   * activeEq.
-   *
-   * @param column a {@link SFunction} object
-   * @param data a R object
-   * @param <R> a R class
-   * @return a {@link QueryCondition} object
-   * @deprecated because this method is optional
-   */
-  @Deprecated
-  public <R> QueryCondition<T> activeEq(SFunction<T, R> column, R data) {
-    Opp.of(data).map(v -> super.eq(column, v)).orElseRun(() -> Database.notActive(this));
-    return this;
-  }
-
-  /**
-   * activeLike.
-   *
-   * @param column a {@link SFunction} object
-   * @param data a {@link String} object
-   * @return a {@link QueryCondition} object
-   * @deprecated because this method is superfluous
-   */
-  @Deprecated
-  public QueryCondition<T> activeLike(SFunction<T, String> column, String data) {
-    Opp.of(data).map(v -> super.like(column, v)).orElseRun(() -> Database.notActive(this));
-    return this;
-  }
-
-  /**
-   * activeIn.
-   *
-   * @param column a {@link SFunction} object
-   * @param dataList a {@link Collection} object
-   * @param <R> a R class
-   * @return a {@link QueryCondition} object
-   * @deprecated because this method is optional
-   */
-  @Deprecated
-  public <R> QueryCondition<T> activeIn(SFunction<T, R> column, Collection<R> dataList) {
-    this.mapping = getMapping(column);
-    Opp.ofColl(dataList).map(v -> super.in(column, v)).orElseRun(() -> Database.notActive(this));
     return this;
   }
 

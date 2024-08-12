@@ -533,33 +533,6 @@ public class ReflectHelper {
     }
   }
 
-  /**
-   * explain. 此方法会在2.0版本移除
-   *
-   * @param obj a {@link java.lang.Object} object
-   */
-  @Deprecated
-  public static void explain(Object obj) {
-    LOGGER.info(() -> "obj: " + obj + " class: " + obj.getClass());
-    LOGGER.info(() -> "fields: ");
-    Steam.of(getFields(obj.getClass()))
-        .map(Field::getName)
-        .forEach(
-            fieldName ->
-                LOGGER.info(() -> "field " + fieldName + ": " + getFieldValue(obj, fieldName)));
-    LOGGER.info(() -> "no arg methods: ");
-    Steam.of(getMethods(obj.getClass()))
-        .map(Method::getName)
-        .forEach(
-            methodName ->
-                LOGGER.info(
-                    () ->
-                        "method "
-                            + methodName
-                            + ": "
-                            + Opp.ofTry(() -> getMethod(obj.getClass(), methodName).invoke(obj))));
-  }
-
   public static <T> T newInstance(Class<T> clazz) {
     SerFunc<Class<T>, Constructor<T>> getConstructor = Class::getConstructor;
     Constructor<T> constructor = getConstructor.andThen(ReflectHelper::accessible).apply(clazz);

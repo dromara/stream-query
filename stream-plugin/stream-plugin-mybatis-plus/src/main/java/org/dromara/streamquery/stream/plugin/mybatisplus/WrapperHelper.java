@@ -76,24 +76,6 @@ public class WrapperHelper {
   }
 
   /**
-   * or 查询 只会拼接第一个条件
-   *
-   * @param wrapper 条件构造器
-   * @param dataList 数据
-   * @param biConsumer 逻辑处理
-   * @param <W> 条件构造器
-   * @param <T> 实体类型
-   * @param <R> 数据类型
-   * @return 条件构造器
-   * @deprecated 请使用 {@link #multi(AbstractWrapper, Collection, BiConsumer)},该API将在v2.0废弃
-   */
-  @Deprecated
-  public static <W extends AbstractWrapper<T, ?, W>, T, R> W multiOr(
-      W wrapper, Collection<R> dataList, BiConsumer<W, R> biConsumer) {
-    return multi(wrapper, dataList, (w, data) -> biConsumer.accept(w.or(), data));
-  }
-
-  /**
    * 多个条件查询
    *
    * @param wrapper 条件构造器

@@ -27,7 +27,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -44,7 +53,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.dromara.streamquery.stream.core.collection.Lists;
 import org.dromara.streamquery.stream.core.collection.Maps;
-import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
 import org.dromara.streamquery.stream.core.optional.Opp;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
@@ -53,7 +61,13 @@ import org.dromara.streamquery.stream.plugin.mybatisplus.engine.mapper.IMapper;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -146,48 +160,6 @@ public class Database {
   /**
    * lambdaQuery.
    *
-   * @param data a E object
-   * @param condition a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param <T> a T class
-   * @param <E> a E class
-   * @return a {@link Opp} object
-   * @deprecated use {@link WrapperHelper#lambdaQuery(Serializable, SFunction)} instead
-   */
-  @Deprecated
-  public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
-      E data, SFunction<T, E> condition) {
-    return Opp.of(data)
-        .map(
-            value ->
-                Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition)))
-                    .eq(condition, value))
-        .filter(Database::isActive);
-  }
-
-  /**
-   * lambdaQuery.
-   *
-   * @param dataList a {@link java.util.Collection} object
-   * @param condition a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param <T> a T class
-   * @param <E> a E class
-   * @return a {@link Opp} object
-   * @deprecated use {@link WrapperHelper#lambdaQuery(Collection, SFunction)} instead
-   */
-  @Deprecated
-  public static <T, E extends Serializable> Opp<LambdaQueryWrapper<T>> lambdaQuery(
-      Collection<E> dataList, SFunction<T, E> condition) {
-    return Opp.ofColl(dataList)
-        .map(
-            value ->
-                Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(condition)))
-                    .in(condition, new HashSet<>(value)))
-        .filter(Database::isActive);
-  }
-
-  /**
-   * lambdaQuery.
-   *
    * @param keyFunction a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
    * @param <T> a T class
    * @param <K> a K class
@@ -195,43 +167,6 @@ public class Database {
    */
   public static <T, K> LambdaQueryWrapper<T> lambdaQuery(SFunction<T, K> keyFunction) {
     return Wrappers.lambdaQuery(ClassUtils.newInstance(SimpleQuery.getType(keyFunction)));
-  }
-
-  /**
-   * select.
-   *
-   * @param wrapper a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper}
-   *     object
-   * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param <T> a T class
-   * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
-   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SFunction[])}
-   */
-  @Deprecated
-  @SafeVarargs
-  public static <T> LambdaQueryWrapper<T> select(
-      LambdaQueryWrapper<T> wrapper, SFunction<T, ?>... columns) {
-    return select(wrapper, LambdaQueryWrapper::select, columns);
-  }
-
-  /**
-   * select.
-   *
-   * @param wrapper a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper}
-   *     object
-   * @param whenAllMatchColumn a {@link SerBiCons} object
-   * @param columns a {@link com.baomidou.mybatisplus.core.toolkit.support.SFunction} object
-   * @param <T> a T class
-   * @return a {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper} object
-   * @deprecated please use {@link WrapperHelper#select(LambdaQueryWrapper, SerBiCons, SFunction[])}
-   */
-  @Deprecated
-  @SafeVarargs
-  public static <T> LambdaQueryWrapper<T> select(
-      LambdaQueryWrapper<T> wrapper,
-      SerBiCons<LambdaQueryWrapper<T>, SFunction<T, ?>[]> whenAllMatchColumn,
-      SFunction<T, ?>... columns) {
-    return WrapperHelper.select(wrapper, whenAllMatchColumn, columns);
   }
 
   /**
