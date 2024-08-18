@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:oceanbase://localhost:2881/stream-query?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    username: root@sys  # Assuming you're using the sys tenant
+    password: stream-query
+    driver-class-name: com.alipay.oceanbase.jdbc.Driver
