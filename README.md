@@ -24,12 +24,13 @@
 
 允许完全摆脱`Mapper`的`mybatis-plus`体验！
 
-封装`stream`和`lambda`操作进行数据返回处理
+封装`stream`和`lambda`操作进行数据返回处理。
 
 ## 🍺Committer卑微求职 北京、雄安求内推
 v：Cizai_
 
-<img src="https://zang-1307996497.cos.ap-beijing.myqcloud.com/undefinedWechatIMG379.jpg" alt="微信">
+<img src="https://zang-1307996497.cos.ap-beijing.myqcloud.com/undefinedWechatIMG379.jpg" alt="微信" width="300px">
+
 ## 📝文档
 
 [中文文档](http://stream-query.dromara.org)
@@ -104,6 +105,7 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 
 提交问题反馈请说明正在使用的JDK版本、stream-query版本和相关依赖库版本。如果可以请尽量详细或加图片以便于我们去复现
 
+[Gitcode issue](https://gitcode.com/dromara/stream-query/issues)<br/>
 [Gitee issue](https://gitee.com/dromara/stream-query/issues)<br/>
 [Github issue](https://github.com/dromara/stream-query/issues)
 
@@ -120,11 +122,11 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 
 ### 🐾贡献代码的步骤
 
-1. 在`Gitee`或者`Github`上`fork`项目到自己的`repo`
+1. 在`Gitcode`或者`Gitee`或者`Github`上`fork`项目到自己的`repo`
 2. 把`fork`过去的项目也就是你的项目`clone`到你的本地
 3. 修改代码
 4. `commit`后`push`到自己的库
-5. 登录`Gitee`或`Github`在你仓库首页可以看到一个 `pull request` 按钮，点击它，填写一些说明信息，然后提交即可。
+5. 登录`Gitcode`或`Gitee`或`Github`在你仓库首页可以看到一个 `pull request` 按钮，点击它，填写一些说明信息，然后提交即可。
    等待维护者合并
 
 ### 📐PR遵照的原则
@@ -135,11 +137,13 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 - 新加的方法尽可能不要使用额外的第三方库方法
 - 我们如果关闭了你的issue或pr，请不要诧异，这是我们保持问题处理整洁的一种方式，你依旧可以继续讨论，当有讨论结果时我们会重新打开。
 
-powered by [GitHub Copilot](https://copilot.github.com)
-powered by [JetBrains](https://www.jetbrains.com)Open source license
+
 
 
 ## 赞助商
 
 [![xiaonuo](https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg)](https://www.xiaonuo.vip/?from=hutool)
 [![yinmaisoft](https://plus.hutool.cn/images/zz/yinmaisoft.jpg)](https://www.jnpfsoft.com/index.html?from=stream-query)
+
+powered by [GitHub Copilot](https://copilot.github.com)
+powered by [JetBrains](https://www.jetbrains.com)Open source license
