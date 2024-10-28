@@ -18,7 +18,12 @@ package org.dromara.streamquery.stream.core.lambda;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.dromara.streamquery.stream.core.lambda.function.*;
+import org.dromara.streamquery.stream.core.clazz.ClassHelper;
+import org.dromara.streamquery.stream.core.lambda.function.SerArgsFunc;
+import org.dromara.streamquery.stream.core.lambda.function.SerBiCons;
+import org.dromara.streamquery.stream.core.lambda.function.SerCons;
+import org.dromara.streamquery.stream.core.lambda.function.SerFunc;
+import org.dromara.streamquery.stream.core.lambda.function.SerSupp;
 import org.dromara.streamquery.stream.core.reflect.AbstractTypeReference;
 import org.dromara.streamquery.stream.core.reflect.ReflectHelper;
 import org.dromara.streamquery.stream.core.stream.Steam;
@@ -26,7 +31,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
-import java.lang.invoke.*;
+import java.lang.invoke.CallSite;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandleProxies;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
@@ -273,10 +283,18 @@ class LambdaHelperTest {
   void testGetPropertyGetterSetterMap() {
     Map<String, Map.Entry<SerFunc<LambdaExecutable, Object>, Serializable>>
         propertyGetterSetterMap = LambdaHelper.getPropertyGetterSetterMap(LambdaExecutable.class);
-    LambdaExecutable executable = new LambdaExecutable();
-    SerFunc.<Serializable, SerBiCons<LambdaExecutable, Object>>cast()
-        .apply(propertyGetterSetterMap.get("name").getValue())
-        .accept(executable, "test");
-    Assertions.assertEquals("test", executable.getName());
+    // get getter,setter by property name
+    Map.Entry<SerFunc<LambdaExecutable, Object>, Serializable> getterSetterEntry =
+        propertyGetterSetterMap.get("name");
+    // get getter
+    SerFunc<LambdaExecutable, Object> getter = getterSetterEntry.getKey();
+    // get setter
+    SerBiCons<LambdaExecutable, Object> setter = ClassHelper.cast(getterSetterEntry.getValue());
+    LambdaExecutable foo = new LambdaExecutable();
+    // call setter
+    setter.accept(foo, "value");
+    // call getter
+    String bar = ClassHelper.cast(getter.apply(foo));
+    Assertions.assertEquals("value", bar);
   }
 }

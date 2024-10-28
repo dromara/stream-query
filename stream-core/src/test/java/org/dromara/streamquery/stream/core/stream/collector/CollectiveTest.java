@@ -66,62 +66,78 @@ class CollectiveTest {
   @Test
   void testLimiting() {
     List<Integer> list = Arrays.asList(0, 0, 0, 1, 1, 1, 1);
-    Map<Integer, List<Integer>> map = list.stream().collect(groupingBy(Function.identity(), limiting(0)));
+    Map<Integer, List<Integer>> map =
+        list.stream().collect(groupingBy(Function.identity(), limiting(0)));
     Assertions.assertEquals(2, map.size());
     Assertions.assertEquals(0, map.get(0).size());
     Assertions.assertEquals(0, map.get(1).size());
 
-    Map<Integer, List<Integer>> map1 = list.stream().collect(groupingBy(Function.identity(), limiting(2)));
+    Map<Integer, List<Integer>> map1 =
+        list.stream().collect(groupingBy(Function.identity(), limiting(2)));
     Assertions.assertEquals(2, map1.size());
     Assertions.assertEquals(2, map1.get(0).size());
     Assertions.assertEquals(2, map1.get(1).size());
 
-    Map<Integer, List<Integer>> map2 = list.stream().collect(groupingBy(Function.identity(), limiting(10)));
+    Map<Integer, List<Integer>> map2 =
+        list.stream().collect(groupingBy(Function.identity(), limiting(10)));
     Assertions.assertEquals(2, map2.size());
     Assertions.assertEquals(3, map2.get(0).size());
     Assertions.assertEquals(4, map2.get(1).size());
 
-    Assertions.assertThrows(LambdaInvokeException.class, () -> list.stream().collect(groupingBy(Function.identity(), limiting(-1))));
+    Assertions.assertThrows(
+        LambdaInvokeException.class,
+        () -> list.stream().collect(groupingBy(Function.identity(), limiting(-1))));
   }
 
   @Test
   void testSkipping() {
     List<Integer> list = Arrays.asList(0, 0, 0, 1, 1, 1, 1);
-    Map<Integer, List<Integer>> map = list.stream().collect(groupingBy(Function.identity(), skipping(2)));
+    Map<Integer, List<Integer>> map =
+        list.stream().collect(groupingBy(Function.identity(), skipping(2)));
     Assertions.assertEquals(2, map.size());
     Assertions.assertEquals(1, map.get(0).size());
     Assertions.assertEquals(2, map.get(1).size());
 
-    Map<Integer, List<Integer>> map1 = list.stream().collect(groupingBy(Function.identity(), skipping(10)));
+    Map<Integer, List<Integer>> map1 =
+        list.stream().collect(groupingBy(Function.identity(), skipping(10)));
     Assertions.assertEquals(2, map1.size());
     Assertions.assertEquals(0, map1.get(0).size());
     Assertions.assertEquals(0, map1.get(1).size());
 
-    Map<Integer, List<Integer>> map2 = list.stream().collect(groupingBy(Function.identity(), skipping(0)));
+    Map<Integer, List<Integer>> map2 =
+        list.stream().collect(groupingBy(Function.identity(), skipping(0)));
     Assertions.assertEquals(2, map2.size());
     Assertions.assertEquals(3, map2.get(0).size());
     Assertions.assertEquals(4, map2.get(1).size());
 
-    Assertions.assertThrows(LambdaInvokeException.class, () -> list.stream().collect(groupingBy(Function.identity(), skipping(-1))));
+    Assertions.assertThrows(
+        LambdaInvokeException.class,
+        () -> list.stream().collect(groupingBy(Function.identity(), skipping(-1))));
   }
 
   @Test
   void testSubList() {
     List<Integer> list = Arrays.asList(0, 0, 1, 1, 1, 2, 2, 2, 2);
-    Map<Integer, List<Integer>> map1 = list.stream().collect(groupingBy(Function.identity(), subList(1, 2)));
+    Map<Integer, List<Integer>> map1 =
+        list.stream().collect(groupingBy(Function.identity(), subList(1, 2)));
     Assertions.assertEquals(3, map1.size());
     Assertions.assertEquals(1, map1.get(0).size());
     Assertions.assertEquals(2, map1.get(1).size());
     Assertions.assertEquals(2, map1.get(2).size());
 
-    Map<Integer, List<Integer>> map2 = list.stream().collect(groupingBy(Function.identity(), subList(10, 2)));
+    Map<Integer, List<Integer>> map2 =
+        list.stream().collect(groupingBy(Function.identity(), subList(10, 2)));
     Assertions.assertEquals(3, map2.size());
     Assertions.assertEquals(0, map2.get(0).size());
     Assertions.assertEquals(0, map2.get(1).size());
     Assertions.assertEquals(0, map2.get(2).size());
 
-    Assertions.assertThrows(LambdaInvokeException.class, () -> list.stream().collect(groupingBy(Function.identity(), subList(-1, 2))));
-    Assertions.assertThrows(LambdaInvokeException.class, () -> list.stream().collect(groupingBy(Function.identity(), subList(1, -1))));
+    Assertions.assertThrows(
+        LambdaInvokeException.class,
+        () -> list.stream().collect(groupingBy(Function.identity(), subList(-1, 2))));
+    Assertions.assertThrows(
+        LambdaInvokeException.class,
+        () -> list.stream().collect(groupingBy(Function.identity(), subList(1, -1))));
   }
 
   @Test
