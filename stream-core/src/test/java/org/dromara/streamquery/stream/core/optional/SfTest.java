@@ -210,4 +210,63 @@ class SfTest {
     Assertions.assertEquals(isNullStr.get(), Z_VERIFY_NAME);
     Assertions.assertNull(isNotNullStr.get());
   }
+
+  @Test
+  void testRecover() {
+    // 测试非激活状态的恢复
+    Sf<String> empty = Sf.empty();
+    Assertions.assertEquals(
+        "recovered",
+        empty.recover(e -> "recovered").get(),
+        "Should recover from empty Sf"
+    );
+
+    // 测试激活状态不需要恢复
+    Sf<String> active = Sf.of("active");
+    Assertions.assertEquals(
+        "active",
+        active.recover(e -> "recovered").get(),
+        "Should not recover when Sf is active"
+    );
+
+    // 测试恢复处理器抛出异常的情况
+    Sf<String> recovered = empty.recover(e -> {
+        throw new RuntimeException("handler error");
+    });
+    Assertions.assertTrue(
+        recovered.isEmpty(),
+        "Should return empty Sf when handler throws exception"
+    );
+
+    // 测试不同类型的异常处理
+    Sf<String> handledByType = empty.recover(e -> {
+        if (e instanceof NoSuchElementException) {
+            return "no element";
+        }
+        return "other error";
+    });
+    Assertions.assertEquals(
+        "no element",
+        handledByType.get(),
+        "Should handle NoSuchElementException correctly"
+    );
+
+    // 测试 null 处理器
+    Assertions.assertThrows(
+        NullPointerException.class,
+        () -> empty.recover(null),
+        "Should throw NPE when handler is null"
+    );
+
+    // 测试链式调用
+    String result = Sf.<String>empty()
+        .recover(e -> "first")
+        .mayLet(String::toUpperCase)
+        .orElse("default");
+    Assertions.assertEquals(
+        "FIRST",
+        result,
+        "Should work in method chain"
+    );
+  }
 }
