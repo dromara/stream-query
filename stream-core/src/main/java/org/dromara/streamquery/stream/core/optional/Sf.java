@@ -322,8 +322,8 @@ public class Sf<T> {
   }
 
   /**
-   * 生产者操作， 获取当前{@code Sf}中包裹对象如果当前{@code Sf}中所包裹元素为{@code null}则拿到{@code other}包裹到Sf中���换原有值，不为{@code
-   * Sf}则返回Sf所包裹对象
+   * 生产者操作， 获取当前{@code Sf}中包裹对象如果当前{@code Sf}中所包裹元素为{@code null}则拿到{@code
+   * other}包裹到Sf中���换原有值，不为{@code Sf}则返回Sf所包裹对象
    *
    * @param other 产生的值
    * @return {@code T}
@@ -390,22 +390,24 @@ public class Sf<T> {
 
   /**
    * 当 Sf 处于非激活状态时，尝试从异常中恢复数据。
-   * 
+   *
    * <p>该方法主要用于以下场景：
+   *
    * <ul>
-   *   <li>处理 Sf 中的异常状态</li>
-   *   <li>提供默认值或替代逻辑</li>
-   *   <li>链式调用中的错误恢复</li>
-   *   <li>复杂业务逻辑中的状态转换</li>
-   *   <li>需要提供降级策略的场景</li>
+   *   <li>处理 Sf 中的异常状态
+   *   <li>提供默认值或替代逻辑
+   *   <li>链式调用中的错误恢复
+   *   <li>复杂业务逻辑中的状态转换
+   *   <li>需要提供降级策略的场景
    * </ul>
-   * 
+   *
    * <p>示例：
+   *
    * <pre>{@code
    * // 从异常中恢复默认值
    * Sf.empty()
    *   .recover(e -> "default");
-   *   
+   *
    * // 根据异常类型提供不同的恢复逻辑
    * Sf.empty()
    *   .recover(e -> {
@@ -423,12 +425,12 @@ public class Sf<T> {
   public Sf<T> recover(SerFunc<Throwable, T> handler) {
     Objects.requireNonNull(handler, "handler must not be null");
     if (!notActive) {
-        return this;
+      return this;
     }
     try {
-        return of(handler.apply(new NoSuchElementException()));
+      return of(handler.apply(new NoSuchElementException()));
     } catch (Throwable t) {
-        return empty();
+      return empty();
     }
   }
 }
