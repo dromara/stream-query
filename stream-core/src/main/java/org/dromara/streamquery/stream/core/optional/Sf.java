@@ -323,7 +323,7 @@ public class Sf<T> {
 
   /**
    * 生产者操作， 获取当前{@code Sf}中包裹对象如果当前{@code Sf}中所包裹元素为{@code null}则拿到{@code
-   * other}包裹到Sf中���换原有值，不为{@code Sf}则返回Sf所包裹对象
+   * other}包裹到Sf中替换原有值，不为{@code Sf}则返回Sf所包裹对象
    *
    * @param other 产生的值
    * @return {@code T}
