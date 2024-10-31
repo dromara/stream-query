@@ -444,6 +444,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
    * @param mapper 操作，返回流
    * @return 返回叠加拆分操作后的流
    */
+  @Override
   public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
     Objects.requireNonNull(mapper);
     return flatMap(
@@ -479,7 +480,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
               }))
           .parallel();
     } else {
-      Set<F> exists = new HashSet<>();
+      Set<F> exists = new LinkedHashSet<>();
       return of(stream.filter(e -> exists.add(keyExtractor.apply(e))));
     }
   }
@@ -1068,5 +1069,107 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   @Override
   public Steam<T> onClose(Runnable closeHandler) {
     return super.onClose(closeHandler);
+  }
+
+  /**
+   * 将流分组为指定大小的子流，最后一组可能小于指定大小
+   * 与split方法类似，但这个方法保证每组大小相等(最后一组除外)
+   *
+   * @param size 每组大小
+   * @return 分组后的流
+   */
+  public Steam<List<T>> chunk(int size) {
+    if (size <= 0) {
+      throw new IllegalArgumentException("Size must be greater than 0");
+    }
+    
+    return Steam.of(
+        () -> new Iterator<>() {
+            private final Iterator<T> iterator = iterator();
+
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public List<T> next() {
+                List<T> chunk = new ArrayList<>(size);
+                for (int i = 0; i < size && iterator.hasNext(); i++) {
+                    chunk.add(iterator.next());
+                }
+                return chunk;
+            }
+        }
+    );
+  }
+
+  /**
+   * 获取流中第n个元素
+   * 
+   * @param n 位置(从0开始)
+   * @return 第n个元素
+   */
+  public Optional<T> nth(long n) {
+    if (n < 0) {
+        return Optional.empty();
+    }
+    return skip(n).findFirst();
+  }
+
+  /**
+   * 将流转换为循环流
+   * 当到达流的末尾时，重新从开始处开始
+   * 
+   * @param times 循环次数
+   * @return 循环后的流
+   */
+  public Steam<T> cycle(int times) {
+    if (times <= 0) {
+        return empty();
+    }
+    
+    List<T> list = toList();
+    if (list.isEmpty()) {
+        return empty();
+    }
+    
+    return Steam.iterate(0, i -> i < times * list.size(), i -> i + 1)
+               .map(i -> list.get(i % list.size()));
+  }
+
+  /**
+   * 对流中的元素进行滑动窗口操作
+   * 
+   * @param windowSize 窗口大小
+   * @param step 步长
+   * @return 滑动窗口流
+   */
+  public Steam<List<T>> sliding(int windowSize, int step) {
+    if (windowSize <= 0 || step <= 0) {
+        throw new IllegalArgumentException("Window size and step must be greater than 0");
+    }
+    
+    List<T> source = toList();
+    return Steam.of(
+        () -> new Iterator<List<T>>() {
+            private int index = 0;
+            
+            @Override
+            public boolean hasNext() {
+                return index + windowSize <= source.size();
+            }
+            
+            @Override
+            public List<T> next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                List<T> window = source.subList(index, index + windowSize);
+                index += step;
+                return window;
+            }
+        }
+    );
   }
 }
