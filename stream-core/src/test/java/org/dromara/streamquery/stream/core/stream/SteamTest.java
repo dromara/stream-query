@@ -430,118 +430,90 @@ class SteamTest {
   @Test
   void testChunk() {
     List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
-    
+
     // 测试正常分组
     List<List<Integer>> chunks = Steam.of(list).chunk(2).toList();
-    Assertions.assertEquals(Arrays.asList(
-        Arrays.asList(1, 2),
-        Arrays.asList(3, 4), 
-        Arrays.asList(5)
-    ), chunks);
-    
+    Assertions.assertEquals(
+        Arrays.asList(Arrays.asList(1, 2), Arrays.asList(3, 4), Arrays.asList(5)), chunks);
+
     // 测试size为1的情况
     chunks = Steam.of(list).chunk(1).toList();
-    Assertions.assertEquals(Arrays.asList(
-        Arrays.asList(1),
-        Arrays.asList(2),
-        Arrays.asList(3),
-        Arrays.asList(4),
-        Arrays.asList(5)
-    ), chunks);
-    
+    Assertions.assertEquals(
+        Arrays.asList(
+            Arrays.asList(1),
+            Arrays.asList(2),
+            Arrays.asList(3),
+            Arrays.asList(4),
+            Arrays.asList(5)),
+        chunks);
+
     // 测试size大于列表长度的情况
     chunks = Steam.of(list).chunk(10).toList();
     Assertions.assertEquals(Arrays.asList(Arrays.asList(1, 2, 3, 4, 5)), chunks);
-    
+
     // 测试非法参数
-    Assertions.assertThrows(IllegalArgumentException.class, () -> 
-        Steam.of(list).chunk(0).toList()
-    );
+    Assertions.assertThrows(IllegalArgumentException.class, () -> Steam.of(list).chunk(0).toList());
   }
 
   @Test
-  void testNth() {
-    List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
-    
-    // 测试正常获取
-    Assertions.assertEquals(1, Steam.of(list).nth(0).orElse(null));
-    Assertions.assertEquals(3, Steam.of(list).nth(2).orElse(null));
-    Assertions.assertEquals(5, Steam.of(list).nth(4).orElse(null));
-    
-    // 测试越界情况
-    Assertions.assertFalse(Steam.of(list).nth(5).isPresent());
-    Assertions.assertFalse(Steam.of(list).nth(-1).isPresent());
-    
+  public void testCycle() {
+    // 测试普通循环
+    List<Integer> result = Steam.of(1, 2, 3).cycle().limit(8).toList();
+    Assertions.assertEquals(Arrays.asList(1, 2, 3, 1, 2, 3, 1, 2), result);
+
     // 测试空流
-    Assertions.assertFalse(Steam.<Integer>empty().nth(0).isPresent());
-  }
+    List<Integer> emptyResult = Steam.<Integer>empty().cycle().limit(5).toList();
+    Assertions.assertTrue(emptyResult.isEmpty());
 
-  @Test
-  void testCycle() {
-    List<Integer> list = Arrays.asList(1, 2, 3);
-    
-    // 测试正常循环
-    List<Integer> result = Steam.of(list).cycle(2).toList();
-    Assertions.assertEquals(Arrays.asList(1, 2, 3, 1, 2, 3), result);
-    
-    // 测试循环1次
-    result = Steam.of(list).cycle(1).toList();
-    Assertions.assertEquals(Arrays.asList(1, 2, 3), result);
-    
-    // 测试循环0次
-    result = Steam.of(list).cycle(0).toList();
-    Assertions.assertEquals(Collections.emptyList(), result);
-    
-    // 测试空列表
-    result = Steam.<Integer>empty().cycle(2).toList();
-    Assertions.assertEquals(Collections.emptyList(), result);
+    // 测试单个元素
+    List<String> singleResult = Steam.of("a").cycle().limit(3).toList();
+    Assertions.assertEquals(Arrays.asList("a", "a", "a"), singleResult);
+
+    // 测试不限制长度时是否能正常获取前几个元素
+    List<Integer> unlimitedResult =
+        Steam.of(1, 2)
+            .cycle()
+            .peek(
+                i -> {
+                  // 确保流确实在运行,但不会无限运行
+                  Assertions.assertTrue(i <= 2);
+                })
+            .limit(4)
+            .toList();
+    Assertions.assertEquals(Arrays.asList(1, 2, 1, 2), unlimitedResult);
   }
 
   @Test
   void testSliding() {
     List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
-    
+
     // 测试正常滑动窗口
     List<List<Integer>> windows = Steam.of(list).sliding(3, 1).toList();
-    Assertions.assertEquals(Arrays.asList(
-        Arrays.asList(1, 2, 3),
-        Arrays.asList(2, 3, 4),
-        Arrays.asList(3, 4, 5)
-    ), windows);
-    
+    Assertions.assertEquals(
+        Arrays.asList(Arrays.asList(1, 2, 3), Arrays.asList(2, 3, 4), Arrays.asList(3, 4, 5)),
+        windows);
+
     // 测试步长为2的滑动窗口
     windows = Steam.of(list).sliding(2, 2).toList();
-    Assertions.assertEquals(Arrays.asList(
-        Arrays.asList(1, 2),
-        Arrays.asList(3, 4)
-    ), windows);
-    
+    Assertions.assertEquals(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(3, 4)), windows);
+
     // 测试非法参数
-    Assertions.assertThrows(IllegalArgumentException.class, () ->
-        Steam.of(list).sliding(0, 1).toList()
-    );
-    Assertions.assertThrows(IllegalArgumentException.class, () ->
-        Steam.of(list).sliding(1, 0).toList()
-    );
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> Steam.of(list).sliding(0, 1).toList());
+    Assertions.assertThrows(
+        IllegalArgumentException.class, () -> Steam.of(list).sliding(1, 0).toList());
   }
-
-
 
   @Test
   void testDistinctOptimized() {
     List<Integer> list = Arrays.asList(1, 2, 2, 3, 3, 3, 1);
-    
+
     // 测试顺序流去重
-    List<Integer> result = Steam.of(list)
-        .distinct(String::valueOf)
-        .toList();
+    List<Integer> result = Steam.of(list).distinct(String::valueOf).toList();
     Assertions.assertEquals(Arrays.asList(1, 2, 3), result);
-    
+
     // 测试并行流去重
-    result = Steam.of(list)
-        .parallel()
-        .distinct(String::valueOf)
-        .toList();
+    result = Steam.of(list).parallel().distinct(String::valueOf).toList();
     Assertions.assertEquals(3, result.size());
     Assertions.assertTrue(result.containsAll(Arrays.asList(1, 2, 3)));
   }

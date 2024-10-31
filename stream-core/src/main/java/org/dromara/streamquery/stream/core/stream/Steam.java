@@ -212,7 +212,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
   /**
    * 创建一个惰性拼接流，其元素是第一个流的所有元素，然后是第二个流的所有元素。 如果两个输入流都是有序的，则结果流是有序的，如果任一输入流是并行的，则结果流是并行的。
-   * 当结果流关闭时，两个输入流的关闭处理程序都会被调用。
+   * 当结果流关闭时，两个输入流的关闭处理程序都���被调用。
    *
    * <p>从重复串行流进行拼接时可能会导致深度调用链甚至抛出 {@code StackOverflowException}
    */
@@ -1072,8 +1072,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
   }
 
   /**
-   * 将流分组为指定大小的子流，最后一组可能小于指定大小
-   * 与split方法类似，但这个方法保证每组大小相等(最后一组除外)
+   * 将流分组为指定大小的子流，最后一组可能小于指定大小 与split方法类似，但这个方法保证每组大小相等(最后一组除外)
    *
    * @param size 每组大小
    * @return 分组后的流
@@ -1082,94 +1081,74 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
     if (size <= 0) {
       throw new IllegalArgumentException("Size must be greater than 0");
     }
-    
+
     return Steam.of(
-        () -> new Iterator<>() {
-            private final Iterator<T> iterator = iterator();
+        () ->
+            new Iterator<>() {
+              private final Iterator<T> iterator = iterator();
 
-            @Override
-            public boolean hasNext() {
+              @Override
+              public boolean hasNext() {
                 return iterator.hasNext();
-            }
+              }
 
-            @Override
-            public List<T> next() {
+              @Override
+              public List<T> next() {
                 List<T> chunk = new ArrayList<>(size);
                 for (int i = 0; i < size && iterator.hasNext(); i++) {
-                    chunk.add(iterator.next());
+                  chunk.add(iterator.next());
                 }
                 return chunk;
-            }
-        }
-    );
+              }
+            });
   }
 
   /**
-   * 获取流中第n个元素
-   * 
-   * @param n 位置(从0开始)
-   * @return 第n个元素
+   * 将流转换为无限循环流 当到达流的末尾时，重新从开始处开始 用户可以使用 limit() 来限制元素数量
+   *
+   * @return 无限循环的流
    */
-  public Optional<T> nth(long n) {
-    if (n < 0) {
-        return Optional.empty();
-    }
-    return skip(n).findFirst();
-  }
-
-  /**
-   * 将流转换为循环流
-   * 当到达流的末尾时，重新从开始处开始
-   * 
-   * @param times 循环次数
-   * @return 循环后的流
-   */
-  public Steam<T> cycle(int times) {
-    if (times <= 0) {
-        return empty();
-    }
-    
+  public Steam<T> cycle() {
     List<T> list = toList();
     if (list.isEmpty()) {
-        return empty();
+      return empty();
     }
-    
-    return Steam.iterate(0, i -> i < times * list.size(), i -> i + 1)
-               .map(i -> list.get(i % list.size()));
+
+    return Steam.iterate(0, i -> true, i -> i + 1).map(i -> list.get(i % list.size()));
   }
 
   /**
    * 对流中的元素进行滑动窗口操作
-   * 
+   *
    * @param windowSize 窗口大小
    * @param step 步长
    * @return 滑动窗口流
    */
   public Steam<List<T>> sliding(int windowSize, int step) {
     if (windowSize <= 0 || step <= 0) {
-        throw new IllegalArgumentException("Window size and step must be greater than 0");
+      throw new IllegalArgumentException("Window size and step must be greater than 0");
     }
-    
+
     List<T> source = toList();
     return Steam.of(
-        () -> new Iterator<List<T>>() {
-            private int index = 0;
-            
-            @Override
-            public boolean hasNext() {
+        () ->
+            new Iterator<List<T>>() {
+              private int index = 0;
+
+              @Override
+              public boolean hasNext() {
                 return index + windowSize <= source.size();
-            }
-            
-            @Override
-            public List<T> next() {
+              }
+
+              @Override
+              public List<T> next() {
                 if (!hasNext()) {
-                    throw new NoSuchElementException();
+                  throw new NoSuchElementException();
                 }
                 List<T> window = source.subList(index, index + windowSize);
                 index += step;
                 return window;
-            }
-        }
-    );
+              }
+            });
   }
 }
