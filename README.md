@@ -3,6 +3,8 @@
 
 <h2 align="center">vuepress-theme-vdoing</h2>
 
+node 16
+
 [在线文档(国内源)](http://stream-query.dromara.org/)
 
 [主题仓库](https://github.com/xugaoyi/vuepress-theme-vdoing)
