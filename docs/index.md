@@ -64,9 +64,8 @@ postList: none
 </a>
 
 <a target="_blank" href="https://www.jnpfsoft.com/index.html?from=stream-query">
-  <img src="/img/sponsor/yinmaisoft.jpg" style="width: 100%" />
+  <img src="/img/sponsor/yinmaisoft.jpg" style="width: 100%;" />
 </a>
-yinmaisoft
 
 <a target="_blank" href="http://doc.zyplayer.com/#/integrate/zyplayer-doc?utm=stream-query">
   <div style="display: flex; justify-content: center; align-items: center;">
