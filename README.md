@@ -146,4 +146,4 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 [![yinmaisoft](https://plus.hutool.cn/images/zz/yinmaisoft.jpg)](https://www.jnpfsoft.com/index.html?from=stream-query)
 
 powered by [GitHub Copilot](https://copilot.github.com)
-powered by [JetBrains](https://www.jetbrains.com)Open source license
+powered by [JetBrains](https://www.jetbrains.com) Open source license
