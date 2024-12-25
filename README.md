@@ -18,6 +18,9 @@
     <a target="_blank" href='https://github.com/dromara/stream-query'>
         <img src="https://img.shields.io/github/stars/dromara/stream-query.svg?style=social" alt="github star"/>
     </a>
+	<a target="_blank" href='https://gitcode.com/dromara/stream-query'>
+		<img src="https://gitcode.com/dromara/stream-query/star/badge.svg" alt="gitcode star"/>
+	</a>
 </p> 
 
 ## 📚简介
