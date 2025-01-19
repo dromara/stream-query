@@ -141,8 +141,6 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 - 我们如果关闭了你的issue或pr，请不要诧异，这是我们保持问题处理整洁的一种方式，你依旧可以继续讨论，当有讨论结果时我们会重新打开。
 
 
-
-
 ## 赞助商
 
 [![xiaonuo](https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg)](https://www.xiaonuo.vip/?from=hutool)
