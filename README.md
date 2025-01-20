@@ -148,3 +148,4 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 
 powered by [GitHub Copilot](https://copilot.github.com)
 powered by [JetBrains](https://www.jetbrains.com) Open source license
+
