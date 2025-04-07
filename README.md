@@ -143,7 +143,7 @@ Map<Long, UserInfo> idUserMap=OneToOne.of(UserInfo::getId).in(userIds).query();
 
 ## 赞助商
 
-[![xiaonuo](https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg)](https://www.xiaonuo.vip/?from=hutool)
+[![xiaonuo](https://plus.hutool.cn/images/ad/xiaonuo_banner.jpg)](https://www.xiaonuo.vip/?from=stream-query)
 [![yinmaisoft](https://plus.hutool.cn/images/zz/yinmaisoft.jpg)](https://www.jnpfsoft.com/index.html?from=stream-query)
 
 powered by [GitHub Copilot](https://copilot.github.com)
