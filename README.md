@@ -40,6 +40,14 @@ v：Cizai_
 &nbsp;[仓库地址](https://gitee.com/dromara/stream-query)
 &nbsp;[视频教程](https://www.bilibili.com/video/BV1UP411F7Ai)
 
+文档备用地址：
+
+https://stream-query-docs-vampireachaos-projects.vercel.app/
+
+https://stream-query-docs-git-site-v2-vampireachaos-projects.vercel.app/
+
+https://stream-query-docs.vercel.app/
+
 ## 📦安装
 
 ### 🍊Maven
