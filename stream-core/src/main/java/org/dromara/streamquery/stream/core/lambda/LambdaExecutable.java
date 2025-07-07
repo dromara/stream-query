@@ -98,7 +98,8 @@ public class LambdaExecutable {
   /**
    * Initializes the constructor-related information.
    *
-   * @param constructor The constructor object used to retrieve detailed information about the constructor.
+   * @param constructor The constructor object used to retrieve detailed information about the
+   *     constructor.
    */
   private void initConstructor(Constructor<?> constructor) {
     this.executable = constructor;
