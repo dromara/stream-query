@@ -444,7 +444,6 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
    * @param mapper 操作，返回流
    * @return 返回叠加拆分操作后的流
    */
-  @Override
   public <R> Steam<R> mapMulti(BiConsumer<? super T, ? super Consumer<R>> mapper) {
     Objects.requireNonNull(mapper);
     return flatMap(
@@ -1084,7 +1083,7 @@ public class Steam<T> extends AbstractStreamWrapper<T, Steam<T>>
 
     return Steam.of(
         () ->
-            new Iterator<>() {
+            new Iterator<List<T>>() {
               private final Iterator<T> iterator = iterator();
 
               @Override
